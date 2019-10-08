@@ -1,0 +1,58 @@
+/* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
+::ng-deep .mat-focused .mat-form-field-label {
+  /*change color of label*/
+  color: black !important;
+}
+::ng-deep .mat-form-field-infix {
+  padding: 0px;
+}
+::ng-deep.mat-dialog-container {
+  padding: 32px;
+}
+::ng-deep.mat-dialog-content {
+  padding: 24px;
+}
+::ng-deep.mat-form-field-underline {
+  /*change color of underline*/
+  background-color: black !important;
+}
+::ng-deep.mat-dialog-title {
+  /* margin: 0px; */
+  font-size: 32px;
+}
+::ng-deep.mat-form-field-ripple {
+  /*change color of underline when focused*/
+  background-color: black !important;
+}
+.indent {
+  margin-left: 25px;
+  margin-top: 0px;
+}
+.but {
+  background-color: var(--raiders-grey);
+}
+.but:hover {
+  background-color: var(--light-blue);
+}
+.space {
+  padding-left: 10px;
+}
+.itemSelected {
+  background-color: var(--light-blue);
+}
+.padTop {
+  padding-top: 2px;
+}
+.save {
+  background-color: var(--medium-blue);
+  font-family: "Sans-Serif";
+}
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.example-full-width {
+  width: 100%;
+}

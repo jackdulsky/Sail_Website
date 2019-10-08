@@ -1,0 +1,46 @@
+<nav class="navbar navbar-fixed-top top" routerLinkActive="active">
+  <ul class="nav navbar-nav navheight">
+    <div class="leftBG"></div>
+    <div class="rightBG">
+      <!-- <div
+      class="filterLabel topbuttonleft"
+      *ngIf="filterService.getNamePresent()"
+    >
+      <i class="fa fa-eye fa-md"></i>
+      Filter Name:
+      {{ filterService.getName() }}
+      <span *ngIf="filterService.modifiedStatus()"> (unsaved)</span>
+    </div> -->
+
+      <div style="float:right; ">
+        <i class="fa colo fa-envelope fa-sm mright"></i>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          aria-label=" menu"
+          style="width:auto"
+          class="navheight"
+        >
+          <span class="usertext mright">
+            {{ allUsers[0].firstName }} {{ allUsers[0].lastName }}
+          </span>
+          <i class="fa fa-bars fa-lg " style="margin-right: 10px;"></i>
+        </button>
+        <mat-menu #menu="matMenu" xPosition="before">
+          <button mat-menu-item (click)="onCreate()">
+            <i class="fa fa-gears fa-sm mright"></i>
+            <span>User Setting</span>
+          </button>
+          <button mat-menu-item (click)="onCreate()">
+            <i class="fa fa-youtube-play fa-sm mright"></i>
+            <span>Video Settings</span>
+          </button>
+          <button mat-menu-item (click)="onCreate()">
+            <i class="fa fa-question-circle fa-sm mright"></i>
+            <span>FAQ</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </ul>
+</nav>

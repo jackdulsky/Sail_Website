@@ -1,0 +1,43 @@
+<h6 mat-dialog-title>
+  Select a Saved Filter<span style="float:right" class="exit"
+    ><i class="fa fa-close fa-lg" (click)="close()"></i
+  ></span>
+</h6>
+<mat-dialog-content [formGroup]="form" style="background-color:white">
+  <ng-template #recursiveList let-list>
+    <div *ngFor="let item of list" class="padTop">
+      <button
+        mat-button
+        id="{{ item }}"
+        class="item but"
+        (click)="selectFilter(item)"
+      >
+        <span>{{ item }}</span>
+        <i id="{{ item }}ico" class="space fa fa-folder-o"></i>
+      </button>
+
+      <!-- <div class="indent" *ngIf="visible[item]">
+        <ng-container
+          *ngTemplateOutlet="
+            recursiveList;
+            context: { $implicit: options[item] }
+          "
+        ></ng-container>
+      </div> -->
+    </div>
+  </ng-template>
+  <div style="height: 10px;"></div>
+  <ng-container
+    *ngTemplateOutlet="recursiveList; context: { $implicit: my_menu }"
+  ></ng-container>
+  <div style="height: 10px;"></div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="mat-raised-button mat-primary save" (click)="save()">
+    Upload
+  </button>
+  <!-- <button class="mat-raised-button mat-primary save" (click)="clearAll()">
+          Clear All
+        </button> -->
+</mat-dialog-actions>
+<!-- <button mat-raised-button matDialogClose>Close</button> -->

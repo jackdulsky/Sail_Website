@@ -1,0 +1,543 @@
+<h6 mat-dialog-title>
+  {{ title
+  }}<span style="float:right" class="exit"
+    ><i class="fa fa-close fa-lg" (click)="close()"></i
+  ></span>
+</h6>
+
+<mat-dialog-content [formGroup]="form" style="background-color:white">
+  <Div class="ovr-container2">
+    <div class="top">
+      <div class=" griditem2 tier1-container">
+        <div id="tier1Tab1" class="tier1Tab" (click)="changelevel2(1)">
+          {{ gamesIDToString[1] }}
+        </div>
+        <div
+          id="tier1Tab{{ t1.key }}"
+          *ngFor="let t1 of options | keyvalue"
+          class="tier1Tab"
+          (click)="changelevel2(t1.key)"
+        >
+          {{ idToString[t1.key] }}
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom griditem2 bottom-container">
+      <div class="tier2-container">
+        <div class="searching">
+          <div>
+            <span>
+              <i class="sicon fa fa-search fa-sm" style="color:black"></i>
+              <input
+                type="text"
+                id="searchGlobalText"
+                placeholder="  Search"
+                (input)="searching($event.target.value)"
+                autocomplete="off"
+              />
+            </span>
+          </div>
+          <div class="suggestionList" *ngIf="showSuggestions">
+            <div
+              *ngFor="
+                let result of reverse | keyvalue | filter: searchGlobalText
+              "
+              (click)="resultSelected(result)"
+              class="gSearchBlock"
+            >
+              {{ idToString[result.key] }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngFor="let t2 of activeLevel2From1 | keyvalue"
+          class="tier2Tab"
+          id="tier2Tab{{ t2.key }}"
+          (click)="changelevel3(t2.key)"
+        >
+          <div class="tier2-arrowName-container">
+            <div class="tier2-name" id="t2name{{ t2.key }}">
+              {{ idToString[t2.key] }}
+            </div>
+            <div id="selectKey{{ t2.key }}" class="selectKey">
+              <i class="fa fa-chevron-right fa-sm"></i>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="level1Selected === '1'">
+          <div
+            *ngFor="let t2 of gamesLevel2From1"
+            class="tier2Tab"
+            id="tier2Tab{{ t2 }}"
+            (click)="changelevel3(t2)"
+          >
+            <div class="tier2-arrowName-container">
+              <div class="tier2-name" id="t2name{{ t2 }}">
+                {{ gamesIDToString[t2] }}
+              </div>
+              <div id="selectKey{{ t2 }}" class="selectKey">
+                <i class="fa fa-chevron-right fa-sm"></i>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="tier3">
+        <div>
+          <H2 class="l2Title">{{ netIDToString[level2Selected] }} Filters</H2>
+        </div>
+        <div *ngIf="level2Selected == 100">
+          {{ leaguesOn }}
+          <div
+            onload=""
+            class="league"
+            id="NFL"
+            (click)="toggleLeague('NFL', 101)"
+            *ngIf="!leaguesOn.includes(101)"
+          >
+            <img
+              src="https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos/NFL.png"
+              width="100%"
+              height="100%"
+            />
+          </div>
+          <div
+            *ngIf="leaguesOn.includes(101)"
+            class="leagueSelected"
+            id="NFL"
+            (click)="toggleLeague('NFL', 101)"
+          >
+            <img
+              src="https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos/NFL.png"
+              width="100%"
+              height="100%"
+            />
+          </div>
+          <div
+            class="league"
+            id="NCAA"
+            (click)="toggleLeague('NCAA', 102)"
+            *ngIf="!leaguesOn.includes(102)"
+          >
+            <img
+              src="https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos/NCAA.png"
+              width="100%"
+              height="90%"
+              style="margin-top: 5%"
+            />
+          </div>
+          <div
+            class="leagueSelected"
+            id="NCAA"
+            (click)="toggleLeague('NCAA', 102)"
+            *ngIf="leaguesOn.includes(102)"
+          >
+            <img
+              src="https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos/NCAA.png"
+              width="100%"
+              height="90%"
+              style="margin-top: 5%"
+            />
+          </div>
+        </div>
+        <div *ngIf="level2Selected == 200" class="seasonWeek">
+          <div
+            style="display: flex; border-bottom: 1px solid var(--darker-grey); padding-bottom:10px;"
+          >
+            <div class="typeButton" (click)="selectAllSeasonWeek('year')">
+              Years:
+            </div>
+            <div *ngFor="let year of years">
+              <span
+                class="swSelection yearSelection"
+                (mouseenter)="toggleYear(year, $event)"
+                id="{{ year }}"
+                (mousedown)="toggleYearHighlight(year)"
+              >
+                {{ year }}
+              </span>
+            </div>
+            <div class="commonNote">
+              note: you are only viewing common weeks selected for each year
+            </div>
+          </div>
+          <div
+            *ngFor="let weekSet of ['PRE', 'REG', 'POST']"
+            style="display: flex; margin-top: 20px;"
+          >
+            <div class="typeButton" (click)="selectAllSeasonWeek(weekSet)">
+              {{ weekSet }}:
+            </div>
+            <div *ngFor="let week of weeks[weekSet]">
+              <span
+                (mouseenter)="toggleWeek(weekSet, week, $event)"
+                id="{{ weekSet }}{{ week }}"
+                (mousedown)="toggleWeekHighlight(weekSet, week)"
+                *ngIf="checkIfSelected(weekSet, week)"
+                style="background-color: grey"
+                class="swSelection weekSelection"
+              >
+                {{ week }}
+              </span>
+              <span
+                (mouseenter)="toggleWeek(weekSet, week, $event)"
+                id="{{ weekSet }}{{ week }}"
+                (mousedown)="toggleWeekHighlight(weekSet, week)"
+                *ngIf="!checkIfSelected(weekSet, week)"
+                style="background-color: white"
+                class="swSelection weekSelection"
+              >
+                {{ week }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="level2Selected === 300 || level2Selected === 400"
+          class="toggleLabel"
+        >
+          <div
+            class="switch-toggle switch-3 switch-candy"
+            style="background-color: var(--raiders-grey)"
+          >
+            <input
+              id="onconf{{ level2Selected }}"
+              name="state-dconf{{ level2Selected }}"
+              type="radio"
+              *ngIf="conferenceSelections[level2Selected] == 'NFC'"
+            />
+            <input
+              id="onconf{{ level2Selected }}"
+              name="state-dconf{{ level2Selected }}"
+              type="radio"
+              checked="checked"
+              *ngIf="conferenceSelections[level2Selected] == 'AFC'"
+            />
+
+            <label
+              for="onconf{{ level2Selected }}"
+              id="AFCButton{{ level2Selected }}"
+              (click)="changeConference(this.level2Selected, 'AFC')"
+              >AFC</label
+            >
+
+            <input
+              id="offconf{{ level2Selected }}"
+              name="state-dconf{{ level2Selected }}"
+              type="radio"
+              *ngIf="conferenceSelections[level2Selected] == 'AFC'"
+            />
+            <input
+              id="offconf{{ level2Selected }}"
+              name="state-dconf{{ level2Selected }}"
+              type="radio"
+              checked="checked"
+              *ngIf="conferenceSelections[level2Selected] == 'NFC'"
+            />
+            <label
+              for="offconf{{ level2Selected }}"
+              id="NFCButton{{ level2Selected }}"
+              (click)="changeConference(this.level2Selected, 'NFC')"
+              >NFC</label
+            >
+
+            <a id="switchConference{{ level2Selected }}"></a>
+          </div>
+        </div>
+        <div
+          *ngIf="level2Selected === 300 || level2Selected === 400"
+          class="teamGUI"
+          style="color:black"
+        >
+          <ng-container
+            *ngFor="let conf of [conferenceSelections[level2Selected]]"
+          >
+            <ng-container
+              *ngFor="let div of ['North', 'South', 'East', 'West']"
+              class="rowTeams"
+            >
+              <ng-container
+                *ngIf="conferenceSelections[level2Selected] === conf"
+              >
+                <div class="division">
+                  {{ div }}
+                </div>
+                <ng-container
+                  *ngFor="
+                    let team of getTeams(
+                      ['Conference', 'Division'],
+                      [conf, div]
+                    );
+                    let i = index
+                  "
+                >
+                  <ng-template
+                    *ngIf="
+                      filterService.testFilters.hasOwnProperty(
+                        this.level2Selected
+                      ) &&
+                        filterService.testFilters[this.level2Selected].indexOf(
+                          team['SailTeamID']
+                        ) !== -1;
+                      then teamselected;
+                      else teamnotselected
+                    "
+                  >
+                  </ng-template>
+                  <ng-template #teamnotselected>
+                    <div
+                      class="singleTeamGUI"
+                      id="teamGUI{{ team['TeamCode'] }}"
+                      (click)="toggleTeam(team, level2Selected)"
+                    >
+                      <div
+                        style="text-align: center; z-index: 0; height: 60px;"
+                      >
+                        <img
+                          [src]="logo(team)"
+                          style="width:100%; height:100%;opacity: 0.3 "
+                        />
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template #teamselected>
+                    <div
+                      class="singleTeamGUISelected"
+                      id="teamGUI{{ team['TeamCode'] }}"
+                      (click)="toggleTeam(team, level2Selected)"
+                    >
+                      <div
+                        style="text-align: center; z-index: 0; height: 60px;"
+                      >
+                        <img
+                          [src]="logo(team)"
+                          style="width:100%; height:100%; opacity: 1"
+                        />
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <div class="tier3Grid">
+          <div
+            style="width:100%;"
+            *ngFor="
+              let filt of activeLevel3From2
+                | keyvalue
+                | SmartFilter: filterService.testFilters
+            "
+          >
+            <div class="toggleContainer" *ngIf="0 == meta[filt.key]['type']">
+              <div class="togglelabel">
+                {{ idToString[filt.key] }}
+              </div>
+
+              <mat-form-field
+                id="tier3Tab{{ filt.key }}"
+                style="width:100%; padding-right:5%;"
+              >
+                <mat-select
+                  formControlName="{{ filt.key }}"
+                  placeholder="Search"
+                  multiple
+                  (selectionChange)="updateSingleFilter(filt.key)"
+                  style="color:black;"
+                >
+                  <ngx-mat-select-search
+                    id="{{ filt.key }}search"
+                    formControlName="{{ filt.key }}search"
+                    placeholderLabel="Search"
+                    [noEntriesFoundLabel]="'None Found'"
+                    [clearSearchInput]="false"
+                    style="caret-color: white !important;"
+                  ></ngx-mat-select-search>
+
+                  <mat-option
+                    *ngFor="
+                      let cat of filt.value
+                        | filter: form.value[filt.key + 'search']
+                        | SmartFilter: filterService.testFilters
+                    "
+                    [value]="cat"
+                    class="clickedWhite"
+                    >{{ idToString[cat] }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="toggleContainer" *ngIf="3 == meta[filt.key]['type']">
+              <div class="togglelabel">
+                {{ idToString[filt.key] }}
+              </div>
+              <div class="form-group" style="width: auto !important;">
+                <mat-form-field style="width:100%; padding-right:5%;">
+                  <input
+                    matInput
+                    placeholder="Enter Condition"
+                    id="enter{{ filt.key }}"
+                    formControlName="{{ filt.key }}"
+                    (input)="enterInput(filt.key, $event.target.value)"
+                    style="color:black !important"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="toggleContainer" *ngIf="2 == meta[filt.key]['type']">
+              <div class="togglelabel">
+                {{ idToString[filt.key] }}
+              </div>
+              <div>
+                <div class="form-group">
+                  <div class="switch-toggle switch-3 switch-candy">
+                    <input
+                      id="on{{ filt.key }}"
+                      name="state-d{{ filt.key }}"
+                      type="radio"
+                      *ngIf="
+                        !activeFilters[filt.key] ||
+                        activeFilters[filt.key][0] != idToOptions[filt.key][0]
+                      "
+                    />
+                    <input
+                      id="on{{ filt.key }}"
+                      name="state-d{{ filt.key }}"
+                      type="radio"
+                      checked="checked"
+                      *ngIf="
+                        activeFilters[filt.key] &&
+                        activeFilters[filt.key][0] == idToOptions[filt.key][0]
+                      "
+                    />
+                    <label
+                      for="on{{ filt.key }}"
+                      (click)="changeToggleValue(filt.key, '0')"
+                      >OFF</label
+                    >
+
+                    <input
+                      id="na{{ filt.key }}"
+                      name="state-d{{ filt.key }}"
+                      type="radio"
+                      *ngIf="activeFilters[filt.key]"
+                    />
+                    <input
+                      id="na{{ filt.key }}"
+                      name="state-d{{ filt.key }}"
+                      type="radio"
+                      checked="checked"
+                      *ngIf="!activeFilters[filt.key]"
+                    />
+                    <label
+                      for="na{{ filt.key }}"
+                      (click)="changeToggleValue(filt.key, '2')"
+                      >N/A</label
+                    >
+
+                    <input
+                      id="off{{ filt.key }}"
+                      name="state-d{{ filt.key }}"
+                      type="radio"
+                      *ngIf="
+                        !activeFilters[filt.key] ||
+                        activeFilters[filt.key][0] != idToOptions[filt.key][1]
+                      "
+                    />
+                    <input
+                      id="off{{ filt.key }}"
+                      name="state-d{{ filt.key }}"
+                      type="radio"
+                      checked="checked"
+                      *ngIf="
+                        activeFilters[filt.key] &&
+                        activeFilters[filt.key][0] == idToOptions[filt.key][1]
+                      "
+                    />
+                    <label
+                      for="off{{ filt.key }}"
+                      (click)="changeToggleValue(filt.key, '1')"
+                      >ON</label
+                    >
+
+                    <a></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="toggleContainer" *ngIf="1 == meta[filt.key]['type']">
+              <div class="togglelabel">
+                {{ idToString[filt.key] }}
+              </div>
+
+              <mat-form-field
+                id="tier3Tab{{ filt.key }}"
+                style="width:100%; padding-right:5%;"
+              >
+                <mat-select
+                  formControlName="{{ filt.key }}"
+                  placeholder="Select"
+                  multiple
+                  (selectionChange)="updateSingleFilter(filt.key)"
+                  style="color:black;"
+                >
+                  <mat-option>
+                    <ngx-mat-select-search
+                      id="{{ filt.key }}search"
+                      formControlName="{{ filt.key }}search"
+                      placeholderLabel="Search"
+                      [noEntriesFoundLabel]="'None Found'"
+                      [clearSearchInput]="false"
+                      style="caret-color: white !important;"
+                    ></ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option disabled>
+                    <button
+                      id="{{ filt.key }}all"
+                      mat-button
+                      (click)="toggleAllSelections(filt.key, true)"
+                    >
+                      Select All
+                    </button>
+                    <button
+                      id="{{ filt.key }}none"
+                      (click)="toggleAllSelections(filt.key, false)"
+                      mat-button
+                    >
+                      Deselect All
+                    </button>
+                  </mat-option>
+                  <mat-option
+                    *ngFor="
+                      let cat of filt.value
+                        | filter: form.value[filt.key + 'search']
+                        | SmartFilter: filterService.testFilters
+                    "
+                    [value]="cat"
+                    class="clickedWhite"
+                    >{{ idToString[cat] }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="mat-raised-button mat-primary save" (click)="close()">
+    Close
+  </button>
+  <button class="mat-raised-button mat-primary save" (click)="save()">
+    Save
+  </button>
+  <!-- <button class="mat-raised-button mat-primary save" (click)="clearAll()">
+    Clear All
+  </button> -->
+</mat-dialog-actions>

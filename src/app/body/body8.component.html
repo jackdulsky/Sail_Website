@@ -1,0 +1,88 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+
+<div class="overallDiv">
+  <div style="display:flex">
+    <div id="reportsSideNav" class="sidenav">
+      <div class="group">
+        <div class="category">
+          REPORTS
+        </div>
+
+        <div
+          *ngFor="let cat of ReportListService.reports | keyvalue: valueOrder"
+          class="sidebutton"
+          id="{{ cat.key }}id"
+          (click)="toggleContents(cat.key)"
+        >
+          <i id="{{ cat.key }}idicon" class="fa fa-circle-thin ico"></i>
+          {{ cat.key }}
+        </div>
+      </div>
+      <!-- <div class="XOSSection">
+        <div class="group">
+          <div class="category">
+            Tools
+          </div>
+          <div (click)="XOSExport()" class="sidebutton">
+            XOS Export
+          </div>
+          <div class="searching" *ngIf="noFolderAlert">
+            <div class="alert">
+              <i class="fa fa-exclamation-triangle fa-sm"></i>
+              Select Folder Please!
+            </div>
+          </div>
+          <div (click)="selectFolderXos()" class="sidebutton">
+            {{ location }}
+            <i id="xosIco" class="fa fa-search space"></i>
+          </div>
+          <div (click)="selectSavedFilter()" class="sidebutton">
+            Import Filter
+          </div>
+        </div>
+      </div> -->
+      <div class="XOSSection">
+        <div class="group">
+          <div class="category" style="padding-top: 20px;">
+            PORTALS
+          </div>
+          <div class="sidebutton">
+            CLUB
+          </div>
+          <div class="sidebutton">
+            PLAYER
+          </div>
+          <div class="sidebutton">
+            FREE AGENCY
+          </div>
+          <div class="sidebutton">
+            DRAFT
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <Div class="area">
+      <div class="grid-container">
+        <div
+          *ngFor="
+            let repo of reports[selected]['reports'] | keyvalue: valueOrder
+          "
+        >
+          <div
+            class="grid-itemGen"
+            routerLink="../report"
+            (click)="changeReportType(repo.value['id'])"
+            [ngStyle]="setIconStyle(repo)"
+          ></div>
+          <div class="labelText">
+            {{ repo.value["name"] }}
+          </div>
+        </div>
+      </div>
+    </Div>
+  </div>
+</div>

@@ -1,0 +1,132 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+<div class="filterBar">
+  <div class="insideGrid-containerFilt titleFilter topleftFloat">
+    <div class="btn2" (click)="openFilterPage()">
+      <i class="fa fa-filter"></i>
+    </div>
+    <Div class="name" (click)="openFilterPage('-1')">
+      Filters
+    </Div>
+  </div>
+  <div
+    *ngFor="let query of filterService.newFIDs | keyvalue"
+    class="singleFilter insideGrid-container2"
+  >
+    <div class="words" (click)="singleOpen(query.key, query.value)">
+      {{ createFilterDisplayString(query.key, query.value) }}
+    </div>
+    <div class="btn" (click)="removeQuery(query.key)">
+      <i class="fa fa-times" style="margin-left: 4px;"></i>
+    </div>
+  </div>
+
+  <div class="playCount">{{ filterService.playCount }} Plays</div>
+  <div *ngIf="filterService.playCount == ''">
+    <div class="loading-spinner"></div>
+  </div>
+  <div class="funcbutton saveFilterNew" (click)="saveFilter()">
+    <div class="btnGo">
+      <!-- <i class="fa fa-save fa-lg"></i> -->
+      Save
+    </div>
+  </div>
+
+  <!-- <div class=" funcbutton apply" (click)="sendFilters()">
+    <div class="btnGo">
+      <i class="fa fa-arrow-circle-right fa-lg"></i>
+    </div>
+  </div> -->
+  <div class="funcbutton saveFilterNew" (click)="clearAll()">
+    <div class="btnGo">
+      <!-- <i class="fa fa-trash fa-lg"></i> -->
+      Clear
+    </div>
+  </div>
+</div>
+
+<!--<div id="filterBar" style="background-color: #ebeced">
+   <div class="buttonsGrid">
+    <div class="insideGrid-containerFilt titleFilter topleftFloat">
+      <Div class="name" (click)="openFilterPage()">
+        Filters
+      </Div>
+      <div class="btn2" (click)="openFilterPage()">
+        <i class="fa fa-plus"></i>
+      </div>
+    </div>
+
+    <Div class="insideGrid-containerFilt funcbutton clear topleftFloat">
+      <div class="btnApply" (click)="clearAll()">New</div>
+      <div class="btnGo" (click)="clearAll()">
+        <i class="fa fa-refresh fa-lg"></i>
+      </div>
+    </Div>
+    <Div class="insideGrid-containerFilt funcbutton apply topleftFloat">
+      <div class="btnApply" (click)="sendFilters()">Apply</div>
+      <div class="btnGo" (click)="sendFilters()">
+        <i class="fa fa-arrow-circle-right fa-lg"></i>
+      </div>
+    </Div>
+
+    <button
+      mat-button
+      class="mat-button titleFilter saveFilter topleftFloat"
+      (click)="saveFilter()"
+    >
+      Save Filter
+    </button>
+    <div>
+      <button
+        mat-button
+        (click)="XOSExport()"
+        class="mat-button but folder topleftFloat"
+      >
+        XOS Export
+         <i *ngIf="noFolderAlert" class="fa fa-exclamation-triangle fa-sm"></i> 
+      </button>
+      <div class="searching" *ngIf="noFolderAlert">
+        <div class="gSearchBlock">
+          <i class="fa fa-exclamation-triangle fa-sm"></i>
+          Select Folder Please!
+        </div>
+      </div>
+    </div>
+    <button
+      mat-button
+      class="mat-button but folder topleftFloat"
+      (click)="selectFolderXos()"
+    >
+      {{ location }}
+      <i id="xosIco" class="fa fa-search space"></i>
+    </button>
+    <button
+      mat-button
+      class="mat-button but folder topleftFloat"
+      (click)="selectSavedFilter()"
+    >
+      Import Filter
+    </button>
+  </div> -->
+
+<!-- <div class="ovr-container" style="display: flow-root">
+    <div class="ovr-container2">
+      <div class="grid-container">
+        <div
+          *ngFor="let filt of filterService.testFilters | keyvalue"
+          class="singleFilter insideGrid-container"
+        >
+          <div class="btnE" (click)="singleOpen(filt.key)">
+            <i class="fa fa-pencil"></i>
+          </div>
+          <div class="words">{{ netIDToString[filt.key] }}</div>
+          <div class="btn" (click)="delete(filt.key)">
+            <i class="fa fa-times"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+</div> -->

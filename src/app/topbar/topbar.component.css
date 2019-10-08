@@ -1,0 +1,112 @@
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: black;
+  /* background-color: #3e4345; */
+  border-bottom: 1px solid var(--color-black);
+  border-top: 1px solid var(--color-black);
+  /* position: fixed; */
+  top: 0;
+  width: 100%;
+}
+.leftBG {
+  background-image: url(../../assets/Site_header.jpg);
+  width: 450px;
+  min-width: 450px;
+  height: 50px;
+  min-height: 50px;
+  background-position: left;
+  background-size: contain;
+  background-repeat: no-repeat;
+  float: left;
+}
+.rightBG {
+  background-image: url(../../assets/Site_header_right.jpg);
+  width: calc(100% - 448px);
+  min-width: 303px;
+  height: 50px;
+  min-height: 50px;
+  background-position: left;
+  background-size: contain;
+  background-repeat: repeat;
+  position: absolute;
+  left: 449px;
+}
+.topbuttonleft {
+  margin-left: 5px;
+  float: left;
+  color: var(--color-black);
+  text-align: center;
+  padding-left: 10px;
+}
+.topFloatLeft {
+  float: left;
+  color: var(--color-black);
+  text-align: center;
+  padding: 12px 16px;
+  text-decoration: none;
+}
+.navheight {
+  color: black;
+  height: 50px;
+}
+.usertext {
+  /* border-left: 2px solid var(--raiders-grey); */
+  padding-left: 10px;
+  font-size: 25px;
+}
+.mright {
+  margin-right: 5px;
+}
+.nav {
+  position: fixed;
+
+  display: inline-block;
+}
+.filterLabel {
+  color: white;
+  font-family: "Sans-Serif";
+  font-weight: bold;
+  font-size: 22px;
+  margin-left: 160px;
+  margin-top: 11px;
+}
+.AL {
+  width: auto;
+  display: flex;
+  position: absolute;
+  margin-left: 140px;
+  margin-top: 9px;
+}
+.ALName {
+  width: 62px;
+  font-size: 12px;
+  margin-top: 3px;
+}
+.raiders {
+  float: left;
+  color: black;
+  /* color: #3e4345; */
+  position: relative;
+  left: -256px;
+  font-size: 36px;
+  font-weight: bold;
+}
+.XOSbutton {
+  float: right;
+  margin-right: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: var(--raiders-grey);
+  font-size: 18px;
+  line-height: 32px;
+}
+.XOSbutton:hover {
+  cursor: pointer;
+  background-color: #5e6366;
+}
+.colo {
+  color: black;
+}

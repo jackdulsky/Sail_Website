@@ -1,0 +1,28 @@
+<h6 mat-dialog-title>
+  Enter Name of Filter<span style="float:right" class="exit"
+    ><i class="fa fa-close fa-lg" (click)="close()"></i
+  ></span>
+</h6>
+<mat-dialog-content [formGroup]="form" style="background-color:white">
+  <div style="height: 10px;"></div>
+  <mat-form-field style="width:100%; padding-right:5%;">
+    <input
+      matInput
+      placeholder="Enter Name"
+      id="enter"
+      formControlName="enter"
+      style="color:black !important"
+    />
+  </mat-form-field>
+  <div style="height: 10px;"></div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="mat-raised-button mat-primary save" (click)="save()">
+    Upload
+  </button>
+
+  <!-- <button class="mat-raised-button mat-primary save" (click)="clearAll()">
+          Clear All
+        </button> -->
+</mat-dialog-actions>
+<!-- <button mat-raised-button matDialogClose>Close</button> -->

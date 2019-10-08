@@ -1,0 +1,25 @@
+/* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
+
+.indent {
+  margin-left: 25px;
+  margin-top: 0px;
+}
+.but {
+  background-color: var(--raiders-grey);
+}
+.but:hover {
+  background-color: var(--light-blue);
+}
+.space {
+  padding-left: 10px;
+}
+.itemSelected {
+  background-color: var(--light-blue);
+}
+.padTop {
+  padding-top: 2px;
+}
+.save {
+  background-color: var(--medium-blue);
+  font-family: "Sans-Serif";
+}

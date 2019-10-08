@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+/* @import '~bootstrap/dist/css/bootstrap.min.css'; */
+/* @import '../node_modules/bootstrap/dist/css/bootstrap.css' */
+:root {
+  --raiders-grey: #c3c8cb;
+  --lighter-blue: #92a2ac;
+  --medium-blue: #778d9b;
+  --medium-grey: #91989c;
+  --darker-grey: #7f878c;
+  --color-white: white;
+  --color-black: black;
+  --light-blue: #799fb7;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
