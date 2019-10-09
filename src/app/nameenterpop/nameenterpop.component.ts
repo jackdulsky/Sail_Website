@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from "@angular/material";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MAT_DIALOG_DATA } from "@angular/material";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
-import { PullDataTestService } from "../pull-data-test.service";
+import { PullDataService } from "../pull-data.service";
 import { FiltersService } from "../filters.service";
 
 @Component({
@@ -23,17 +23,17 @@ export class NameenterpopComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({});
-    console.log(this.data);
     this.form.addControl("enter", new FormControl());
-
+    //SET EXISTING NAME IF EXISTS
     if (this.data.previousName != "") {
       this.form.controls["enter"].setValue(this.data.previousName);
     }
   }
-
+  //CLOSE MODULE
   close() {
     this.dialogRef.close();
   }
+  //RETURN NAME ON CLOSE
   save() {
     this.dialogRef.close({ name: this.form.value.enter });
   }

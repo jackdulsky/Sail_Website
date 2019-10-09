@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MAT_DIALOG_DATA } from "@angular/material";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { FiltersService } from "../filters.service";
-import { PullDataTestService } from "../pull-data-test.service";
+import { PullDataService } from "../pull-data.service";
 import { Options } from "selenium-webdriver/safari";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
@@ -20,32 +20,15 @@ import { MsAdalAngular6Module } from "microsoft-adal-angular6";
 
 @Component({
   selector: "app-filterspop",
-  templateUrl: "./filterspop2.component.html",
-  styleUrls: ["./filterspop2.component.css"]
+  templateUrl: "./filterspop.component.html",
+  styleUrls: ["./filterspop.component.css"]
 })
 export class FilterspopComponent implements OnInit {
-  // dialogRef : MatDialogRef<FilterspopComponent>
-
+  //VARIABLES
   public form: FormGroup;
   public formG: FormGroup;
-  leaguesOn = [];
   title: string;
-  filts;
-  activeFilters;
-  options: {
-    [id: number]: { [id: number]: { [id: number]: number[] } };
-  };
   gamesLevel2From1: number[] = [100, 200, 300, 400, 500];
-  gamesIDToString: { [id: number]: string } = {
-    1: "Games",
-    100: "League",
-    200: "Season/Weeks",
-    300: "Teams-Off",
-    400: "Teams-Def",
-    500: "Games",
-    101: "NFL",
-    102: "NCAA"
-  };
   years = ["2019", "2018", "2017", "2016", "2015"];
   weeks = {
     PRE: ["1", "2", "3", "4", "5"],
@@ -70,29 +53,16 @@ export class FilterspopComponent implements OnInit {
     ],
     POST: ["1", "2", "3", "4"]
   };
-  netIDToString: any;
-  teams;
-  filterYears: { [year: string]: { [type: string]: string[] } };
   public selected: any[] = [];
   yearsSelected: string[] = [];
   highlighting: boolean = false;
-  conferenceSelectedOFF = "AFC";
-  conferenceSelectedDEF = "AFC";
-  conferenceSelections = { "300": "AFC", "400": "AFC" };
-  activeLevel2From1;
-  activeLevel3From2;
   level1Selected;
   level2Selected;
-  safeHtmlContent: string;
-  idToOptions: { [id: number]: number[] } = {};
-  idToString: { [id: string]: string } = {};
-  reverse: { [id: number]: number[] };
   showSuggestions: boolean = false;
   searchGlobalText: string = "";
-  meta;
 
   constructor(
-    public pullData: PullDataTestService,
+    public pullData: PullDataService,
     public fb: FormBuilder,
     public dialogRef: MatDialogRef<FilterspopComponent>,
     public filterService: FiltersService,
@@ -102,26 +72,21 @@ export class FilterspopComponent implements OnInit {
     this.title = data.title;
     this.filterService.level1Selected = data.selected;
   }
-  newAttributeStructure;
-  newValueMap;
-  newAttribute;
-  newGroup;
-  newValuesOnly;
   Label = "Label";
 
   ngOnInit() {
     this.form = this.fb.group({});
     this.formG = this.fb.group({});
-    this.getNewContents();
-    this.netIDToString = Object.assign(
-      {},
-      this.idToString,
-      this.gamesIDToString
-    );
+    setTimeout(() => {
+      this.changelevel2(this.filterService.level1Selected);
+    }, 1);
   }
+  //RETURN LABEL OF OBJECT
   returnlabel(obj: any) {
     return obj["Label"];
   }
+
+  //SEND TYPE0CHANGE TO FILTER SERVICE WITH VALUES OF SET AND LEVEL1SELECTED
   type0change(formKey) {
     this.filterService.type0change(
       formKey,
@@ -129,21 +94,28 @@ export class FilterspopComponent implements OnInit {
       this.filterService.level1Selected
     );
   }
+
+  //CLEAR A SINGLE FILTER IN THE WORKING QUERY
   clearSingle(id: string) {
-    console.log(id);
     this.filterService.clearSingleIDWorking(
       id,
       this.filterService.level1Selected
     );
   }
+
+  //DELETE ENTIRE WORKING QUERY
   clearWorkingQuery() {
     this.filterService.clearWorking(this.filterService.level1Selected);
   }
+
+  //SEND THE WORKING QUERY TO THE FILTER TOP BAR
   pushWorkingQuery() {
     this.filterService.pushQueryToActiveFilter(
       this.filterService.level1Selected
     );
   }
+
+  //FUNCTION TO SORT THE TIER 1 BUTTONS BY THE ORDER SENT IN
   valueOrderT1 = (
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
@@ -157,25 +129,27 @@ export class FilterspopComponent implements OnInit {
       : 0;
   };
 
-  getNewContents() {
-    setTimeout(() => {
-      this.changelevel2(this.filterService.level1Selected);
-    }, 1);
-  }
+  //ALTER THE SELECTION VIEW OF TEH WORKING QUERY BASED ON THE
+  //TIER 1 TAB THAT WAS SELECTED
   changelevel2(id: string) {
+    //CHANGE OLD CSS
     var old = document.getElementById(
       "tier1Tab" + this.filterService.level1Selected
     );
     old.style.backgroundColor = "white";
     old.style.borderBottom = "4px solid white";
+
+    //SET THE LEVEL SELECTED
     this.filterService.level1Selected = id;
+
+    //CHANGE NEW CSS
     var newTab = document.getElementById("tier1Tab" + id);
     newTab.style.backgroundColor = "#f2f2f2";
     newTab.style.borderBottom = "4px solid var(--lighter-blue)";
   }
-  printvars() {
-    console.log("FORM", this.filterService.form.value);
-  }
+
+  //WHEN THE ADD BUTTON IS CLICKED OPEN THE ATTRIBUTE SELECTION
+  //FOR THE LEVEL 1 SELECTED
   openAttributeSelection() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "80vw";
@@ -188,42 +162,37 @@ export class FilterspopComponent implements OnInit {
         this.returnlabel(
           this.filterService.pullBin[this.filterService.level1Selected]
         ) + " Selection",
-      bid: this.filterService.level1Selected,
-      filterItem: ""
+      bid: this.filterService.level1Selected
     };
     const dialogRef = this.dialog.open(
       AttributeSelectionComponent,
       dialogConfig
     );
-    dialogRef.afterClosed().subscribe(data => {
-      console.log("FORM AFTER ATT  CLOSE", this.filterService.form.value);
-    });
+    dialogRef.afterClosed().subscribe(data => {});
   }
 
-  // new above
-  //
-
-  //   older
-  ngAfterViewInit() {}
-
-  getTeams(id: string[], key: any) {
-    return this.teams.filter(x => x[id[0]] == key[0] && x[id[1]] == key[1]);
+  //CLOSE THE DIALOG
+  close() {
+    this.dialogRef.close();
   }
-  changeConference(num: string, newConf: string) {
-    if (newConf == "NFC") {
-      document.getElementById(
-        "switchConference" + this.level2Selected
-      ).style.backgroundColor = "Blue";
+
+  //CLOSE THE DIALOG
+  save() {
+    this.close();
+  }
+
+  //TOGGLE THE SHOW SELECTIONS IF THE GLOBAL SEARCH BOX IS NOT NULL
+  searching(input: string) {
+    if (input.length > 0) {
+      this.showSuggestions = true;
     } else {
-      document.getElementById(
-        "switchConference" + this.level2Selected
-      ).style.backgroundColor = "Red";
+      this.showSuggestions = false;
     }
-    this.conferenceSelections[num] = newConf;
+
+    this.searchGlobalText = input;
   }
-  testprint() {
-    console.log(this.selected);
-  }
+
+  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
   toggleWeek(type: string, week: string, event: any) {
     // var id = type + week;
     // if (event.buttons == 1) {
@@ -260,6 +229,8 @@ export class FilterspopComponent implements OnInit {
     //   }
     // }
   }
+
+  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
   toggleWeekHighlight(type: string, week: string) {
     // var id = type + week;
     // if (
@@ -289,6 +260,8 @@ export class FilterspopComponent implements OnInit {
     //   }
     // }
   }
+
+  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
   toggleYear(year: string, event: any) {
     // if (event.buttons == 1) {
     //   //toggle
@@ -311,6 +284,8 @@ export class FilterspopComponent implements OnInit {
     //   }
     // }
   }
+
+  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
   toggleYearHighlight(year: string) {
     // if (document.getElementById(year).style.backgroundColor != "grey") {
     //   this.highlighting = true;
@@ -324,6 +299,8 @@ export class FilterspopComponent implements OnInit {
     //   this.yearsSelected = this.yearsSelected.filter(x => x != year);
     // }
   }
+
+  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
   checkIfSelected(type: string, week: string) {
     // for (let i = 0; i < this.yearsSelected.length; i++) {
     //   try {
@@ -343,6 +320,8 @@ export class FilterspopComponent implements OnInit {
     // }
     // return true;
   }
+
+  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
   selectAllSeasonWeek(yearOrWeekSet: string) {
     // if (yearOrWeekSet == "year") {
     //   if (this.years.length == this.yearsSelected.length) {
@@ -400,25 +379,8 @@ export class FilterspopComponent implements OnInit {
     // }
   }
 
-  showItem(type: string, week: string) {}
-
-  close() {
-    this.dialogRef.close();
-  }
-
-  save() {
-    this.close();
-  }
-
-  searching(input: string) {
-    if (input.length > 0) {
-      this.showSuggestions = true;
-    } else {
-      this.showSuggestions = false;
-    }
-
-    this.searchGlobalText = input;
-  }
+  //THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE
+  //UPON SELECTING AN ITEM FROM THE GLOBAL SEARCH LIST PULL IT UP
   resultSelected(id: any) {
     // var path = this.reverse[Number(id.key)];
     // this.changelevel2(String(path[0]));
@@ -432,6 +394,9 @@ export class FilterspopComponent implements OnInit {
     // (<HTMLInputElement>document.getElementById("searchGlobalText")).value = "";
     // this.showSuggestions = false;
   }
+
+  //THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE
+  //INPUT THE TEXT FOR AN ATTRIBUTTE AND SAVE THAT AS THE VALUE
   enterInput(id: string, condition: string) {
     // if (condition != "") {
     //   this.form.controls[Number(id)].setValue([condition]);
@@ -439,45 +404,6 @@ export class FilterspopComponent implements OnInit {
     // } else {
     //   this.form.controls[Number(id)].setValue([]);
     //   this.filterService.testDelete(id);
-    // }
-  }
-
-  checked: boolean = false;
-
-  logo(team: any) {
-    var citySplit = team["ClubCityName"].split(" ");
-    var city;
-    if (citySplit.length > 1) {
-      city = citySplit[0] + citySplit[1];
-    } else {
-      city = citySplit[0];
-    }
-    var nick = team["ClubNickName"];
-    return (
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/" +
-      team["TeamCode"] +
-      "_logo.png"
-    );
-  }
-  toggleTeam(teamI: any, filter: string) {
-    var team = document.getElementById("teamGUI" + teamI["TeamCode"]);
-    if (team.className == "singleTeamGUI ng-star-inserted") {
-      team.className = "singleTeamGUISelected ng-star-inserted";
-      // this.filterService.testSet(filter, [teamI["SailTeamID"]]);
-    } else {
-      team.className = "singleTeamGUI ng-star-inserted";
-
-      // this.filterService.removeSingleSelection(filter, teamI["SailTeamID"]);
-    }
-  }
-  toggleLeague(elementID: string, num: number) {
-    // var logo = document.getElementById(elementID);
-    // if (logo.className.includes("Selected")) {
-    //   logo.className = "league";
-    //   this.filterService.removeSingleSelection("100", num);
-    // } else {
-    //   logo.className = "leagueSelected";
-    //   this.filterService.testSet("100", [num]);
     // }
   }
 }

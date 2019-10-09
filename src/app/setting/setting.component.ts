@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { PullDataTestService } from "../pull-data-test.service";
+import { PullDataService } from "../pull-data.service";
 import { HttpClient } from "@angular/common/http";
 
 @Component({
@@ -10,17 +10,8 @@ import { HttpClient } from "@angular/common/http";
 export class SettingComponent implements OnInit {
   data = null;
   data1 = null;
-  constructor(private dbconn: PullDataTestService, private http: HttpClient) {}
+  constructor(private dbconn: PullDataService, private http: HttpClient) {}
 
-  ngOnInit(): void {
-    // this.dbconn.getTest().subscribe(res => this.data = res)
-    // this.data = new Map(Object.entries(this.dbconn.getTest1()));
-    //this.data = dat.substring(1, dat.length - 1).split(",");
-    //console.log(this.data1, typeof this.data1);
-    //this.data = this.data.substring(1,this.data.length-1);
-    //    this.data = this.dbconn.getTest1();
-  }
-  Check() {
-    console.log(this.data[0].playerID, typeof this.data[0].playerID);
-  }
+  ngOnInit(): void {}
+  Check() {}
 }

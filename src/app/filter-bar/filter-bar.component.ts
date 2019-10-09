@@ -5,7 +5,7 @@ import { FiltersService } from "../filters.service";
 import { FolderselectpopComponent } from "../folderselectpop/folderselectpop.component";
 import { SavedfilterspopComponent } from "../savedfilterspop/savedfilterspop.component";
 import { NameenterpopComponent } from "../nameenterpop/nameenterpop.component";
-import { PullDataTestService } from "../pull-data-test.service";
+import { PullDataService } from "../pull-data.service";
 import * as cloneDeep from "lodash/cloneDeep";
 
 @Component({
@@ -17,18 +17,22 @@ export class FilterBarComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     public filterService: FiltersService,
-    public pullData: PullDataTestService
+    public pullData: PullDataService
   ) {}
+
+  //VARIABLES
   location = "Folder";
   playCount = "0";
   noFolderAlert = false;
   folderSelected = false;
   filterOpen = false;
 
-  netIDToString: any;
   ngOnInit() {}
+
+  //OPENS ENTIRE FILTER PAGE CLEAN
   openFilterPage(selected: string) {
     if (!this.filterOpen) {
+      //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
       const dialogConfig = new MatDialogConfig();
       dialogConfig.width = "98vw";
       dialogConfig.maxWidth = "98vw";
@@ -41,27 +45,37 @@ export class FilterBarComponent implements OnInit {
         filterItem: "",
         selected: selected
       };
+
+      //SET BOOL FOR OPEN FILTER TO  TRUE
       this.filterOpen = true;
+
+      //OPEN THE DIALOG AND UPON CLOSE RESET BOOL
       const dialogRef = this.dialog.open(FilterspopComponent, dialogConfig);
-      dialogRef.afterClosed().subscribe(
-        // data=> console.log("Dialog output:", data)
-        // data=> this.filterService.add(data.category,data.filterItem),
-        result => {
-          this.filterOpen = false;
-        }
-      );
+      dialogRef.afterClosed().subscribe(result => {
+        this.filterOpen = false;
+      });
     }
   }
+
+  //THIS OPENS A SINGLE QUERY IN THE FILTER PAGE
+  //INPUTS-
+  //  FID- the FID number as a string
+  //  QUERY- the dictionary of Atributes to selected values (all strings)
   singleOpen(fid: string, query: any) {
+    //SET WORKING DICTIONARY, WORKINGBIN, AND WORKINGFID
     this.filterService.workingQuery = cloneDeep(query);
     var bin = cloneDeep(this.filterService.newFIDBID[fid]);
     this.filterService.workingBin = cloneDeep(bin);
     this.filterService.workingFID = cloneDeep(fid);
+
+    //SET THE FORM CONTROL
     for (let id in this.filterService.workingQuery) {
       this.filterService.form.controls[id].setValue(
         this.filterService.workingQuery[id]
       );
     }
+
+    //IF FILTER PAGE IS OPEN ALREADY SWITCH THE DISPLAY
     if (this.filterOpen) {
       var old = document.getElementById(
         "tier1Tab" + this.filterService.level1Selected
@@ -76,14 +90,19 @@ export class FilterBarComponent implements OnInit {
 
     this.openFilterPage(bin);
   }
+
+  //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT
   selectFolderXos() {
+    //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
+
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "80%";
     dialogConfig.height = "calc(60%-150px)";
     dialogConfig.autoFocus = true;
     dialogConfig.position = { top: "100px" };
     dialogConfig.data = {};
-
+    //OPEN DIALOG FOR SELECTING
+    //AFTER CLOSING SET THE FOLDER SELECTED TO DISPLAY
     const dialogRef = this.dialog.open(FolderselectpopComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data => {
       if (data != undefined) {
@@ -94,7 +113,11 @@ export class FilterBarComponent implements OnInit {
       }
     });
   }
+
+  //IMPORT A FILTER POP UP MODAL
   selectSavedFilter() {
+    //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
+
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "80%";
     dialogConfig.height = "calc(80%-150px)";
@@ -102,6 +125,7 @@ export class FilterBarComponent implements OnInit {
     dialogConfig.position = { top: "150px" };
     dialogConfig.data = {};
 
+    //OPEN WINDOW
     const dialogRef = this.dialog.open(SavedfilterspopComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data => {
       if (data != undefined) {
@@ -111,6 +135,9 @@ export class FilterBarComponent implements OnInit {
       }
     });
   }
+
+  //SEND THE FOLDER ID TO EXPORT
+  //IF NO FOLDER SELECTED SHOW THE ERROR MESSAGE (RELATIVE POSITION)
   XOSExport() {
     if (!this.folderSelected) {
       this.noFolderAlert = true;
@@ -118,13 +145,16 @@ export class FilterBarComponent implements OnInit {
         this.noFolderAlert = false;
       }, 2000);
     } else {
-      // this.filterService.XOSExport(this.location);
+      this.filterService.XOSExport(this.location);
     }
   }
 
+  //CLEAR ALL QUERIES
   clearAll() {
     this.filterService.clearAll();
   }
+
+  //SAVE FILTER / OPEN UP NAME POP UP MODAL
   saveFilter() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "80%";
@@ -141,6 +171,12 @@ export class FilterBarComponent implements OnInit {
       // }
     });
   }
+
+  //THIS CREATES THE DISPLAY STRING
+  //RESTRICTS MAX LENGTH TO 100 CHARS
+  //WIDTH OF THE ITEM SET BY THE CSS OF THE ELEMENT
+  //MAY HAVE TO TAILER THIS FOR EACH PKID
+  //RIGHT NOW IT SHOWS PKID's AND ATTRIBUTES OF NON PKID's
   createFilterDisplayString(fid: string, value: any) {
     console.log("CREATING DISPLAY", fid, value);
     var BID = this.filterService.newFIDBID[fid];
@@ -177,24 +213,12 @@ export class FilterBarComponent implements OnInit {
     return dispName;
   }
 
-  // if (value[0].length > 0) {
-  //   dispName = this.returnlabel(
-  //     this.filterService.newValuesOnly[value[0][0]]
-  //   );
-  //   for (let t4 of value[0].slice(1)) {
-  //     dispName +=
-  //       ", " + this.returnlabel(this.filterService.newValuesOnly[t4]);
-  //   }
-  // }
-  // return dispName;
-  //}
-  createFilterDisplayString2() {
-    console.log("THIS2");
-    return "FILTER";
-  }
+  //RETURN THE STRING LABEL OF THE OBJECT PASSED IN
+  //ONLY USED BECAUSE OF BINDING ACCESS OF STRING EVALUATION
   returnlabel(obj: any) {
     return obj["Label"];
   }
+  //REMOVE A SINGLE QUERY BY HITTING X
   removeQuery(fid: string) {
     this.filterService.removeQuery(fid);
   }

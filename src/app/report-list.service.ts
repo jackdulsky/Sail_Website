@@ -9,9 +9,12 @@ export class ReportListService {
   currentReportTypeID: number = 0;
   reports = reports;
   constructor() {}
+
+  //SET RD REPORT NUMBER
   updateReportType(newID: number) {
     this.currentReportTypeID = newID;
   }
+  //RETURN THE REPORT ID
   getTypeID() {
     return this.currentReportTypeID;
   }

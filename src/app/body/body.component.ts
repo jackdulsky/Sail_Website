@@ -4,7 +4,7 @@ import { ReportListService } from "../report-list.service";
 import { FolderselectpopComponent } from "../folderselectpop/folderselectpop.component";
 import { SavedfilterspopComponent } from "../savedfilterspop/savedfilterspop.component";
 import { MatDialog, MatDialogConfig } from "@angular/material";
-import { PullDataTestService } from "../pull-data-test.service";
+import { PullDataService } from "../pull-data.service";
 import { KeyValue } from "@angular/common";
 
 import { style } from "@angular/animations";
@@ -12,15 +12,15 @@ import { style } from "@angular/animations";
 
 @Component({
   selector: "app-body",
-  templateUrl: "./body8.component.html",
-  styleUrls: ["./body8.component.css"]
+  templateUrl: "./body.component.html",
+  styleUrls: ["./body.component.css"]
 })
 export class BodyComponent implements OnInit {
   constructor(
     public ReportListService: ReportListService,
     public dialog: MatDialog,
     private filterService: FiltersService,
-    public pullData: PullDataTestService
+    public pullData: PullDataService
   ) {}
   selected: string;
   location = "XOS Folder";
@@ -28,6 +28,7 @@ export class BodyComponent implements OnInit {
   noFolderAlert = false;
   folderSelected = false;
 
+  //ON INIT SET THE SELECTED TAB ON THE LEFT TO GENERAL / CHANGE CSS
   ngOnInit() {
     this.selected = "General";
     setTimeout(() => {
@@ -39,32 +40,41 @@ export class BodyComponent implements OnInit {
     this.reports = this.ReportListService.reports;
   }
 
+  //THIS UPDATES THE REPORT TYPE TO VIEW FROM CLICK
   changeReportType(newNumb: number) {
     this.ReportListService.updateReportType(newNumb);
   }
 
+  //CHANGE DISPLAY REPORTS BASED ON CLICKED REPORT
+  //ALTER CSS APPROPRIATELY
   toggleContents(name: any) {
+    //HAVE ALL TURN OFF
     for (let category in this.ReportListService.reports) {
       document.getElementById(category.toString() + "id").className =
         "sidebutton";
       document.getElementById(category.toString() + "idicon").className =
         "fa fa-circle-thin ico";
-
-      // document.getElementById(element.toString()).style.display = "none";
     }
     this.selected = name;
+
+    //TURN SELECTED ONE ON
     document.getElementById(name + "id").className =
       "sidebutton sidebuttonclicked";
     document.getElementById(name + "idicon").className = "fa fa-circle ico";
   }
+
+  //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT
   selectFolderXos() {
+    //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
+
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "80%";
     dialogConfig.height = "calc(60%-150px)";
     dialogConfig.autoFocus = true;
     dialogConfig.position = { top: "100px" };
     dialogConfig.data = {};
-
+    //OPEN DIALOG FOR SELECTING
+    //AFTER CLOSING SET THE FOLDER SELECTED TO DISPLAY
     const dialogRef = this.dialog.open(FolderselectpopComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data => {
       if (data != undefined) {
@@ -75,7 +85,11 @@ export class BodyComponent implements OnInit {
       }
     });
   }
+
+  //IMPORT A FILTER POP UP MODAL
   selectSavedFilter() {
+    //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
+
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "80%";
     dialogConfig.height = "calc(80%-150px)";
@@ -83,6 +97,7 @@ export class BodyComponent implements OnInit {
     dialogConfig.position = { top: "150px" };
     dialogConfig.data = {};
 
+    //OPEN WINDOW
     const dialogRef = this.dialog.open(SavedfilterspopComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data => {
       if (data != undefined) {
@@ -92,6 +107,10 @@ export class BodyComponent implements OnInit {
       }
     });
   }
+
+  //SEND THE FOLDER ID TO EXPORT
+  //IF NO FOLDER SELECTED SHOW THE ERROR MESSAGE (RELATIVE POSITION)
+
   XOSExport() {
     if (!this.folderSelected) {
       this.noFolderAlert = true;
@@ -99,7 +118,7 @@ export class BodyComponent implements OnInit {
         this.noFolderAlert = false;
       }, 2000);
     } else {
-      // this.filterService.XOSExport(this.location);
+      this.filterService.XOSExport(this.location);
     }
   }
   setIconStyle(repo: any) {
@@ -119,6 +138,7 @@ export class BodyComponent implements OnInit {
     return styles;
   }
 
+  //RETURN THE ITEMS IN THE REVERSE OF THE ORDER SPECIFIED
   reverseKeyOrder = (
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
@@ -129,6 +149,9 @@ export class BodyComponent implements OnInit {
       ? 1
       : 0;
   };
+
+  //RETURN THE ITEMS IN THE ORDER SPECIFIED
+
   valueOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
     return a.value["order"] < b.value["order"]
       ? -1

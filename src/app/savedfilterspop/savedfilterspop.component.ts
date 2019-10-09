@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from "@angular/material";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MAT_DIALOG_DATA } from "@angular/material";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
-import { PullDataTestService } from "../pull-data-test.service";
+import { PullDataService } from "../pull-data.service";
 import { FiltersService } from "../filters.service";
 
 @Component({
@@ -20,7 +20,7 @@ export class SavedfilterspopComponent implements OnInit {
   justSelected: string;
   constructor(
     private filterService: FiltersService,
-    public pullData: PullDataTestService,
+    public pullData: PullDataService,
     public fb: FormBuilder,
     public dialogRef: MatDialogRef<SavedfilterspopComponent>,
 
@@ -33,9 +33,13 @@ export class SavedfilterspopComponent implements OnInit {
     this.my_menu = Object.keys(this.savedOptions);
   }
 
+  //CLOSE WITH SELECTED PASSED BACK
   close() {
     this.dialogRef.close({ folderID: this.justSelected });
   }
+
+  //CLOSE THE DIALOG BUT UPLOAD THE SAVED FILTERS SELECTED
+  //uploadSavedFilter IS NOT FUNCTIONAL
   save() {
     this.filterService.uploadSavedFilter(
       this.justSelected,
@@ -45,6 +49,8 @@ export class SavedfilterspopComponent implements OnInit {
 
     this.dialogRef.close({ folderID: this.justSelected });
   }
+
+  //NO RECURSIVE DATA STRUCTURE
   selectFilter(name: string) {
     this.justSelected = name;
     document.getElementById(name).className = "itemSelected but mat-button";

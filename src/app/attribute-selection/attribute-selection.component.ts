@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { MatDialog, MatDialogRef } from "@angular/material";
 import { MAT_DIALOG_DATA } from "@angular/material";
 import { FiltersService } from "../filters.service";
-import { PullDataTestService } from "../pull-data-test.service";
+import { PullDataService } from "../pull-data.service";
 import { KeyValue } from "@angular/common";
 
 @Component({
@@ -13,7 +13,7 @@ import { KeyValue } from "@angular/common";
 })
 export class AttributeSelectionComponent implements OnInit {
   constructor(
-    public pullData: PullDataTestService,
+    public pullData: PullDataService,
     public fb: FormBuilder,
     public dialogRef: MatDialogRef<AttributeSelectionComponent>,
     public filterService: FiltersService,
@@ -41,66 +41,48 @@ export class AttributeSelectionComponent implements OnInit {
 
   //////LIFE CYCLE HOOKS
   ngOnInit() {
-    //this.form = this.fb.group({});
-    //this.formG = this.fb.group({});
     this.panels = [this.bid];
-    this.getNewContents();
-    console.log("PANELS1", this.panels);
   }
 
   close() {
     this.dialogRef.close();
   }
 
-  //////FUNCTIONS
-
-  //pull in filter meta data
-  getNewContents() {}
-
-  //Returns label (hack around passing in strings to html evaluation)
+  //RETURNS LABEL
   returnlabel(obj: any) {
     return obj["Label"];
   }
 
+  //THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
   attributeSelected(att: string) {
-    // var old = this.panels[this.panels.length - 1];
-    // console.log("old", old, this.panels);
-    // if (old != this.bid && old != att && old != "") {
-    //   if (document.getElementById("selectKey" + old)) {
-    //     document.getElementById("selectKey" + old).style.visibility = "hidden";
-    //     document.getElementById("firstname" + old).style.borderLeft = "";
-    //     document.getElementById("buttonContainer" + old).style.backgroundColor =
-    //       "white";
-    //   }
-    // }
     var newPanels = [];
-    //var level = this.newAttributeStructure;
     var first = this.panels[0];
     var level = this.filterService.pullStructure[first];
 
     var toTurnOff = [];
     var addtoOff = false;
-    console.log("START PANELS", this.panels);
-    console.log("ATT", att);
-    console.log("SHOW", this.show);
 
+    //ITERATE THROUGH THE PANELS THAT HAVE BEEN OPENED INCLUDING THE
+    //POTENTIAL ONE JUST CLICKED.
+    //IGNORE THE BIN PANEL.
+    //THROUGH EACH ITERATION OF THE PATH HAVE THE STRUCUTRE ITERATE DOWN
+    //AS WELL.
+    //IF THE PANEL EXISTS IN THE KEYS AT A LEVEL, CLOSE THE REST OF THE
+    //OPEN PANELS
     for (let panel of this.panels.slice(1).concat([this.show])) {
-      console.log("LEVEL", level, level.hasOwnProperty(panel), panel);
       if (level.hasOwnProperty(panel) || addtoOff) {
         addtoOff = true;
         if (panel != "") {
-          console.log("TURNING OFF ADD", panel);
           toTurnOff.push(panel);
         }
       } else {
         if (panel != "") {
-          console.log("TURNING ON ADD", panel);
           newPanels.push(panel);
         }
       }
       level = level[panel];
     }
-    console.log(toTurnOff, this.panels, [first].concat(newPanels));
+    //TURN OFF THE PANELS THROUGH CSS THAT NEED TO BE TURNED OFF
     for (let turnoff of toTurnOff) {
       document.getElementById("selectKey" + turnoff).style.visibility =
         "hidden";
@@ -111,13 +93,18 @@ export class AttributeSelectionComponent implements OnInit {
         "buttonContainer" + turnoff
       ).style.backgroundColor = "white";
     }
+
+    //ADD TO PANEL OR SHOW THE SELECTION FORM
     if (this.filterService.pullNavigationElement[att]["IsAttribute"] == true) {
-      this.openSelection(att);
+      this.show = att;
     } else {
       newPanels.push(att);
       this.show = "";
     }
+    //RECONSTRUCT THE PANELS THROUGH ADDING THE BIN PANEL BACK AT THE BEGINNING
     this.panels = [first].concat(newPanels);
+
+    //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
     if (document.getElementById("selectKey" + att)) {
       document.getElementById("selectKey" + att).style.visibility = "visible";
       document.getElementById("buttonContainer" + att).style.backgroundColor =
@@ -125,14 +112,8 @@ export class AttributeSelectionComponent implements OnInit {
       document.getElementById("buttonContainer" + att).style.borderLeft =
         "4px solid lightskyblue";
     }
-    console.log("End Panels", this.panels);
   }
 
-  //open up the selection gui, query data if necessary
-  openSelection(att: string) {
-    this.show = att;
-    //add to the form
-  }
   getPanelOptions(att: string) {
     var disp = this.filterService.pullStructure;
     for (let level of this.panels.slice(0, -1)) {
@@ -146,25 +127,19 @@ export class AttributeSelectionComponent implements OnInit {
   }
   updateSingleFilter(category: string) {}
 
-  //for the select filter toggle all options available
+  //TOGGLE ALL FILTER SELECTIONS THEN CALL TYPE0CHANGE ON THE FORM VALUES
   toggleAllSelections(id: string, tf: boolean) {
-    console.log(
-      "TOGGLE ALL",
-      id,
-      tf,
-      Object.keys(this.filterService.pullValueMap[id])
-    );
     if (tf) {
       this.filterService.form.controls[id].setValue(
         Object.keys(this.filterService.pullValueMap[id])
       );
     } else {
       this.filterService.form.controls[id].setValue(null);
-      //this.filterService.testDelete(id);
     }
-    console.log(this.filterService.form.value);
     this.type0change(id);
   }
+
+  //ORDER SIDE BUTTONS ON THEIR ORDER ID
   valueOrderSideButtons = (
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
@@ -181,6 +156,9 @@ export class AttributeSelectionComponent implements OnInit {
       ? 1
       : 0;
   };
+
+  //ORDER OPTIONS
+  //***NOT IMPLEMENTED IN THE HTML PIPE YET *****/
   valueOrderOptions = (
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
@@ -198,48 +176,10 @@ export class AttributeSelectionComponent implements OnInit {
       : 0;
   };
 
-  //locally save / remove  a filter into query as it is being built
-  //not for FID's
-  // localNormalAdd(att: string, value: string) {
-  //   if (this.newAttribute[att]["pkid"] == "1") {
-  //     if (this.pkID.indexOf(value) == -1) {
-  //       this.pkID.push(value);
-  //     }
-  //   } else {
-  //     if (this.attributes[att]) {
-  //       if (this.attributes[att].indexOf(value) == -1) {
-  //         this.attributes[att] = this.attributes[att].concat([value]);
-  //       }
-  //     } else {
-  //       this.attributes[att] = [value];
-  //     }
-  //   }
-  //   console.log(this.pkID);
-  //   console.log(this.attributes);
-  // }
-  // localNormalRemove(att: string, value: string) {
-  //   if (this.newAttribute[att]["pkid"] == "1") {
-  //     this.pkID = this.pkID.filter(id => id != value);
-  //   } else {
-  //     if (this.attributes[att] && this.attributes[att].indexOf(value) == 1) {
-  //       this.attributes[att] = this.attributes[att].filter(id => id != value);
-  //     }
-  //     if (this.attributes[att] == []) {
-  //       delete this.attributes[att];
-  //     }
-  //   }
-  // }
-
-  /////EVERY TYPE OF INPUT HAS A SPECIAL ADD LOCALLY
-  ///
-  ///
-  ///Type 0: normal search select
+  ///Type 0 INPUT
+  //ALSO FUNCTIONS AS THE GENERIC SAVING FILTER FORMS OF OTHER TYPES
+  //ONCE THE FORM VALUE IS SET APPROPRIATELY
   type0change(formKey) {
-    console.log(
-      "CLICKED ON SELECT ",
-      formKey,
-      this.filterService.form.value[formKey]
-    );
     this.filterService.type0change(
       formKey,
       this.filterService.form.value[formKey],
@@ -247,23 +187,9 @@ export class AttributeSelectionComponent implements OnInit {
     );
   }
 
-  //this will save a single query (or filter set)
+  //CLOSES THE POP UP AND PUSHES WORKING QUERY TO ACTIVE
   save() {
-    ///
-    ///code to add the query to overall filters
-    ///
     this.filterService.addWorkingQuery(this.bid);
-    console.log("DONE ADDING WORKING QUERY");
-    //this.filterService.addQuery(this.bid, this.pkID, this.attributes, []);
     this.close();
-  }
-
-  createLeagueImages(league: string) {
-    console.log();
-    return (
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos/" +
-      league +
-      ".png"
-    );
   }
 }

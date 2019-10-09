@@ -13,50 +13,29 @@ import { UUID } from "angular2-uuid";
 @Injectable({
   providedIn: "root"
 })
-export class PullDataTestService {
-  //name of server
+export class PullDataService {
+  //UTILITY SERVER URL
   serverURL = "http://oaksvr06.raiders.com/";
-  url = "http://localhost:8080/api/7";
   GUID;
   constructor(private http: HttpClient) {}
-
+  //RETURN ALL THE INFOR RELATED TO TEAMS FROM THE DATA BASE
   getTeams() {
     return this.http.post(this.serverURL + "db/query", {
       query:
         "select SailTeamID,TeamCode,Conference,Division,ClubCityName, ClubNickName from SaildB.org.TeamSeason where LeagueType = 'NFL' and Season  = '2019'"
     });
   }
-  sendFilters(filters: any) {
-    console.log("Trying to send: ", filters);
-    console.log(JSON.stringify(filters));
-    let body = JSON.stringify({ foo: "bar", text: "123" });
-    const headers = new HttpHeaders();
-    headers.append("Content-Type", "application/json");
-    let header = new HttpHeaders({
-      "content-type": "json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": "true"
-    });
 
-    this.http
-      .get(
-        this.serverURL +
-          "execute/file/norm/python_template?raiders=win&vegas=football",
-        {
-          responseType: "text"
-        }
-      )
-
-      .subscribe(data => {
-        console.log(data, typeof data);
-      });
-    return String(Math.floor(Math.random() * 1000));
-  }
+  //SEND UP THE XOS INFORMATION
+  //NOT FUNCTIONAL
   XOSExport(folder: string, filterID: string, filters: any) {
     console.log("Sending to folder: ", folder);
     console.log("Sending filterID ", filterID);
     console.log("Sending Filters: ", filters);
   }
+
+  //RETURNS THE SAVED FILTERS FROM THE DATA BASE
+  //NOT FUNCTIONAL
   getSavedFilters() {
     console.log("returning filters");
     //EVENTUALLY PASS IN USER
@@ -69,15 +48,15 @@ export class PullDataTestService {
     };
   }
 
-  //update to get strings of next level path
-
+  //GET NEXT LEVEL OF SUBFOLDERS FROM DATABASE
   getSubFolders(name: string) {
     return this.http.get(
       "http://oaksvr06.raiders.com/api/xos/subfolders/" + name
     );
   }
 
-  //save filter also renames
+  //SAVE THE FILTER SET IN THE DB
+  //NOT FUNCTIONAL
   saveFilter(name: string, filters: any, filterID: string) {
     console.log("Trying to send: ", name, filterID);
     console.log(JSON.stringify(filters));
@@ -88,6 +67,7 @@ export class PullDataTestService {
     }
   }
 
+  //A SLOW QUERY TO TEST THE PLAY COUNT PART
   testSlowQuery(game: number) {
     // var query =
     //   "SELECT * FROM (SELECT g.GSISGamekey, y.GSISPlayID, r.GSISPlayerID, p.SideOfBall, p.SpecialTeamsUnit, s.PlayStatType, s.PlayStatValue FROM saildb.stat.PlayerPlay p LEFT JOIN saildb.stat.Game g ON p.SailGameKey = g.SailGameKey LEFT JOIN saildb.stat.Play y ON p.SailPlayID = y.SailPlayID LEFT JOIN saildb.org.Player r ON p.SailID = r.SailID LEFT JOIN saildb.stat.PlayerPlayStats s ON s.PFFPlayID = y.PFFPlayID AND s.GSISPlayerID = r.GSISPlayerID WHERE s.PlayStatType IN ('pff_POSITION','pff_ROLE')) AS p PIVOT (MAX(PlayStatValue) FOR PlayStatType IN ([pff_ROLE],[pff_POSITION])) AS p Where GSISGamekey =" +
@@ -99,66 +79,86 @@ export class PullDataTestService {
       query: query
     });
   }
-  newPullDataType() {
+
+  //PULL THE DATATYPE FROM THE DB
+  pullDataType() {
     var query = "Select * from SailDB.stat.DataType";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newPullBin() {
+
+  //PULL BIN INFORMATION FROM THE DB ABOUT THE 6 BINS
+  pullBin() {
     var query = "Select * from SailDB.filter.Bin";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newPullNavigation() {
+
+  //PULL THE NAVIGATION FROM THE DB
+  pullNavigation() {
     var query = "Select * from SailDB.filter.Navigation";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newPullNavigationElement() {
+
+  //PULL THE NAVIGATION ELEMENTS FROM THE DB
+  //ANYTHING DOING WITH TABS OR PANELS FOR THE STRUCTURE
+
+  pullNavigationElement() {
     var query = "Select * from SailDB.filter.NavigationElement";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newPullAttributeType() {
+
+  //PULL ATTRIBUTE TYPE INFORMATION (0 = tab in panel that opens another panel, 1 = pkid, 2 = attribute)
+  pullAttributeType() {
     var query = "Select * from SailDB.filter.AttributeType";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newPullAttribute() {
+
+  //PULL INFORMATION ABOUT THE ATTRIBUTES (ORDER, LABEL, ETC...)
+  pullAttribute() {
     var query = "Select * from SailDB.filter.Attribute";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newPullUIType() {
+
+  //PULL UI TYPE LABELS
+  pullUIType() {
     var query = "Select * from SailDB.filter.UIType";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newPullValue() {
+
+  //PULL THE VALUES LIST OF ALL POSSIBLE SELECTIONS
+  //MAPPING OF ATTRIBUTE ID TO VALUE ID IS UNIQUE BUT VALUES ARE NOT UNIQUE
+  pullValue() {
     var query = "Select * from SailDB.filter.Value";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newPullStructure(leagueType: string) {
+
+  //PULL THE STRUCTURE OF THE TABS FROM THE DB
+  pullStructure(leagueType: string) {
     var query = "exec SailDB.filter.spSAIL_GetFilterStructure " + leagueType;
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  newConstructAndSendFilters(filter) {
-    //pass down guid
-    console.log("CURRENT GUID", this.GUID);
-    //construct filters
+
+  //SEND THE DATA BACK UP TO THE DB
+  // INSERT THE GUI AND FILTERS SELECTED
+  constructAndSendFilters(filter) {
     console.log(JSON.stringify(filter));
-    //send query
 
     var query =
       "exec SailDB.filter.spSAIL_StoreUpdateFilter N'" +
@@ -179,6 +179,8 @@ export class PullDataTestService {
     //
   }
 
+  //SET THE GUI FOR THE WINDOW
+  //THIS IS CALLED FROM THE ONINIT FUNCTION
   setGUID() {
     this.GUID = UUID.UUID();
   }

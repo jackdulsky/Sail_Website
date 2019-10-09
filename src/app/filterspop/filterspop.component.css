@@ -6,7 +6,14 @@
   padding: 0px;
 }
 ::ng-deep.mat-dialog-container {
-  /* padding: 32px; */
+  padding-top: 1px !important;
+}
+#FilterPopUp {
+  padding-top: 1px !important;
+  padding-bottom: 0px !important;
+}
+::ng-deep.mat-dialog-title {
+  margin-bottom: 10px !important;
 }
 ::ng-deep.mat-dialog-actions {
   padding: 0px !important;
@@ -34,8 +41,17 @@ input {
   font-family: "Sans-Serif";
 }
 .save {
-  background-color: var(--medium-blue);
+  /* background-color: var(--medium-blue); */
+  margin-top: 10px;
+  margin-right: 5px;
+  background-color: var(--raiders-grey);
   font-family: "Sans-Serif";
+  color: black;
+  font-weight: bold;
+}
+.save:hover {
+  background-color: #f2f2f2 !important;
+  cursor: pointer !important;
 }
 .clickedWhite::after {
   color: white !important;
@@ -45,6 +61,15 @@ input {
 }
 .exit:hover {
   cursor: pointer;
+}
+.exit {
+  color: black;
+  display: flex;
+  height: 50px;
+  width: 5%;
+  justify-content: center;
+
+  padding-top: 9px;
 }
 .ovr-container2 {
   display: grid;
@@ -56,6 +81,8 @@ input {
   grid-template-columns: repeat(auto-fit, minmax(100px, 125px));
   column-gap: 5px;
   align-items: center;
+  float: left;
+  width: 95%;
 }
 .bottom-container {
   display: grid;
@@ -67,7 +94,7 @@ input {
   width: 100%;
   background-color: white;
   align-content: center;
-  border-bottom: 1px solid lightgray;
+  border-bottom: 2px solid var(--raiders-grey);
 }
 .tier1Tab {
   height: 45px;
@@ -98,9 +125,6 @@ input {
   text-align: center;
   font-size: 20px;
   border-left: 4px solid white;
-  /* border-top-left-radius: 10px;
-    border-top-right-radius: 10px; */
-  /* box-shadow: -2px -2px 2px black; */
   font-family: "Sans-Serif";
   position: relative;
 }
@@ -538,10 +562,10 @@ input {
     text-align: center;
     text-shadow: 1px 1px 1px #191b1e;
   }
-  #NFCButton300,
-  #NFCButton400,
-  #AFCButton300,
-  #AFCButton400 {
+  #NFCButton2,
+  /* #NFCButton400,
+  #AFCButton300, */
+  #AFCButton2 {
     color: #fff !important;
     font-weight: bold !important;
     text-align: center !important;
@@ -562,9 +586,8 @@ input {
     background-color: var(--raiders-grey);
     background-image: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
   }
-  #switchConferenceDEF {
-    background-color: red;
-  }
+  #switchConferenceDEF,
+  #switchConference2,
   #switchConferenceOFF {
     background-color: red;
   }
@@ -870,8 +893,17 @@ input {
   width: 100%;
   padding-bottom: 10px;
   display: grid;
-  grid-template-columns: 25% 1fr;
-  align-items: center;
+  grid-template-columns: 20px 25% 1fr;
+  line-height: 40px;
+  /* align-items: center; */
+}
+.toggleContainerClub2 {
+  width: 100%;
+  padding-bottom: 10px;
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  line-height: 40px;
+  /* align-items: center; */
 }
 .togglev2Containers {
   width: 100%;
@@ -881,7 +913,7 @@ input {
 }
 .tier3Grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   padding: 10px;
   padding-bottom: 0px;
   grid-row-gap: 20px;
@@ -890,7 +922,7 @@ input {
 }
 .togglelabel {
   color: black;
-  width: 20%;
+  width: 100%;
   float: left;
   font-family: sans-serif;
   font-size: 16px;
@@ -1048,4 +1080,39 @@ input {
   height: 32px;
   line-height: 45px;
   margin-left: 10px;
+}
+.addButton {
+  height: 50px;
+  width: 50px;
+  border: 1px solid black;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+  border-radius: 15px;
+}
+.bottom {
+  margin-top: 3px;
+  min-height: 300px;
+}
+.attributesValues {
+  color: black;
+}
+::ng-deep .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
+  top: 88px;
+}
+.nickNameQuery {
+  min-width: 150px;
+  display: inline-block;
+  color: black;
+  margin-left: 5px;
+}
+.nicknameInput {
+  color: black;
+}
+.nickNameTitle {
+  color: black;
+  width: auto;
+  display: inline-block;
 }

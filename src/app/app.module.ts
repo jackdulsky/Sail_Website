@@ -23,7 +23,7 @@ import { ModalModule } from "ngx-bootstrap/modal";
 import { FilterspopComponent } from "./filterspop/filterspop.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ReportComponent } from "./report/report.component";
-import { PullDataTestService } from "./pull-data-test.service";
+import { PullDataService } from "./pull-data.service";
 import { HttpClientModule } from "@angular/common/http";
 import { SelectDropDownModule } from "ngx-select-dropdown";
 import { MatFormFieldModule, MatSelectModule } from "@angular/material";
@@ -34,7 +34,6 @@ import { FilterPipe2 } from "./filter2.pipe";
 import { SafeHtmlPipe } from "./safe.pipe";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { SmartFilterPipe } from "./smartFilter.pipe";
-import { sortTeamsPipe } from "./sortTeams.pipe";
 
 // import { Ng5SliderModule } from "ng5-slider";
 import { MatSliderModule } from "@angular/material/slider";
@@ -53,7 +52,6 @@ import { AttributeSelectionComponent } from "./attribute-selection/attribute-sel
 
 @NgModule({
   declarations: [
-    sortTeamsPipe,
     SmartFilterPipe,
     SafeHtmlPipe,
     FilterPipe,
@@ -117,7 +115,7 @@ import { AttributeSelectionComponent } from "./attribute-selection/attribute-sel
   ],
   providers: [
     { provide: MatDialogRef },
-    PullDataTestService,
+    PullDataService,
     CookieService,
     OAuthService
   ],
