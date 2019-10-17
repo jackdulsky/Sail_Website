@@ -110,12 +110,12 @@
   margin-top: 5px;
 }
 .name {
-  font-size: 15px;
+  font-size: 12px;
 
   text-align: center;
   margin-right: 5px;
   font-weight: bold;
-  font-family: "Sans-Serif";
+  font-family: "DIN";
 }
 .titleFilter:hover {
   background-color: var(--raiders-grey);
@@ -133,7 +133,7 @@
   height: 25px;
   border-radius: 4px;
   align-content: center;
-  font-family: "Sans-Serif";
+  font-family: "DIN";
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
 }
 .apply {
@@ -174,7 +174,7 @@
 }
 .btnApply {
   text-align: right;
-  font-size: 15px;
+  font-size: 12px;
 
   color: var(--color-black);
   margin-right: 5px;
@@ -194,7 +194,9 @@
   margin-left: 20%;
   font-weight: bolder;
   margin-right: 20%;
-  font-family: "Sans-Serif";
+  font-size: 12px;
+  font-family: "DIN";
+  margin-top: 1px;
 }
 .playCount {
   text-align: right;
@@ -202,7 +204,7 @@
   color: var(--color-white);
   font-weight: bold;
   float: right;
-
+  font-size: 12px;
   margin-right: 20px;
   margin-left: 10px;
   margin-top: 5px;
@@ -210,7 +212,7 @@
   height: 25px;
   border-radius: 4px;
   align-content: center;
-  font-family: "Sans-Serif";
+  font-family: "DIN";
 }
 .words:hover {
   cursor: pointer;
@@ -220,8 +222,8 @@
   width: 100%;
   max-width: 110px;
   vertical-align: middle;
-  font-size: 15px;
-  font-family: "Sans-Serif";
+  font-size: 12px;
+  font-family: "DIN";
   text-align: center;
   margin: 4px;
   /* overflow: hidden; */
@@ -256,9 +258,9 @@
   padding-right: 10px;
   text-overflow: clip;
   width: 100%;
-  font-family: "Sans-Serif";
+  font-family: "DIN";
   font-weight: bold;
-  font-size: 15px;
+  font-size: 12px;
   margin-bottom: 5px;
   border-radius: 4px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
@@ -313,9 +315,9 @@
 .saveFilter {
   line-height: 0px;
   width: 100% !important;
-  font-family: "Sans-Serif";
+  font-family: "DIN";
   font-weight: bold;
-  font-size: 15px;
+  font-size: 12px;
   margin-bottom: 5px;
   border-radius: 4px;
   margin-top: 5px;

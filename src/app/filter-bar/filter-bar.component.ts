@@ -34,10 +34,10 @@ export class FilterBarComponent implements OnInit {
     if (!this.filterOpen) {
       //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
       const dialogConfig = new MatDialogConfig();
-      dialogConfig.width = "98vw";
-      dialogConfig.maxWidth = "98vw";
+      dialogConfig.width = "86vw";
+      dialogConfig.maxWidth = "100vw";
       dialogConfig.autoFocus = true;
-      dialogConfig.position = { top: "87px" };
+      dialogConfig.position = { top: "87px", left: "150px" };
       dialogConfig.id = "FilterPopUp";
       dialogConfig.data = {
         title: "Filters:",

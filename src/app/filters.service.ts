@@ -362,9 +362,10 @@ export class FiltersService {
     } else {
       //ADD TO THE COMBINED
       this.combined[formKey] = values;
-      if (this.workingQuery[formKey]) {
-        this.workingQuery[formKey] = values;
-      }
+      this.workingQuery[formKey] = values;
+      // if (this.workingQuery[formKey]) {
+      //   this.workingQuery[formKey] = values;
+      // }
     }
   }
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
@@ -535,6 +536,8 @@ export class FiltersService {
       logo.className = "leagueSelected";
       this.form.controls[attID].setValue(oldValue.concat([value]));
     }
+    console.log(this.workingBin, "SPLIT", this.level1Selected);
+
     this.type0change(attID, this.form.value[attID], this.workingBin);
   }
 

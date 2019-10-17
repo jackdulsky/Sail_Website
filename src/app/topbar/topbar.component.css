@@ -12,9 +12,9 @@ ul {
   width: 100%;
 }
 .leftBG {
-  background-image: url(../../assets/Site_header.jpg);
-  width: 450px;
-  min-width: 450px;
+  background-image: url(../../assets/Site_header_leftV3.png);
+  width: 434px;
+  min-width: 434px;
   height: 50px;
   min-height: 50px;
   background-position: left;
@@ -23,16 +23,16 @@ ul {
   float: left;
 }
 .rightBG {
-  background-image: url(../../assets/Site_header_right.jpg);
-  width: calc(100% - 448px);
+  background-image: url(../../assets/Site_header_rightV3.png);
+  width: calc(100% - 434px);
   min-width: 303px;
-  height: 50px;
-  min-height: 50px;
+  height: 51px;
+  min-height: 51px;
   background-position: left;
   background-size: contain;
   background-repeat: repeat;
   position: absolute;
-  left: 449px;
+  left: 434px;
 }
 .topbuttonleft {
   margin-left: 5px;
@@ -56,6 +56,7 @@ ul {
   /* border-left: 2px solid var(--raiders-grey); */
   padding-left: 10px;
   font-size: 25px;
+  font-family: "DIN";
 }
 .mright {
   margin-right: 5px;
@@ -67,7 +68,7 @@ ul {
 }
 .filterLabel {
   color: white;
-  font-family: "Sans-Serif";
+  font-family: "DIN";
   font-weight: bold;
   font-size: 22px;
   margin-left: 160px;

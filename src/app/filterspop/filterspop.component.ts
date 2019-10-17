@@ -56,10 +56,12 @@ export class FilterspopComponent implements OnInit {
   public selected: any[] = [];
   yearsSelected: string[] = [];
   highlighting: boolean = false;
-  level1Selected;
-  level2Selected;
   showSuggestions: boolean = false;
   searchGlobalText: string = "";
+  Label = "Label";
+  selectedPath;
+  show: string = "";
+  panels: string[] = [];
 
   constructor(
     public pullData: PullDataService,
@@ -72,7 +74,6 @@ export class FilterspopComponent implements OnInit {
     this.title = data.title;
     this.filterService.level1Selected = data.selected;
   }
-  Label = "Label";
 
   ngOnInit() {
     this.form = this.fb.group({});
@@ -80,6 +81,7 @@ export class FilterspopComponent implements OnInit {
     setTimeout(() => {
       this.changelevel2(this.filterService.level1Selected);
     }, 1);
+    this.panels = [this.filterService.level1Selected];
   }
   //RETURN LABEL OF OBJECT
   returnlabel(obj: any) {
@@ -129,6 +131,43 @@ export class FilterspopComponent implements OnInit {
       : 0;
   };
 
+  //ORDER OPTIONS
+  //***NOT IMPLEMENTED IN THE HTML PIPE YET *****/
+  valueOrderOptions = (
+    a: KeyValue<string, any>,
+    b: KeyValue<string, any>
+  ): number => {
+    console.log(
+      this.filterService.pullValueMap[a.key]["OrderID"],
+      this.filterService.pullValueMap[b.key]["OrderID"]
+    );
+    return this.filterService.pullValueMap[a.key]["OrderID"] <
+      this.filterService.pullValueMap[b.key]["OrderID"]
+      ? -1
+      : this.filterService.pullValueMap[b.key]["OrderID"] <
+        this.filterService.pullValueMap[a.key]["OrderID"]
+      ? 1
+      : 0;
+  };
+
+  //ORDER SIDE BUTTONS ON THEIR ORDER ID
+  valueOrderSideButtons = (
+    a: KeyValue<string, any>,
+    b: KeyValue<string, any>
+  ): number => {
+    console.log(
+      this.filterService.pullAttribute[a.key]["OrderID"],
+      this.filterService.pullAttribute[b.key]["OrderID"]
+    );
+    return this.filterService.pullAttribute[a.key]["OrderID"] <
+      this.filterService.pullAttribute[b.key]["OrderID"]
+      ? -1
+      : this.filterService.pullAttribute[b.key]["OrderID"] <
+        this.filterService.pullAttribute[a.key]["OrderID"]
+      ? 1
+      : 0;
+  };
+
   //ALTER THE SELECTION VIEW OF TEH WORKING QUERY BASED ON THE
   //TIER 1 TAB THAT WAS SELECTED
   changelevel2(id: string) {
@@ -141,6 +180,10 @@ export class FilterspopComponent implements OnInit {
 
     //SET THE LEVEL SELECTED
     this.filterService.level1Selected = id;
+
+    // SET PANELS
+    this.panels = [id];
+    this.show = "";
 
     //CHANGE NEW CSS
     var newTab = document.getElementById("tier1Tab" + id);
@@ -190,6 +233,89 @@ export class FilterspopComponent implements OnInit {
     }
 
     this.searchGlobalText = input;
+  }
+  //TOGGLE ALL FILTER SELECTIONS THEN CALL TYPE0CHANGE ON THE FORM VALUES
+  toggleAllSelections(id: string, tf: boolean) {
+    if (tf) {
+      this.filterService.form.controls[id].setValue(
+        Object.keys(this.filterService.pullValueMap[id])
+      );
+    } else {
+      this.filterService.form.controls[id].setValue(null);
+    }
+    this.type0change(id);
+  }
+
+  getPanelOptions(att: string) {
+    var disp = this.filterService.pullStructure;
+    for (let level of this.panels.slice(0, -1)) {
+      if (level == att) {
+        break;
+      }
+      disp = disp[level];
+    }
+    disp = disp[att];
+    return disp;
+  }
+  //THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
+  attributeSelected(att: string) {
+    var newPanels = [];
+    var first = this.panels[0];
+    var level = this.filterService.pullStructure[first];
+
+    var toTurnOff = [];
+    var addtoOff = false;
+
+    //ITERATE THROUGH THE PANELS THAT HAVE BEEN OPENED INCLUDING THE
+    //POTENTIAL ONE JUST CLICKED.
+    //IGNORE THE BIN PANEL.
+    //THROUGH EACH ITERATION OF THE PATH HAVE THE STRUCUTRE ITERATE DOWN
+    //AS WELL.
+    //IF THE PANEL EXISTS IN THE KEYS AT A LEVEL, CLOSE THE REST OF THE
+    //OPEN PANELS
+    for (let panel of this.panels.slice(1).concat([this.show])) {
+      if (level.hasOwnProperty(panel) || addtoOff) {
+        addtoOff = true;
+        if (panel != "") {
+          toTurnOff.push(panel);
+        }
+      } else {
+        if (panel != "") {
+          newPanels.push(panel);
+        }
+      }
+      level = level[panel];
+    }
+    //TURN OFF THE PANELS THROUGH CSS THAT NEED TO BE TURNED OFF
+    for (let turnoff of toTurnOff) {
+      document.getElementById("selectKey" + turnoff).style.visibility =
+        "hidden";
+
+      document.getElementById("buttonContainer" + turnoff).style.borderLeft =
+        "4px solid white";
+      document.getElementById(
+        "buttonContainer" + turnoff
+      ).style.backgroundColor = "white";
+    }
+
+    //ADD TO PANEL OR SHOW THE SELECTION FORM
+    if (this.filterService.pullNavigationElement[att]["IsAttribute"] == true) {
+      this.show = att;
+    } else {
+      newPanels.push(att);
+      this.show = "";
+    }
+    //RECONSTRUCT THE PANELS THROUGH ADDING THE BIN PANEL BACK AT THE BEGINNING
+    this.panels = [first].concat(newPanels);
+
+    //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
+    if (document.getElementById("selectKey" + att)) {
+      document.getElementById("selectKey" + att).style.visibility = "visible";
+      document.getElementById("buttonContainer" + att).style.backgroundColor =
+        "#f2f2f2";
+      document.getElementById("buttonContainer" + att).style.borderLeft =
+        "4px solid lightskyblue";
+    }
   }
 
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********

@@ -18,3 +18,16 @@ body {
   height: 100%;
   overflow: hidden;
 }
+@font-face {
+  font-family: "DIN";
+  src: url("/assets/font/@font-face/1daa609fdca8da38e5bcbb12c2a987db.ttf")
+    format("opentype");
+  src: url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.eot")
+      format("embedded-opentype"),
+    url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.woff")
+      format("woff"),
+    url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.woff2")
+      format("woff2"),
+    url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.svg")
+      format("svg");
+}

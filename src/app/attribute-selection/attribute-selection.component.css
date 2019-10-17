@@ -1,3 +1,6 @@
+* {
+  font-family: "DIN";
+}
 ::ng-deep .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
   background-color: white;
 }
@@ -11,12 +14,14 @@
 ::ng-deep .mat-form-field-infix {
   padding: 0px;
 }
+
 /* ::ng-deep.mat-dialog-container {
   padding-top: 15px !important;
 } */
 ::ng-deep.mat-dialog-title {
   margin-bottom: 10px !important;
   padding-top: 10px !important;
+  font-family: "DIN";
 }
 ::ng-deep.mat-dialog-content {
   padding-left: 10px;
@@ -33,6 +38,7 @@
 }
 ::ng-deep.mat-dialog-title {
   /* margin: 0px; */
+  font-family: "DIN";
   font-size: 32px;
 }
 ::ng-deep.mat-form-field-ripple {
@@ -56,7 +62,7 @@
 }
 .save {
   background-color: var(--medium-blue);
-  font-family: "Sans-Serif";
+  font-family: "DIN";
 }
 .dialogBody {
   background-color: white;
@@ -80,7 +86,7 @@
   text-align: center;
   font-size: 20px;
   border-left: 4px solid white;
-  font-family: "Sans-Serif";
+  font-family: "DIN";
   position: relative;
   height: 40px;
   align-items: center;
@@ -88,6 +94,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  font-family: "DIN";
 }
 .singlePanel:hover,
 .tier2Tab:hover {
@@ -105,6 +112,7 @@
   overflow: hidden;
   text-overflow: ellipsis !important;
   width: max-content;
+  font-family: "DIN";
   padding-left: 5px;
 }
 .tier2-name:hover {
@@ -124,21 +132,21 @@
   padding-top: 0px;
   /* display: flex; */
   align-items: center;
-  min-height: 100px;
+  min-height: 300px;
   justify-content: center;
 }
 .togglelabel {
   color: black;
   width: 100%;
   float: left;
-  font-family: sans-serif;
+  font-family: "DIN";
   font-size: 16px;
 }
 .toggleLabelClub2 {
   color: black;
   width: 100%;
   float: left;
-  font-family: sans-serif;
+  font-family: "DIN";
   font-size: 16px;
 }
 .toggleContainer {
@@ -151,7 +159,7 @@
 }
 .l2Title {
   color: black;
-  font-family: "Sans-Serif";
+  font-family: "DIN";
   width: 100%;
   border-bottom: 2px solid lightskyblue;
   margin-top: 5px;
@@ -879,5 +887,5 @@
   font-weight: bold !important;
   text-align: center !important;
   text-shadow: 1px 1px 1px #191b1e !important;
-  font-family: sans-serif;
+  font-family: DIN;
 }
