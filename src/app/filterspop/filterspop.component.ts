@@ -12,7 +12,6 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { SafeHtmlPipe } from "../safe.pipe";
 import { SmartFilterPipe } from "../smartFilter.pipe";
 import { TEMPORARY_NAME } from "@angular/compiler/src/render3/view/util";
-import { AttributeSelectionComponent } from "../attribute-selection/attribute-selection.component";
 import { KeyValue } from "@angular/common";
 
 // import { AdalService } from 'adal-angular4';
@@ -186,29 +185,6 @@ export class FilterspopComponent implements OnInit {
     var newTab = document.getElementById("tier1Tab" + id);
     newTab.style.backgroundColor = "#f2f2f2";
     newTab.style.borderBottom = "4px solid var(--lighter-blue)";
-  }
-
-  //WHEN THE ADD BUTTON IS CLICKED OPEN THE ATTRIBUTE SELECTION
-  //FOR THE LEVEL 1 SELECTED
-  openAttributeSelection() {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "80vw";
-    dialogConfig.maxWidth = "80vw";
-    dialogConfig.autoFocus = true;
-    dialogConfig.position = { top: "187px" };
-    console.log("OPENING FORM", this.filterService.form.value);
-    dialogConfig.data = {
-      title:
-        this.returnlabel(
-          this.filterService.pullBin[this.filterService.level1Selected]
-        ) + " Selection",
-      bid: this.filterService.level1Selected
-    };
-    const dialogRef = this.dialog.open(
-      AttributeSelectionComponent,
-      dialogConfig
-    );
-    dialogRef.afterClosed().subscribe(data => {});
   }
 
   //CLOSE THE DIALOG

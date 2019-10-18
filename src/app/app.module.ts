@@ -48,7 +48,6 @@ import { MsAdalAngular6Module } from "microsoft-adal-angular6";
 import { OAuthService, OAuthModule } from "angular-oauth2-oidc";
 import { MatButtonToggleModule } from "@angular/material";
 import { DragToSelectModule } from "ngx-drag-to-select";
-import { AttributeSelectionComponent } from "./attribute-selection/attribute-selection.component";
 
 @NgModule({
   declarations: [
@@ -65,8 +64,7 @@ import { AttributeSelectionComponent } from "./attribute-selection/attribute-sel
     FilterspopComponent,
     ReportComponent,
     SavedfilterspopComponent,
-    NameenterpopComponent,
-    AttributeSelectionComponent
+    NameenterpopComponent
   ],
   imports: [
     DragToSelectModule.forRoot(),
@@ -146,8 +144,7 @@ import { AttributeSelectionComponent } from "./attribute-selection/attribute-sel
     NameenterpopComponent,
     SavedfilterspopComponent,
     FolderselectpopComponent,
-    FilterspopComponent,
-    AttributeSelectionComponent
+    FilterspopComponent
   ]
 })
 export class AppModule {}

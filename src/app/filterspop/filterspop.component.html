@@ -17,6 +17,35 @@
             {{ returnlabel(filterService.pullBin[t1.key]) }}
           </div>
         </div>
+        <div class="searching">
+          <div>
+            <span>
+              <i
+                class="sicon fa fa-search fa-sm"
+                style="color:white;margin-left:5%;"
+              ></i>
+              <input
+                type="text"
+                id="searchGlobalText"
+                placeholder="  Search"
+                (input)="searching($event.target.value)"
+                autocomplete="off"
+                class="filterSearch"
+              />
+            </span>
+          </div>
+          <div class="suggestionList" *ngIf="showSuggestions">
+            <div
+              *ngFor="
+                let result of reverse | keyvalue | filter: searchGlobalText
+              "
+              (click)="resultSelected(result)"
+              class="gSearchBlock"
+            >
+              {{ idToString[result.key] }}
+            </div>
+          </div>
+        </div>
       </div>
       <div style="float:right" class="exit">
         <i class="fa fa-close fa-lg" (click)="close()"></i>
@@ -182,18 +211,10 @@
             </div>
           </ng-container>
           <div class="bottomQueryButtons">
-            <button
-              class="mat-raised-button mat-primary save"
-              style="float:right;"
-              (click)="pushWorkingQuery()"
-            >
+            <button class="save" style="" (click)="pushWorkingQuery()">
               SUBMIT
             </button>
-            <button
-              class="mat-raised-button mat-primary save"
-              style="float:right;"
-              (click)="clearWorkingQuery()"
-            >
+            <button class="save" style="" (click)="clearWorkingQuery()">
               CLEAR
             </button>
           </div>
@@ -234,7 +255,7 @@
 
           <mat-form-field
             id="tier3Tab{{ id }}"
-            style="width:100%; padding-right:0%;"
+            style="width:100%; padding-right:0%; max-width: 10vw;"
           >
             <mat-select
               [formControl]="filterService.form.controls[id]"

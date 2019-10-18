@@ -44,15 +44,20 @@ input {
   /* background-color: var(--medium-blue); */
   margin-top: 10px;
   margin-right: 5px;
-  background-color: var(--raiders-grey);
+  background-color: #3e4345;
   font-family: "DIN";
-  color: black;
+  color: white;
   font-weight: bold;
   font-size: 16px;
   padding-top: 3px;
+  float: right;
+  width: 41%;
+  margin-left: 6%;
+  border: none;
+  border-radius: 5px;
 }
 .save:hover {
-  background-color: #f2f2f2 !important;
+  background-color: var(--raiders-grey) !important;
   cursor: pointer !important;
 }
 .clickedWhite::after {
@@ -81,7 +86,7 @@ input {
 .tier1-container {
   display: grid;
   /* grid-template-columns: repeat(auto-fit, minmax(100px, 125px)); */
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   column-gap: 5px;
   align-items: center;
   float: left;
@@ -144,7 +149,9 @@ input {
   position: absolute;
   bottom: 0;
   color: black;
+  width: 100%;
 }
+
 .singlePanel,
 .tier2Tab {
   min-width: 85px;
@@ -194,7 +201,7 @@ input {
 .l2Title {
   color: black;
   font-family: "DIN";
-  width: 100%;
+  width: 99%;
   border-bottom: 2px solid lightskyblue;
   margin-top: 5px;
   font-size: 16px;
@@ -208,15 +215,34 @@ input {
   visibility: hidden;
   color: grey;
 }
+.filterSearch {
+  background: transparent;
+}
+.filterSearch:focus {
+  border: none;
+  outline: none;
+}
+.filterSearch::placeholder {
+  color: white;
+  font-size: 16px;
+  font-family: "DIN";
+}
 .searching {
   position: relative;
+  background: #3e4345;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  height: 34px;
 }
 .searching input {
-  height: 30px;
+  height: 34px;
   margin: 0;
   padding: 0;
-  width: 90%;
+  width: 83%;
+  margin-left: 2%;
   border: none;
+  caret-color: white;
+  color: white;
 }
 .suggestionList {
   background-color: transparent;
@@ -614,7 +640,7 @@ input {
     font-weight: bold !important;
     text-align: center !important;
     text-shadow: 1px 1px 1px #191b1e !important;
-    font-family: DIN;
+    font-family: "DIN";
   }
   .switch-light.switch-candy input ~ span span:first-child,
   .switch-light.switch-candy input:checked ~ span span:nth-child(2),
@@ -1138,7 +1164,7 @@ input {
   user-select: none;
   -o-user-select: none;
   line-height: 30px;
-  font-family: DIN;
+  font-family: "DIN";
   text-align: center;
   top: 50%;
 }

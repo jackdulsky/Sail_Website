@@ -330,18 +330,6 @@ export class FiltersService {
     this.testSendFilters2();
   }
 
-  //ADD THE SELECTIONS IN ATTRIBUTE SELCTION TO THE WORKING QUERY
-  //COMBINED IS THE SELECTED OPTIONS IN THE ATTRIBUTE SELECTION
-  addWorkingQuery(bid: string) {
-    if (this.workingBin != bid) {
-      this.workingQuery = {};
-      this.workingFID = "";
-    }
-    this.workingBin = cloneDeep(bid);
-    this.workingQuery = Object.assign({}, this.workingQuery, this.combined);
-    this.combined = {};
-  }
-
   //THIS IS THE GENERIC CHANGE FUNCTION
   //TAKES IN THE FORMKEY (ATT OR PKID), AND ITS VALUES
   //AND WILL PUT THE CHANGES IN THE COMBINED VARIABLE
