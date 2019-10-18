@@ -37,7 +37,7 @@ export class FilterBarComponent implements OnInit {
       dialogConfig.width = "86vw";
       dialogConfig.maxWidth = "100vw";
       dialogConfig.autoFocus = true;
-      dialogConfig.position = { top: "87px", left: "150px" };
+      dialogConfig.position = { top: "87px", left: "200px" };
       dialogConfig.id = "FilterPopUp";
       dialogConfig.data = {
         title: "Filters:",
@@ -63,15 +63,16 @@ export class FilterBarComponent implements OnInit {
   //  QUERY- the dictionary of Atributes to selected values (all strings)
   singleOpen(fid: string, query: any) {
     //SET WORKING DICTIONARY, WORKINGBIN, AND WORKINGFID
-    this.filterService.workingQuery = cloneDeep(query);
     var bin = cloneDeep(this.filterService.newFIDBID[fid]);
+
+    this.filterService.newWorkingQuery[bin] = cloneDeep(query);
     this.filterService.workingBin = cloneDeep(bin);
-    this.filterService.workingFID = cloneDeep(fid);
+    this.filterService.newWorkingFID[bin] = cloneDeep(fid);
 
     //SET THE FORM CONTROL
-    for (let id in this.filterService.workingQuery) {
+    for (let id in this.filterService.newWorkingQuery[bin]) {
       this.filterService.form.controls[id].setValue(
-        this.filterService.workingQuery[id]
+        this.filterService.newWorkingQuery[bin][id]
       );
     }
 

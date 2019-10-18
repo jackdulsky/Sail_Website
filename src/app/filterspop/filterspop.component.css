@@ -48,7 +48,7 @@ input {
   font-family: "DIN";
   color: black;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 16px;
   padding-top: 3px;
 }
 .save:hover {
@@ -107,7 +107,7 @@ input {
   color: black;
   font-weight: bold;
   text-align: center;
-  font-size: 16px;
+  font-size: 20px;
 
   /* border-top-left-radius: 10px;
   border-top-right-radius: 10px; */
@@ -126,20 +126,34 @@ input {
 }
 .leftside {
   max-width: fit-content;
+  min-width: 100px;
   float: left;
   width: auto;
   min-height: 100px;
-  border-right: 1px solid lightgray;
+  border-right: 3px solid lightgray;
+}
+.rightside {
+  max-width: 15%;
+  min-width: 15%;
+  color: black;
+  float: right;
+  border-left: 3px solid lightgray;
+  position: relative;
+}
+.bottomQueryButtons {
+  position: absolute;
+  bottom: 0;
+  color: black;
 }
 .singlePanel,
 .tier2Tab {
-  min-width: 120px;
+  min-width: 85px;
   width: auto;
   background-color: white;
   color: black;
   font-weight: bold;
   text-align: center;
-  font-size: 12px;
+  font-size: 16px;
   border-left: 4px solid white;
   font-family: "DIN";
   position: relative;
@@ -920,11 +934,16 @@ input {
   width: 100%;
 }
 .toggleContainer {
-  width: 100%;
-  padding-bottom: 10px;
+  width: auto;
+  /* padding-bottom: 10px; */
   display: grid;
-  grid-template-columns: 20px 25% 1fr;
+  grid-template-columns: 20px 1fr;
   line-height: 40px;
+  /* height: 100%; */
+  /* height: -moz-available; WebKit-based browsers will ignore this. */
+  /* height: -webkit-fill-available; Mozilla-based browsers will ignore this. */
+  /* height: fill-available; */
+
   /* align-items: center; */
 }
 .toggleContainerSelection {
@@ -954,6 +973,7 @@ input {
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   padding: 10px;
   padding-bottom: 0px;
+  padding-top: 0px;
   grid-row-gap: 20px;
   grid-column-gap: 10%;
   align-items: center;
@@ -1156,7 +1176,7 @@ input {
 }
 ::ng-deep .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
   top: 88px;
-  left: 150px;
+  left: 200px;
 }
 .nickNameQuery {
   min-width: 150px;
@@ -1181,4 +1201,7 @@ input {
   padding-right: 5px;
   height: 100%;
   min-height: 100px;
+}
+.rightSideFontFilter {
+  font-size: 14px;
 }

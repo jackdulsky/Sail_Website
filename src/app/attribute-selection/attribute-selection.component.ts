@@ -26,18 +26,10 @@ export class AttributeSelectionComponent implements OnInit {
   //////VARIABLES
   title;
   bid;
-  newAttributeStructure;
-  newValueMap;
-  newAttribute;
-  newGroup;
-  form;
-  formG;
   Label = "Label";
   selectedPath;
   show: string = "";
   panels: string[] = [];
-  pkID: string[] = [];
-  attributes: { [id: string]: string[] } = {};
 
   //////LIFE CYCLE HOOKS
   ngOnInit() {

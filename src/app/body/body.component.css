@@ -48,7 +48,7 @@
   transition: all 0.2s ease 0s;
 }
 .sidenav {
-  width: 150px;
+  width: 200px;
   height: 100%;
   position: fixed;
 
@@ -67,7 +67,7 @@
 }
 
 .area {
-  margin-left: 150px;
+  margin-left: 200px;
   width: 100%;
   overflow-y: scroll !important;
   min-height: calc(100vh - 200px);
@@ -89,7 +89,7 @@
   background-color: #262829;
   padding: 5px;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 16px;
   /* color: var(--color-black); */
   color: #5f676b;
   display: block;
@@ -103,7 +103,7 @@
 .sidebutton {
   padding: 5px;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 16px;
   text-transform: uppercase;
   /* color: var(--color-black); */
   color: var(--color-white);
@@ -160,7 +160,7 @@
 }
 .labelText {
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 12px;
   font-family: "DIN";
   text-align: center;
 }

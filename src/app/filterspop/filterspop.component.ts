@@ -89,25 +89,22 @@ export class FilterspopComponent implements OnInit {
   }
 
   //SEND TYPE0CHANGE TO FILTER SERVICE WITH VALUES OF SET AND LEVEL1SELECTED
-  type0change(formKey) {
+  type0change(formKey, bin) {
     this.filterService.type0change(
       formKey,
       this.filterService.form.value[formKey],
-      this.filterService.level1Selected
+      bin
     );
   }
 
   //CLEAR A SINGLE FILTER IN THE WORKING QUERY
-  clearSingle(id: string) {
-    this.filterService.clearSingleIDWorking(
-      id,
-      this.filterService.level1Selected
-    );
+  clearSingle(id: string, bin: string) {
+    this.filterService.clearSingleIDWorking(id, bin);
   }
 
   //DELETE ENTIRE WORKING QUERY
   clearWorkingQuery() {
-    this.filterService.clearWorking(this.filterService.level1Selected);
+    this.filterService.clearWorking();
   }
 
   //SEND THE WORKING QUERY TO THE FILTER TOP BAR
@@ -235,7 +232,7 @@ export class FilterspopComponent implements OnInit {
     this.searchGlobalText = input;
   }
   //TOGGLE ALL FILTER SELECTIONS THEN CALL TYPE0CHANGE ON THE FORM VALUES
-  toggleAllSelections(id: string, tf: boolean) {
+  toggleAllSelections(id: string, tf: boolean, bin: string) {
     if (tf) {
       this.filterService.form.controls[id].setValue(
         Object.keys(this.filterService.pullValueMap[id])
@@ -243,7 +240,7 @@ export class FilterspopComponent implements OnInit {
     } else {
       this.filterService.form.controls[id].setValue(null);
     }
-    this.type0change(id);
+    this.type0change(id, bin);
   }
 
   getPanelOptions(att: string) {

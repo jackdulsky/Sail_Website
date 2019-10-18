@@ -4,7 +4,7 @@ import { PullDataService } from "./pull-data.service";
 import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
-import { NonNullAssert } from "@angular/compiler";
+import { NonNullAssert, ThrowStmt } from "@angular/compiler";
 
 @Injectable({
   providedIn: "root"
@@ -15,6 +15,10 @@ export class FiltersService {
   newFIDs: { [FID: string]: {} } = {};
   newDBFormat: { [bid: string]: {} } = {};
   workingQuery = {};
+  newWorkingQuery = {};
+  newWorkingFID = {};
+  show: string = "";
+  panels: string[] = [];
   combined = {};
   workingBin = "";
   workingFID = "";
@@ -130,6 +134,10 @@ export class FiltersService {
     this.pullData.pullBin().subscribe(data => {
       this.pullBin = {};
       this.extractID(data, "BinID", this.pullBin);
+      for (let binKey in this.pullBin) {
+        this.newWorkingQuery[binKey] = {};
+        this.newWorkingFID[binKey] = "";
+      }
       console.log("BIN", this.pullBin);
     });
     this.pullData.pullNavigation().subscribe(data => {
@@ -340,39 +348,57 @@ export class FiltersService {
   //STAGED FOR PUTTIN INTO THE WORKING QUERY
   //RESET VARIABLES APPROPRIATELY
   type0change(formKey, formVals, bid) {
-    //IF THE BIN ID AND THE WORKING BIN ARE NOT THE SAME THEN RESET FIRST
-    if (bid != this.workingBin) {
-      this.workingBin = bid;
-      this.workingFID = "";
-      this.combined = {};
-      this.workingQuery = {};
-    }
     var values = cloneDeep(formVals);
-
     //CHECK IF A DELETE NEEDS TO OCCUR CAUSE VALUE IS EMPTY
+
     if (values != null && values.length == 0) {
-      delete this.workingQuery[formKey];
-      delete this.combined[formKey];
+      delete this.newWorkingQuery[bid][formKey];
       this.form.controls[formKey].setValue(null);
       if (Object.keys(this.workingQuery).length == 0) {
-        delete this.newFIDs[this.workingFID];
-        this.workingFID = "";
+        delete this.newFIDs[this.newWorkingFID[bid]];
+        this.newWorkingFID[bid] = "";
       }
       this.testSendFilters2();
     } else {
-      //ADD TO THE COMBINED
-      this.combined[formKey] = values;
-      this.workingQuery[formKey] = values;
-      // if (this.workingQuery[formKey]) {
-      //   this.workingQuery[formKey] = values;
-      // }
+      console.log("TESTING", this.newWorkingQuery, bid, formKey, formVals);
+      console.log("BID", bid);
+      this.newWorkingQuery[bid][formKey] = formVals;
     }
+    console.log("NEW WORKING QUERY", this.newWorkingQuery);
+    // //IF THE BIN ID AND THE WORKING BIN ARE NOT THE SAME THEN RESET FIRST
+    // if (bid != this.workingBin) {
+    //   this.workingBin = bid;
+    //   this.workingFID = "";
+    //   this.combined = {};
+    //   this.workingQuery = {};
+    // }
+    // var values = cloneDeep(formVals);
+
+    // //CHECK IF A DELETE NEEDS TO OCCUR CAUSE VALUE IS EMPTY
+    // if (values != null && values.length == 0) {
+    //   delete this.workingQuery[formKey];
+    //   delete this.combined[formKey];
+    //   this.form.controls[formKey].setValue(null);
+    //   if (Object.keys(this.workingQuery).length == 0) {
+    //     delete this.newFIDs[this.workingFID];
+    //     this.workingFID = "";
+    //   }
+    //   this.testSendFilters2();
+    // } else {
+    //   //ADD TO THE COMBINED
+    //   this.combined[formKey] = values;
+    //   if (this.workingQuery[formKey]) {
+    //     this.workingQuery[formKey] = values;
+    //   }
+    // }
   }
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
   //REMOVE FROM THE WORKING QUERY AND
   clearSingleIDWorking(id: string, BID: string) {
-    delete this.workingQuery[id];
-
+    delete this.newWorkingQuery[BID][id]; //this.workingQuery[id];
+    if (this.newWorkingFID[BID] != "") {
+      this.pushQueryToActiveFilter(BID);
+    }
     if (this.form.value[id + "search"] != null) {
       this.form.controls[String(id) + "search"].setValue(null);
     }
@@ -409,85 +435,165 @@ export class FiltersService {
 
   //PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
   pushQueryToActiveFilter(BID: string) {
-    //PUSH EMPTY PERFORM DELETES
-    if (Object.keys(this.workingQuery).length == 0) {
-      if (this.workingFID != "") {
-        delete this.newFIDs[this.workingFID];
-        delete this.newFIDBID[this.workingFID];
-        delete this.newDBFormat[this.workingBin][this.workingFID];
-        this.workingFID = "";
+    for (let bin in this.newWorkingQuery) {
+      //PUSH EMPTY PERFORM DELETES
+      if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
+        console.log(
+          "BINPUSH",
+          bin,
+          this.newWorkingQuery[bin],
+          this.newWorkingFID[bin]
+        );
+        if (this.newWorkingFID[bin] != "") {
+          delete this.newFIDs[this.newWorkingFID[bin]];
+          delete this.newFIDBID[this.newWorkingFID[bin]];
+          delete this.newDBFormat[bin][this.newWorkingFID[bin]];
+          this.newWorkingFID[bin] = "";
+        }
+        continue;
       }
-      return;
-    }
-    //DO NOT DOUBLE PUT IN ITEMS
-    for (let key in this.newFIDs) {
-      if (this.isEqualObjectsContents(this.newFIDs[key], this.workingQuery)) {
-        return;
-      }
-    }
 
-    //SET FID TO CURRENT OR GENERATE NEW ONE
-    var newFIDNumber;
-    if (this.workingFID != "") {
-      newFIDNumber = cloneDeep(this.workingFID);
-    } else {
-      newFIDNumber = String(Math.floor(Math.random() * 1000));
+      //DO NOT DOUBLE PUT IN ITEMS
+
+      for (let key in this.newFIDs) {
+        if (
+          this.isEqualObjectsContents(
+            this.newFIDs[key],
+            this.newWorkingQuery[bin]
+          )
+        ) {
+          continue;
+        }
+      }
+      //SET FID TO CURRENT OR GENERATE NEW ONE
+      var newFIDNumber;
+      if (this.newWorkingFID[bin] != "") {
+        newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
+      } else {
+        newFIDNumber = String(Math.floor(Math.random() * 1000));
+      }
+      //PUT THE WORKING QUERY IN NEW FIDs
+      var pkID = [];
+      this.newFIDs[newFIDNumber] = Object.assign(
+        {},
+        cloneDeep(this.newWorkingQuery[bin])
+      );
+
+      //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
+      if (this.newWorkingQuery[bin][String(Number(bin) * -1)]) {
+        pkID = cloneDeep(this.newWorkingQuery[bin][String(Number(bin) * -1)]);
+        delete this.newWorkingQuery[bin][String(Number(bin) * -1)];
+      }
+      var att = cloneDeep(this.newWorkingQuery[bin]);
+      var FID = [];
+
+      //INIT THE NEW DB FORMAT BEFORE ADDING
+
+      this.newFIDBID[newFIDNumber] = bin;
+      if (!this.newDBFormat[bin]) {
+        this.newDBFormat[bin] = {};
+      }
+      this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
+
+      //RESET
+      this.newWorkingQuery[bin] = {};
+      this.newWorkingFID[bin] = "";
     }
-    //PUT THE WORKING QUERY IN NEW FIDs
-    var pkID = [];
-    this.newFIDs[newFIDNumber] = Object.assign(
-      {},
-      cloneDeep(this.workingQuery)
-    );
 
     //RESET
     this.form.reset();
 
-    //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
-    if (this.workingQuery[String(Number(BID) * -1)]) {
-      pkID = cloneDeep(this.workingQuery[String(Number(BID) * -1)]);
-      delete this.workingQuery[String(Number(BID) * -1)];
-    }
-    var att = cloneDeep(this.workingQuery);
-    var FID = [];
-
-    //INIT THE NEW DB FORMAT BEFORE ADDING
-    this.newFIDBID[newFIDNumber] = BID;
-    if (!this.newDBFormat[BID]) {
-      this.newDBFormat[BID] = {};
-    }
-    this.newDBFormat[BID][newFIDNumber] = [pkID, att, FID];
-
-    //RESET
-    this.workingQuery = {};
-    this.workingBin = "0";
-    this.workingFID = "";
-
     //SEND UP TO THE DB
+
     this.pullData.constructAndSendFilters(this.newDBFormat);
     this.testSendFilters2();
+
+    // if (Object.keys(this.workingQuery).length == 0) {
+    //   if (this.workingFID != "") {
+    //     delete this.newFIDs[this.workingFID];
+    //     delete this.newFIDBID[this.workingFID];
+    //     delete this.newDBFormat[this.workingBin][this.workingFID];
+    //     this.workingFID = "";
+    //   }
+    //   return;
+    // }
+    // //DO NOT DOUBLE PUT IN ITEMS
+    // for (let key in this.newFIDs) {
+    //   if (this.isEqualObjectsContents(this.newFIDs[key], this.workingQuery)) {
+    //     return;
+    //   }
+    // }
+
+    // //SET FID TO CURRENT OR GENERATE NEW ONE
+    // var newFIDNumber;
+    // if (this.workingFID != "") {
+    //   newFIDNumber = cloneDeep(this.workingFID);
+    // } else {
+    //   newFIDNumber = String(Math.floor(Math.random() * 1000));
+    // }
+    // //PUT THE WORKING QUERY IN NEW FIDs
+    // var pkID = [];
+    // this.newFIDs[newFIDNumber] = Object.assign(
+    //   {},
+    //   cloneDeep(this.workingQuery)
+    // );
+
+    // //RESET
+    // this.form.reset();
+
+    // //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
+    // if (this.workingQuery[String(Number(BID) * -1)]) {
+    //   pkID = cloneDeep(this.workingQuery[String(Number(BID) * -1)]);
+    //   delete this.workingQuery[String(Number(BID) * -1)];
+    // }
+    // var att = cloneDeep(this.workingQuery);
+    // var FID = [];
+
+    // //INIT THE NEW DB FORMAT BEFORE ADDING
+    // this.newFIDBID[newFIDNumber] = BID;
+    // if (!this.newDBFormat[BID]) {
+    //   this.newDBFormat[BID] = {};
+    // }
+    // this.newDBFormat[BID][newFIDNumber] = [pkID, att, FID];
+
+    // //RESET
+    // this.workingQuery = {};
+    // this.workingBin = "0";
+    // this.workingFID = "";
+
+    // //SEND UP TO THE DB
+    // this.pullData.constructAndSendFilters(this.newDBFormat);
+    // this.testSendFilters2();
   }
   //EMPTY THE WORKING QUERY
-  clearWorking(BID: string) {
-    if (this.workingBin == BID) {
-      for (let id in this.workingQuery) {
-        this.clearSingleIDWorking(id, BID);
+  clearWorking() {
+    for (let bin in this.newWorkingQuery) {
+      for (let id in this.newWorkingQuery[bin]) {
+        this.clearSingleIDWorking(id, bin);
       }
-    }
-    if (this.workingFID != "") {
-      this.removeQuery(this.workingFID);
-      this.workingFID = "";
+
+      if (this.newWorkingFID[bin] != "") {
+        this.removeQuery(this.newWorkingFID[bin]);
+        this.newWorkingFID[bin] = "";
+      }
     }
   }
   //HARD RESET OF ALL VARIABLES CALLED FROM THE FILTER BAR
   clearAll() {
-    this.workingFID = "";
-    this.workingBin = "0";
+    for (let bin in this.newWorkingQuery) {
+      this.newWorkingFID[bin] = "";
+      this.newWorkingQuery[bin] = {};
+    }
     this.newDBFormat = {};
-    this.combined = {};
-    this.workingQuery = {};
     this.newFIDs = {};
     this.newFIDBID = {};
+    this.form.reset();
+
+    // this.workingFID = "";
+    // this.workingBin = "0";
+
+    // this.combined = {};
+    // this.workingQuery = {};
   }
 
   //SETTING CSS OF THE LEAGUE ICONS
@@ -522,7 +628,7 @@ export class FiltersService {
 
   //CHANGE A LEAGUES STATUS IN THE FORM FOR LEAGUE SELECT GUI
   //CHANGE THE CSS AND INSERT/REMOVE
-  toggleLeague(attID: string, value: string) {
+  toggleLeague(attID: string, value: string, bin: string) {
     var id = this.pullValue[value]["Label"];
     var logo = document.getElementById(id);
     var oldValue = this.form.value[attID];
@@ -536,16 +642,15 @@ export class FiltersService {
       logo.className = "leagueSelected";
       this.form.controls[attID].setValue(oldValue.concat([value]));
     }
-    console.log(this.workingBin, "SPLIT", this.level1Selected);
 
-    this.type0change(attID, this.form.value[attID], this.workingBin);
+    this.type0change(attID, this.form.value[attID], bin);
   }
 
   //SELECT OR DESELECT ALL FROM THE TYPE 0 INPUT
-  changeToggleValue(id: string, toLabel: string, remove: boolean) {
+  changeToggleValue(id: string, toLabel: string, remove: boolean, bin: string) {
     if (remove) {
       this.form.controls[id].setValue(null);
-      this.type0change(id, [], this.workingBin);
+      this.type0change(id, [], bin);
     } else {
       var toVal;
       for (let choice in this.pullValueMap[id]) {
@@ -554,7 +659,7 @@ export class FiltersService {
         }
       }
       this.form.controls[id].setValue([toVal]);
-      this.type0change(id, [toVal], this.workingBin);
+      this.type0change(id, [toVal], bin);
     }
   }
 
@@ -624,7 +729,7 @@ export class FiltersService {
   }
 
   //TOGGLE A TEAMS STATUS IN THE TEAM SELECT GUI
-  toggleTeam(teamI: any, attID: string) {
+  toggleTeam(teamI: any, attID: string, bin: string) {
     var team = document.getElementById("teamGUI" + String(teamI["SailTeamID"]));
     var oldValue = this.form.value[attID];
     if (oldValue == null) {
@@ -641,7 +746,7 @@ export class FiltersService {
         oldValue.filter(x => x != String(teamI["SailTeamID"]))
       );
     }
-    this.type0change(attID, this.form.value[attID], this.workingBin);
+    this.type0change(attID, this.form.value[attID], bin);
   }
 
   constructor(public pullData: PullDataService, public fb: FormBuilder) {}

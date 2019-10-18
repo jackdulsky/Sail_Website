@@ -109,6 +109,95 @@
             ></ng-container>
           </ng-container>
         </div>
+        <div class="rightside">
+          <ng-container
+            *ngFor="let bin of filterService.newWorkingQuery | keyvalue"
+          >
+            <div class="tier3Grid" *ngIf="(bin.value | json) != '{}'">
+              <div
+                *ngFor="let att of bin.value | keyvalue"
+                style="width:fit-content;display:flex;color:black; margin-top:5px;"
+              >
+                <ng-container
+                  *ngIf="0 == filterService.pullAttribute[att.key]['UITypeID']"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      type0;
+                      context: {
+                        id: att.key,
+                        values: att.value,
+                        bin: bin.key
+                      }
+                    "
+                    style="width:100%"
+                  ></ng-container>
+                </ng-container>
+                <ng-container
+                  *ngIf="1 == filterService.pullAttribute[att.key]['UITypeID']"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      type0;
+                      context: {
+                        id: att.key,
+                        values: att.value,
+                        bin: bin.key
+                      }
+                    "
+                    style="width:100%"
+                  ></ng-container>
+                </ng-container>
+                <ng-container
+                  *ngIf="3 == filterService.pullAttribute[att.key]['UITypeID']"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      type3;
+                      context: {
+                        id: att.key,
+                        values: att.value,
+                        bin: bin.key
+                      }
+                    "
+                    style="width:100%"
+                  ></ng-container>
+                </ng-container>
+                <ng-container
+                  *ngIf="2 == filterService.pullAttribute[att.key]['UITypeID']"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      type0;
+                      context: {
+                        id: att.key,
+                        values: att.value,
+                        bin: bin.key
+                      }
+                    "
+                    style="width:100%"
+                  ></ng-container>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+          <div class="bottomQueryButtons">
+            <button
+              class="mat-raised-button mat-primary save"
+              style="float:right;"
+              (click)="pushWorkingQuery()"
+            >
+              SUBMIT
+            </button>
+            <button
+              class="mat-raised-button mat-primary save"
+              style="float:right;"
+              (click)="clearWorkingQuery()"
+            >
+              CLEAR
+            </button>
+          </div>
+        </div>
       </div>
       <!-- <div>
         <button
@@ -132,80 +221,27 @@
           CLEAR
         </button>
       </div> -->
-      <ng-container
-        *ngIf="filterService.workingBin == filterService.level1Selected"
-      >
-        <div class="tier3Grid">
-          <div
-            *ngFor="let att of filterService.workingQuery | keyvalue"
-            style="width:100%;display:flex;color:black; margin-top:5px;"
-          >
-            <ng-container
-              *ngIf="0 == filterService.pullAttribute[att.key]['UITypeID']"
-            >
-              <ng-container
-                *ngTemplateOutlet="
-                  type0;
-                  context: { id: att.key, values: att.value }
-                "
-                style="width:100%"
-              ></ng-container>
-            </ng-container>
-            <ng-container
-              *ngIf="1 == filterService.pullAttribute[att.key]['UITypeID']"
-            >
-              <ng-container
-                *ngTemplateOutlet="
-                  type1;
-                  context: { id: att.key, values: att.value }
-                "
-                style="width:100%"
-              ></ng-container>
-            </ng-container>
-            <ng-container
-              *ngIf="3 == filterService.pullAttribute[att.key]['UITypeID']"
-            >
-              <ng-container
-                *ngTemplateOutlet="
-                  type3;
-                  context: { id: att.key, values: att.value }
-                "
-                style="width:100%"
-              ></ng-container>
-            </ng-container>
-            <ng-container
-              *ngIf="2 == filterService.pullAttribute[att.key]['UITypeID']"
-            >
-              <ng-container
-                *ngTemplateOutlet="
-                  type0;
-                  context: { id: att.key, values: att.value }
-                "
-                style="width:100%"
-              ></ng-container>
-            </ng-container>
-          </div>
-        </div>
-      </ng-container>
+      <!-- *ngIf="filterService.level1Selected == filterService.level1Selected" -->
 
-      <ng-template #type0 let-id="id" let-values="values">
+      <ng-template #type0 let-id="id" let-values="values" let-bin="bin">
         <div class="toggleContainer">
           <div style="margin-top:3px; color: red !important;" class="exit">
-            <i class="fa fa-close fa-lg" (click)="clearSingle(id)"></i>
+            <i class="fa fa-close fa-lg" (click)="clearSingle(id, bin)"></i>
           </div>
-          <div class="togglelabel">
+          <!-- <div class="togglelabel">
             {{ filterService.pullAttribute[id][Label] }}:
-          </div>
+          </div> -->
 
           <mat-form-field
             id="tier3Tab{{ id }}"
-            style="width:100%; padding-right:5%;"
+            style="width:100%; padding-right:0%;"
           >
             <mat-select
               [formControl]="filterService.form.controls[id]"
               multiple
-              (selectionChange)="type0change(id)"
+              (selectionChange)="type0change(id, bin)"
               style="color:black;"
+              class="rightSideFontFilter"
             >
               <mat-option>
                 <ngx-mat-select-search
@@ -221,13 +257,13 @@
                 <button
                   id="{{ id }}all"
                   mat-button
-                  (click)="toggleAllSelections(id, true)"
+                  (click)="toggleAllSelections(id, true, bin)"
                 >
                   Select All
                 </button>
                 <button
                   id="{{ id }}none"
-                  (click)="toggleAllSelections(id, false)"
+                  (click)="toggleAllSelections(id, false, bin)"
                   mat-button
                 >
                   Deselect All
@@ -248,13 +284,13 @@
           </mat-form-field>
         </div>
       </ng-template>
-      <ng-template #type1 let-id="id" let-values="values">
+      <ng-template #type1 let-id="id" let-values="values" let-bin="bin">
         <div *ngFor="let option of filterService.pullValueMap[id] | keyvalue">
           <div
             onload=""
             class="league"
             id="{{ option.value[Label] }}"
-            (click)="filterService.toggleLeague(id, option.key)"
+            (click)="filterService.toggleLeague(id, option.key, bin)"
             *ngIf="
               filterService.form.value[id] == null ||
               !filterService.form.value[id].includes(option.key)
@@ -276,7 +312,7 @@
             "
             class="leagueSelected"
             id="{{ option.value[Label] }}"
-            (click)="filterService.toggleLeague(id, option.key)"
+            (click)="filterService.toggleLeague(id, option.key, bin)"
           >
             <img
               [src]="
@@ -289,7 +325,7 @@
           </div>
         </div>
       </ng-template>
-      <ng-template #type2 let-id="id" let-values="values">
+      <ng-template #type2 let-id="id" let-values="values" let-bin="bin">
         <div class="toggleContainerClub2">
           <div style="margin-top:3px; color: red !important;" class="exit">
             <i class="fa fa-close fa-lg" (click)="clearSingle(id)"></i>
@@ -367,7 +403,7 @@
                         <div
                           class="singleTeamGUI"
                           id="teamGUI{{ team['TeamCode'] }}"
-                          (click)="filterService.toggleTeam(team, id)"
+                          (click)="filterService.toggleTeam(team, id, bin)"
                         >
                           <div
                             style="text-align: center; z-index: 0; height: 60px;"
@@ -383,7 +419,7 @@
                         <div
                           class="singleTeamGUISelected"
                           id="teamGUI{{ team['TeamCode'] }}"
-                          (click)="filterService.toggleTeam(team, id)"
+                          (click)="filterService.toggleTeam(team, id, bin)"
                         >
                           <div
                             style="text-align: center; z-index: 0; height: 60px;"
@@ -403,14 +439,14 @@
           </div>
         </div>
       </ng-template>
-      <ng-template #type3 let-id="id" let-values="values">
+      <ng-template #type3 let-id="id" let-values="values" let-bin="bin">
         <div class="toggleContainer">
           <div style="margin-top:3px; color: red !important;" class="exit">
             <i class="fa fa-close fa-lg" (click)="clearSingle(id)"></i>
           </div>
-          <div class="togglelabel">
+          <!-- <div class="togglelabel">
             {{ filterService.pullAttribute[id][Label] }}:
-          </div>
+          </div> -->
           <div>
             <div class="form-group">
               <div class="switch-toggle switch-3 switch-candy">
@@ -422,7 +458,9 @@
                 />
                 <label
                   for="off{{ id }}"
-                  (click)="filterService.changeToggleValue(id, 'False', false)"
+                  (click)="
+                    filterService.changeToggleValue(id, 'False', false, bin)
+                  "
                   >OFF</label
                 >
                 <input
@@ -433,7 +471,7 @@
                 />
                 <label
                   for="na{{ id }}"
-                  (click)="filterService.changeToggleValue(id, '0', true)"
+                  (click)="filterService.changeToggleValue(id, '0', true, bin)"
                   >N/A</label
                 >
                 <input
@@ -444,7 +482,9 @@
                 />
                 <label
                   for="on{{ id }}"
-                  (click)="filterService.changeToggleValue(id, 'True', false)"
+                  (click)="
+                    filterService.changeToggleValue(id, 'True', false, bin)
+                  "
                   >ON</label
                 >
 
@@ -467,7 +507,7 @@
             <mat-select
               [formControl]="filterService.form.controls[id]"
               multiple
-              (selectionChange)="type0change(id)"
+              (selectionChange)="type0change(id, filterService.level1Selected)"
               style="color:black;"
             >
               <mat-option>
@@ -484,13 +524,17 @@
                 <button
                   id="{{ id }}all"
                   mat-button
-                  (click)="toggleAllSelections(id, true)"
+                  (click)="
+                    toggleAllSelections(id, true, filterService.level1Selected)
+                  "
                 >
                   Select All
                 </button>
                 <button
                   id="{{ id }}none"
-                  (click)="toggleAllSelections(id, false)"
+                  (click)="
+                    toggleAllSelections(id, false, filterService.level1Selected)
+                  "
                   mat-button
                 >
                   Deselect All
@@ -517,7 +561,13 @@
             onload=""
             class="league"
             id="{{ option.value[Label] }}"
-            (click)="filterService.toggleLeague(id, option.key)"
+            (click)="
+              filterService.toggleLeague(
+                id,
+                option.key,
+                filterService.level1Selected
+              )
+            "
             *ngIf="
               filterService.form.value[id] == null ||
               !filterService.form.value[id].includes(option.key)
@@ -539,7 +589,13 @@
             "
             class="leagueSelected"
             id="{{ option.value[Label] }}"
-            (click)="filterService.toggleLeague(id, option.key)"
+            (click)="
+              filterService.toggleLeague(
+                id,
+                option.key,
+                filterService.level1Selected
+              )
+            "
           >
             <img
               [src]="
@@ -627,7 +683,13 @@
                     <div
                       class="singleTeamGUI"
                       id="teamGUI{{ team['SailTeamID'] }}"
-                      (click)="filterService.toggleTeam(team, id)"
+                      (click)="
+                        filterService.toggleTeam(
+                          team,
+                          id,
+                          filterService.level1Selected
+                        )
+                      "
                     >
                       <div
                         style="text-align: center; z-index: 0; height: 60px;"
@@ -643,7 +705,13 @@
                     <div
                       class="singleTeamGUISelected"
                       id="teamGUI{{ team['SailTeamID'] }}"
-                      (click)="filterService.toggleTeam(team, id)"
+                      (click)="
+                        filterService.toggleTeam(
+                          team,
+                          id,
+                          filterService.level1Selected
+                        )
+                      "
                     >
                       <div
                         style="text-align: center; z-index: 0; height: 60px;"
@@ -677,7 +745,14 @@
                 />
                 <label
                   for="off{{ id }}"
-                  (click)="filterService.changeToggleValue(id, 'False', false)"
+                  (click)="
+                    filterService.changeToggleValue(
+                      id,
+                      'False',
+                      false,
+                      filterService.level1Selected
+                    )
+                  "
                   >OFF</label
                 >
                 <input
@@ -688,7 +763,14 @@
                 />
                 <label
                   for="na{{ id }}"
-                  (click)="filterService.changeToggleValue(id, '0', true)"
+                  (click)="
+                    filterService.changeToggleValue(
+                      id,
+                      '0',
+                      true,
+                      filterService.level1Selected
+                    )
+                  "
                   >N/A</label
                 >
                 <input
@@ -699,7 +781,14 @@
                 />
                 <label
                   for="on{{ id }}"
-                  (click)="filterService.changeToggleValue(id, 'True', false)"
+                  (click)="
+                    filterService.changeToggleValue(
+                      id,
+                      'True',
+                      false,
+                      filterService.level1Selected
+                    )
+                  "
                   >ON</label
                 >
 
