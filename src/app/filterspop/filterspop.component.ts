@@ -13,6 +13,7 @@ import { SafeHtmlPipe } from "../safe.pipe";
 import { SmartFilterPipe } from "../smartFilter.pipe";
 import { TEMPORARY_NAME } from "@angular/compiler/src/render3/view/util";
 import { KeyValue } from "@angular/common";
+import * as cloneDeep from "lodash/cloneDeep";
 
 // import { AdalService } from 'adal-angular4';
 import { MsAdalAngular6Module } from "microsoft-adal-angular6";
@@ -78,9 +79,9 @@ export class FilterspopComponent implements OnInit {
     this.form = this.fb.group({});
     this.formG = this.fb.group({});
     setTimeout(() => {
-      this.changelevel2(this.filterService.level1Selected);
+      this.filterService.changelevel2(this.filterService.level1Selected);
     }, 1);
-    this.panels = [this.filterService.level1Selected];
+    this.filterService.panels = [this.filterService.level1Selected];
   }
   //RETURN LABEL OF OBJECT
   returnlabel(obj: any) {
@@ -280,6 +281,9 @@ export class FilterspopComponent implements OnInit {
     }
     //RECONSTRUCT THE PANELS THROUGH ADDING THE BIN PANEL BACK AT THE BEGINNING
     this.panels = [first].concat(newPanels);
+    this.filterService.reversePaths[this.filterService.level1Selected][
+      att
+    ] = cloneDeep(this.panels);
 
     //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
     if (document.getElementById("selectKey" + att)) {
@@ -289,6 +293,16 @@ export class FilterspopComponent implements OnInit {
       document.getElementById("buttonContainer" + att).style.borderLeft =
         "4px solid lightskyblue";
     }
+  }
+
+  //This function navigates the panels and displays where the
+  //Attribute was selected from if its clicked on the right area
+  navigateToAttribute(bin: any, att: any) {
+    this.filterService.changelevel2(bin);
+    this.filterService.panels = cloneDeep(
+      this.filterService.reversePaths[bin][att]
+    );
+    this.filterService.show = att;
   }
 
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********

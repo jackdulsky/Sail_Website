@@ -17,6 +17,7 @@ export class FiltersService {
   workingQuery = {};
   newWorkingQuery = {};
   newWorkingFID = {};
+  reversePaths = {};
   show: string = "";
   panels: string[] = [];
   combined = {};
@@ -136,6 +137,7 @@ export class FiltersService {
       this.extractID(data, "BinID", this.pullBin);
       for (let binKey in this.pullBin) {
         this.newWorkingQuery[binKey] = {};
+        this.reversePaths[binKey] = {};
         this.newWorkingFID[binKey] = "";
       }
       console.log("BIN", this.pullBin);
@@ -321,10 +323,13 @@ export class FiltersService {
 
   //DELETE A QUERY BASED ON FID
   removeQuery(fid: string) {
+    console.log("REMOVE QUERY1", this.newDBFormat, fid, this.newFIDBID[fid]);
+    var oldBID = this.newFIDBID[fid];
     for (let id in this.newFIDs[fid]) {
       this.clearSingleIDWorking(id, this.newFIDBID[fid]);
     }
-    delete this.newDBFormat[this.newFIDBID[fid]][fid];
+    console.log("REMOVE QUERY2", this.newDBFormat, fid, oldBID);
+    delete this.newDBFormat[oldBID][fid];
     delete this.newFIDBID[fid];
     delete this.newFIDs[fid];
     this.testSendFilters2();
@@ -348,37 +353,8 @@ export class FiltersService {
       }
       this.testSendFilters2();
     } else {
-      console.log("TESTING", this.newWorkingQuery, bid, formKey, formVals);
-      console.log("BID", bid);
       this.newWorkingQuery[bid][formKey] = formVals;
     }
-    console.log("NEW WORKING QUERY", this.newWorkingQuery);
-    // //IF THE BIN ID AND THE WORKING BIN ARE NOT THE SAME THEN RESET FIRST
-    // if (bid != this.workingBin) {
-    //   this.workingBin = bid;
-    //   this.workingFID = "";
-    //   this.combined = {};
-    //   this.workingQuery = {};
-    // }
-    // var values = cloneDeep(formVals);
-
-    // //CHECK IF A DELETE NEEDS TO OCCUR CAUSE VALUE IS EMPTY
-    // if (values != null && values.length == 0) {
-    //   delete this.workingQuery[formKey];
-    //   delete this.combined[formKey];
-    //   this.form.controls[formKey].setValue(null);
-    //   if (Object.keys(this.workingQuery).length == 0) {
-    //     delete this.newFIDs[this.workingFID];
-    //     this.workingFID = "";
-    //   }
-    //   this.testSendFilters2();
-    // } else {
-    //   //ADD TO THE COMBINED
-    //   this.combined[formKey] = values;
-    //   if (this.workingQuery[formKey]) {
-    //     this.workingQuery[formKey] = values;
-    //   }
-    // }
   }
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
   //REMOVE FROM THE WORKING QUERY AND
@@ -422,7 +398,7 @@ export class FiltersService {
   }
 
   //PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
-  pushQueryToActiveFilter(BID: string) {
+  pushQueryToActiveFilter(BID: string, clearWorking: boolean = true) {
     for (let bin in this.newWorkingQuery) {
       //PUSH EMPTY PERFORM DELETES
       if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
@@ -466,13 +442,13 @@ export class FiltersService {
         {},
         cloneDeep(this.newWorkingQuery[bin])
       );
-
-      //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
-      if (this.newWorkingQuery[bin][String(Number(bin) * -1)]) {
-        pkID = cloneDeep(this.newWorkingQuery[bin][String(Number(bin) * -1)]);
-        delete this.newWorkingQuery[bin][String(Number(bin) * -1)];
-      }
       var att = cloneDeep(this.newWorkingQuery[bin]);
+      //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
+      if (att[String(Number(bin) * -1)]) {
+        pkID = cloneDeep(att[String(Number(bin) * -1)]);
+        delete att[String(Number(bin) * -1)];
+      }
+
       var FID = [];
 
       //INIT THE NEW DB FORMAT BEFORE ADDING
@@ -484,74 +460,21 @@ export class FiltersService {
       this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
 
       //RESET
-      this.newWorkingQuery[bin] = {};
-      this.newWorkingFID[bin] = "";
+      if (clearWorking) {
+        this.newWorkingQuery[bin] = {};
+        this.newWorkingFID[bin] = "";
+      }
     }
 
     //RESET
-    this.form.reset();
+    if (clearWorking) {
+      this.form.reset();
+    }
 
     //SEND UP TO THE DB
 
     this.pullData.constructAndSendFilters(this.newDBFormat);
     this.testSendFilters2();
-
-    // if (Object.keys(this.workingQuery).length == 0) {
-    //   if (this.workingFID != "") {
-    //     delete this.newFIDs[this.workingFID];
-    //     delete this.newFIDBID[this.workingFID];
-    //     delete this.newDBFormat[this.workingBin][this.workingFID];
-    //     this.workingFID = "";
-    //   }
-    //   return;
-    // }
-    // //DO NOT DOUBLE PUT IN ITEMS
-    // for (let key in this.newFIDs) {
-    //   if (this.isEqualObjectsContents(this.newFIDs[key], this.workingQuery)) {
-    //     return;
-    //   }
-    // }
-
-    // //SET FID TO CURRENT OR GENERATE NEW ONE
-    // var newFIDNumber;
-    // if (this.workingFID != "") {
-    //   newFIDNumber = cloneDeep(this.workingFID);
-    // } else {
-    //   newFIDNumber = String(Math.floor(Math.random() * 1000));
-    // }
-    // //PUT THE WORKING QUERY IN NEW FIDs
-    // var pkID = [];
-    // this.newFIDs[newFIDNumber] = Object.assign(
-    //   {},
-    //   cloneDeep(this.workingQuery)
-    // );
-
-    // //RESET
-    // this.form.reset();
-
-    // //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
-    // if (this.workingQuery[String(Number(BID) * -1)]) {
-    //   pkID = cloneDeep(this.workingQuery[String(Number(BID) * -1)]);
-    //   delete this.workingQuery[String(Number(BID) * -1)];
-    // }
-    // var att = cloneDeep(this.workingQuery);
-    // var FID = [];
-
-    // //INIT THE NEW DB FORMAT BEFORE ADDING
-    // this.newFIDBID[newFIDNumber] = BID;
-    // if (!this.newDBFormat[BID]) {
-    //   this.newDBFormat[BID] = {};
-    // }
-    // this.newDBFormat[BID][newFIDNumber] = [pkID, att, FID];
-
-    // //RESET
-    // this.workingQuery = {};
-    // this.workingBin = "0";
-    // this.workingFID = "";
-
-    // //SEND UP TO THE DB
-    // this.pullData.constructAndSendFilters(this.newDBFormat);
-    // this.testSendFilters2();
   }
   //EMPTY THE WORKING QUERY
   clearWorking() {
@@ -584,6 +507,49 @@ export class FiltersService {
     // this.workingQuery = {};
   }
 
+  //This function clears a single value from the newWorking query, if a
+  //Working FID is set it pushes the updates
+  clearSingleValuePop(bin: any, att: any, val: any) {
+    console.log(
+      "CLEAR SINGLE VALUE",
+      bin,
+      att,
+      val,
+      this.newWorkingQuery[bin][att],
+      this.newWorkingQuery[bin][att] == [String(val)]
+    );
+    if (this.newWorkingQuery[bin][att] == [String(val)]) {
+      this.clearSingleIDWorking(att, bin);
+    } else {
+      console.log("BEFORE 1", this.newWorkingQuery[bin][att]);
+      this.newWorkingQuery[bin][att] = this.newWorkingQuery[bin][att].filter(
+        x => x != String(val)
+      );
+      console.log("AFTER 1", this.newWorkingQuery[bin][att]);
+
+      var oldValue = this.form.value[att];
+      console.log(
+        "BEFORE 2",
+        this.newWorkingQuery[bin][att],
+        this.form.value[att]
+      );
+      this.form.controls[att].setValue(oldValue.filter(x => x != String(val)));
+      console.log(
+        "AFTER 2",
+        this.newWorkingQuery[bin][att],
+        this.form.value[att]
+      );
+
+      if (this.newWorkingFID[bin] != "") {
+        this.pushQueryToActiveFilter(bin, false);
+      }
+      console.log(
+        "AFTER 2",
+        this.newWorkingQuery[bin][att],
+        this.form.value[att]
+      );
+    }
+  }
   //SETTING CSS OF THE LEAGUE ICONS
   setLeagueIconStyle(leagueID: string, id: string) {
     var obj = this.pullValueMap[id][leagueID];
@@ -735,6 +701,110 @@ export class FiltersService {
       );
     }
     this.type0change(attID, this.form.value[attID], bin);
+  }
+
+  //This Function will allow for the coloring of the filter based on the BIN it falls under
+  //uses the color scheme and fact of the pattern color for determine color for each output
+  //first color is the outer, and second one is the inside one
+  setFilterStyle(BID: string, pos: number) {
+    var conversions = {
+      "-1": ["Green", "PaleGreen"],
+      "-2": ["Blue", "lightBlue"],
+      "-3": ["Black", "Grey"],
+      "-8": ["Green", "PaleGreen"],
+      "-11": ["Green", "PaleGreen"],
+      "-14": ["Green", "PaleGreen"]
+    };
+    let styles = {
+      "background-color": conversions[BID][pos % 2],
+      color: conversions[BID][(pos + 1) % 2]
+    };
+    return styles;
+  }
+
+  //PANEL SECTION FOR FILTERPOP
+
+  //ALTER THE SELECTION VIEW OF TEH WORKING QUERY BASED ON THE
+  //TIER 1 TAB THAT WAS SELECTED
+  changelevel2(id: string) {
+    //CHANGE OLD CSS
+    var old = document.getElementById("tier1Tab" + this.level1Selected);
+    old.style.backgroundColor = "white";
+    old.style.borderBottom = "4px solid white";
+
+    //SET THE LEVEL SELECTED
+    this.level1Selected = id;
+
+    // SET PANELS
+    this.panels = [id];
+    this.show = "";
+
+    //CHANGE NEW CSS
+    var newTab = document.getElementById("tier1Tab" + id);
+    newTab.style.backgroundColor = "#f2f2f2";
+    newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+  }
+
+  //THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
+  attributeSelected(att: string) {
+    var newPanels = [];
+    var first = this.panels[0];
+    var level = this.pullStructure[first];
+
+    var toTurnOff = [];
+    var addtoOff = false;
+
+    //ITERATE THROUGH THE PANELS THAT HAVE BEEN OPENED INCLUDING THE
+    //POTENTIAL ONE JUST CLICKED.
+    //IGNORE THE BIN PANEL.
+    //THROUGH EACH ITERATION OF THE PATH HAVE THE STRUCUTRE ITERATE DOWN
+    //AS WELL.
+    //IF THE PANEL EXISTS IN THE KEYS AT A LEVEL, CLOSE THE REST OF THE
+    //OPEN PANELS
+    for (let panel of this.panels.slice(1).concat([this.show])) {
+      if (level.hasOwnProperty(panel) || addtoOff) {
+        addtoOff = true;
+        if (panel != "") {
+          toTurnOff.push(panel);
+        }
+      } else {
+        if (panel != "") {
+          newPanels.push(panel);
+        }
+      }
+      level = level[panel];
+    }
+    //TURN OFF THE PANELS THROUGH CSS THAT NEED TO BE TURNED OFF
+    for (let turnoff of toTurnOff) {
+      document.getElementById("selectKey" + turnoff).style.visibility =
+        "hidden";
+
+      document.getElementById("buttonContainer" + turnoff).style.borderLeft =
+        "4px solid white";
+      document.getElementById(
+        "buttonContainer" + turnoff
+      ).style.backgroundColor = "white";
+    }
+
+    //ADD TO PANEL OR SHOW THE SELECTION FORM
+    if (this.pullNavigationElement[att]["IsAttribute"] == true) {
+      this.show = att;
+    } else {
+      newPanels.push(att);
+      this.show = "";
+    }
+    //RECONSTRUCT THE PANELS THROUGH ADDING THE BIN PANEL BACK AT THE BEGINNING
+    this.panels = [first].concat(newPanels);
+    this.reversePaths[this.level1Selected][att] = cloneDeep(this.panels);
+
+    //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
+    if (document.getElementById("selectKey" + att)) {
+      document.getElementById("selectKey" + att).style.visibility = "visible";
+      document.getElementById("buttonContainer" + att).style.backgroundColor =
+        "#f2f2f2";
+      document.getElementById("buttonContainer" + att).style.borderLeft =
+        "4px solid lightskyblue";
+    }
   }
 
   constructor(public pullData: PullDataService, public fb: FormBuilder) {}

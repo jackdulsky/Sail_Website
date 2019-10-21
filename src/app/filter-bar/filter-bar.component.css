@@ -23,6 +23,39 @@
 
   /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19); */
 }
+.ovrSingleFilter {
+  float: left;
+  height: 25px;
+  margin-top: 5px;
+  height: 25px;
+  margin-left: 10px;
+
+  width: auto;
+}
+.filterLeftBorder {
+  border-radius: 3px 0px 0px 3px;
+  /* background-color: green; */
+  width: 3px;
+  height: 25px;
+  float: left;
+}
+.filterMiddleBorder {
+  float: left;
+  font-weight: bold;
+  height: 25px;
+  line-height: 27px;
+  font-family: "DIN";
+}
+.filterRightBorder {
+  float: left;
+  height: 25px;
+  border-radius: 0px 5px 5px 0px;
+}
+.filterLeftBorder:hover,
+.filterRightBorder:hover,
+.filterMiddleBorder:hover {
+  cursor: pointer;
+}
 .titleFilter {
   width: 80px !important;
   grid-column-gap: 0px !important;
@@ -44,6 +77,11 @@
 .insideGrid-container2 {
   display: grid;
   grid-template-columns: 1fr 20px;
+  align-items: center;
+}
+.insideGrid-container3 {
+  display: grid;
+  grid-template-columns: 3px 1fr 20px;
   align-items: center;
 }
 /* .full-width-dialog .mat-dialog-container {
@@ -236,6 +274,7 @@
 }
 .fa-times:hover {
   color: red;
+  cursor: pointer;
 }
 .fa-pencil:hover {
   color: green;

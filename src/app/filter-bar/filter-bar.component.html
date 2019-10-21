@@ -11,7 +11,7 @@
       Filters
     </Div>
   </div>
-  <div
+  <!-- <div
     *ngFor="let query of filterService.newFIDs | keyvalue"
     class="singleFilter insideGrid-container2"
   >
@@ -20,6 +20,40 @@
     </div>
     <div class="btn" (click)="removeQuery(query.key)">
       <i class="fa fa-times" style="margin-left: 4px;"></i>
+    </div>
+  </div> -->
+  <div
+    *ngFor="let query of filterService.newFIDs | keyvalue"
+    class="ovrSingleFilter insideGrid-container3"
+  >
+    <div
+      class="filterLeftBorder"
+      [ngStyle]="
+        filterService.setFilterStyle(filterService.newFIDBID[query.key], 0)
+      "
+    ></div>
+    <div
+      class="filterMiddleBorder"
+      [ngStyle]="
+        filterService.setFilterStyle(filterService.newFIDBID[query.key], 1)
+      "
+      (click)="singleOpen(query.key, query.value)"
+    >
+      &nbsp;&nbsp;&nbsp;{{
+        createFilterDisplayString(query.key, query.value)
+      }}&nbsp;&nbsp;&nbsp;
+    </div>
+    <div
+      class="filterRightBorder"
+      [ngStyle]="
+        filterService.setFilterStyle(filterService.newFIDBID[query.key], 2)
+      "
+      (click)="removeQuery(query.key)"
+    >
+      <i
+        class="fa fa-times"
+        style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
+      ></i>
     </div>
   </div>
 

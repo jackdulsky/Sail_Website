@@ -88,7 +88,8 @@ export class FilterBarComponent implements OnInit {
       newTab.style.backgroundColor = "#f2f2f2";
       newTab.style.borderBottom = "4px solid var(--lighter-blue)";
     }
-
+    this.filterService.changelevel2(bin);
+    this.filterService.show = "";
     this.openFilterPage(bin);
   }
 
@@ -183,6 +184,7 @@ export class FilterBarComponent implements OnInit {
     var BID = this.filterService.newFIDBID[fid];
     var dispName = "";
     var tempFilter = { ...value };
+
     if (value[String(Number(BID) * -1)]) {
       for (let val in value[String(Number(BID) * -1)]) {
         dispName +=

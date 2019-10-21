@@ -11,7 +11,7 @@
             let t1 of filterService.pullStructure | keyvalue: valueOrderT1
           "
           class="tier1Tab"
-          (click)="changelevel2(t1.key)"
+          (click)="filterService.changelevel2(t1.key)"
         >
           <div class="tableCenter">
             {{ returnlabel(filterService.pullBin[t1.key]) }}
@@ -27,7 +27,7 @@
               <input
                 type="text"
                 id="searchGlobalText"
-                placeholder="  Search"
+                placeholder="  SEARCH"
                 (input)="searching($event.target.value)"
                 autocomplete="off"
                 class="filterSearch"
@@ -56,7 +56,7 @@
         <div
           class="leftside"
           id="leftside{{ panel }}"
-          *ngFor="let panel of panels"
+          *ngFor="let panel of filterService.panels"
         >
           <div
             *ngFor="
@@ -64,7 +64,7 @@
                 | keyvalue: valueOrderSideButtons
             "
             class="singlePanel"
-            (click)="attributeSelected(first.key)"
+            (click)="filterService.attributeSelected(first.key)"
             id="buttonContainer{{ first.key }}"
           >
             <div class="tier2-name" id="firstname{{ first.key }}">
@@ -77,62 +77,65 @@
         </div>
         <div class="guiArea">
           <div style="width: 100%">
-            <H2 class="l2Title" *ngIf="show != ''"
-              >{{ filterService.pullAttribute[show][Label] }} Filters</H2
+            <H2 class="l2Title" *ngIf="filterService.show != ''"
+              >{{
+                filterService.pullAttribute[filterService.show][Label]
+              }}
+              Filters</H2
             >
           </div>
           <ng-container
             *ngIf="
-              filterService.pullAttribute[show] &&
-              0 == filterService.pullAttribute[show]['UITypeID']
+              filterService.pullAttribute[filterService.show] &&
+              0 == filterService.pullAttribute[filterService.show]['UITypeID']
             "
           >
             <ng-container
               *ngTemplateOutlet="
                 type0Selection;
-                context: { id: show, values: null }
+                context: { id: filterService.show, values: null }
               "
               style="width:100%"
             ></ng-container>
           </ng-container>
           <ng-container
             *ngIf="
-              filterService.pullAttribute[show] &&
-              1 == filterService.pullAttribute[show]['UITypeID']
+              filterService.pullAttribute[filterService.show] &&
+              1 == filterService.pullAttribute[filterService.show]['UITypeID']
             "
           >
             <ng-container
               *ngTemplateOutlet="
                 type1Selection;
-                context: { id: show, values: null }
+                context: { id: filterService.show, values: null }
               "
               style="width:100%"
             ></ng-container>
           </ng-container>
           <ng-container
             *ngIf="
-              filterService.pullAttribute[show] &&
-              2 == filterService.pullAttribute[show]['UITypeID']
+              filterService.pullAttribute[filterService.show] &&
+              2 == filterService.pullAttribute[filterService.show]['UITypeID']
             "
           >
             <ng-container
               *ngTemplateOutlet="
                 type2Selection;
-                context: { id: show, values: null }
+                context: { id: filterService.show, values: null }
               "
               style="width:100%"
             ></ng-container>
           </ng-container>
           <ng-container
             *ngIf="
-              filterService.pullAttribute[show] &&
-              3 == filterService.pullAttribute[show]['UITypeID']
+              filterService.pullAttribute[filterService.show] &&
+              3 == filterService.pullAttribute[filterService.show]['UITypeID']
             "
           >
             <ng-container
               *ngTemplateOutlet="
                 type3Selection;
-                context: { id: show, values: null }
+                context: { id: filterService.show, values: null }
               "
               style="width:100%"
             ></ng-container>
@@ -142,8 +145,51 @@
           <ng-container
             *ngFor="let bin of filterService.newWorkingQuery | keyvalue"
           >
-            <div class="tier3Grid" *ngIf="(bin.value | json) != '{}'">
-              <div
+            <div class="tier3Grid2" *ngIf="(bin.value | json) != '{}'">
+              <ng-container *ngFor="let att of bin.value | keyvalue">
+                <div
+                  *ngFor="let val of att.value"
+                  class="ovrSingleFilter insideGrid-container3"
+                >
+                  <div
+                    class="filterLeftBorder"
+                    [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
+                  ></div>
+                  <div
+                    class="filterMiddleBorder"
+                    [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
+                    (click)="navigateToAttribute(bin.key, att.key)"
+                  >
+                    <div
+                      style="position: relative; top: -10px; font-size: 12px;"
+                    >
+                      &nbsp;{{ filterService.pullAttribute[att.key][Label] }}
+                      &nbsp;
+                    </div>
+                    <div
+                      style="top: -29px;
+                    position: relative;"
+                    >
+                      &nbsp;&nbsp;&nbsp;{{
+                        filterService.pullValueMap[att.key][val][Label]
+                      }}&nbsp;&nbsp;&nbsp;
+                    </div>
+                  </div>
+                  <div
+                    class="filterRightBorder"
+                    [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
+                    (click)="
+                      filterService.clearSingleValuePop(bin.key, att.key, val)
+                    "
+                  >
+                    <i
+                      class="fa fa-times"
+                      style="margin-left: 4px;margin-right: 4px;margin-top: 8px;"
+                    ></i>
+                  </div>
+                </div>
+              </ng-container>
+              <!-- <div
                 *ngFor="let att of bin.value | keyvalue"
                 style="width:fit-content;display:flex;color:black; margin-top:5px;"
               >
@@ -207,7 +253,7 @@
                     style="width:100%"
                   ></ng-container>
                 </ng-container>
-              </div>
+              </div> -->
             </div>
           </ng-container>
           <div class="bottomQueryButtons">

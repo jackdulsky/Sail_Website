@@ -138,8 +138,8 @@ input {
   border-right: 3px solid lightgray;
 }
 .rightside {
-  max-width: 15%;
-  min-width: 15%;
+  max-width: 20%;
+  min-width: 20%;
   color: black;
   float: right;
   border-left: 3px solid lightgray;
@@ -217,6 +217,10 @@ input {
 }
 .filterSearch {
   background: transparent;
+  font-size: 16px;
+}
+.filterSearch:hover {
+  cursor: pointer;
 }
 .filterSearch:focus {
   border: none;
@@ -1004,6 +1008,11 @@ input {
   grid-column-gap: 10%;
   align-items: center;
 }
+.tier3Grid2 {
+  padding-bottom: 0px;
+  padding-top: 0px;
+  align-items: center;
+}
 .togglelabel {
   color: black;
   width: 100%;
@@ -1224,10 +1233,42 @@ input {
   /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) auto; */
   grid-column-gap: 0px;
   /* padding-left: 5px; */
-  padding-right: 5px;
   height: 100%;
   min-height: 100px;
 }
 .rightSideFontFilter {
   font-size: 14px;
+}
+.ovrSingleFilter {
+  float: left;
+  height: 35px;
+  margin-top: 5px;
+  height: 35px;
+  margin-left: 10px;
+
+  width: auto;
+}
+.filterLeftBorder {
+  border-radius: 3px 0px 0px 3px;
+  /* background-color: green; */
+  width: 3px;
+  height: 35px;
+  float: left;
+}
+.filterMiddleBorder {
+  float: left;
+  font-weight: bold;
+  height: 35px;
+  line-height: 36px;
+  font-family: "DIN";
+}
+.filterRightBorder {
+  float: left;
+  height: 35px;
+  border-radius: 0px 5px 5px 0px;
+}
+.filterLeftBorder:hover,
+.filterRightBorder:hover,
+.filterMiddleBorder:hover {
+  cursor: pointer;
 }
