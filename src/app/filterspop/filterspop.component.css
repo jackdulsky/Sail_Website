@@ -33,6 +33,9 @@
   /*change color of underline when focused*/
   background-color: black !important;
 }
+::ng-deep.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  color: grey;
+}
 .mat-seudo-checkbox::after {
   color: white !important;
 }
@@ -48,7 +51,7 @@ input {
   font-family: "DIN";
   color: white;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
   padding-top: 3px;
   float: right;
   width: 41%;
@@ -160,11 +163,11 @@ input {
   color: black;
   font-weight: bold;
   text-align: center;
-  font-size: 16px;
+  font-size: 18px;
   border-left: 4px solid white;
   font-family: "DIN";
   position: relative;
-  height: 25px;
+  height: 30px;
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -204,7 +207,7 @@ input {
   width: 99%;
   border-bottom: 2px solid lightskyblue;
   margin-top: 5px;
-  font-size: 16px;
+  font-size: 18px;
 }
 .tier3 {
   padding-left: 15px;
@@ -212,12 +215,12 @@ input {
 }
 .selectKey {
   margin-left: 4px;
-  visibility: hidden;
+  margin-right: 4px;
   color: grey;
 }
 .filterSearch {
   background: transparent;
-  font-size: 16px;
+  font-size: 18px;
 }
 .filterSearch:hover {
   cursor: pointer;
@@ -228,7 +231,7 @@ input {
 }
 .filterSearch::placeholder {
   color: white;
-  font-size: 16px;
+  font-size: 18px;
   font-family: "DIN";
 }
 .searching {
@@ -977,7 +980,7 @@ input {
   /* align-items: center; */
 }
 .toggleContainerSelection {
-  width: 100%;
+  width: 99%;
   padding-bottom: 10px;
   display: grid;
   grid-template-columns: 25% 1fr;
@@ -1012,20 +1015,21 @@ input {
   padding-bottom: 0px;
   padding-top: 0px;
   align-items: center;
+  display: inline-block;
 }
 .togglelabel {
   color: black;
   width: 100%;
   float: left;
   font-family: "DIN";
-  font-size: 16px;
+  font-size: 18px;
 }
 .toggleLabelClub2 {
   color: black;
   width: 100%;
   float: left;
   font-family: "DIN";
-  font-size: 16px;
+  font-size: 18px;
 }
 .guiArea {
   flex: 1;
@@ -1210,7 +1214,7 @@ input {
   color: black;
 }
 ::ng-deep .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
-  top: 88px;
+  top: 103px;
   left: 200px;
 }
 .nickNameQuery {

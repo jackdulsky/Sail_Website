@@ -36,20 +36,20 @@
   border-radius: 3px 0px 0px 3px;
   /* background-color: green; */
   width: 3px;
-  height: 25px;
-  float: left;
 }
 .filterMiddleBorder {
-  float: left;
-  font-weight: bold;
-  height: 25px;
-  line-height: 27px;
-  font-family: "DIN";
 }
 .filterRightBorder {
-  float: left;
-  height: 25px;
   border-radius: 0px 5px 5px 0px;
+}
+.filterRightBorder,
+.filterLeftBorder,
+.filterMiddleBorder {
+  height: 37px;
+  float: left;
+  font-family: "DIN";
+  font-weight: bold;
+  line-height: 39px;
 }
 .filterLeftBorder:hover,
 .filterRightBorder:hover,
@@ -59,7 +59,7 @@
 .titleFilter {
   width: 80px !important;
   grid-column-gap: 0px !important;
-  height: 25px;
+  height: 37px;
   width: auto;
   border-radius: 4px;
   margin-left: 0px;
@@ -168,7 +168,7 @@
 }
 .funcbutton {
   margin-left: 0px;
-  height: 25px;
+  height: 37px;
   border-radius: 4px;
   align-content: center;
   font-family: "DIN";
@@ -191,7 +191,7 @@
   width: 60px !important;
   margin-right: 5px;
   margin-top: 5px;
-  line-height: 25px;
+  line-height: 37px;
   background-color: white;
 }
 .saveFilterNew:hover {
@@ -246,8 +246,8 @@
   margin-right: 20px;
   margin-left: 10px;
   margin-top: 5px;
-  line-height: 25px;
-  height: 25px;
+  line-height: 37px;
+  height: 37px;
   border-radius: 4px;
   align-content: center;
   font-family: "DIN";
@@ -342,7 +342,7 @@
   position: relative;
 }
 .titleFilter {
-  height: 25px;
+  height: 37px;
   width: auto;
   border-radius: 4px;
   margin-left: 0px;
@@ -367,7 +367,7 @@
   background-image: linear-gradient(to right, #ebeced, #ebeced, #ebeced, black);
   padding-left: 5px;
   border-bottom: 1px solid black;
-  height: 35px;
+  height: 50px;
   width: 100%;
   display: inline-block;
 }

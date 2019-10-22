@@ -165,29 +165,6 @@ export class FilterspopComponent implements OnInit {
       : 0;
   };
 
-  //ALTER THE SELECTION VIEW OF TEH WORKING QUERY BASED ON THE
-  //TIER 1 TAB THAT WAS SELECTED
-  changelevel2(id: string) {
-    //CHANGE OLD CSS
-    var old = document.getElementById(
-      "tier1Tab" + this.filterService.level1Selected
-    );
-    old.style.backgroundColor = "white";
-    old.style.borderBottom = "4px solid white";
-
-    //SET THE LEVEL SELECTED
-    this.filterService.level1Selected = id;
-
-    // SET PANELS
-    this.panels = [id];
-    this.show = "";
-
-    //CHANGE NEW CSS
-    var newTab = document.getElementById("tier1Tab" + id);
-    newTab.style.backgroundColor = "#f2f2f2";
-    newTab.style.borderBottom = "4px solid var(--lighter-blue)";
-  }
-
   //CLOSE THE DIALOG
   close() {
     this.dialogRef.close();
@@ -230,69 +207,6 @@ export class FilterspopComponent implements OnInit {
     }
     disp = disp[att];
     return disp;
-  }
-  //THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
-  attributeSelected(att: string) {
-    var newPanels = [];
-    var first = this.panels[0];
-    var level = this.filterService.pullStructure[first];
-
-    var toTurnOff = [];
-    var addtoOff = false;
-
-    //ITERATE THROUGH THE PANELS THAT HAVE BEEN OPENED INCLUDING THE
-    //POTENTIAL ONE JUST CLICKED.
-    //IGNORE THE BIN PANEL.
-    //THROUGH EACH ITERATION OF THE PATH HAVE THE STRUCUTRE ITERATE DOWN
-    //AS WELL.
-    //IF THE PANEL EXISTS IN THE KEYS AT A LEVEL, CLOSE THE REST OF THE
-    //OPEN PANELS
-    for (let panel of this.panels.slice(1).concat([this.show])) {
-      if (level.hasOwnProperty(panel) || addtoOff) {
-        addtoOff = true;
-        if (panel != "") {
-          toTurnOff.push(panel);
-        }
-      } else {
-        if (panel != "") {
-          newPanels.push(panel);
-        }
-      }
-      level = level[panel];
-    }
-    //TURN OFF THE PANELS THROUGH CSS THAT NEED TO BE TURNED OFF
-    for (let turnoff of toTurnOff) {
-      document.getElementById("selectKey" + turnoff).style.visibility =
-        "hidden";
-
-      document.getElementById("buttonContainer" + turnoff).style.borderLeft =
-        "4px solid white";
-      document.getElementById(
-        "buttonContainer" + turnoff
-      ).style.backgroundColor = "white";
-    }
-
-    //ADD TO PANEL OR SHOW THE SELECTION FORM
-    if (this.filterService.pullNavigationElement[att]["IsAttribute"] == true) {
-      this.show = att;
-    } else {
-      newPanels.push(att);
-      this.show = "";
-    }
-    //RECONSTRUCT THE PANELS THROUGH ADDING THE BIN PANEL BACK AT THE BEGINNING
-    this.panels = [first].concat(newPanels);
-    this.filterService.reversePaths[this.filterService.level1Selected][
-      att
-    ] = cloneDeep(this.panels);
-
-    //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
-    if (document.getElementById("selectKey" + att)) {
-      document.getElementById("selectKey" + att).style.visibility = "visible";
-      document.getElementById("buttonContainer" + att).style.backgroundColor =
-        "#f2f2f2";
-      document.getElementById("buttonContainer" + att).style.borderLeft =
-        "4px solid lightskyblue";
-    }
   }
 
   //This function navigates the panels and displays where the

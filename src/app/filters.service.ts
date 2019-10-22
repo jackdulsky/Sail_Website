@@ -711,9 +711,9 @@ export class FiltersService {
       "-1": ["Green", "PaleGreen"],
       "-2": ["Blue", "lightBlue"],
       "-3": ["Black", "Grey"],
-      "-8": ["Green", "PaleGreen"],
-      "-11": ["Green", "PaleGreen"],
-      "-14": ["Green", "PaleGreen"]
+      "-8": ["Red", "LightPink"],
+      "-14": ["Purple", "Plum"],
+      "-11": ["Black", "LightGrey"]
     };
     let styles = {
       "background-color": conversions[BID][pos % 2],
@@ -776,9 +776,6 @@ export class FiltersService {
     }
     //TURN OFF THE PANELS THROUGH CSS THAT NEED TO BE TURNED OFF
     for (let turnoff of toTurnOff) {
-      document.getElementById("selectKey" + turnoff).style.visibility =
-        "hidden";
-
       document.getElementById("buttonContainer" + turnoff).style.borderLeft =
         "4px solid white";
       document.getElementById(
@@ -799,7 +796,6 @@ export class FiltersService {
 
     //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
     if (document.getElementById("selectKey" + att)) {
-      document.getElementById("selectKey" + att).style.visibility = "visible";
       document.getElementById("buttonContainer" + att).style.backgroundColor =
         "#f2f2f2";
       document.getElementById("buttonContainer" + att).style.borderLeft =

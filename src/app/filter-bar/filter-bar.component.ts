@@ -31,13 +31,14 @@ export class FilterBarComponent implements OnInit {
 
   //OPENS ENTIRE FILTER PAGE CLEAN
   openFilterPage(selected: string) {
+    console.log("TRING TO OPEN FILTERS", selected, this.filterOpen);
     if (!this.filterOpen) {
       //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
       const dialogConfig = new MatDialogConfig();
       dialogConfig.width = "100vw";
       dialogConfig.maxWidth = "100vw";
       dialogConfig.autoFocus = true;
-      dialogConfig.position = { top: "87px", left: "200px" };
+      dialogConfig.position = { top: "102px", left: "200px" };
       dialogConfig.id = "FilterPopUp";
       dialogConfig.data = {
         title: "Filters:",
@@ -64,7 +65,7 @@ export class FilterBarComponent implements OnInit {
   singleOpen(fid: string, query: any) {
     //SET WORKING DICTIONARY, WORKINGBIN, AND WORKINGFID
     var bin = cloneDeep(this.filterService.newFIDBID[fid]);
-
+    this.filterService.level1Selected = bin;
     this.filterService.newWorkingQuery[bin] = cloneDeep(query);
     this.filterService.workingBin = cloneDeep(bin);
     this.filterService.newWorkingFID[bin] = cloneDeep(fid);
@@ -88,9 +89,9 @@ export class FilterBarComponent implements OnInit {
       newTab.style.backgroundColor = "#f2f2f2";
       newTab.style.borderBottom = "4px solid var(--lighter-blue)";
     }
-    this.filterService.changelevel2(bin);
-    this.filterService.show = "";
     this.openFilterPage(bin);
+    //this.filterService.changelevel2(bin);
+    this.filterService.show = "";
   }
 
   //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT
@@ -180,7 +181,6 @@ export class FilterBarComponent implements OnInit {
   //MAY HAVE TO TAILER THIS FOR EACH PKID
   //RIGHT NOW IT SHOWS PKID's AND ATTRIBUTES OF NON PKID's
   createFilterDisplayString(fid: string, value: any) {
-    console.log("CREATING DISPLAY", fid, value);
     var BID = this.filterService.newFIDBID[fid];
     var dispName = "";
     var tempFilter = { ...value };
@@ -188,7 +188,7 @@ export class FilterBarComponent implements OnInit {
     if (value[String(Number(BID) * -1)]) {
       for (let val in value[String(Number(BID) * -1)]) {
         dispName +=
-          "," +
+          ", " +
           this.returnlabel(
             this.filterService.pullValueMap[String(Number(BID) * -1)][
               value[String(Number(BID) * -1)][val]
@@ -205,13 +205,14 @@ export class FilterBarComponent implements OnInit {
     delete tempFilter[String(Number(BID) * -1)];
 
     for (let att in tempFilter) {
-      dispName += "," + this.returnlabel(this.filterService.pullAttribute[att]);
+      dispName +=
+        ", " + this.returnlabel(this.filterService.pullAttribute[att]);
       if (dispName.length > 100) {
         break;
       }
     }
     if (dispName.charAt(0) == ",") {
-      dispName = dispName.substr(1);
+      dispName = dispName.substr(2);
     }
     return dispName;
   }

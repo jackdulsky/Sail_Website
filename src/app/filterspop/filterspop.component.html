@@ -34,7 +34,7 @@
               />
             </span>
           </div>
-          <div class="suggestionList" *ngIf="showSuggestions">
+          <!-- <div class="suggestionList" *ngIf="showSuggestions">
             <div
               *ngFor="
                 let result of reverse | keyvalue | filter: searchGlobalText
@@ -44,7 +44,7 @@
             >
               {{ idToString[result.key] }}
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div style="float:right" class="exit">
@@ -395,7 +395,7 @@
       <ng-template #type2 let-id="id" let-values="values" let-bin="bin">
         <div class="toggleContainerClub2">
           <div style="margin-top:3px; color: red !important;" class="exit">
-            <i class="fa fa-close fa-lg" (click)="clearSingle(id)"></i>
+            <i class="fa fa-close fa-lg" (click)="clearSingle(id, bin)"></i>
           </div>
           <div>
             <div
@@ -509,7 +509,7 @@
       <ng-template #type3 let-id="id" let-values="values" let-bin="bin">
         <div class="toggleContainer">
           <div style="margin-top:3px; color: red !important;" class="exit">
-            <i class="fa fa-close fa-lg" (click)="clearSingle(id)"></i>
+            <i class="fa fa-close fa-lg" (click)="clearSingle(id, bin)"></i>
           </div>
           <!-- <div class="togglelabel">
             {{ filterService.pullAttribute[id][Label] }}:

@@ -4,7 +4,7 @@ import { BodyComponent } from "./body/body.component";
 import { SettingComponent } from "./setting/setting.component";
 import { FilterBarComponent } from "./filter-bar/filter-bar.component";
 import { ReportComponent } from "./report/report.component";
-
+import { BottomContainerComponent } from "./bottom-container/bottom-container.component";
 const routes: Routes = [
   // {
   //     path: 'home',
@@ -48,6 +48,10 @@ const routes: Routes = [
     path: "",
     component: FilterBarComponent,
     outlet: "filterSection"
+  },
+  {
+    path: "base",
+    component: BottomContainerComponent
   }
 ];
 

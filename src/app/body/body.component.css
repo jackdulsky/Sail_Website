@@ -1,6 +1,6 @@
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 160px));
 
   padding-right: 35px;
 
@@ -11,7 +11,7 @@
 }
 .grid-itemGen {
   border-radius: 10px;
-  height: 120px;
+  height: 160px;
   background-color: white;
   padding-left: 20px;
   padding-right: 20px;
@@ -89,7 +89,7 @@
   background-color: #262829;
   padding: 5px;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 20px;
   /* color: var(--color-black); */
   color: #5f676b;
   display: block;
@@ -103,7 +103,7 @@
 .sidebutton {
   padding: 5px;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 20px;
   text-transform: uppercase;
   /* color: var(--color-black); */
   color: var(--color-white);
@@ -160,7 +160,7 @@
 }
 .labelText {
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 16px;
   font-family: "DIN";
   text-align: center;
 }
