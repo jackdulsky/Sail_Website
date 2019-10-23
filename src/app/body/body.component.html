@@ -4,24 +4,24 @@
 />
 
 <div class="overallDiv">
-  <div style="display:flex">
-    <div id="reportsSideNav" class="sidenav">
-      <div class="group">
-        <div class="category">
-          REPORTS
-        </div>
-
-        <div
-          *ngFor="let cat of ReportListService.reports | keyvalue: valueOrder"
-          class="sidebutton"
-          id="{{ cat.key }}id"
-          (click)="toggleContents(cat.key)"
-        >
-          <i id="{{ cat.key }}idicon" class="fa fa-circle-thin ico"></i>
-          {{ cat.key }}
-        </div>
+  <div id="reportsSideNav" class="sidenav">
+    <div class="group">
+      <div class="category" routerLink="../base-reports">
+        REPORTS
       </div>
-      <!-- <div class="XOSSection">
+
+      <div
+        routerLink="../base-reports"
+        *ngFor="let cat of ReportListService.reports | keyvalue: valueOrder"
+        class="sidebutton"
+        id="{{ cat.key }}id"
+        (click)="toggleContents(cat.key)"
+      >
+        <!-- <i id="{{ cat.key }}idicon" class="fa fa-circle-thin ico"></i> -->
+        {{ cat.key }}
+      </div>
+    </div>
+    <!-- <div class="XOSSection">
         <div class="group">
           <div class="category">
             Tools
@@ -44,28 +44,28 @@
           </div>
         </div>
       </div> -->
-      <div class="XOSSection">
-        <div class="group">
-          <div class="category" style="padding-top: 20px;">
-            PORTALS
-          </div>
-          <div class="sidebutton">
-            CLUB
-          </div>
-          <div class="sidebutton">
-            PLAYER
-          </div>
-          <div class="sidebutton">
-            FREE AGENCY
-          </div>
-          <div class="sidebutton">
-            DRAFT
-          </div>
+    <div class="XOSSection">
+      <div class="group">
+        <div class="category" style="padding-top: 20px;">
+          PORTALS
+        </div>
+        <div class="sidebutton" routerLink="../club">
+          CLUB
+        </div>
+        <div class="sidebutton">
+          PLAYER
+        </div>
+        <div class="sidebutton">
+          FREE AGENCY
+        </div>
+        <div class="sidebutton">
+          DRAFT
         </div>
       </div>
     </div>
+  </div>
 
-    <Div class="area">
+  <!-- <Div class="area">
       <div class="grid-container">
         <div
           *ngFor="
@@ -83,6 +83,6 @@
           </div>
         </div>
       </div>
-    </Div>
-  </div>
+    </Div> -->
+  <router-outlet style="float:left"></router-outlet>
 </div>

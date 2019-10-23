@@ -34,8 +34,6 @@ export class BodyComponent implements OnInit {
     setTimeout(() => {
       document.getElementById(this.selected + "id").className =
         "sidebutton sidebuttonclicked";
-      document.getElementById(this.selected + "idicon").className =
-        "fa fa-circle ico";
     }, 1);
     this.reports = this.ReportListService.reports;
   }
@@ -52,15 +50,12 @@ export class BodyComponent implements OnInit {
     for (let category in this.ReportListService.reports) {
       document.getElementById(category.toString() + "id").className =
         "sidebutton";
-      document.getElementById(category.toString() + "idicon").className =
-        "fa fa-circle-thin ico";
     }
     this.selected = name;
 
     //TURN SELECTED ONE ON
     document.getElementById(name + "id").className =
       "sidebutton sidebuttonclicked";
-    document.getElementById(name + "idicon").className = "fa fa-circle ico";
   }
 
   //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT

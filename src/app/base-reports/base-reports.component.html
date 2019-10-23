@@ -1,1 +1,21 @@
-<p>base-reports works!</p>
+<Div class="area">
+  <div class="grid-container">
+    <div
+      *ngFor="
+        let repo of body.reports[body.selected]['reports']
+          | keyvalue: valueOrder
+      "
+    >
+      <div
+        routerLink="../report"
+        class="grid-itemGen"
+        (click)="body.changeReportType(repo.value['id'])"
+        [ngStyle]="body.setIconStyle(repo)"
+      ></div>
+      <div class="labelText">
+        {{ repo.value["name"] }}
+      </div>
+    </div>
+  </div>
+</Div>
+<!-- routerLink="../report" -->

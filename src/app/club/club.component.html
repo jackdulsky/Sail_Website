@@ -1,0 +1,57 @@
+<div class="topBar">
+  <div class="team" (click)="showList = true">
+    <img class="imgLogo tableCenter" [src]="getActiveLogo(teamSelected)" />
+    <div class="teamText">
+      &nbsp;&nbsp;{{ getCityName(teamSelected) }}
+      {{ teamSelected[ClubNickName] }}
+    </div>
+    <div class="tableCenter" style="display: inline; float: right;">
+      <i class="fa fa-angle-down fa-lg"></i>
+    </div>
+  </div>
+  <div class="teamList" *ngIf="showList">
+    <div
+      class="team"
+      style="border-bottom: 1px solid black; margin-right: 0px !important;"
+      (click)="changeTeam(team)"
+      *ngFor="let team of filterService.teams"
+    >
+      <img class="imgLogo tableCenter" [src]="getActiveLogo(team)" />
+      <div class="teamText">
+        &nbsp;&nbsp;{{ getCityName(team) }}
+        {{ team[ClubNickName] }}
+      </div>
+    </div>
+  </div>
+
+  <div class="topLink" routerLink="home">
+    Home
+  </div>
+  <div class="topLink" routerLink="cash">
+    Cash
+  </div>
+  <div class="topLink">
+    Depth
+  </div>
+  <div class="topLink">
+    Reports
+  </div>
+</div>
+
+<router-outlet></router-outlet>
+<!-- <div class="suggestionList" *ngIf="showSuggestions">
+        <div
+          *ngFor="let result of reverse | keyvalue | filter: searchGlobalText"
+          (click)="resultSelected(result)"
+          class="gSearchBlock"
+        >
+          {{ idToString[result.key] }}
+        </div>
+      </div>
+      <div class="team">
+        <img class="imgLogo tableCenter" [src]="getActiveLogo(teamSelected)" />
+        <div class="teamText">
+          &nbsp;&nbsp;{{ teamSelected[ClubCityName] }}
+          {{ teamSelected[ClubNickName] }}
+        </div>
+      </div> -->

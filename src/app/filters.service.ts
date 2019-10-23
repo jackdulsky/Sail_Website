@@ -464,6 +464,10 @@ export class FiltersService {
         this.newWorkingQuery[bin] = {};
         this.newWorkingFID[bin] = "";
       }
+      console.log("PUSHED");
+      console.log(this.newFIDBID);
+      console.log(this.newFIDs);
+      console.log(this.newDBFormat);
     }
 
     //RESET

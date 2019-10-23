@@ -4,7 +4,10 @@ import { BodyComponent } from "./body/body.component";
 import { SettingComponent } from "./setting/setting.component";
 import { FilterBarComponent } from "./filter-bar/filter-bar.component";
 import { ReportComponent } from "./report/report.component";
-import { BottomContainerComponent } from "./bottom-container/bottom-container.component";
+import { BaseReportsComponent } from "./base-reports/base-reports.component";
+import { ClubComponent } from "./club/club.component";
+import { ClubCashComponent } from "./club-cash/club-cash.component";
+import { ClubHomeComponent } from "./club-home/club-home.component";
 const routes: Routes = [
   // {
   //     path: 'home',
@@ -25,7 +28,7 @@ const routes: Routes = [
   // },
   {
     path: "",
-    redirectTo: "/home",
+    redirectTo: "base-reports",
     pathMatch: "full"
   },
   {
@@ -49,9 +52,23 @@ const routes: Routes = [
     component: FilterBarComponent,
     outlet: "filterSection"
   },
+
   {
-    path: "base",
-    component: BottomContainerComponent
+    path: "base-reports",
+    component: BaseReportsComponent
+  },
+  {
+    path: "club",
+    component: ClubComponent,
+    children: [
+      { path: "cash", component: ClubCashComponent },
+      { path: "home", component: ClubHomeComponent },
+      {
+        path: "",
+        redirectTo: "home",
+        pathMatch: "full"
+      }
+    ]
   }
 ];
 

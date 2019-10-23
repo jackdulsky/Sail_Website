@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LeftBarComponent } from './left-bar.component';
+import { ClubCashComponent } from './club-cash.component';
 
-describe('LeftBarComponent', () => {
-  let component: LeftBarComponent;
-  let fixture: ComponentFixture<LeftBarComponent>;
+describe('ClubCashComponent', () => {
+  let component: ClubCashComponent;
+  let fixture: ComponentFixture<ClubCashComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LeftBarComponent ]
+      declarations: [ ClubCashComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LeftBarComponent);
+    fixture = TestBed.createComponent(ClubCashComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

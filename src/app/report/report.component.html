@@ -1,7 +1,9 @@
-<h1>ReportID: {{ this.typeID }}</h1>
+<!-- <div>ReportID: {{ this.typeID }}</div> -->
 <!-- <iframe src="{{ this.sourceURL }}" style="width:100%;height:600px;"> </iframe> -->
-<iframe
-  [src]="displayURL"
-  style="width:100%;height:600px;"
-  crossorigin="anonymous"
-></iframe>
+<div>
+  <iframe
+    [src]="displayURL"
+    style="width:calc(100vw - 209px);height:calc(100vh - 125px);"
+    crossorigin="anonymous"
+  ></iframe>
+</div>

@@ -48,9 +48,10 @@ import { MsAdalAngular6Module } from "microsoft-adal-angular6";
 import { OAuthService, OAuthModule } from "angular-oauth2-oidc";
 import { MatButtonToggleModule } from "@angular/material";
 import { DragToSelectModule } from "ngx-drag-to-select";
-import { BottomContainerComponent } from './bottom-container/bottom-container.component';
-import { LeftBarComponent } from './left-bar/left-bar.component';
-import { BaseReportsComponent } from './base-reports/base-reports.component';
+import { BaseReportsComponent } from "./base-reports/base-reports.component";
+import { ClubComponent } from './club/club.component';
+import { ClubCashComponent } from './club-cash/club-cash.component';
+import { ClubHomeComponent } from './club-home/club-home.component';
 
 @NgModule({
   declarations: [
@@ -68,9 +69,10 @@ import { BaseReportsComponent } from './base-reports/base-reports.component';
     ReportComponent,
     SavedfilterspopComponent,
     NameenterpopComponent,
-    BottomContainerComponent,
-    LeftBarComponent,
-    BaseReportsComponent
+    BaseReportsComponent,
+    ClubComponent,
+    ClubCashComponent,
+    ClubHomeComponent
   ],
   imports: [
     DragToSelectModule.forRoot(),
