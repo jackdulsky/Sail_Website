@@ -332,3 +332,409 @@ export const reports: any = {
     ]
   }
 };
+
+export const lor: any = {
+  0: {
+    order: 0,
+    Label: "General",
+    Location: 0,
+    List: 1
+  },
+  1: {
+    order: 1,
+    Label: "Offense",
+    Location: 0,
+    List: 1
+  },
+  2: {
+    order: 2,
+    Label: "Defense",
+    Location: 0,
+    List: 1
+  },
+  3: {
+    order: 3,
+    Label: "Special Teams",
+    Location: 0,
+    List: 1
+  },
+  4: {
+    order: 3,
+    Label: "Home",
+    Location: 1,
+    List: 1
+  },
+  5: {
+    order: 3,
+    Label: "Cash",
+    Location: 1,
+    List: 0
+  },
+  6: {
+    order: 3,
+    Label: "Depth",
+    Location: 1,
+    List: 0
+  },
+  7: {
+    order: 3,
+    Label: "All Reports",
+    Location: 1,
+    List: 1
+  }
+};
+export const reportsNew: any = {
+  0: {
+    1: {
+      Label: "Quick cuts",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 1
+    },
+    2: {
+      Label: "Run/Pass Report",
+      id: 2,
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 2
+    },
+    3: {
+      Label: "Cutups Generator",
+      id: 3,
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 3
+    },
+    4: {
+      Label: "Player/Position Pivot",
+      id: 4,
+      colorTop: "skyblue",
+      colorBottom: "blue",
+      order: 4
+    },
+    5: {
+      Label: "Grade Distribution",
+      id: 5,
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 5
+    },
+    6: {
+      Label: "Penalty Stats",
+      id: 6,
+      colorTop: "skyblue",
+      colorBottom: "green",
+      order: 6
+    },
+    7: {
+      Label: "Player Report",
+      id: 7,
+      colorTop: "skyblue",
+      colorBottom: "red",
+      order: 7
+    },
+    8: {
+      Label: "Team Report",
+      id: 8,
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 8
+    }
+  },
+  3: {
+    32: {
+      Label: "Special Teams Summary",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 1
+    },
+    33: {
+      Label: "Punt Spray Chart",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 2
+    },
+    34: {
+      Label: "FG/XP Kicking Report",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 3
+    },
+    35: {
+      Label: "Kickoff Spray Chart",
+      colorTop: "skyblue",
+      colorBottom: "blue",
+      order: 4
+    },
+    36: {
+      Label: "Kickoff Report",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 5
+    },
+    37: {
+      Label: "Kickoff and Punt Returns Report",
+      colorTop: "skyblue",
+      colorBottom: "green",
+      order: 6
+    },
+    38: {
+      Label: "Punt Report",
+      colorTop: "skyblue",
+      colorBottom: "red",
+      order: 7
+    },
+    39: {
+      Label: "Phase Snap Report",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 8
+    }
+  },
+  1: {
+    9: {
+      Label: "Offensive Summary",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 1
+    },
+    10: {
+      Label: "Passing Stats",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 2
+    },
+    11: {
+      Label: "Offensive Run Concept",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 3
+    },
+    12: {
+      Label: "Passing Map",
+      colorTop: "skyblue",
+      colorBottom: "blue",
+      order: 4
+    },
+    13: {
+      Label: "QB Throw Accuracy",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 5
+    },
+    14: {
+      Label: "Team Offense Bar Charts",
+      colorTop: "skyblue",
+      colorBottom: "green",
+      order: 6
+    },
+    15: {
+      Label: "Receiving Stats",
+      colorTop: "skyblue",
+      colorBottom: "red",
+      order: 7
+    },
+    16: {
+      Label: "Pass Protection Stats",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 8
+    },
+    17: {
+      Label: "Offense Blocking Matchup Stats",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 9
+    },
+    18: {
+      Label: "Rushing Stats",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 10
+    },
+    19: {
+      Label: "Offense vs Coverage Schemes",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 11
+    },
+    20: {
+      Label: "Team Offense Scatter Plot",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 12
+    }
+  },
+  2: {
+    21: {
+      Label: "Defensive Summary",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 1
+    },
+    22: {
+      Label: "Coverage Stats",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 2
+    },
+    23: {
+      Label: "Team Defense Bar Charts",
+      colorTop: "skyblue",
+      colorBottom: "grey",
+      order: 3
+    },
+    24: {
+      Label: "Defensive Player Stats",
+      colorTop: "skyblue",
+      colorBottom: "blue",
+      order: 4
+    },
+    25: {
+      Label: "Tackling Stats",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 5
+    },
+    26: {
+      Label: "Defense Blocking Matchup Stats",
+      colorTop: "skyblue",
+      colorBottom: "green",
+      order: 6
+    },
+    27: {
+      Label: "Pass Rushing Stats",
+      colorTop: "skyblue",
+      colorBottom: "red",
+      order: 7
+    },
+    28: {
+      Label: "Defense Coverage Schemes",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 8
+    },
+    29: {
+      Label: "Team Defense Scatter Plot",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 9
+    },
+    30: {
+      Label: "Run Defense Stats",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 10
+    },
+    31: {
+      Label: "Defensive Run Concept Frequency",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 11
+    }
+  },
+  4: {
+    40: {
+      Label: "Kickoff Report",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 5
+    },
+    41: {
+      Label: "Kickoff and Punt Returns Report",
+      colorTop: "skyblue",
+      colorBottom: "green",
+      order: 6
+    },
+    42: {
+      Label: "Punt Report",
+      colorTop: "skyblue",
+      colorBottom: "red",
+      order: 7
+    },
+    43: {
+      Label: "Phase Snap Report",
+      colorTop: "skyblue",
+      colorBottom: "black",
+      order: 8
+    }
+  },
+  7: {
+    44: {
+      Label: "Kickoff Report",
+      colorTop: "skyblue",
+      colorBottom: "purple",
+      order: 5
+    },
+    45: {
+      Label: "Kickoff and Punt Returns Report",
+      colorTop: "grey",
+      colorBottom: "green",
+      order: 6
+    },
+    46: {
+      Label: "Punt Report",
+      colorTop: "red",
+      colorBottom: "skyblue",
+      order: 7
+    },
+    47: {
+      Label: "Phase Snap Report",
+      colorTop: "orange",
+      colorBottom: "black",
+      order: 8
+    }
+  }
+};
+export const views: any = {
+  1: "https://sail.raiders.com/view/2634///true/true/true",
+  2: "https://sail.raiders.com/view/2634///true/true/true",
+  3: "https://sail.raiders.com/view/2634///true/true/true",
+  4: "https://sail.raiders.com/view/2634///true/true/true",
+  5: "https://sail.raiders.com/view/2634///true/true/true",
+  6: "https://sail.raiders.com/view/2634///true/true/true",
+  7: "https://sail.raiders.com/view/2634///true/true/true",
+  8: "https://sail.raiders.com/view/2634///true/true/true",
+  9: "https://sail.raiders.com/view/2634///true/true/true",
+  10: "https://sail.raiders.com/view/2634///true/true/true",
+  11: "https://sail.raiders.com/view/2634///true/true/true",
+  12: "https://sail.raiders.com/view/2634///true/true/true",
+  13: "https://sail.raiders.com/view/2634///true/true/true",
+  14: "https://sail.raiders.com/view/2634///true/true/true",
+  15: "https://sail.raiders.com/view/2634///true/true/true",
+  16: "https://sail.raiders.com/view/2634///true/true/true",
+  17: "https://sail.raiders.com/view/2634///true/true/true",
+  18: "https://sail.raiders.com/view/2634///true/true/true",
+  19: "https://sail.raiders.com/view/2634///true/true/true",
+  20: "https://sail.raiders.com/view/2634///true/true/true",
+  21: "https://sail.raiders.com/view/2634///true/true/true",
+  22: "https://sail.raiders.com/view/2634///true/true/true",
+  23: "https://sail.raiders.com/view/2634///true/true/true",
+  24: "https://sail.raiders.com/view/2634///true/true/true",
+  25: "https://sail.raiders.com/view/2634///true/true/true",
+  26: "https://sail.raiders.com/view/2634///true/true/true",
+  27: "https://sail.raiders.com/view/2634///true/true/true",
+  28: "https://sail.raiders.com/view/2634///true/true/true",
+  29: "https://sail.raiders.com/view/2634///true/true/true",
+  30: "https://sail.raiders.com/view/2634///true/true/true",
+  31: "https://sail.raiders.com/view/2634///true/true/true",
+  32: "https://sail.raiders.com/view/2634///true/true/true",
+  33: "https://sail.raiders.com/view/2634///true/true/true",
+  34: "https://sail.raiders.com/view/2634///true/true/true",
+  35: "https://sail.raiders.com/view/2634///true/true/true",
+  36: "https://sail.raiders.com/view/2634///true/true/true",
+  37: "https://sail.raiders.com/view/2634///true/true/true",
+  38: "https://sail.raiders.com/view/2634///true/true/true",
+  39: "https://sail.raiders.com/view/2634///true/true/true",
+  40: "https://sail.raiders.com/view/2634///true/true/true",
+  41: "https://sail.raiders.com/view/2634///true/true/true",
+  42: "https://sail.raiders.com/view/2634///true/true/true",
+  43: "https://sail.raiders.com/view/2634///true/true/true",
+  44: "https://sail.raiders.com/view/2634///true/true/true",
+  45: "https://sail.raiders.com/view/2634///true/true/true",
+  46: "https://sail.raiders.com/view/2634///true/true/true",
+  47: "https://sail.raiders.com/view/2634///true/true/true",
+  48: "https://sail.raiders.com/view/2634///true/true/true",
+  49: "https://sail.raiders.com/view/2634///true/true/true",
+  50: "https://sail.raiders.com/view/2634///true/true/true"
+};

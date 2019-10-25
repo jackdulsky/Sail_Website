@@ -1,9 +1,12 @@
 <div class="topBar">
-  <div class="team" (click)="showList = true">
-    <img class="imgLogo tableCenter" [src]="getActiveLogo(teamSelected)" />
+  <div class="team" (click)="displayTeams(showList)">
+    <img
+      class="imgLogo tableCenter"
+      [src]="getActiveLogo(filterService.teamPortalSelected)"
+    />
     <div class="teamText">
-      &nbsp;&nbsp;{{ getCityName(teamSelected) }}
-      {{ teamSelected[ClubNickName] }}
+      &nbsp;&nbsp;{{ getCityName(filterService.teamPortalSelected) }}
+      {{ filterService.teamPortalSelected[ClubNickName] }}
     </div>
     <div class="tableCenter" style="display: inline; float: right;">
       <i class="fa fa-angle-down fa-lg"></i>
@@ -12,7 +15,8 @@
   <div class="teamList" *ngIf="showList">
     <div
       class="team"
-      style="border-bottom: 1px solid black; margin-right: 0px !important;"
+      style="border-bottom: 1px solid black; margin-right: 0px !important;     display: grid;
+      grid-template-columns: 80px 1fr;"
       (click)="changeTeam(team)"
       *ngFor="let team of filterService.teams"
     >
@@ -23,19 +27,26 @@
       </div>
     </div>
   </div>
-
-  <div class="topLink" routerLink="home">
+  <div
+    class="topLink"
+    *ngFor="let cat of filterService.getReportHeaders(1) | keyvalue: valueOrder"
+    id="{{ cat.key }}clubBarHighlightid"
+    (click)="subRoute(cat.key)"
+  >
+    {{ cat.value.Label }}
+  </div>
+  <!-- <div class="topLink" routerLink="home">
     Home
   </div>
   <div class="topLink" routerLink="cash">
     Cash
   </div>
-  <div class="topLink">
+  <div class="topLink" routerLink="report">
     Depth
   </div>
   <div class="topLink">
-    Reports
-  </div>
+    Club Reports
+  </div> -->
 </div>
 
 <router-outlet></router-outlet>

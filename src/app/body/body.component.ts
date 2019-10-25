@@ -6,7 +6,7 @@ import { SavedfilterspopComponent } from "../savedfilterspop/savedfilterspop.com
 import { MatDialog, MatDialogConfig } from "@angular/material";
 import { PullDataService } from "../pull-data.service";
 import { KeyValue } from "@angular/common";
-
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { style } from "@angular/animations";
 // import { url } from "inspector";
 
@@ -20,42 +20,93 @@ export class BodyComponent implements OnInit {
     public ReportListService: ReportListService,
     public dialog: MatDialog,
     private filterService: FiltersService,
-    public pullData: PullDataService
+    public pullData: PullDataService,
+    public route: ActivatedRoute,
+    public router: Router
   ) {}
   selected: string;
+
+  portalSelected = "";
   location = "XOS Folder";
   reports;
+
   noFolderAlert = false;
   folderSelected = false;
 
   //ON INIT SET THE SELECTED TAB ON THE LEFT TO GENERAL / CHANGE CSS
   ngOnInit() {
-    this.selected = "General";
+    this.filterService.selected = "0";
     setTimeout(() => {
-      document.getElementById(this.selected + "id").className =
-        "sidebutton sidebuttonclicked";
+      if (this.filterService.portalSelected == "") {
+        document.getElementById(
+          this.filterService.selected + "reportHighlightid"
+        ).className = "sidebutton sidebuttonclicked";
+      }
     }, 1);
     this.reports = this.ReportListService.reports;
   }
 
   //THIS UPDATES THE REPORT TYPE TO VIEW FROM CLICK
   changeReportType(newNumb: number) {
-    this.ReportListService.updateReportType(newNumb);
+    var newRoute =
+      this.router.url.split("/base-reports/")[0] + "/report/" + String(newNumb);
+    this.router.navigate([newRoute]);
   }
 
   //CHANGE DISPLAY REPORTS BASED ON CLICKED REPORT
   //ALTER CSS APPROPRIATELY
   toggleContents(name: any) {
     //HAVE ALL TURN OFF
-    for (let category in this.ReportListService.reports) {
-      document.getElementById(category.toString() + "id").className =
-        "sidebutton";
+    for (let category in this.filterService.getReportHeaders(0)) {
+      document.getElementById(
+        category.toString() + "reportHighlightid"
+      ).className = "sidebutton";
     }
-    this.selected = name;
+
+    //Turn off Portals
+    if (this.portalSelected != "") {
+      document.getElementById(
+        this.filterService.portalSelected + "id"
+      ).className = "sidebutton";
+    }
+    document.getElementById("clubid").className = "sidebutton";
+
+    this.filterService.selected = name;
 
     //TURN SELECTED ONE ON
+    document.getElementById(name + "reportHighlightid").className =
+      "sidebutton sidebuttonclicked";
+    if (this.filterService.lor[name]["List"] == 0) {
+      this.router.navigate(["../report/" + String(name)]);
+    } else {
+      this.router.navigate(["../base-reports/" + String(name)]);
+    }
+  }
+
+  //THis function re high lights the previously highlighted report tab
+  reportsRehighlight() {
+    document.getElementById(
+      this.filterService.selected + "reportHighlightid"
+    ).className = "sidebutton sidebuttonclicked";
+    document.getElementById("clubid").className = "sidebutton";
+  }
+
+  //Highlight the portals and unhighlight the reports
+  portalHighlight(name: any) {
+    for (let category in this.filterService.getReportHeaders(0)) {
+      document.getElementById(
+        category.toString() + "reportHighlightid"
+      ).className = "sidebutton";
+    }
     document.getElementById(name + "id").className =
       "sidebutton sidebuttonclicked";
+    this.filterService.portalSelected = name;
+    // [routerLink]="['../club', filterService.teamPortalActiveClubID]"
+    var routeClub = this.filterService.teamPortalActiveClubID;
+    // if (this.filterService.newFIDs)
+    if (!this.router.url.includes("club")) {
+      this.router.navigate(["../club", routeClub]);
+    }
   }
 
   //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT
@@ -124,11 +175,7 @@ export class BodyComponent implements OnInit {
       //     ? "url('https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/OAK_logo.png')"
       //     : "url('https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/NYG_logo.png')",
       "background-image":
-        "linear-gradient(" +
-        repo.value["colorTop"] +
-        "," +
-        repo.value["colorBottom"] +
-        ")"
+        "linear-gradient(" + repo["colorTop"] + "," + repo["colorBottom"] + ")"
     };
     return styles;
   }

@@ -6,19 +6,23 @@
 <div class="overallDiv">
   <div id="reportsSideNav" class="sidenav">
     <div class="group">
-      <div class="category" routerLink="../base-reports">
+      <div
+        class="category"
+        routerLink="../base-reports"
+        (click)="reportsRehighlight()"
+      >
         REPORTS
       </div>
 
       <div
-        routerLink="../base-reports"
-        *ngFor="let cat of ReportListService.reports | keyvalue: valueOrder"
+        *ngFor="
+          let cat of filterService.getReportHeaders(0) | keyvalue: valueOrder
+        "
         class="sidebutton"
-        id="{{ cat.key }}id"
+        id="{{ cat.key }}reportHighlightid"
         (click)="toggleContents(cat.key)"
       >
-        <!-- <i id="{{ cat.key }}idicon" class="fa fa-circle-thin ico"></i> -->
-        {{ cat.key }}
+        {{ cat.value.Label }}
       </div>
     </div>
     <!-- <div class="XOSSection">
@@ -49,7 +53,7 @@
         <div class="category" style="padding-top: 20px;">
           PORTALS
         </div>
-        <div class="sidebutton" routerLink="../club">
+        <div class="sidebutton" id="clubid" (click)="portalHighlight('club')">
           CLUB
         </div>
         <div class="sidebutton">
@@ -65,24 +69,5 @@
     </div>
   </div>
 
-  <!-- <Div class="area">
-      <div class="grid-container">
-        <div
-          *ngFor="
-            let repo of reports[selected]['reports'] | keyvalue: valueOrder
-          "
-        >
-          <div
-            class="grid-itemGen"
-            routerLink="../report"
-            (click)="changeReportType(repo.value['id'])"
-            [ngStyle]="setIconStyle(repo)"
-          ></div>
-          <div class="labelText">
-            {{ repo.value["name"] }}
-          </div>
-        </div>
-      </div>
-    </Div> -->
   <router-outlet style="float:left"></router-outlet>
 </div>

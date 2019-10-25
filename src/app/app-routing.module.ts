@@ -28,7 +28,7 @@ const routes: Routes = [
   // },
   {
     path: "",
-    redirectTo: "base-reports",
+    redirectTo: "base-reports/0",
     pathMatch: "full"
   },
   {
@@ -40,8 +40,9 @@ const routes: Routes = [
     component: SettingComponent
   },
   {
-    path: "report",
-    component: ReportComponent
+    path: "report/:reportid",
+    component: ReportComponent,
+    pathMatch: "full"
   },
   {
     path: "filters",
@@ -54,18 +55,21 @@ const routes: Routes = [
   },
 
   {
-    path: "base-reports",
-    component: BaseReportsComponent
+    path: "base-reports/:base-reportsid",
+    component: BaseReportsComponent,
+    pathMatch: "full"
   },
   {
-    path: "club",
+    path: "club/:clubid",
     component: ClubComponent,
     children: [
       { path: "cash", component: ClubCashComponent },
       { path: "home", component: ClubHomeComponent },
+      { path: "report/:reportid", component: ReportComponent },
+      { path: "base-reports/:base-reportsid", component: BaseReportsComponent },
       {
         path: "",
-        redirectTo: "home",
+        redirectTo: "base-reports/4",
         pathMatch: "full"
       }
     ]

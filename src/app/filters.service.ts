@@ -5,6 +5,10 @@ import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { NonNullAssert, ThrowStmt } from "@angular/compiler";
+import { lor, reportsNew, views } from "./allReports";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { ReplaceSource } from "webpack-sources";
 
 @Injectable({
   providedIn: "root"
@@ -41,12 +45,45 @@ export class FiltersService {
   conferenceSelectedDEF = "AFC";
   conferenceSelections = { "2": "AFC", "400": "AFC" };
   teams;
+  teamsMap;
   playCount = "0";
   playLock;
   filterID: string = null;
   filterName: string = "";
   namePresent: boolean = false;
   modified: boolean = false;
+  teamPortalActiveClubID = "1012";
+  teamPortalSelected = {
+    SailTeamID: "1012",
+    TeamCode: "OAK",
+    Conference: "AFC",
+    Division: "West",
+    ClubCityName: "NFL",
+    ClubNickName: ""
+  };
+  lor = lor;
+  reportsNew = reportsNew;
+  views = views;
+  Label = "Label";
+  selected: string;
+  portalSelected = "";
+  viewingURL;
+
+  //This function returns the list of reports based on the location id
+  getReportHeaders(location: any) {
+    // return _.pickBy(this.lor, function(category) {
+    //   return category["Location"] == location;
+    // });
+
+    return Object.assign(
+      {},
+      ...Object.entries(this.lor)
+        .filter(([k, v]) => v["Location"] == location)
+        .map(([k, v]) => ({ [k]: v }))
+    );
+    // return Object.fromEntries(Object.entries(this.lor).filter(([k,v]) => v["Location"]== location));
+    //return this.lor.filter(x => x.Location == location);
+  }
 
   //RETURN TEAMS INFORMATION (NOT A LIST OF NAMES)
   getTeams() {
@@ -89,10 +126,13 @@ export class FiltersService {
   }
 
   //TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
-  extractID(data, idString: string, insertDict) {
+  extractID(data, idString: string, insertDict, keep: number = 0) {
     for (let b in data) {
       var id = String(data[b][idString]);
-      delete data[b][idString];
+      if (keep == 0) {
+        delete data[b][idString];
+      }
+
       insertDict[id] = data[b];
     }
   }
@@ -203,7 +243,9 @@ export class FiltersService {
       console.log("PULL ORDER MAP", this.pullOrderMap);
     });
     this.pullData.getTeams().subscribe(data => {
-      this.teams = data;
+      this.teams = cloneDeep(data);
+      this.teamsMap = {};
+      this.extractID(data, "SailTeamID", this.teamsMap, 1);
     });
   }
 
@@ -323,15 +365,19 @@ export class FiltersService {
 
   //DELETE A QUERY BASED ON FID
   removeQuery(fid: string) {
-    console.log("REMOVE QUERY1", this.newDBFormat, fid, this.newFIDBID[fid]);
     var oldBID = this.newFIDBID[fid];
     for (let id in this.newFIDs[fid]) {
       this.clearSingleIDWorking(id, this.newFIDBID[fid]);
     }
-    console.log("REMOVE QUERY2", this.newDBFormat, fid, oldBID);
+
     delete this.newDBFormat[oldBID][fid];
+
     delete this.newFIDBID[fid];
     delete this.newFIDs[fid];
+    if (JSON.stringify(this.newDBFormat[oldBID]) == "{}") {
+      delete this.newDBFormat[oldBID];
+    }
+    this.pullData.constructAndSendFilters(this.newDBFormat);
     this.testSendFilters2();
   }
 
@@ -351,6 +397,8 @@ export class FiltersService {
         delete this.newFIDs[this.newWorkingFID[bid]];
         this.newWorkingFID[bid] = "";
       }
+      this.pullData.constructAndSendFilters(this.newDBFormat);
+
       this.testSendFilters2();
     } else {
       this.newWorkingQuery[bid][formKey] = formVals;
@@ -402,12 +450,6 @@ export class FiltersService {
     for (let bin in this.newWorkingQuery) {
       //PUSH EMPTY PERFORM DELETES
       if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
-        console.log(
-          "BINPUSH",
-          bin,
-          this.newWorkingQuery[bin],
-          this.newWorkingFID[bin]
-        );
         if (this.newWorkingFID[bin] != "") {
           delete this.newFIDs[this.newWorkingFID[bin]];
           delete this.newFIDBID[this.newWorkingFID[bin]];
@@ -479,6 +521,12 @@ export class FiltersService {
 
     this.pullData.constructAndSendFilters(this.newDBFormat);
     this.testSendFilters2();
+    if (this.router.url.includes("club")) {
+      var replacing = this.router.url.split("/club/")[1].split("/")[0];
+      var routeClub = this.teamPortalActiveClubID;
+      this.router.navigate([this.router.url.replace(replacing, routeClub)]);
+      this.updateRDURL();
+    }
   }
   //EMPTY THE WORKING QUERY
   clearWorking() {
@@ -503,26 +551,31 @@ export class FiltersService {
     this.newFIDs = {};
     this.newFIDBID = {};
     this.form.reset();
-
-    // this.workingFID = "";
-    // this.workingBin = "0";
-
-    // this.combined = {};
-    // this.workingQuery = {};
+    this.pullData.constructAndSendFilters(this.newDBFormat);
   }
 
   //This function clears a single value from the newWorking query, if a
   //Working FID is set it pushes the updates
   clearSingleValuePop(bin: any, att: any, val: any) {
+    console.log("BEGGINNING");
+    console.log(this.newFIDs);
+    console.log(this.newDBFormat);
+    console.log(this.newFIDBID);
+    console.log(this.newWorkingQuery);
     console.log(
       "CLEAR SINGLE VALUE",
       bin,
       att,
       val,
-      this.newWorkingQuery[bin][att],
-      this.newWorkingQuery[bin][att] == [String(val)]
+      JSON.stringify(this.newWorkingQuery[bin][att]),
+      JSON.stringify([String(val)]),
+      JSON.stringify(this.newWorkingQuery[bin][att]) ==
+        JSON.stringify([String(val)])
     );
-    if (this.newWorkingQuery[bin][att] == [String(val)]) {
+    if (
+      JSON.stringify(this.newWorkingQuery[bin][att]) ==
+      JSON.stringify([String(val)])
+    ) {
       this.clearSingleIDWorking(att, bin);
     } else {
       console.log("BEFORE 1", this.newWorkingQuery[bin][att]);
@@ -548,11 +601,16 @@ export class FiltersService {
         this.pushQueryToActiveFilter(bin, false);
       }
       console.log(
-        "AFTER 2",
+        "AFTER 3",
         this.newWorkingQuery[bin][att],
         this.form.value[att]
       );
     }
+    console.log("END");
+    console.log(this.newFIDs);
+    console.log(this.newDBFormat);
+    console.log(this.newFIDBID);
+    console.log(this.newWorkingQuery);
   }
   //SETTING CSS OF THE LEAGUE ICONS
   setLeagueIconStyle(leagueID: string, id: string) {
@@ -688,6 +746,8 @@ export class FiltersService {
 
   //TOGGLE A TEAMS STATUS IN THE TEAM SELECT GUI
   toggleTeam(teamI: any, attID: string, bin: string) {
+    this.teamPortalActiveClubID = String(teamI["SailTeamID"]);
+    this.teamPortalSelected = teamI;
     var team = document.getElementById("teamGUI" + String(teamI["SailTeamID"]));
     var oldValue = this.form.value[attID];
     if (oldValue == null) {
@@ -712,16 +772,17 @@ export class FiltersService {
   //first color is the outer, and second one is the inside one
   setFilterStyle(BID: string, pos: number) {
     var conversions = {
-      "-1": ["Green", "PaleGreen"],
-      "-2": ["Blue", "lightBlue"],
-      "-3": ["Black", "Grey"],
-      "-8": ["Red", "LightPink"],
-      "-14": ["Purple", "Plum"],
-      "-11": ["Black", "LightGrey"]
+      "-1": ["Green", "white"],
+      "-2": ["Blue", "white"],
+      "-3": ["Black", "white"],
+      "-8": ["Red", "white"],
+      "-14": ["Purple", "white"],
+      "-11": ["Orange", "white"]
     };
     let styles = {
       "background-color": conversions[BID][pos % 2],
-      color: conversions[BID][(pos + 1) % 2]
+      color: conversions[BID][(pos + 1) % 2],
+      border: "1px solid " + conversions[BID][0]
     };
     return styles;
   }
@@ -807,5 +868,26 @@ export class FiltersService {
     }
   }
 
-  constructor(public pullData: PullDataService, public fb: FormBuilder) {}
+  //Thisfunction creates and stores the RD URL
+  createRDURL(id: any) {
+    var newURL = this.views[id];
+    this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(newURL);
+  }
+
+  //THIS FUNCTION UPDATES THE
+  //RD URL ON CLUB CHANGE
+  //#SNEAKY METHOD
+  updateRDURL() {
+    var old = cloneDeep(this.viewingURL);
+    this.viewingURL = "";
+    this.viewingURL = old;
+  }
+
+  constructor(
+    public sanitizer: DomSanitizer,
+    public pullData: PullDataService,
+    public fb: FormBuilder,
+    public route: ActivatedRoute,
+    public router: Router
+  ) {}
 }

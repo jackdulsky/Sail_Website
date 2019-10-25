@@ -2,18 +2,16 @@
   <div class="grid-container">
     <div
       *ngFor="
-        let repo of body.reports[body.selected]['reports']
-          | keyvalue: valueOrder
+        let repo of filterService.reportsNew[reportList] | keyvalue: valueOrder
       "
     >
       <div
-        routerLink="../report"
         class="grid-itemGen"
-        (click)="body.changeReportType(repo.value['id'])"
-        [ngStyle]="body.setIconStyle(repo)"
+        (click)="body.changeReportType(repo.key)"
+        [ngStyle]="body.setIconStyle(repo.value)"
       ></div>
       <div class="labelText">
-        {{ repo.value["name"] }}
+        {{ repo.value.Label }}
       </div>
     </div>
   </div>

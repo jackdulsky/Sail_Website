@@ -17,7 +17,7 @@
 }
 .topLink:hover {
   background-color: #f2f2f2 !important;
-  border-bottom: 4px solid var(--raiders-grey) !important;
+  border-bottom: 4px solid var(--lighter-blue) !important;
   cursor: pointer;
 }
 .topBar {
@@ -36,19 +36,23 @@
 }
 .team:hover {
   cursor: pointer;
+  background-color: rgba(158, 158, 158, 0.568);
 }
 .imgLogo {
-  height: 40px;
+  max-height: 73px;
+  max-width: 50px;
+  margin: auto;
+  background: transparent;
 }
 .tableCenter {
   vertical-align: middle;
 }
 .teamText {
   display: inline-block;
-  background-color: white;
+  /* background-color: white; */
   color: black;
   font-weight: bold;
-  text-align: center;
+  text-align: left;
   font-size: 20px;
   font-family: "DIN";
 }

@@ -54,7 +54,10 @@ export class FilterBarComponent implements OnInit {
       const dialogRef = this.dialog.open(FilterspopComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(result => {
         this.filterOpen = false;
+        this.filterService.pushQueryToActiveFilter("0", false);
       });
+    } else {
+      this.filterService.level1Selected = selected;
     }
   }
 
@@ -65,6 +68,9 @@ export class FilterBarComponent implements OnInit {
   singleOpen(fid: string, query: any) {
     //SET WORKING DICTIONARY, WORKINGBIN, AND WORKINGFID
     var bin = cloneDeep(this.filterService.newFIDBID[fid]);
+    var old = document.getElementById(
+      "tier1Tab" + cloneDeep(this.filterService.level1Selected)
+    );
     this.filterService.level1Selected = bin;
     this.filterService.newWorkingQuery[bin] = cloneDeep(query);
     this.filterService.workingBin = cloneDeep(bin);
@@ -79,13 +85,14 @@ export class FilterBarComponent implements OnInit {
 
     //IF FILTER PAGE IS OPEN ALREADY SWITCH THE DISPLAY
     if (this.filterOpen) {
-      var old = document.getElementById(
-        "tier1Tab" + this.filterService.level1Selected
+      old.setAttribute(
+        "style",
+        "background-color: white;border-bottom: 4px solid white"
       );
-      old.style.backgroundColor = "white";
-      old.style.borderBottom = "4px solid white";
+
       this.filterService.level1Selected = bin;
       var newTab = document.getElementById("tier1Tab" + bin);
+
       newTab.style.backgroundColor = "#f2f2f2";
       newTab.style.borderBottom = "4px solid var(--lighter-blue)";
     }
@@ -184,35 +191,38 @@ export class FilterBarComponent implements OnInit {
     var BID = this.filterService.newFIDBID[fid];
     var dispName = "";
     var tempFilter = { ...value };
+    try {
+      if (value[String(Number(BID) * -1)]) {
+        for (let val in value[String(Number(BID) * -1)]) {
+          dispName +=
+            ", " +
+            this.returnlabel(
+              this.filterService.pullValueMap[String(Number(BID) * -1)][
+                value[String(Number(BID) * -1)][val]
+              ]
+            );
+          if (dispName.length > 100) {
+            break;
+          }
+        }
+      }
+      if (dispName.charAt(0) == ",") {
+        dispName = dispName.substr(1);
+      }
+      delete tempFilter[String(Number(BID) * -1)];
 
-    if (value[String(Number(BID) * -1)]) {
-      for (let val in value[String(Number(BID) * -1)]) {
+      for (let att in tempFilter) {
         dispName +=
-          ", " +
-          this.returnlabel(
-            this.filterService.pullValueMap[String(Number(BID) * -1)][
-              value[String(Number(BID) * -1)][val]
-            ]
-          );
+          ", " + this.returnlabel(this.filterService.pullAttribute[att]);
         if (dispName.length > 100) {
           break;
         }
       }
-    }
-    if (dispName.charAt(0) == ",") {
-      dispName = dispName.substr(1);
-    }
-    delete tempFilter[String(Number(BID) * -1)];
-
-    for (let att in tempFilter) {
-      dispName +=
-        ", " + this.returnlabel(this.filterService.pullAttribute[att]);
-      if (dispName.length > 100) {
-        break;
+      if (dispName.charAt(0) == ",") {
+        dispName = dispName.substr(2);
       }
-    }
-    if (dispName.charAt(0) == ",") {
-      dispName = dispName.substr(2);
+    } catch (e) {
+      null;
     }
     return dispName;
   }
