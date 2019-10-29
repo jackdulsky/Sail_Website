@@ -166,6 +166,19 @@ export class FiltersService {
   }
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
   getBulkImport() {
+    console.log("IMPORT BULK");
+    //http://localhost:4200/loading/1A7C11F8-3CBB-95FE-27F5-5B70834093DB/%5B%5B%22-2%22,%222%22,%5B%221012%22,%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
+    // if (!this.router.url.includes("load")) {
+    //   this.newFIDBID = JSON.parse(localStorage.getItem("newFIDBID"));
+    //   this.newFIDs = JSON.parse(localStorage.getItem("newFIDs"));
+    //   this.newDBFormat = JSON.parse(localStorage.getItem("newDBFormat"));
+    //   this.newWorkingQuery = JSON.parse(
+    //     localStorage.getItem("newWorkingQuery")
+    //   );
+    //   this.newWorkingFID = JSON.parse(localStorage.getItem("newWorkingFID"));
+    //   this.reversePaths = JSON.parse(localStorage.getItem("reversePaths"));
+    // }
+
     this.form = this.fb.group({});
     this.pullData.setGUID();
     this.pullData.pullDataType().subscribe(data => {
@@ -377,8 +390,7 @@ export class FiltersService {
     if (JSON.stringify(this.newDBFormat[oldBID]) == "{}") {
       delete this.newDBFormat[oldBID];
     }
-    this.pullData.constructAndSendFilters(this.newDBFormat);
-    this.testSendFilters2();
+    this.saveAndSend();
   }
 
   //THIS IS THE GENERIC CHANGE FUNCTION
@@ -393,16 +405,16 @@ export class FiltersService {
     if (values != null && values.length == 0) {
       delete this.newWorkingQuery[bid][formKey];
       this.form.controls[formKey].setValue(null);
-      if (Object.keys(this.workingQuery).length == 0) {
+      if (Object.keys(this.newWorkingQuery).length == 0) {
         delete this.newFIDs[this.newWorkingFID[bid]];
         this.newWorkingFID[bid] = "";
       }
-      this.pullData.constructAndSendFilters(this.newDBFormat);
 
-      this.testSendFilters2();
+      this.saveAndSend();
     } else {
       this.newWorkingQuery[bid][formKey] = formVals;
     }
+    // console.log("SHOWING", this.newFIDBID, this.newFIDs, this.newDBFormat);
   }
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
   //REMOVE FROM THE WORKING QUERY AND
@@ -519,15 +531,32 @@ export class FiltersService {
 
     //SEND UP TO THE DB
 
-    this.pullData.constructAndSendFilters(this.newDBFormat);
-    this.testSendFilters2();
+    this.saveAndSend();
     if (this.router.url.includes("club")) {
-      var replacing = this.router.url.split("/club/")[1].split("/")[0];
-      var routeClub = this.teamPortalActiveClubID;
-      this.router.navigate([this.router.url.replace(replacing, routeClub)]);
+      // var replacing = this.router.url.split("/club/")[1].split("/")[0];
+      // var routeClub = this.teamPortalActiveClubID;
+      // this.router.navigate([this.router.url.replace(replacing, routeClub)]);
       this.updateRDURL();
     }
   }
+
+  //SAVE LOCAL STORAGE FOR REFRESH AND THEN SEND THE FILTERS TO THE DB
+  saveAndSend() {
+    // localStorage.setItem("newFIDBID", JSON.stringify(this.newFIDBID));
+    // localStorage.setItem("newFIDs", JSON.stringify(this.newFIDs));
+    // localStorage.setItem("newDBFormat", JSON.stringify(this.newDBFormat));
+    // localStorage.setItem(
+    //   "newWorkingQuery",
+    //   JSON.stringify(this.newWorkingQuery)
+    // );
+    // localStorage.setItem("newWorkingFID", JSON.stringify(this.newWorkingFID));
+    // localStorage.setItem("reversePaths", JSON.stringify(this.reversePaths));
+    // localStorage.setItem("lastUpdateTime", String(Date()));
+    // console.log(String(Date()));
+    this.pullData.constructAndSendFilters(this.newDBFormat);
+    this.testSendFilters2();
+  }
+
   //EMPTY THE WORKING QUERY
   clearWorking() {
     for (let bin in this.newWorkingQuery) {
@@ -551,7 +580,7 @@ export class FiltersService {
     this.newFIDs = {};
     this.newFIDBID = {};
     this.form.reset();
-    this.pullData.constructAndSendFilters(this.newDBFormat);
+    this.saveAndSend();
   }
 
   //This function clears a single value from the newWorking query, if a
@@ -876,11 +905,46 @@ export class FiltersService {
 
   //THIS FUNCTION UPDATES THE
   //RD URL ON CLUB CHANGE
-  //#SNEAKY METHOD
+  //
   updateRDURL() {
     var old = cloneDeep(this.viewingURL);
     this.viewingURL = "";
     this.viewingURL = old;
+  }
+
+  //convert the db format variable to the other ones for display
+  pushDBFormat(DBFormat: any) {
+    this.clearAll();
+    this.newDBFormat = cloneDeep(DBFormat);
+    for (let bin in this.newDBFormat) {
+      for (let fid in this.newDBFormat[bin]) {
+        var currentFid = cloneDeep(this.newDBFormat[bin][fid][1]);
+        this.newFIDBID[fid] = bin;
+        if (this.newDBFormat[bin][fid][0].length > 0) {
+          currentFid[-1 * Number(bin)] = this.newDBFormat[bin][fid][0];
+        }
+        this.newFIDs[fid] = currentFid;
+      }
+    }
+  }
+
+  //THIS FUNCTION WILL TAKE IN A JSON OF:
+  //[BIN, ATT ID, [VALUES]]
+  //removes content of a bin if a filter is being added
+  loadJSON(filters: any) {
+    console.log("LOADING FILTER JSON", filters);
+    for (let add of filters) {
+      //check against current bins
+      for (let active in this.newFIDBID) {
+        if (String(this.newFIDBID[active]) == String(add[0])) {
+          this.removeQuery(active);
+        }
+      }
+      var tempDict = {};
+      tempDict[add[1]] = add[2];
+      this.newWorkingQuery[add[0]] = tempDict;
+    }
+    this.pushQueryToActiveFilter("0");
   }
 
   constructor(

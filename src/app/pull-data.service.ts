@@ -48,6 +48,14 @@ export class PullDataService {
     };
   }
 
+  loadFilterFromGUID(guid: string = this.GUID) {
+    var query =
+      "Select * FROM SaildB.filter.Filter Where FilterGUID = '" + guid + "'";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+
   //GET NEXT LEVEL OF SUBFOLDERS FROM DATABASE
   getSubFolders(name: string) {
     return this.http.get(

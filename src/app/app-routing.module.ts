@@ -8,6 +8,7 @@ import { BaseReportsComponent } from "./base-reports/base-reports.component";
 import { ClubComponent } from "./club/club.component";
 import { ClubCashComponent } from "./club-cash/club-cash.component";
 import { ClubHomeComponent } from "./club-home/club-home.component";
+import { LoadingComponent } from "./loading/loading.component";
 const routes: Routes = [
   // {
   //     path: 'home',
@@ -60,7 +61,8 @@ const routes: Routes = [
     pathMatch: "full"
   },
   {
-    path: "club/:clubid",
+    // path: "club/:clubid",
+    path: "club",
     component: ClubComponent,
     children: [
       { path: "cash", component: ClubCashComponent },
@@ -73,6 +75,10 @@ const routes: Routes = [
         pathMatch: "full"
       }
     ]
+  },
+  {
+    path: "loading/:guid/:filterjson/:destination",
+    component: LoadingComponent
   }
 ];
 

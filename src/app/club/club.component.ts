@@ -52,28 +52,40 @@ export class ClubComponent implements OnInit {
     }, 1);
   }
   ngOnDestroy() {
-    this.sub.unsubscribe();
+    // this.sub.unsubscribe();
   }
   ngAfterViewInit() {
-    this.sub = this.route.params.subscribe(params => {
-      this.filterService.teamPortalActiveClubID = String(params["clubid"]); // (+) converts string 'id' to a number
-      if (this.filterService.teamsMap) {
+    // this.sub = this.route.params.subscribe(params => {
+    //   this.filterService.teamPortalActiveClubID = String(params["clubid"]); // (+) converts string 'id' to a number
+    //   if (this.filterService.teamsMap) {
+    //     this.filterService.teamPortalSelected = this.filterService.teamsMap[
+    //       this.filterService.teamPortalActiveClubID
+    //     ];
+    //     this.initTeam(this.filterService.teamPortalSelected);
+    //   } else {
+    //     setTimeout(() => {
+    //       this.filterService.teamPortalSelected = this.filterService.teamsMap[
+    //         this.filterService.teamPortalActiveClubID
+    //       ];
+    //       this.initTeam(this.filterService.teamPortalSelected);
+    //     }, 800);
+    //   }
+    //   console.log("ID", this.filterService.teamPortalActiveClubID);
+    //   this.cdref.detectChanges();
+    // });
+    if (this.filterService.teamsMap) {
+      this.filterService.teamPortalSelected = this.filterService.teamsMap[
+        this.filterService.teamPortalActiveClubID
+      ];
+      this.initTeam(this.filterService.teamPortalSelected);
+    } else {
+      setTimeout(() => {
         this.filterService.teamPortalSelected = this.filterService.teamsMap[
           this.filterService.teamPortalActiveClubID
         ];
         this.initTeam(this.filterService.teamPortalSelected);
-      } else {
-        setTimeout(() => {
-          this.filterService.teamPortalSelected = this.filterService.teamsMap[
-            this.filterService.teamPortalActiveClubID
-          ];
-          this.initTeam(this.filterService.teamPortalSelected);
-        }, 800);
-      }
-      console.log("ID", this.filterService.teamPortalActiveClubID);
-      this.cdref.detectChanges();
-      // In a real app: dispatch action to load the details here.
-    });
+      }, 800);
+    }
   }
 
   //TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
@@ -118,13 +130,11 @@ export class ClubComponent implements OnInit {
   }
   //Toggle Display of Teams Selection
   displayTeams(onOff: number) {
-    console.log("START CHANGE", this.showList);
     if (!onOff) {
       this.showList = true;
     } else {
       this.showList = false;
     }
-    console.log("AFTER CHANGE", this.showList);
   }
 
   //This function changes the team selected
@@ -139,7 +149,8 @@ export class ClubComponent implements OnInit {
 
     this.filterService.teamPortalActiveClubID = team["SailTeamID"];
     this.filterService.teamPortalSelected = team;
-    this.router.navigate([newRoute]);
+    this.initTeam(this.filterService.teamPortalSelected);
+    // this.router.navigate([newRoute]);
     this.filterService.updateRDURL();
   }
   initTeam(team: any) {
@@ -149,22 +160,16 @@ export class ClubComponent implements OnInit {
 
     //remove other team filters that are applied
     for (let query in this.filterService.newFIDBID) {
-      console.log(
-        "CHECKING",
-        query,
-        this.filterService.newFIDBID[query],
-        Number(this.filterService.newFIDBID[query]) == -2
-      );
-      // if (Number(this.filterService.newFIDBID[query]) == -2) {
+      // if (Number(this.filterService.newFIDBID[query]) != -2) {
       this.filterService.removeQuery(query);
       // }
     }
+
     this.filterService.newFIDBID["-2"] = "-2";
     this.filterService.newFIDs["-2"] = { "2": [String(team["SailTeamID"])] };
     this.filterService.newDBFormat["-2"] = {
       "-2": [[String(team["SailTeamID"])], {}, []]
     };
-    console.log("SENDING ");
     this.pullData.constructAndSendFilters(this.filterService.newDBFormat);
     this.filterService.testSendFilters2();
   }

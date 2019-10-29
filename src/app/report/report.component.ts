@@ -28,12 +28,7 @@ export class ReportComponent implements OnInit {
   viewing;
   test;
 
-  ngOnInit() {
-    this.sub2 = this.route.params.subscribe(params => {
-      this.test = String(params["clubid"]);
-      console.log("clubID", this.test);
-    });
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
     this.sub.unsubscribe();
@@ -48,8 +43,6 @@ export class ReportComponent implements OnInit {
           this.changeReport(this.viewing);
         }, 800);
       }
-
-      console.log("Report ID", this.viewing);
       this.cdref.detectChanges();
       // In a real app: dispatch action to load the details here.
     });
@@ -61,7 +54,6 @@ export class ReportComponent implements OnInit {
 
   //Changes the report based on report ID
   changeReport(input: any) {
-    console.log("changing to ", input);
     this.createRDURL();
   }
 }

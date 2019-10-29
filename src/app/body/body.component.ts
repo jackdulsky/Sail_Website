@@ -101,11 +101,12 @@ export class BodyComponent implements OnInit {
     document.getElementById(name + "id").className =
       "sidebutton sidebuttonclicked";
     this.filterService.portalSelected = name;
-    // [routerLink]="['../club', filterService.teamPortalActiveClubID]"
-    var routeClub = this.filterService.teamPortalActiveClubID;
-    // if (this.filterService.newFIDs)
+    // var routeClub = this.filterService.teamPortalActiveClubID;
+    // if (!this.router.url.includes("club")) {
+    //   this.router.navigate(["../club", routeClub]);
+    // }
     if (!this.router.url.includes("club")) {
-      this.router.navigate(["../club", routeClub]);
+      this.router.navigate(["../club"]);
     }
   }
 

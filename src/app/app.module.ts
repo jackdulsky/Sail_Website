@@ -52,6 +52,7 @@ import { BaseReportsComponent } from "./base-reports/base-reports.component";
 import { ClubComponent } from './club/club.component';
 import { ClubCashComponent } from './club-cash/club-cash.component';
 import { ClubHomeComponent } from './club-home/club-home.component';
+import { LoadingComponent } from './loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { ClubHomeComponent } from './club-home/club-home.component';
     BaseReportsComponent,
     ClubComponent,
     ClubCashComponent,
-    ClubHomeComponent
+    ClubHomeComponent,
+    LoadingComponent
   ],
   imports: [
     DragToSelectModule.forRoot(),
