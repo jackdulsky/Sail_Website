@@ -147,6 +147,7 @@ input {
   float: right;
   border-left: 3px solid lightgray;
   position: relative;
+  padding-bottom: 35px;
 }
 .bottomQueryButtons {
   position: absolute;

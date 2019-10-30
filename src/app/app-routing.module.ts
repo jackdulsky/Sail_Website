@@ -6,8 +6,6 @@ import { FilterBarComponent } from "./filter-bar/filter-bar.component";
 import { ReportComponent } from "./report/report.component";
 import { BaseReportsComponent } from "./base-reports/base-reports.component";
 import { ClubComponent } from "./club/club.component";
-import { ClubCashComponent } from "./club-cash/club-cash.component";
-import { ClubHomeComponent } from "./club-home/club-home.component";
 import { LoadingComponent } from "./loading/loading.component";
 const routes: Routes = [
   // {
@@ -61,12 +59,9 @@ const routes: Routes = [
     pathMatch: "full"
   },
   {
-    // path: "club/:clubid",
     path: "club",
     component: ClubComponent,
     children: [
-      { path: "cash", component: ClubCashComponent },
-      { path: "home", component: ClubHomeComponent },
       { path: "report/:reportid", component: ReportComponent },
       { path: "base-reports/:base-reportsid", component: BaseReportsComponent },
       {

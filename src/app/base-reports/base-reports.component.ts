@@ -37,11 +37,8 @@ export class BaseReportsComponent implements OnInit {
     this.sub = this.route.params.subscribe(params => {
       this.reportList = String(params["base-reportsid"]); // (+) converts string 'id' to a number
       if (this.filterService.reportsNew) {
-        // this.reportList = this.reportList
       } else {
-        setTimeout(() => {
-          // this.changeReport(this.viewing);
-        }, 800);
+        setTimeout(() => {}, 800);
       }
       this.cdref.detectChanges();
       // In a real app: dispatch action to load the details here.

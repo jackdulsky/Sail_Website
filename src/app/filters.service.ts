@@ -166,7 +166,7 @@ export class FiltersService {
   }
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
   getBulkImport() {
-    console.log("IMPORT BULK");
+    //console.log("IMPORT BULK");
     //http://localhost:4200/loading/1A7C11F8-3CBB-95FE-27F5-5B70834093DB/%5B%5B%22-2%22,%222%22,%5B%221012%22,%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
     // if (!this.router.url.includes("load")) {
     //   this.newFIDBID = JSON.parse(localStorage.getItem("newFIDBID"));
@@ -181,6 +181,18 @@ export class FiltersService {
 
     this.form = this.fb.group({});
     this.pullData.setGUID();
+    this.pullData.pullStructure("1").subscribe(data => {
+      var d = JSON.parse(data[0][""]);
+      this.pullStructure = {};
+      for (let b in d) {
+        this.pullStructure = Object.assign(
+          {},
+          this.pullStructure,
+          this.recursiveExtractLevel(d[b], "BinID", 2)
+        );
+      }
+      //console.log("PULLStructure", this.pullStructure);
+    });
     this.pullData.pullDataType().subscribe(data => {
       this.pullDataType = {};
       this.extractID(data, "DataTypeID", this.pullDataType);
@@ -193,45 +205,34 @@ export class FiltersService {
         this.reversePaths[binKey] = {};
         this.newWorkingFID[binKey] = "";
       }
-      console.log("BIN", this.pullBin);
+      //console.log("BIN", this.pullBin);
     });
     this.pullData.pullNavigation().subscribe(data => {
       this.pullNavigation = {};
       this.extractID(data, "ItemID", this.pullNavigation);
-      console.log("NAV", this.pullNavigation);
+      //console.log("NAV", this.pullNavigation);
     });
     this.pullData.pullNavigationElement().subscribe(data => {
       this.pullNavigationElement = {};
       this.extractID(data, "ItemID", this.pullNavigationElement);
-      console.log("NAVELEM", this.pullNavigationElement);
+      //console.log("NAVELEM", this.pullNavigationElement);
     });
     this.pullData.pullAttributeType().subscribe(data => {
       this.pullAttributeType = {};
       this.extractID(data, "AttributeTypeID", this.pullAttributeType);
-      console.log("ATT TYPE", this.pullAttributeType);
+      //console.log("ATT TYPE", this.pullAttributeType);
     });
     this.pullData.pullAttribute().subscribe(data => {
       this.pullAttribute = {};
       this.extractID(data, "AttributeID", this.pullAttribute);
-      console.log("PULLATTRIBUTE", this.pullAttribute);
+      //console.log("PULLATTRIBUTE", this.pullAttribute);
     });
     this.pullData.pullUIType().subscribe(data => {
       this.pullUIType = {};
       this.extractID(data, "UITypeID", this.pullUIType);
-      console.log("PULL UI TYPE", this.pullUIType);
+      //console.log("PULL UI TYPE", this.pullUIType);
     });
-    this.pullData.pullStructure("1").subscribe(data => {
-      var d = JSON.parse(data[0][""]);
-      this.pullStructure = {};
-      for (let b in d) {
-        this.pullStructure = Object.assign(
-          {},
-          this.pullStructure,
-          this.recursiveExtractLevel(d[b], "BinID", 2)
-        );
-      }
-      console.log("PULLStructure", this.pullStructure);
-    });
+
     this.pullData.pullValue().subscribe(data => {
       this.pullOrderMap = {};
       this.extractID(cloneDeep(data), "OrderID", this.pullOrderMap);
@@ -252,8 +253,8 @@ export class FiltersService {
         this.pullValue[valID] = data[b];
       }
 
-      console.log("PULLValueMap", this.pullValueMap);
-      console.log("PULL ORDER MAP", this.pullOrderMap);
+      //console.log("PULLValueMap", this.pullValueMap);
+      //console.log("PULL ORDER MAP", this.pullOrderMap);
     });
     this.pullData.getTeams().subscribe(data => {
       this.teams = cloneDeep(data);
@@ -426,6 +427,7 @@ export class FiltersService {
     if (this.form.value[id + "search"] != null) {
       this.form.controls[String(id) + "search"].setValue(null);
     }
+    console.log("CLEARING ", id, BID, this.form.value);
     this.form.controls[id].setValue(null);
   }
 
@@ -459,6 +461,13 @@ export class FiltersService {
 
   //PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
   pushQueryToActiveFilter(BID: string, clearWorking: boolean = true) {
+    if (this.router.url.includes("club/")) {
+      console.log(
+        "CLUB PAGE AND GETTING SINGLE CLUB",
+        this.teamPortalActiveClubID
+      );
+      this.reduceFiltersSingleClub();
+    }
     for (let bin in this.newWorkingQuery) {
       //PUSH EMPTY PERFORM DELETES
       if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
@@ -518,10 +527,11 @@ export class FiltersService {
         this.newWorkingQuery[bin] = {};
         this.newWorkingFID[bin] = "";
       }
-      console.log("PUSHED");
-      console.log(this.newFIDBID);
-      console.log(this.newFIDs);
-      console.log(this.newDBFormat);
+
+      // console.log("PUSHED");
+      // console.log(this.newFIDBID);
+      // console.log(this.newFIDs);
+      // console.log(this.newDBFormat);
     }
 
     //RESET
@@ -533,9 +543,6 @@ export class FiltersService {
 
     this.saveAndSend();
     if (this.router.url.includes("club")) {
-      // var replacing = this.router.url.split("/club/")[1].split("/")[0];
-      // var routeClub = this.teamPortalActiveClubID;
-      // this.router.navigate([this.router.url.replace(replacing, routeClub)]);
       this.updateRDURL();
     }
   }
@@ -775,18 +782,33 @@ export class FiltersService {
 
   //TOGGLE A TEAMS STATUS IN THE TEAM SELECT GUI
   toggleTeam(teamI: any, attID: string, bin: string) {
-    this.teamPortalActiveClubID = String(teamI["SailTeamID"]);
-    this.teamPortalSelected = teamI;
     var team = document.getElementById("teamGUI" + String(teamI["SailTeamID"]));
     var oldValue = this.form.value[attID];
     if (oldValue == null) {
       oldValue = [];
     }
+    if (this.router.url.includes("club")) {
+      for (let club of oldValue) {
+        if (String(club) != String(teamI["SailTeamID"])) {
+          try {
+            var oldClub = document.getElementById("teamGUI" + String(club));
+            oldClub.className = "singleTeamGUI ng-star-inserted";
+          } catch (e) {}
+          oldValue = oldValue.filter(x => x != club);
+          this.form.controls[attID].setValue(oldValue);
+        }
+      }
+    }
+
     if (team.className == "singleTeamGUI ng-star-inserted") {
       team.className = "singleTeamGUISelected ng-star-inserted";
       this.form.controls[attID].setValue(
         oldValue.concat([String(teamI["SailTeamID"])])
       );
+      console.log("SETTING TEAMID 2");
+
+      this.teamPortalActiveClubID = String(teamI["SailTeamID"]);
+      this.teamPortalSelected = teamI;
     } else {
       team.className = "singleTeamGUI ng-star-inserted";
       this.form.controls[attID].setValue(
@@ -808,11 +830,14 @@ export class FiltersService {
       "-14": ["Purple", "white"],
       "-11": ["Orange", "white"]
     };
-    let styles = {
-      "background-color": conversions[BID][pos % 2],
-      color: conversions[BID][(pos + 1) % 2],
-      border: "1px solid " + conversions[BID][0]
-    };
+    var styles = {};
+    try {
+      styles = {
+        "background-color": conversions[BID][pos % 2],
+        color: conversions[BID][(pos + 1) % 2],
+        border: "1px solid " + conversions[BID][0]
+      };
+    } catch (e) {}
     return styles;
   }
 
@@ -921,8 +946,18 @@ export class FiltersService {
         var currentFid = cloneDeep(this.newDBFormat[bin][fid][1]);
         this.newFIDBID[fid] = bin;
         if (this.newDBFormat[bin][fid][0].length > 0) {
-          currentFid[-1 * Number(bin)] = this.newDBFormat[bin][fid][0];
+          currentFid[String(-1 * Number(bin))] = this.newDBFormat[bin][fid][0];
+          if (String(bin) == "-2") {
+            this.teamPortalActiveClubID = cloneDeep(
+              this.newDBFormat[bin][fid][0][0]
+            );
+
+            this.teamPortalSelected = this.teamsMap[
+              this.teamPortalActiveClubID
+            ];
+          }
         }
+
         this.newFIDs[fid] = currentFid;
       }
     }
@@ -932,7 +967,7 @@ export class FiltersService {
   //[BIN, ATT ID, [VALUES]]
   //removes content of a bin if a filter is being added
   loadJSON(filters: any) {
-    console.log("LOADING FILTER JSON", filters);
+    //[["-2","2",["1024","1026"]],["-11","10092",["10000001"]]]
     for (let add of filters) {
       //check against current bins
       for (let active in this.newFIDBID) {
@@ -945,6 +980,28 @@ export class FiltersService {
       this.newWorkingQuery[add[0]] = tempDict;
     }
     this.pushQueryToActiveFilter("0");
+    return true;
+  }
+
+  //CLEAN Up filters for single club
+  //go through active filters and delete if in club bin and replace with last selected club
+  reduceFiltersSingleClub() {
+    this.removeAllTeamFilters();
+    var tempDict = {};
+    tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
+    this.newWorkingQuery["-2"] = tempDict;
+  }
+
+  //remove all team filter querys
+  removeAllTeamFilters() {
+    for (let active in this.newFIDBID) {
+      if (
+        String(this.newFIDBID[active]) == "-2" &&
+        this.newWorkingFID["-2"] != active
+      ) {
+        this.removeQuery(active);
+      }
+    }
   }
 
   constructor(

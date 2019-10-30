@@ -31,11 +31,6 @@ export class ClubComponent implements OnInit {
   private sub: any;
 
   ngOnInit() {
-    // this.filterService.teamsMap.subscribe(teamsMap => {
-    //   this.teamSelected = teamsMap[this.id];
-    //   console.log(this.teamSelected);
-    //   console.log("teamsMAp", this.filterService.teamsMap);
-    // });
     this.body.portalHighlight("club");
     this.clubTabSelected = Object.keys(
       this.filterService.getReportHeaders(1)
@@ -46,33 +41,14 @@ export class ClubComponent implements OnInit {
     if (this.router.url.includes("/base-reports")) {
       this.clubTabSelected = this.router.url.split("/base-reports/")[1];
     }
+    console.log("CLUB INIT 0", this.filterService.teamPortalActiveClubID);
 
     setTimeout(() => {
       this.subRoute(this.clubTabSelected);
     }, 1);
   }
-  ngOnDestroy() {
-    // this.sub.unsubscribe();
-  }
+  ngOnDestroy() {}
   ngAfterViewInit() {
-    // this.sub = this.route.params.subscribe(params => {
-    //   this.filterService.teamPortalActiveClubID = String(params["clubid"]); // (+) converts string 'id' to a number
-    //   if (this.filterService.teamsMap) {
-    //     this.filterService.teamPortalSelected = this.filterService.teamsMap[
-    //       this.filterService.teamPortalActiveClubID
-    //     ];
-    //     this.initTeam(this.filterService.teamPortalSelected);
-    //   } else {
-    //     setTimeout(() => {
-    //       this.filterService.teamPortalSelected = this.filterService.teamsMap[
-    //         this.filterService.teamPortalActiveClubID
-    //       ];
-    //       this.initTeam(this.filterService.teamPortalSelected);
-    //     }, 800);
-    //   }
-    //   console.log("ID", this.filterService.teamPortalActiveClubID);
-    //   this.cdref.detectChanges();
-    // });
     if (this.filterService.teamsMap) {
       this.filterService.teamPortalSelected = this.filterService.teamsMap[
         this.filterService.teamPortalActiveClubID
@@ -142,15 +118,10 @@ export class ClubComponent implements OnInit {
     this.displayTeams(1);
 
     this.teamSelected = team;
-    var newRoute = this.router.url.replace(
-      String(this.filterService.teamPortalActiveClubID),
-      String(team["SailTeamID"])
-    );
-
     this.filterService.teamPortalActiveClubID = team["SailTeamID"];
+    console.log("SETTING TEAMID 1");
     this.filterService.teamPortalSelected = team;
     this.initTeam(this.filterService.teamPortalSelected);
-    // this.router.navigate([newRoute]);
     this.filterService.updateRDURL();
   }
   initTeam(team: any) {
@@ -159,47 +130,65 @@ export class ClubComponent implements OnInit {
     //ATT is 2
 
     //remove other team filters that are applied
-    for (let query in this.filterService.newFIDBID) {
-      // if (Number(this.filterService.newFIDBID[query]) != -2) {
-      this.filterService.removeQuery(query);
-      // }
-    }
+    // for (let query in this.filterService.newFIDBID) {
+    //   if (Number(this.filterService.newFIDBID[query]) == -2) {
+    //     console.log(this.filterService.newFIDs[
+    //       query
+    //     ])
+    //     this.filterService.teamPortalActiveClubID = this.filterService.newFIDs[
+    //       query
+    //     ][0];
+    //     this.filterService.teamPortalSelected = this.filterService.teamsMap[
+    //       this.filterService.teamPortalActiveClubID
+    //     ];
+    //     teamInit = false;
+    //   }
+    // }
+    console.log("PUSHING");
 
-    this.filterService.newFIDBID["-2"] = "-2";
-    this.filterService.newFIDs["-2"] = { "2": [String(team["SailTeamID"])] };
-    this.filterService.newDBFormat["-2"] = {
-      "-2": [[String(team["SailTeamID"])], {}, []]
-    };
-    this.pullData.constructAndSendFilters(this.filterService.newDBFormat);
-    this.filterService.testSendFilters2();
+    this.filterService.pushQueryToActiveFilter("0");
+    // if (teamInit) {
+    //   this.filterService.newFIDBID["-2"] = "-2";
+    //   this.filterService.newFIDs["-2"] = { "2": [String(team["SailTeamID"])] };
+    //   this.filterService.newDBFormat["-2"] = {
+    //     "-2": [[String(team["SailTeamID"])], {}, []]
+    //   };
+    // }
+    // this.pullData.constructAndSendFilters(this.filterService.newDBFormat);
+    // this.filterService.testSendFilters2();
   }
 
-  //This function will route to reprots page or display the report
+  //This function will route to reports page or display the report
   subRoute(name: any) {
     //Get rid of old
-    var old = document.getElementById(
-      String(this.clubTabSelected) + "clubBarHighlightid"
-    );
-    old.style.backgroundColor = "white";
-    old.style.borderBottom = "4px solid white";
+    try {
+      var old = document.getElementById(
+        String(this.clubTabSelected) + "clubBarHighlightid"
+      );
+      old.style.backgroundColor = "white";
+      old.style.borderBottom = "4px solid white";
+    } catch (e) {}
 
     this.clubTabSelected = name;
-
     //color new
-    var newTab = document.getElementById(name + "clubBarHighlightid");
-    newTab.style.backgroundColor = "#f2f2f2";
-    newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+    try {
+      var newTab = document.getElementById(name + "clubBarHighlightid");
+      newTab.style.backgroundColor = "#f2f2f2";
+      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+    } catch (e) {}
 
     //Route Appropriately
-    if (this.filterService.lor[name]["List"] == 0) {
-      var newRoute = this.router.url.split("/base-report")[0];
-      newRoute = newRoute.split("/report")[0];
-      this.router.navigate([newRoute + "/report/" + String(name)]);
-    } else {
-      this.filterService.selected = name;
-      var newRoute = this.router.url.split("/report")[0];
-      newRoute = newRoute.split("/base-report")[0];
-      this.router.navigate([newRoute + "/base-reports/" + String(name)]);
-    }
+    try {
+      if (this.filterService.lor[name]["List"] == 0) {
+        var newRoute = this.router.url.split("/base-report")[0];
+        newRoute = newRoute.split("/report")[0];
+        this.router.navigate([newRoute + "/report/" + String(name)]);
+      } else {
+        this.filterService.selected = name;
+        var newRoute = this.router.url.split("/report")[0];
+        newRoute = newRoute.split("/base-report")[0];
+        this.router.navigate([newRoute + "/base-reports/" + String(name)]);
+      }
+    } catch (e) {}
   }
 }

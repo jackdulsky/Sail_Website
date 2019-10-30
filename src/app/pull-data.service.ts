@@ -48,6 +48,8 @@ export class PullDataService {
     };
   }
 
+  //Return the filter DB format from the database from the guid passed in
+  //DEFAULT GUID IS WINDOW GUID
   loadFilterFromGUID(guid: string = this.GUID) {
     var query =
       "Select * FROM SaildB.filter.Filter Where FilterGUID = '" + guid + "'";
@@ -166,7 +168,7 @@ export class PullDataService {
   //SEND THE DATA BACK UP TO THE DB
   // INSERT THE GUI AND FILTERS SELECTED
   constructAndSendFilters(filter) {
-    console.log(JSON.stringify(filter));
+    console.log("PULL DATA CONSTRUCT AND SEND", JSON.stringify(filter));
 
     var query =
       "exec SailDB.filter.spSAIL_StoreUpdateFilter N'" +

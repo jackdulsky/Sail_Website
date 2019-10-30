@@ -78,6 +78,7 @@ export class FilterspopComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({});
     this.formG = this.fb.group({});
+    this.filterService.conferenceSelections["2"] = "AFC";
     setTimeout(() => {
       this.filterService.changelevel2(this.filterService.level1Selected);
     }, 1);

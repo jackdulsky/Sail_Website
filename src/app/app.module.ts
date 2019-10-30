@@ -49,10 +49,8 @@ import { OAuthService, OAuthModule } from "angular-oauth2-oidc";
 import { MatButtonToggleModule } from "@angular/material";
 import { DragToSelectModule } from "ngx-drag-to-select";
 import { BaseReportsComponent } from "./base-reports/base-reports.component";
-import { ClubComponent } from './club/club.component';
-import { ClubCashComponent } from './club-cash/club-cash.component';
-import { ClubHomeComponent } from './club-home/club-home.component';
-import { LoadingComponent } from './loading/loading.component';
+import { ClubComponent } from "./club/club.component";
+import { LoadingComponent } from "./loading/loading.component";
 
 @NgModule({
   declarations: [
@@ -72,8 +70,6 @@ import { LoadingComponent } from './loading/loading.component';
     NameenterpopComponent,
     BaseReportsComponent,
     ClubComponent,
-    ClubCashComponent,
-    ClubHomeComponent,
     LoadingComponent
   ],
   imports: [
