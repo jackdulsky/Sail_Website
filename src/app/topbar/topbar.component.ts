@@ -6,6 +6,7 @@ import { UserService } from "../user.service";
 import { User } from "../user";
 import { USERS } from "../mock-users";
 import { FiltersService } from "../filters.service";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 
 @Component({
   selector: "app-topbar",
@@ -19,7 +20,9 @@ export class TopbarComponent implements OnInit {
     public filterService: FiltersService,
     private userService: UserService,
     private modalService: NgbModal,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public route: ActivatedRoute,
+    public router: Router
   ) {}
 
   ngOnInit() {
@@ -29,11 +32,14 @@ export class TopbarComponent implements OnInit {
   getAllUsers(): void {
     this.userService.getUsers().subscribe(USERS => (this.allUsers = USERS));
   }
-  onCreate() {
+  openFolderSelect() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "60%";
     dialogConfig.autoFocus = true;
     // dialogConfig.position ={'top': '0', 'left':'0'};
     const dialogRef = this.dialog.open(FolderselectpopComponent, dialogConfig);
+  }
+  openReportUpload() {
+    this.router.navigate(["../../report-upload"]);
   }
 }

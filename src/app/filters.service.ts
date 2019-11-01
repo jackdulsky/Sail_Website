@@ -9,6 +9,7 @@ import { lor, reportsNew, views } from "./allReports";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { ReplaceSource } from "webpack-sources";
+import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 
 @Injectable({
   providedIn: "root"
@@ -40,6 +41,7 @@ export class FiltersService {
   pullValueMap;
   pullStructure;
   pullOrderMap;
+  pullPlayers;
   OrderID = "OrderID";
   conferenceSelected = "AFC";
   conferenceSelectedDEF = "AFC";
@@ -61,6 +63,11 @@ export class FiltersService {
     ClubCityName: "NFL",
     ClubNickName: ""
   };
+  playerPortalSelected = {
+    Label: "Player Select"
+  };
+  playerPortalActivePlayerID = "";
+  playerPortalActivePlayerIDOLD = "";
   lor = lor;
   reportsNew = reportsNew;
   views = views;
@@ -68,21 +75,25 @@ export class FiltersService {
   selected: string;
   portalSelected = "";
   viewingURL;
-
+  reportTabs;
   //This function returns the list of reports based on the location id
   getReportHeaders(location: any) {
-    // return _.pickBy(this.lor, function(category) {
-    //   return category["Location"] == location;
-    // });
-
+    var tabs;
+    try {
+      tabs = Object.assign(
+        {},
+        ...Object.entries(this.reportTabs)
+          .filter(([k, v]) => v["LocationID"] == location)
+          .map(([k, v]) => ({ [k]: v }))
+      );
+    } catch (e) {}
+    return tabs;
     return Object.assign(
       {},
       ...Object.entries(this.lor)
         .filter(([k, v]) => v["Location"] == location)
         .map(([k, v]) => ({ [k]: v }))
     );
-    // return Object.fromEntries(Object.entries(this.lor).filter(([k,v]) => v["Location"]== location));
-    //return this.lor.filter(x => x.Location == location);
   }
 
   //RETURN TEAMS INFORMATION (NOT A LIST OF NAMES)
@@ -191,11 +202,16 @@ export class FiltersService {
           this.recursiveExtractLevel(d[b], "BinID", 2)
         );
       }
-      //console.log("PULLStructure", this.pullStructure);
+      console.log("PULLStructure", this.pullStructure);
     });
     this.pullData.pullDataType().subscribe(data => {
       this.pullDataType = {};
       this.extractID(data, "DataTypeID", this.pullDataType);
+    });
+    this.pullData.pullPlayers().subscribe(data => {
+      this.pullPlayers = {};
+      this.extractID(data, "SailID", this.pullPlayers);
+      console.log("PLAYERS", this.pullPlayers);
     });
     this.pullData.pullBin().subscribe(data => {
       this.pullBin = {};
@@ -205,32 +221,32 @@ export class FiltersService {
         this.reversePaths[binKey] = {};
         this.newWorkingFID[binKey] = "";
       }
-      //console.log("BIN", this.pullBin);
+      console.log("BIN", this.pullBin);
     });
     this.pullData.pullNavigation().subscribe(data => {
       this.pullNavigation = {};
       this.extractID(data, "ItemID", this.pullNavigation);
-      //console.log("NAV", this.pullNavigation);
+      console.log("NAV", this.pullNavigation);
     });
     this.pullData.pullNavigationElement().subscribe(data => {
       this.pullNavigationElement = {};
       this.extractID(data, "ItemID", this.pullNavigationElement);
-      //console.log("NAVELEM", this.pullNavigationElement);
+      console.log("NAVELEM", this.pullNavigationElement);
     });
     this.pullData.pullAttributeType().subscribe(data => {
       this.pullAttributeType = {};
       this.extractID(data, "AttributeTypeID", this.pullAttributeType);
-      //console.log("ATT TYPE", this.pullAttributeType);
+      console.log("ATT TYPE", this.pullAttributeType);
     });
     this.pullData.pullAttribute().subscribe(data => {
       this.pullAttribute = {};
       this.extractID(data, "AttributeID", this.pullAttribute);
-      //console.log("PULLATTRIBUTE", this.pullAttribute);
+      console.log("PULLATTRIBUTE", this.pullAttribute);
     });
     this.pullData.pullUIType().subscribe(data => {
       this.pullUIType = {};
       this.extractID(data, "UITypeID", this.pullUIType);
-      //console.log("PULL UI TYPE", this.pullUIType);
+      console.log("PULL UI TYPE", this.pullUIType);
     });
 
     this.pullData.pullValue().subscribe(data => {
@@ -253,13 +269,18 @@ export class FiltersService {
         this.pullValue[valID] = data[b];
       }
 
-      //console.log("PULLValueMap", this.pullValueMap);
-      //console.log("PULL ORDER MAP", this.pullOrderMap);
+      console.log("PULLValueMap", this.pullValueMap);
+      console.log("PULL ORDER MAP", this.pullOrderMap);
     });
     this.pullData.getTeams().subscribe(data => {
       this.teams = cloneDeep(data);
       this.teamsMap = {};
       this.extractID(data, "SailTeamID", this.teamsMap, 1);
+    });
+    this.pullData.pullReportTabs().subscribe(data => {
+      this.reportTabs = {};
+      this.extractID(data, "TabID", this.reportTabs);
+      console.log("Pull Tabs", this.reportTabs);
     });
   }
 
@@ -380,6 +401,7 @@ export class FiltersService {
   //DELETE A QUERY BASED ON FID
   removeQuery(fid: string) {
     var oldBID = this.newFIDBID[fid];
+
     for (let id in this.newFIDs[fid]) {
       this.clearSingleIDWorking(id, this.newFIDBID[fid]);
     }
@@ -413,6 +435,15 @@ export class FiltersService {
 
       this.saveAndSend();
     } else {
+      if (String(formKey) == "3" && String(bid) == "-3") {
+        this.playerPortalActivePlayerIDOLD = this.playerPortalActivePlayerID;
+        this.playerPortalActivePlayerID = formVals[0];
+        console.log("CHANGING PLAYER ACTIVE", this.playerPortalActivePlayerID);
+        this.playerPortalSelected = this.pullValueMap["3"][
+          this.playerPortalActivePlayerID
+        ];
+        console.log(this.playerPortalSelected, this.playerPortalActivePlayerID);
+      }
       this.newWorkingQuery[bid][formKey] = formVals;
     }
     // console.log("SHOWING", this.newFIDBID, this.newFIDs, this.newDBFormat);
@@ -427,7 +458,6 @@ export class FiltersService {
     if (this.form.value[id + "search"] != null) {
       this.form.controls[String(id) + "search"].setValue(null);
     }
-    console.log("CLEARING ", id, BID, this.form.value);
     this.form.controls[id].setValue(null);
   }
 
@@ -462,11 +492,13 @@ export class FiltersService {
   //PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
   pushQueryToActiveFilter(BID: string, clearWorking: boolean = true) {
     if (this.router.url.includes("club/")) {
-      console.log(
-        "CLUB PAGE AND GETTING SINGLE CLUB",
-        this.teamPortalActiveClubID
-      );
       this.reduceFiltersSingleClub();
+    }
+    if (
+      this.router.url.includes("player/") &&
+      this.playerPortalActivePlayerID != ""
+    ) {
+      this.reduceFiltersSinglePlayer();
     }
     for (let bin in this.newWorkingQuery) {
       //PUSH EMPTY PERFORM DELETES
@@ -528,10 +560,11 @@ export class FiltersService {
         this.newWorkingFID[bin] = "";
       }
 
-      // console.log("PUSHED");
-      // console.log(this.newFIDBID);
-      // console.log(this.newFIDs);
-      // console.log(this.newDBFormat);
+      console.log("PUSHED");
+      console.log(this.newFIDBID);
+      console.log(this.newFIDs);
+      console.log(this.newDBFormat);
+      // console.log(this.newBIDFIDS)
     }
 
     //RESET
@@ -562,6 +595,8 @@ export class FiltersService {
     // console.log(String(Date()));
     this.pullData.constructAndSendFilters(this.newDBFormat);
     this.testSendFilters2();
+    this.setActiveClub();
+    this.setActivePlayer();
   }
 
   //EMPTY THE WORKING QUERY
@@ -593,60 +628,44 @@ export class FiltersService {
   //This function clears a single value from the newWorking query, if a
   //Working FID is set it pushes the updates
   clearSingleValuePop(bin: any, att: any, val: any) {
-    console.log("BEGGINNING");
-    console.log(this.newFIDs);
-    console.log(this.newDBFormat);
-    console.log(this.newFIDBID);
-    console.log(this.newWorkingQuery);
-    console.log(
-      "CLEAR SINGLE VALUE",
-      bin,
-      att,
-      val,
-      JSON.stringify(this.newWorkingQuery[bin][att]),
-      JSON.stringify([String(val)]),
-      JSON.stringify(this.newWorkingQuery[bin][att]) ==
-        JSON.stringify([String(val)])
-    );
+    // console.log("BEGGINNING");
+    // console.log(this.newFIDs);
+    // console.log(this.newDBFormat);
+    // console.log(this.newFIDBID);
+    // console.log(this.newWorkingQuery);
+    // console.log(
+    //   "CLEAR SINGLE VALUE",
+    //   bin,
+    //   att,
+    //   val,
+    //   JSON.stringify(this.newWorkingQuery[bin][att]),
+    //   JSON.stringify([String(val)]),
+    //   JSON.stringify(this.newWorkingQuery[bin][att]) ==
+    //     JSON.stringify([String(val)])
+    // );
     if (
       JSON.stringify(this.newWorkingQuery[bin][att]) ==
       JSON.stringify([String(val)])
     ) {
       this.clearSingleIDWorking(att, bin);
     } else {
-      console.log("BEFORE 1", this.newWorkingQuery[bin][att]);
       this.newWorkingQuery[bin][att] = this.newWorkingQuery[bin][att].filter(
         x => x != String(val)
       );
-      console.log("AFTER 1", this.newWorkingQuery[bin][att]);
 
       var oldValue = this.form.value[att];
-      console.log(
-        "BEFORE 2",
-        this.newWorkingQuery[bin][att],
-        this.form.value[att]
-      );
+
       this.form.controls[att].setValue(oldValue.filter(x => x != String(val)));
-      console.log(
-        "AFTER 2",
-        this.newWorkingQuery[bin][att],
-        this.form.value[att]
-      );
 
       if (this.newWorkingFID[bin] != "") {
         this.pushQueryToActiveFilter(bin, false);
       }
-      console.log(
-        "AFTER 3",
-        this.newWorkingQuery[bin][att],
-        this.form.value[att]
-      );
     }
-    console.log("END");
-    console.log(this.newFIDs);
-    console.log(this.newDBFormat);
-    console.log(this.newFIDBID);
-    console.log(this.newWorkingQuery);
+    // console.log("END");
+    // console.log(this.newFIDs);
+    // console.log(this.newDBFormat);
+    // console.log(this.newFIDBID);
+    // console.log(this.newWorkingQuery);
   }
   //SETTING CSS OF THE LEAGUE ICONS
   setLeagueIconStyle(leagueID: string, id: string) {
@@ -805,7 +824,6 @@ export class FiltersService {
       this.form.controls[attID].setValue(
         oldValue.concat([String(teamI["SailTeamID"])])
       );
-      console.log("SETTING TEAMID 2");
 
       this.teamPortalActiveClubID = String(teamI["SailTeamID"]);
       this.teamPortalSelected = teamI;
@@ -1002,6 +1020,83 @@ export class FiltersService {
         this.removeQuery(active);
       }
     }
+  }
+
+  reduceFiltersSinglePlayer() {
+    this.removeAllPlayerFilters();
+    var tempDict = {};
+    tempDict["3"] = [cloneDeep(this.playerPortalActivePlayerID)];
+    this.newWorkingQuery["-3"] = tempDict;
+  }
+
+  //remove all team filter querys
+  removeAllPlayerFilters() {
+    for (let active in this.newFIDBID) {
+      if (
+        String(this.newFIDBID[active]) == "-3" &&
+        this.newWorkingFID["-3"] != active
+      ) {
+        this.removeQuery(active);
+      }
+    }
+  }
+
+  setActiveClub() {
+    var notFound = true;
+
+    for (let activeFID in this.newFIDBID) {
+      if (String(this.newFIDBID[activeFID]) == "-2") {
+        if ("2" in this.newFIDs[activeFID] || 2 in this.newFIDs[activeFID]) {
+          try {
+            this.teamPortalActiveClubID = this.newFIDs[activeFID]["2"][0];
+          } catch (e) {
+            this.teamPortalActiveClubID = this.newFIDs[activeFID][2][0];
+          }
+          this.teamPortalSelected = this.teamsMap[this.teamPortalActiveClubID];
+          notFound = false;
+        }
+      }
+    }
+    if (notFound) {
+      this.teamPortalActiveClubID = "1012";
+      this.teamPortalSelected = {
+        SailTeamID: "1012",
+        TeamCode: "OAK",
+        Conference: "AFC",
+        Division: "West",
+        ClubCityName: "NFL",
+        ClubNickName: ""
+      };
+    }
+  }
+  setActivePlayer() {
+    console.log("NEWWW ", this.newFIDs);
+    var notFound = true;
+    for (let activeFID in this.newFIDBID) {
+      if (String(this.newFIDBID[activeFID]) == "-3") {
+        if ("3" in this.newFIDs[activeFID] || 3 in this.newFIDs[activeFID]) {
+          try {
+            this.playerPortalActivePlayerID = this.newFIDs[activeFID]["3"][0];
+          } catch (e) {
+            this.playerPortalActivePlayerID = this.newFIDs[activeFID][3][0];
+          }
+          this.playerPortalSelected = this.pullValueMap["3"][
+            this.playerPortalActivePlayerID
+          ];
+        }
+        console.log("TURNING FOUND OFF");
+        notFound = false;
+      }
+    }
+    console.log("NEWWW 2", this.newFIDs, notFound);
+
+    // if (notFound) {
+    //   console.log("NOT FOUND");
+    //   this.playerPortalActivePlayerID = "";
+    //   this.playerPortalSelected = {
+    //     Label: "Player Select"
+    //   };
+    // } else{}
   }
 
   constructor(

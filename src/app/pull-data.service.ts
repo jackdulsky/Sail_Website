@@ -194,4 +194,29 @@ export class PullDataService {
   setGUID() {
     this.GUID = UUID.UUID();
   }
+
+  //PULL THE REPORT TABS TABLE
+  pullReportTabs() {
+    var query = "SELECT *  FROM [SaildB].[Reports].[Tabs]";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+
+  //PULL THE REPORT URL
+  pullReportURLs() {
+    var query = "";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+
+  //GET ALL THE PLAYERS FOR THE URL COMPOSITION
+  pullPlayers() {
+    var query =
+      " SELECT r.GSISPlayerID,r.SailID,v.StatValue,GSISID FROM saildb.stat.PlayerStats s LEFT JOIN saildb.org.Player r ON s.SailID = r.SailID LEFT JOIN saildb.stat.PlayerStatType t ON s.PlayerStatID = t.PlayerStatID LEFT JOIN saildb.import.ValueLookup v ON v.ValueID = s.PlayerStatValue WHERE t.PlayerStatType = 'PlayerName'";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
 }

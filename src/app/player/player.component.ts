@@ -7,11 +7,11 @@ import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
 
 @Component({
-  selector: "app-club",
-  templateUrl: "./club.component.html",
-  styleUrls: ["./club.component.css"]
+  selector: "app-player",
+  templateUrl: "./player.component.html",
+  styleUrls: ["./player.component.css"]
 })
-export class ClubComponent implements OnInit {
+export class PlayerComponent implements OnInit {
   constructor(
     public ReportListService: ReportListService,
     public filterService: FiltersService,
@@ -21,54 +21,62 @@ export class ClubComponent implements OnInit {
     public body: BodyComponent,
     public cdref: ChangeDetectorRef
   ) {}
-  teamSelected;
+
+  playerSelected;
   ClubCityName = "ClubCityName";
   showList = false;
   id;
   teamsDict = {};
-  clubTabSelected;
-  private sub: any;
-
+  playerTabSelected;
+  //baseURL ="https://nfl-fisa-assets.s3.amazonaws.com/images/headshots/REPLACEME_headshot.jpg";
+  baseURL =
+    "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
   ngOnInit() {
-    this.body.portalHighlight("club");
+    this.body.portalHighlight("player");
+
     if (this.filterService.reportTabs) {
-      this.clubTabSelected = Object.keys(
-        this.filterService.getReportHeaders(2)
+      this.playerTabSelected = Object.keys(
+        this.filterService.getReportHeaders(3)
       )[0];
       if (this.router.url.includes("/report")) {
-        this.clubTabSelected = this.router.url.split("/report/")[1];
+        this.playerTabSelected = this.router.url.split("/report/")[1];
       }
       if (this.router.url.includes("/base-reports")) {
-        this.clubTabSelected = this.router.url.split("/base-reports/")[1];
+        this.playerTabSelected = this.router.url.split("/base-reports/")[1];
       }
-      this.subRoute(this.clubTabSelected);
+      this.subRoute(this.playerTabSelected);
     } else {
+      console.log("WAITING TO LOAD");
+
       setTimeout(() => {
-        this.clubTabSelected = Object.keys(
-          this.filterService.getReportHeaders(2)
+        this.playerTabSelected = Object.keys(
+          this.filterService.getReportHeaders(3)
         )[0];
         if (this.router.url.includes("/report")) {
-          this.clubTabSelected = this.router.url.split("/report/")[1];
+          this.playerTabSelected = this.router.url.split("/report/")[1];
         }
         if (this.router.url.includes("/base-reports")) {
-          this.clubTabSelected = this.router.url.split("/base-reports/")[1];
+          this.playerTabSelected = this.router.url.split("/base-reports/")[1];
         }
-        this.subRoute(this.clubTabSelected);
+        console.log("WAITING TO LOAD", this.playerTabSelected);
+
+        this.subRoute(this.playerTabSelected);
       }, 800);
     }
 
     setTimeout(() => {
-      this.subRoute(this.clubTabSelected);
+      this.subRoute(this.playerTabSelected);
     }, 1);
   }
-  ngOnDestroy() {}
+
   ngAfterViewInit() {
     setTimeout(() => {
-      this.filterService.teamPortalSelected = this.filterService.teamsMap[
-        this.filterService.teamPortalActiveClubID
-      ];
-
-      this.initTeam(this.filterService.teamPortalSelected);
+      if (this.filterService.playerPortalActivePlayerID != "") {
+        this.filterService.playerPortalSelected = this.filterService.pullValueMap[
+          "3"
+        ][this.filterService.playerPortalActivePlayerID];
+        this.initPlayer();
+      }
     }, 800);
   }
 
@@ -84,7 +92,6 @@ export class ClubComponent implements OnInit {
     }
   }
 
-  //Returns the logo src url to the club selection display
   getActiveLogo(team: any) {
     var citySplit = team["ClubCityName"].split(" ");
     var city;
@@ -103,17 +110,42 @@ export class ClubComponent implements OnInit {
     );
   }
 
-  //Retuns proper city name
-  getCityName(team: any) {
-    var citySplit = team["ClubCityName"].split(" ");
-    if (citySplit.length > 1) {
-      return citySplit[0] + " " + citySplit[1];
+  //RETURN THE PLAYER IMAGES
+  getActivePlayerImage(playerID: any) {
+    if (playerID == "") {
+      return "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/NFL_.png";
     } else {
-      return citySplit[0];
+      var gsisID = this.filterService.pullPlayers[playerID]["GSISPlayerID"];
+      var url = this.baseURL.replace("REPLACEME", gsisID);
+      // this.urlExists(url, function(err, exists) {
+      //   if (!exists) {
+      //     url =
+      //       "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg";
+      //   }
+      // });
+
+      return url;
     }
+    var gsis = this.filterService.pullPlayers[playerID]["GSISID"];
+    return this.baseURL.replace("REPLACEME", gsis);
   }
+
+  //RETURN LIST OF PLAYERS
+  getPlayers(players: any) {
+    var returnPlayers = {};
+    var i = 0;
+    for (let player in players) {
+      if (i == 15) {
+        break;
+      }
+      returnPlayers[player] = players[player];
+      i += 1;
+    }
+    return returnPlayers;
+  }
+
   //Toggle Display of Teams Selection
-  displayTeams(onOff: number) {
+  displayPlayers(onOff: number) {
     if (!onOff) {
       this.showList = true;
     } else {
@@ -122,16 +154,19 @@ export class ClubComponent implements OnInit {
   }
 
   //This function changes the team selected
-  changeTeam(team: any) {
-    this.displayTeams(1);
+  changePlayer(playerID: any, player: any) {
+    this.displayPlayers(1);
 
-    this.teamSelected = team;
-    this.filterService.teamPortalActiveClubID = team["SailTeamID"];
-    this.filterService.teamPortalSelected = team;
-    this.initTeam(this.filterService.teamPortalSelected);
+    this.playerSelected = player;
+    this.filterService.playerPortalActivePlayerIDOLD = this.filterService.playerPortalActivePlayerID;
+    this.filterService.playerPortalActivePlayerID = playerID;
+    this.filterService.playerPortalSelected = player;
+
+    this.initPlayer();
     this.filterService.updateRDURL();
   }
-  initTeam(team: any) {
+
+  initPlayer() {
     //FID is -2
     //ATT is 2
     this.filterService.pushQueryToActiveFilter("0");
@@ -142,16 +177,16 @@ export class ClubComponent implements OnInit {
     //Get rid of old
     try {
       var old = document.getElementById(
-        String(this.clubTabSelected) + "clubBarHighlightid"
+        String(this.playerTabSelected) + "playerBarHighlightid"
       );
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
     } catch (e) {}
 
-    this.clubTabSelected = name;
+    this.playerTabSelected = name;
     //color new
     try {
-      var newTab = document.getElementById(name + "clubBarHighlightid");
+      var newTab = document.getElementById(name + "playerBarHighlightid");
       newTab.style.backgroundColor = "#f2f2f2";
       newTab.style.borderBottom = "4px solid var(--lighter-blue)";
     } catch (e) {}

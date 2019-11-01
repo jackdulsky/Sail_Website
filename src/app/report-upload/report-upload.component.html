@@ -1,0 +1,139 @@
+<div></div>
+<div [hidden]="submitted">
+  <h1 style="margin-top:0px;">REPORT UPLOAD FORM</h1>
+  <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+    <div class="form-group">
+      <label for="label">Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="label"
+        required
+        [(ngModel)]="report.label"
+        name="label"
+        #label="ngModel"
+      />
+      <div [hidden]="label.valid || label.pristine" class="alert alert-danger">
+        Name is required
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="alterEgo">RD URL</label>
+      <input
+        type="text"
+        class="form-control"
+        id="alterEgo"
+        [(ngModel)]="report.url"
+        name="alterEgo"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="tab">Is Tab?</label>
+      <select
+        class="form-control"
+        id="tab"
+        required
+        [(ngModel)]="report.isTab"
+        name="tab"
+        #tab="ngModel"
+      >
+        <option *ngFor="let option of yesno" [value]="option">{{
+          option
+        }}</option>
+      </select>
+      <div [hidden]="tab.valid || tab.pristine" class="alert alert-danger">
+        Tab Selection is required
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="list">Is A List?</label>
+      <select
+        class="form-control"
+        id="list"
+        required
+        [(ngModel)]="report.isTab"
+        name="list"
+        #list="ngModel"
+      >
+        <option *ngFor="let option of yesno" [value]="option">{{
+          option
+        }}</option>
+      </select>
+      <div [hidden]="list.valid || list.pristine" class="alert alert-danger">
+        Tab Selection is required
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-success"
+      [disabled]="!heroForm.form.valid"
+    >
+      Submit
+    </button>
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="newHero(); heroForm.reset()"
+    >
+      Reset
+    </button>
+  </form>
+</div>
+
+<!-- <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+  <div style="margin-top:10px;">
+    <label>
+      Label:
+      <input type="text" formControlName="firstName" />
+    </label>
+  </div>
+  <div style="margin-top:10px;">
+    <label>
+      Rock Daisy URL:
+      <input type="text" formControlName="lastName" />
+    </label>
+  </div>
+  <div style="margin-top:10px;">
+    <label>
+      Is it a Tab?
+    </label>
+    <mat-slide-toggle
+      class="example-margin"
+      [color]="color"
+      [checked]="checked"
+    >
+    </mat-slide-toggle>
+  </div>
+  <div style="margin-top:10px;">
+    <label>
+      Is it a List?
+    </label>
+    <mat-slide-toggle
+      class="example-margin"
+      [color]="color"
+      [checked]="checked"
+    >
+    </mat-slide-toggle>
+  </div>
+  <div style="margin-top:10px;">
+    <mat-form-field>
+      <mat-label>Favorite food</mat-label>
+      <mat-select>
+        <mat-option
+          *ngFor="let food of ['blafs', 'sdfdf', 'sdfsad']"
+          [value]="food"
+        >
+          {{ food }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div style="margin-top:10px;">
+    <button type="submit" [disabled]="!profileForm.valid">Submit</button>
+  </div>
+</form> -->

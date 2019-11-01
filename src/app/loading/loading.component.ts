@@ -21,16 +21,30 @@ export class LoadingComponent implements OnInit {
 
   private sub2: any;
   loadGUID;
+  guidExists = true;
   doneloading = 0;
   doneChecking = true;
   loadJSON;
+  jsonExists = true;
   redirectDestination;
+  reroutExists = true;
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       this.loadGUID = String(params["guid"]);
+      if (String(this.loadGUID) == "undefined") {
+        this.guidExists = false;
+      }
       this.loadJSON = String(params["filterjson"]);
+
+      if (String(this.loadJSON) == "undefined") {
+        this.jsonExists = false;
+      }
+
       this.redirectDestination = String(params["destination"]);
+      if (String(this.redirectDestination) == "undefined") {
+        this.reroutExists = false;
+      }
 
       this.injectGUID(this.loadGUID, this.loadJSON);
     });
@@ -44,70 +58,63 @@ export class LoadingComponent implements OnInit {
   //CALL INSERTING JSON AFTER
   injectGUID(guid: string, filtersAdded: any) {
     var insertFilter;
-    var loop = true;
-    try {
-    } catch (e) {
-      console.log("INVALID GUID");
-    }
     this.sub2 = this.pullData.loadFilterFromGUID(guid).subscribe(filter => {
       setTimeout(() => {
         try {
           insertFilter = JSON.parse(filter[0]["JSON"]);
-          console.log("PRE JSON 0", this.filterService.teamPortalActiveClubID);
 
           this.filterService.pushDBFormat(insertFilter);
         } catch (e) {
           console.log("INVALID GUID");
         }
-        console.log("PRE JSON", this.filterService.teamPortalActiveClubID);
 
         this.injectFilters();
       }, 1000);
     });
-
-    // while (loop) {
-    //   if (doneloading) {
-    //     this.injectFilters(filtersAdded);
-    //     loop = false;
-    //   }
-    // }
   }
 
   //UPLOAD JSON TO FILTER STRUCUTRE
   //CALL ROUTE AFTER
   injectFilters() {
-    this.router.url;
-    var filters = this.loadJSON;
+    if (this.jsonExists) {
+      var filters = this.loadJSON;
+      this.filterService.loadJSON(JSON.parse(filters));
+      for (let query in this.filterService.newFIDBID) {
+        if (Number(this.filterService.newFIDBID[query]) == -2) {
+          this.filterService.teamPortalActiveClubID = cloneDeep(
+            this.filterService.newFIDs[query]["2"][0]
+          );
 
-    this.filterService.loadJSON(JSON.parse(filters));
-    for (let query in this.filterService.newFIDBID) {
-      if (Number(this.filterService.newFIDBID[query]) == -2) {
-        this.filterService.teamPortalActiveClubID = cloneDeep(
-          this.filterService.newFIDs[query]["2"][0]
-        );
-
-        this.filterService.teamPortalSelected = this.filterService.teamsMap[
-          this.filterService.teamPortalActiveClubID
-        ];
+          this.filterService.teamPortalSelected = this.filterService.teamsMap[
+            this.filterService.teamPortalActiveClubID
+          ];
+        }
+        this.doneloading += 1;
+        this.doneChecking = false;
       }
-      this.doneloading += 1;
-      this.doneChecking = false;
     }
-    var id = cloneDeep(this.filterService.teamPortalActiveClubID);
     this.rerouteAfterUpload();
   }
 
   //ROUTE TO APPROPRIATE PLACE
   rerouteAfterUpload() {
-    if (
-      this.doneChecking ||
-      this.doneloading != Object.keys(this.filterService.newFIDBID).length
-    ) {
-      setInterval(this.rerouteAfterUpload, 100);
+    if (this.reroutExists) {
+      if (
+        this.doneChecking ||
+        this.doneloading != Object.keys(this.filterService.newFIDBID).length
+      ) {
+        setInterval(this.rerouteAfterUpload, 100);
+      } else {
+        try {
+          this.router.navigate([
+            "/" + this.redirectDestination.split(",").join("/")
+          ]);
+        } catch (e) {
+          this.router.navigate([""]);
+        }
+      }
     } else {
-      this.router.navigate([
-        "/" + this.redirectDestination.split(",").join("/")
-      ]);
+      this.router.navigate(["/base-report"]);
     }
   }
 }

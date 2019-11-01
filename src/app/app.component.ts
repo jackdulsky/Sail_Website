@@ -33,6 +33,5 @@ export class AppComponent implements OnInit {
     // if (!this.oauthService.getAccessToken()) {
     //   await this.oauthService.initImplicitFlow();
     // }
-    // console.log(this.oauthService.getAccessToken());
   }
 }

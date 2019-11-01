@@ -7,6 +7,8 @@ import { ReportComponent } from "./report/report.component";
 import { BaseReportsComponent } from "./base-reports/base-reports.component";
 import { ClubComponent } from "./club/club.component";
 import { LoadingComponent } from "./loading/loading.component";
+import { ReportUploadComponent } from "./report-upload/report-upload.component";
+import { PlayerComponent } from "./player/player.component";
 const routes: Routes = [
   // {
   //     path: 'home',
@@ -44,6 +46,10 @@ const routes: Routes = [
     pathMatch: "full"
   },
   {
+    path: "report",
+    redirectTo: "base-reports/0"
+  },
+  {
     path: "filters",
     component: FilterBarComponent
   },
@@ -56,6 +62,11 @@ const routes: Routes = [
   {
     path: "base-reports/:base-reportsid",
     component: BaseReportsComponent,
+    pathMatch: "full"
+  },
+  {
+    path: "base-reports",
+    redirectTo: "base-reports/0",
     pathMatch: "full"
   },
   {
@@ -72,8 +83,37 @@ const routes: Routes = [
     ]
   },
   {
+    path: "player",
+    component: PlayerComponent,
+    children: [
+      { path: "report/:reportid", component: ReportComponent },
+      { path: "base-reports/:base-reportsid", component: BaseReportsComponent },
+      {
+        path: "",
+        redirectTo: "base-reports/7",
+        pathMatch: "full"
+      }
+    ]
+  },
+  {
     path: "loading/:guid/:filterjson/:destination",
     component: LoadingComponent
+  },
+  {
+    path: "loading/:guid/:filterjson",
+    component: LoadingComponent
+  },
+  {
+    path: "loading/:guid",
+    component: LoadingComponent
+  },
+  {
+    path: "report-upload",
+    component: ReportUploadComponent
+  },
+  {
+    path: "**",
+    redirectTo: "base-reports/0"
   }
 ];
 

@@ -29,7 +29,7 @@
   </div>
   <div
     class="topLink"
-    *ngFor="let cat of filterService.getReportHeaders(1) | keyvalue: valueOrder"
+    *ngFor="let cat of filterService.getReportHeaders(2) | keyvalue: valueOrder"
     id="{{ cat.key }}clubBarHighlightid"
     (click)="subRoute(cat.key)"
   >

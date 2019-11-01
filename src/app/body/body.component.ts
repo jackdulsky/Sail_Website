@@ -29,6 +29,7 @@ export class BodyComponent implements OnInit {
   portalSelected = "";
   location = "XOS Folder";
   reports;
+  portals = ["club", "player", "cash"];
 
   noFolderAlert = false;
   folderSelected = false;
@@ -57,7 +58,7 @@ export class BodyComponent implements OnInit {
   //ALTER CSS APPROPRIATELY
   toggleContents(name: any) {
     //HAVE ALL TURN OFF
-    for (let category in this.filterService.getReportHeaders(0)) {
+    for (let category in this.filterService.getReportHeaders(1)) {
       document.getElementById(
         category.toString() + "reportHighlightid"
       ).className = "sidebutton";
@@ -69,14 +70,18 @@ export class BodyComponent implements OnInit {
         this.filterService.portalSelected + "id"
       ).className = "sidebutton";
     }
-    document.getElementById("clubid").className = "sidebutton";
+
+    for (let port in this.portals) {
+      document.getElementById(this.portals[port] + "id").className =
+        "sidebutton";
+    }
 
     this.filterService.selected = name;
 
     //TURN SELECTED ONE ON
     document.getElementById(name + "reportHighlightid").className =
       "sidebutton sidebuttonclicked";
-    if (this.filterService.lor[name]["List"] == 0) {
+    if (this.filterService.reportTabs[name]["IsList"] == 0) {
       this.router.navigate(["../report/" + String(name)]);
     } else {
       this.router.navigate(["../base-reports/" + String(name)]);
@@ -85,25 +90,35 @@ export class BodyComponent implements OnInit {
 
   //THis function re high lights the previously highlighted report tab
   reportsRehighlight() {
+    if (
+      String(this.filterService.reportTabs[this.filterService.selected]) != "0"
+    ) {
+      this.filterService.selected = "0";
+    }
     document.getElementById(
       this.filterService.selected + "reportHighlightid"
     ).className = "sidebutton sidebuttonclicked";
-    document.getElementById("clubid").className = "sidebutton";
+    for (let port in this.portals) {
+      document.getElementById(this.portals[port] + "id").className =
+        "sidebutton";
+    }
   }
 
   //Highlight the portals and unhighlight the reports
   portalHighlight(name: any) {
-    for (let category in this.filterService.getReportHeaders(0)) {
+    for (let category in this.filterService.getReportHeaders(1)) {
       document.getElementById(
         category.toString() + "reportHighlightid"
       ).className = "sidebutton";
     }
+    for (let port in this.portals) {
+      document.getElementById(this.portals[port] + "id").className =
+        "sidebutton";
+    }
     document.getElementById(name + "id").className =
       "sidebutton sidebuttonclicked";
     this.filterService.portalSelected = name;
-    if (!this.router.url.includes("club")) {
-      this.router.navigate(["../club"]);
-    }
+    this.router.navigate(["../" + name]);
   }
 
   //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT

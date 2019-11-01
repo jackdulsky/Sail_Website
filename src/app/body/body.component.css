@@ -124,6 +124,7 @@
   border-bottom: 2px solid rgb(13, 13, 13);
   /* background-color: #ebeced; */
   background-color: RGB(38, 38, 38);
+  text-transform: uppercase;
 }
 .sidebutton:hover {
   cursor: pointer;

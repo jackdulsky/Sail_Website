@@ -135,10 +135,6 @@ export class FilterspopComponent implements OnInit {
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
   ): number => {
-    console.log(
-      this.filterService.pullValueMap[a.key]["OrderID"],
-      this.filterService.pullValueMap[b.key]["OrderID"]
-    );
     return this.filterService.pullValueMap[a.key]["OrderID"] <
       this.filterService.pullValueMap[b.key]["OrderID"]
       ? -1
@@ -153,10 +149,6 @@ export class FilterspopComponent implements OnInit {
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
   ): number => {
-    console.log(
-      this.filterService.pullAttribute[a.key]["OrderID"],
-      this.filterService.pullAttribute[b.key]["OrderID"]
-    );
     return this.filterService.pullAttribute[a.key]["OrderID"] <
       this.filterService.pullAttribute[b.key]["OrderID"]
       ? -1
@@ -188,7 +180,7 @@ export class FilterspopComponent implements OnInit {
   }
   //TOGGLE ALL FILTER SELECTIONS THEN CALL TYPE0CHANGE ON THE FORM VALUES
   toggleAllSelections(id: string, tf: boolean, bin: string) {
-    if (tf) {
+    if (tf && String(id) != "3") {
       this.filterService.form.controls[id].setValue(
         Object.keys(this.filterService.pullValueMap[id])
       );

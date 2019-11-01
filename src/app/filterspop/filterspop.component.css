@@ -55,6 +55,7 @@ input {
   padding-top: 3px;
   float: right;
   width: 41%;
+  min-width: 75px;
   margin-left: 6%;
   border: none;
   border-radius: 5px;

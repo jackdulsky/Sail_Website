@@ -1,0 +1,44 @@
+<div class="topBar">
+  <div class="player" (click)="displayPlayers(showList)">
+    <img
+      class="imgLogo tableCenter"
+      [src]="getActivePlayerImage(filterService.playerPortalActivePlayerID)"
+      onError="this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
+    />
+    <div class="playerText">
+      &nbsp;&nbsp;{{ filterService.playerPortalSelected.Label }}
+    </div>
+    <div class="tableCenter" style="display: inline; float: right;">
+      <i class="fa fa-angle-down fa-lg"></i>
+    </div>
+  </div>
+  <div class="playerList" *ngIf="showList">
+    <div
+      class="player"
+      style="border-bottom: 1px solid black; margin-right: 0px !important;     display: grid;
+        grid-template-columns: 80px 1fr;"
+      (click)="changePlayer(player.key, player.value)"
+      *ngFor="
+        let player of getPlayers(filterService.pullValueMap['3']) | keyvalue
+      "
+    >
+      <img
+        class="imgLogo tableCenter"
+        src="{{ getActivePlayerImage(player.key) }}"
+        onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
+        alt=""
+      />
+      <div class="playerText">&nbsp;&nbsp;{{ player.value.Label }}</div>
+    </div>
+  </div>
+  <div
+    class="topLink"
+    *ngFor="let cat of filterService.getReportHeaders(3) | keyvalue: valueOrder"
+    id="{{ cat.key }}playerBarHighlightid"
+    (click)="subRoute(cat.key)"
+  >
+    {{ cat.value.Label }}
+  </div>
+</div>
+
+<router-outlet></router-outlet>

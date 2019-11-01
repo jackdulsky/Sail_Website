@@ -1,4 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy
+} from "@angular/core";
 import { MatDialog, MatDialogConfig } from "@angular/material";
 import { FilterspopComponent } from "../filterspop/filterspop.component";
 import { FiltersService } from "../filters.service";
@@ -17,7 +22,8 @@ export class FilterBarComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     public filterService: FiltersService,
-    public pullData: PullDataService
+    public pullData: PullDataService,
+    public cdref: ChangeDetectorRef
   ) {}
 
   //VARIABLES
@@ -28,10 +34,11 @@ export class FilterBarComponent implements OnInit {
   filterOpen = false;
 
   ngOnInit() {}
-
+  ngAfterInit() {
+    this.cdref.detectChanges;
+  }
   //OPENS ENTIRE FILTER PAGE CLEAN
   openFilterPage(selected: string) {
-    console.log("TRING TO OPEN FILTERS", selected, this.filterOpen);
     if (!this.filterOpen) {
       //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
       const dialogConfig = new MatDialogConfig();
@@ -191,6 +198,10 @@ export class FilterBarComponent implements OnInit {
     var BID = this.filterService.newFIDBID[fid];
     var dispName = "";
     var tempFilter = { ...value };
+    console.log("VALUE", tempFilter);
+    console.log("BID", BID);
+    console.log("REVERSE", this.filterService.reversePaths);
+    console.log("FID", fid);
     try {
       if (value[String(Number(BID) * -1)]) {
         for (let val in value[String(Number(BID) * -1)]) {

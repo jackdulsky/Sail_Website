@@ -17,6 +17,7 @@
         <button
           mat-icon-button
           [matMenuTriggerFor]="menu"
+          disableRipple="True"
           aria-label=" menu"
           style="width:auto"
           class="navheight"
@@ -27,10 +28,15 @@
           <i class="fa fa-bars fa-lg " style="margin-right: 10px;"></i>
         </button>
         <mat-menu #menu="matMenu" xPosition="before">
-          <button mat-menu-item (click)="onCreate()">
+          <button
+            mat-menu-item
+            (click)="openFolderSelect()"
+            disableRipple="True"
+          >
             <i class="fa fa-gears fa-sm mright"></i>
             <span>User Setting</span>
           </button>
+          <!-- 
           <button mat-menu-item (click)="onCreate()">
             <i class="fa fa-youtube-play fa-sm mright"></i>
             <span>Video Settings</span>
@@ -38,6 +44,10 @@
           <button mat-menu-item (click)="onCreate()">
             <i class="fa fa-question-circle fa-sm mright"></i>
             <span>FAQ</span>
+          </button> -->
+          <button mat-menu-item (click)="openReportUpload()">
+            <i class="fa fa-upload fa-sm mright"></i>
+            <span>Report Upload</span>
           </button>
         </mat-menu>
       </div>

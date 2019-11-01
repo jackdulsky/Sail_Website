@@ -633,7 +633,7 @@ export const reportsNew: any = {
       order: 11
     }
   },
-  4: {
+  6: {
     40: {
       Label: "Kickoff Report",
       colorTop: "skyblue",
@@ -659,7 +659,7 @@ export const reportsNew: any = {
       order: 8
     }
   },
-  7: {
+  9: {
     44: {
       Label: "Kickoff Report",
       colorTop: "skyblue",

@@ -16,7 +16,7 @@
 
       <div
         *ngFor="
-          let cat of filterService.getReportHeaders(0) | keyvalue: valueOrder
+          let cat of filterService.getReportHeaders(1) | keyvalue: valueOrder
         "
         class="sidebutton"
         id="{{ cat.key }}reportHighlightid"
@@ -53,18 +53,30 @@
         <div class="category" style="padding-top: 20px;">
           PORTALS
         </div>
-        <div class="sidebutton" id="clubid" (click)="portalHighlight('club')">
+        <div
+          *ngFor="let port of portals"
+          id="{{ port }}id"
+          class="sidebutton"
+          (click)="portalHighlight(port)"
+        >
+          {{ port }}
+        </div>
+        <!-- <div class="sidebutton" id="clubid" (click)="portalHighlight('club')">
           CLUB
         </div>
-        <div class="sidebutton">
+        <div
+          class="sidebutton"
+          id="playerid"
+          (click)="portalHighlight('player')"
+        >
           PLAYER
         </div>
         <div class="sidebutton">
-          FREE AGENCY
+          CASH
         </div>
         <div class="sidebutton">
           DRAFT
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

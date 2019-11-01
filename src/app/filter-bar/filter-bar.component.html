@@ -56,27 +56,23 @@
       ></i>
     </div>
   </div>
-
-  <div class="playCount">{{ filterService.playCount }} Plays</div>
-  <div *ngIf="filterService.playCount == ''">
-    <div class="loading-spinner"></div>
-  </div>
-  <div class="funcbutton saveFilterNew" (click)="saveFilter()">
-    <div class="btnGo">
-      <!-- <i class="fa fa-save fa-lg"></i> -->
-      Save
+  <div>
+    <div class="playCount">{{ filterService.playCount }} Plays</div>
+    <div *ngIf="filterService.playCount == ''">
+      <div class="loading-spinner"></div>
     </div>
-  </div>
-
-  <!-- <div class=" funcbutton apply" (click)="sendFilters()">
-    <div class="btnGo">
-      <i class="fa fa-arrow-circle-right fa-lg"></i>
+    <div class="funcbutton saveFilterNew" (click)="saveFilter()">
+      <div class="btnGo">
+        <!-- <i class="fa fa-save fa-lg"></i> -->
+        Save
+      </div>
     </div>
-  </div> -->
-  <div class="funcbutton saveFilterNew" (click)="clearAll()">
-    <div class="btnGo">
-      <!-- <i class="fa fa-trash fa-lg"></i> -->
-      Clear
+
+    <div class="funcbutton saveFilterNew" (click)="clearAll()">
+      <div class="btnGo">
+        <!-- <i class="fa fa-trash fa-lg"></i> -->
+        Clear
+      </div>
     </div>
   </div>
 </div>
