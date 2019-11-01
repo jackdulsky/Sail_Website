@@ -51,8 +51,10 @@ import { DragToSelectModule } from "ngx-drag-to-select";
 import { BaseReportsComponent } from "./base-reports/base-reports.component";
 import { ClubComponent } from "./club/club.component";
 import { LoadingComponent } from "./loading/loading.component";
-import { ReportUploadComponent } from './report-upload/report-upload.component';
-import { PlayerComponent } from './player/player.component';
+import { ReportUploadComponent } from "./report-upload/report-upload.component";
+import { PlayerComponent } from "./player/player.component";
+import { CashComponent } from "./cash/cash.component";
+import { NgMultiSelectDropDownModule } from "ng-multiselect-dropdown";
 
 @NgModule({
   declarations: [
@@ -74,9 +76,11 @@ import { PlayerComponent } from './player/player.component';
     ClubComponent,
     LoadingComponent,
     ReportUploadComponent,
-    PlayerComponent
+    PlayerComponent,
+    CashComponent
   ],
   imports: [
+    NgMultiSelectDropDownModule.forRoot(),
     DragToSelectModule.forRoot(),
     OAuthModule.forRoot(),
     MatButtonToggleModule,

@@ -39,6 +39,7 @@
     "mdbootstrap": "^4.8.7",
     "microsoft-adal-angular6": "^1.3.0",
     "mssql": "^3.3.0",
+    "ng-multiselect-dropdown": "^0.2.6",
     "ng2-opd-popup": "^1.1.21",
     "ngx-bootstrap": "^5.1.0",
     "ngx-cookie-service": "^2.2.0",

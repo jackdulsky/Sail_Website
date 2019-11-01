@@ -31,3 +31,34 @@ body {
     url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.svg")
       format("svg");
 }
+.multiselect-dropdown,
+.dropdown-btn {
+  border: none !important;
+  height: 59px;
+  font-family: "DIN" !important;
+  font-weight: bold !important;
+  font-size: 20px;
+  text-align: center !important;
+  line-height: 3 !important;
+  border-radius: 0px !important;
+}
+
+.selected-item {
+  font-family: "DIN";
+  line-height: 1.3 !important;
+
+  margin-bottom: 2px;
+}
+.dropdown-down,
+.dropdown-up {
+  position: absolute;
+  margin-top: 23px;
+  margin-left: -15px;
+  display: none !important;
+}
+.dropdown-btn:focus {
+  outline: none;
+}
+.dropdown-list {
+  margin-top: 3px !important;
+}

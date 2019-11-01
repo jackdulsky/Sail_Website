@@ -9,6 +9,8 @@ import { ClubComponent } from "./club/club.component";
 import { LoadingComponent } from "./loading/loading.component";
 import { ReportUploadComponent } from "./report-upload/report-upload.component";
 import { PlayerComponent } from "./player/player.component";
+import { CashComponent } from "./cash/cash.component";
+
 const routes: Routes = [
   // {
   //     path: 'home',
@@ -91,6 +93,19 @@ const routes: Routes = [
       {
         path: "",
         redirectTo: "base-reports/7",
+        pathMatch: "full"
+      }
+    ]
+  },
+  {
+    path: "cash",
+    component: CashComponent,
+    children: [
+      { path: "report/:reportid", component: ReportComponent },
+      { path: "base-reports/:base-reportsid", component: BaseReportsComponent },
+      {
+        path: "",
+        redirectTo: "base-reports/10",
         pathMatch: "full"
       }
     ]

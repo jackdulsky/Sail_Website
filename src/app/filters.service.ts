@@ -587,6 +587,7 @@ export class FiltersService {
     this.testSendFilters2();
     this.setActiveClub();
     this.setActivePlayer();
+    this.updateRDURL();
   }
 
   //EMPTY THE WORKING QUERY

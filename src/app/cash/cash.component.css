@@ -24,17 +24,17 @@
   display: flex;
   border-bottom: 2px solid black;
 }
-.team {
+.cash {
   height: 72px;
   color: black;
-  width: 220px;
+  width: 300px;
   line-height: 72px;
-  min-width: 220px;
+  min-width: 300px;
 
   padding-right: 30px;
   background-color: white;
 }
-.team:hover {
+.cash:hover {
   cursor: pointer;
   background-color: rgba(158, 158, 158, 0.568);
 }
@@ -47,7 +47,7 @@
 .tableCenter {
   vertical-align: middle;
 }
-.teamText {
+.cashText {
   display: inline-block;
   /* background-color: white; */
   color: black;
@@ -56,12 +56,12 @@
   font-size: 20px;
   font-family: "DIN";
 }
-.teamList {
+.cashList {
   background-color: white;
   border: 1px solid black;
   position: absolute;
   top: 124px;
-
+  font-family: "DIN";
   z-index: 1000;
   margin: 0;
   padding: 0;
@@ -71,10 +71,22 @@
 }
 .yearSelect {
   height: 73px;
-  width: 205px;
-  min-width: 205px;
+  width: 190px;
   margin-right: 26px;
 }
-.yearSelect:focus {
-  outline: none;
-}
+
+/*
+    display: inline-block;
+    border: 1px solid #adadad;
+    width: 100%;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-weight: 400;
+    line-height: 1.528571;
+    height: 59px;
+    text-align: left;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border-radius: 4px;
+*/

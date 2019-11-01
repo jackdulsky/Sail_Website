@@ -167,8 +167,8 @@ export class PlayerComponent implements OnInit {
   }
 
   initPlayer() {
-    //FID is -2
-    //ATT is 2
+    //FID is -3
+    //ATT is 3
     this.filterService.pushQueryToActiveFilter("0");
   }
 

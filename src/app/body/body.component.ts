@@ -118,7 +118,9 @@ export class BodyComponent implements OnInit {
     document.getElementById(name + "id").className =
       "sidebutton sidebuttonclicked";
     this.filterService.portalSelected = name;
-    this.router.navigate(["../" + name]);
+    if (!this.router.url.includes(name)) {
+      this.router.navigate(["../" + name]);
+    }
   }
 
   //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT
