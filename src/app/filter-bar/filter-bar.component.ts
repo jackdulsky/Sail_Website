@@ -198,10 +198,7 @@ export class FilterBarComponent implements OnInit {
     var BID = this.filterService.newFIDBID[fid];
     var dispName = "";
     var tempFilter = { ...value };
-    console.log("VALUE", tempFilter);
-    console.log("BID", BID);
-    console.log("REVERSE", this.filterService.reversePaths);
-    console.log("FID", fid);
+
     try {
       if (value[String(Number(BID) * -1)]) {
         for (let val in value[String(Number(BID) * -1)]) {

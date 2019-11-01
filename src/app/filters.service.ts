@@ -405,7 +405,6 @@ export class FiltersService {
     for (let id in this.newFIDs[fid]) {
       this.clearSingleIDWorking(id, this.newFIDBID[fid]);
     }
-
     delete this.newDBFormat[oldBID][fid];
 
     delete this.newFIDBID[fid];
@@ -438,15 +437,12 @@ export class FiltersService {
       if (String(formKey) == "3" && String(bid) == "-3") {
         this.playerPortalActivePlayerIDOLD = this.playerPortalActivePlayerID;
         this.playerPortalActivePlayerID = formVals[0];
-        console.log("CHANGING PLAYER ACTIVE", this.playerPortalActivePlayerID);
         this.playerPortalSelected = this.pullValueMap["3"][
           this.playerPortalActivePlayerID
         ];
-        console.log(this.playerPortalSelected, this.playerPortalActivePlayerID);
       }
       this.newWorkingQuery[bid][formKey] = formVals;
     }
-    // console.log("SHOWING", this.newFIDBID, this.newFIDs, this.newDBFormat);
   }
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
   //REMOVE FROM THE WORKING QUERY AND
@@ -559,12 +555,6 @@ export class FiltersService {
         this.newWorkingQuery[bin] = {};
         this.newWorkingFID[bin] = "";
       }
-
-      console.log("PUSHED");
-      console.log(this.newFIDBID);
-      console.log(this.newFIDs);
-      console.log(this.newDBFormat);
-      // console.log(this.newBIDFIDS)
     }
 
     //RESET
@@ -628,21 +618,6 @@ export class FiltersService {
   //This function clears a single value from the newWorking query, if a
   //Working FID is set it pushes the updates
   clearSingleValuePop(bin: any, att: any, val: any) {
-    // console.log("BEGGINNING");
-    // console.log(this.newFIDs);
-    // console.log(this.newDBFormat);
-    // console.log(this.newFIDBID);
-    // console.log(this.newWorkingQuery);
-    // console.log(
-    //   "CLEAR SINGLE VALUE",
-    //   bin,
-    //   att,
-    //   val,
-    //   JSON.stringify(this.newWorkingQuery[bin][att]),
-    //   JSON.stringify([String(val)]),
-    //   JSON.stringify(this.newWorkingQuery[bin][att]) ==
-    //     JSON.stringify([String(val)])
-    // );
     if (
       JSON.stringify(this.newWorkingQuery[bin][att]) ==
       JSON.stringify([String(val)])
@@ -661,11 +636,6 @@ export class FiltersService {
         this.pushQueryToActiveFilter(bin, false);
       }
     }
-    // console.log("END");
-    // console.log(this.newFIDs);
-    // console.log(this.newDBFormat);
-    // console.log(this.newFIDBID);
-    // console.log(this.newWorkingQuery);
   }
   //SETTING CSS OF THE LEAGUE ICONS
   setLeagueIconStyle(leagueID: string, id: string) {
@@ -1004,9 +974,10 @@ export class FiltersService {
   //CLEAN Up filters for single club
   //go through active filters and delete if in club bin and replace with last selected club
   reduceFiltersSingleClub() {
-    this.removeAllTeamFilters();
     var tempDict = {};
     tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
+
+    this.removeAllTeamFilters();
     this.newWorkingQuery["-2"] = tempDict;
   }
 
@@ -1023,9 +994,9 @@ export class FiltersService {
   }
 
   reduceFiltersSinglePlayer() {
-    this.removeAllPlayerFilters();
     var tempDict = {};
     tempDict["3"] = [cloneDeep(this.playerPortalActivePlayerID)];
+    this.removeAllPlayerFilters();
     this.newWorkingQuery["-3"] = tempDict;
   }
 
@@ -1070,7 +1041,6 @@ export class FiltersService {
     }
   }
   setActivePlayer() {
-    console.log("NEWWW ", this.newFIDs);
     var notFound = true;
     for (let activeFID in this.newFIDBID) {
       if (String(this.newFIDBID[activeFID]) == "-3") {
@@ -1084,19 +1054,17 @@ export class FiltersService {
             this.playerPortalActivePlayerID
           ];
         }
-        console.log("TURNING FOUND OFF");
         notFound = false;
       }
     }
-    console.log("NEWWW 2", this.newFIDs, notFound);
 
-    // if (notFound) {
-    //   console.log("NOT FOUND");
-    //   this.playerPortalActivePlayerID = "";
-    //   this.playerPortalSelected = {
-    //     Label: "Player Select"
-    //   };
-    // } else{}
+    if (notFound) {
+      this.playerPortalActivePlayerID = "";
+      this.playerPortalSelected = {
+        Label: "Player Select"
+      };
+    } else {
+    }
   }
 
   constructor(
