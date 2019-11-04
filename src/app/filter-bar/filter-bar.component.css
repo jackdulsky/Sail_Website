@@ -252,6 +252,22 @@
   align-content: center;
   font-family: "DIN";
 }
+.playCountNumber {
+  text-align: right;
+  border-radius: 4px;
+  color: var(--color-white);
+  font-weight: bold;
+  float: right;
+  font-size: 16px;
+  margin-left: 10px;
+  margin-top: 5px;
+  line-height: 37px;
+  height: 37px;
+  border-radius: 4px;
+  align-content: center;
+  font-family: "DIN";
+  width: 43px;
+}
 .words:hover {
   cursor: pointer;
 }
@@ -376,9 +392,11 @@
   animation-play-state: running;
   opacity: 1;
   float: right;
-  margin-top: 17px;
-  margin-right: 4px;
-  margin-left: 9px;
+  margin-top: 23px;
+  /* margin-right: 4px;
+  margin-left: 9px; */
+  right: -26px;
+  position: relative;
 }
 @-webkit-keyframes spinner {
   0% {

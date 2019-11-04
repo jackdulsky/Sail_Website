@@ -31,6 +31,19 @@
       <div class="playerText">&nbsp;&nbsp;{{ player.value.Label }}</div>
     </div>
   </div>
+  <ng-multiselect-dropdown
+    [placeholder]="'Year'"
+    [data]="filterService.portalYearsList"
+    [(ngModel)]="filterService.portalYearsSelected"
+    [settings]="filterService.portalYearDropDownSettings"
+    (onDropDownClose)="filterService.portalYearDropDownClose()"
+    class="yearSelect"
+    id="yearSelect"
+  >
+  </ng-multiselect-dropdown>
+  <div class="tableCenter yearArrow" id="yearSelectArrow">
+    <i class="fa fa-angle-down fa-lg"></i>
+  </div>
   <div
     class="topLink"
     *ngFor="let cat of filterService.getReportHeaders(3) | keyvalue: valueOrder"

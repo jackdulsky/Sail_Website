@@ -57,7 +57,10 @@
     </div>
   </div>
   <div>
-    <div class="playCount">{{ filterService.playCount }} Plays</div>
+    <div class="playCount">Plays</div>
+    <div class="playCountNumber">{{ filterService.playCount }}</div>
+
+    <!--  -->
     <div *ngIf="filterService.playCount == ''">
       <div class="loading-spinner"></div>
     </div>

@@ -684,6 +684,32 @@ export const reportsNew: any = {
       colorBottom: "black",
       order: 8
     }
+  },
+  9: {
+    44: {
+      Label: "Kickoff Report",
+      colorTop: "skyblue",
+      colorBottom: "purple",
+      order: 5
+    },
+    45: {
+      Label: "Kickoff and Punt Returns Report",
+      colorTop: "grey",
+      colorBottom: "green",
+      order: 6
+    },
+    46: {
+      Label: "Punt Report",
+      colorTop: "red",
+      colorBottom: "skyblue",
+      order: 7
+    },
+    47: {
+      Label: "Phase Snap Report",
+      colorTop: "orange",
+      colorBottom: "black",
+      order: 8
+    }
   }
 };
 export const views: any = {

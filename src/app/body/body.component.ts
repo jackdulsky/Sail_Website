@@ -39,9 +39,11 @@ export class BodyComponent implements OnInit {
     this.filterService.selected = "0";
     setTimeout(() => {
       if (this.filterService.portalSelected == "") {
-        document.getElementById(
-          this.filterService.selected + "reportHighlightid"
-        ).className = "sidebutton sidebuttonclicked";
+        try {
+          document.getElementById(
+            this.filterService.selected + "reportHighlightid"
+          ).className = "sidebutton sidebuttonclicked";
+        } catch (e) {}
       }
     }, 1);
     this.reports = this.ReportListService.reports;

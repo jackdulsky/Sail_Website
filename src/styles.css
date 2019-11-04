@@ -62,3 +62,21 @@ body {
 .dropdown-list {
   margin-top: 3px !important;
 }
+/* span.dropdown-btn:first-child {
+  line-height: 3 !important;
+}
+span.dropdown-btn:last-child {
+  line-height: 2 !important;
+} */
+/* .multiselect-dropdown > div > div > span:first-child {
+  line-height: 3 !important;
+}
+#yearSelect > div > div:nth-child(1) > span > span.ng-star-inserted {
+  line-height: 3 !important;
+} */
+#yearSelect > div > div:nth-child(1) > span > span:last-child {
+  line-height: 2 !important;
+}
+#yearSelect > div > div.dropdown-list > ul.item2 {
+  line-height: 2 !important;
+}

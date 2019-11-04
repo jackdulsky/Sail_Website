@@ -104,11 +104,4 @@ export class CashComponent implements OnInit {
       }
     } catch (e) {}
   }
-
-  onItemSelect(item: any) {
-    console.log(item);
-  }
-  onSelectAll(items: any) {
-    console.log(items);
-  }
 }

@@ -31,20 +31,13 @@
     [placeholder]="'Year'"
     [data]="filterService.portalYearsList"
     [(ngModel)]="filterService.portalYearsSelected"
-    [settings]="dropdownSettings"
-    (onSelect)="filterService.portalYearItemSelected($event)"
-    (onSelectAll)="filterService.portalYearSelectedAll($event)"
-    (onUnSelectAll)="filterService.portalYearUnSelectAll($event)"
-    (onFilterChange)="filterService.portalYearChange($event)"
+    [settings]="filterService.portalYearDropDownSettings"
     (onDropDownClose)="filterService.portalYearDropDownClose()"
     class="yearSelect"
+    id="yearSelect"
   >
   </ng-multiselect-dropdown>
-  <div
-    class="tableCenter"
-    style="display: inline; float: right; margin-top: 26px;position: relative;
-    left: -22px;"
-  >
+  <div class="tableCenter yearArrow" id="yearSelectArrow">
     <i class="fa fa-angle-down fa-lg"></i>
   </div>
   <div

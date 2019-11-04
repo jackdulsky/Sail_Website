@@ -71,22 +71,19 @@
 }
 .yearSelect {
   height: 73px;
-  width: 190px;
-  margin-right: 26px;
+  width: 205px;
+  min-width: 205px;
+  padding-right: 26px;
 }
-
-/*
-    display: inline-block;
-    border: 1px solid #adadad;
-    width: 100%;
-    padding: 6px 12px;
-    margin-bottom: 0;
-    font-weight: 400;
-    line-height: 1.528571;
-    height: 59px;
-    text-align: left;
-    vertical-align: middle;
-    cursor: pointer;
-    background-image: none;
-    border-radius: 4px;
-*/
+.yearSelect:hover {
+  cursor: pointer;
+  background-color: rgba(158, 158, 158, 0.568);
+}
+.yearArrow {
+  display: inline;
+  margin-top: 26px;
+  position: relative;
+  left: -43px;
+  background: transparent;
+  width: 0px;
+}

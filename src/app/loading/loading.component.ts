@@ -76,24 +76,26 @@ export class LoadingComponent implements OnInit {
   //UPLOAD JSON TO FILTER STRUCUTRE
   //CALL ROUTE AFTER
   injectFilters() {
-    if (this.jsonExists) {
-      var filters = this.loadJSON;
-      this.filterService.loadJSON(JSON.parse(filters));
-      for (let query in this.filterService.newFIDBID) {
-        if (Number(this.filterService.newFIDBID[query]) == -2) {
-          this.filterService.teamPortalActiveClubID = cloneDeep(
-            this.filterService.newFIDs[query]["2"][0]
-          );
+    setTimeout(() => {
+      if (this.jsonExists) {
+        var filters = this.loadJSON;
+        this.filterService.loadJSON(JSON.parse(filters));
+        for (let query in this.filterService.newFIDBID) {
+          if (Number(this.filterService.newFIDBID[query]) == -2) {
+            this.filterService.teamPortalActiveClubID = cloneDeep(
+              this.filterService.newFIDs[query]["2"][0]
+            );
 
-          this.filterService.teamPortalSelected = this.filterService.teamsMap[
-            this.filterService.teamPortalActiveClubID
-          ];
+            this.filterService.teamPortalSelected = this.filterService.teamsMap[
+              this.filterService.teamPortalActiveClubID
+            ];
+          }
+          this.doneloading += 1;
+          this.doneChecking = false;
         }
-        this.doneloading += 1;
-        this.doneChecking = false;
       }
-    }
-    this.rerouteAfterUpload();
+      this.rerouteAfterUpload();
+    }, 200);
   }
 
   //ROUTE TO APPROPRIATE PLACE
@@ -123,3 +125,6 @@ export class LoadingComponent implements OnInit {
 //http://localhost:4200/loading/C18400E2-DE4E-A997-A09E-6D9B2F53E113/%5B%5B%22-2%22,%222%22,%5B%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46
 //94A6AFBD-7FAD-8F71-AD16-34930D667AC4
 //http://localhost:4200/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
+//http://localhost:4200/loading/C18400E2-DE4E-A997-A09E-6D9B2F53E113/%5B%5B%22-2%22,%222%22,%5B%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5B%22-4%22,%224%22,%5B%222014%22%5D%5D%5D%5D/club,report,46
+//http://localhost:4200/loading/C18400E2-DE4E-A997-A09E-6D9B2F53E113/[["-2","2",["1024","1026"]],["-11","10092",["10000001"]],["-4","4",["2014"]]]/club,report,46
+//upload years guid testing 717FBBBF-DE7C-25AE-24D3-0004E04396B6

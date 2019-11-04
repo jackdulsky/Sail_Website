@@ -73,8 +73,17 @@
   height: 73px;
   width: 205px;
   min-width: 205px;
-  margin-right: 26px;
+  padding-right: 26px;
 }
-.yearSelect:focus {
-  outline: none;
+.yearSelect:hover {
+  cursor: pointer;
+  background-color: rgba(158, 158, 158, 0.568);
+}
+.yearArrow {
+  display: inline;
+  margin-top: 26px;
+  position: relative;
+  left: -43px;
+  background: transparent;
+  width: 0px;
 }

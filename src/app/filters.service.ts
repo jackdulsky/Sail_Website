@@ -10,6 +10,7 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { ReplaceSource } from "webpack-sources";
 import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
+import { IDropdownSettings } from "ng-multiselect-dropdown";
 
 @Injectable({
   providedIn: "root"
@@ -77,8 +78,27 @@ export class FiltersService {
   viewingURL;
   reportTabs;
   portalYearsSelected: String[] = [];
-  portalYearsList = ["2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011"];
+  portalYearsList = [
+    "2019",
+    "2018",
+    "2017",
+    "2016",
+    "2015",
+    "2014",
+    "2013",
+    "2012",
+    "2011"
+  ];
   portalYearsOnly: String[] = [];
+  portalYearDropDownSettings: IDropdownSettings = {
+    singleSelection: false,
+    allowSearchFilter: false,
+    selectAllText: "Select All",
+    unSelectAllText: "UnSelect All",
+    itemsShowLimit: 4,
+    maxHeight: 800
+  };
+
   //This function returns the list of reports based on the location id
   getReportHeaders(location: any) {
     var tabs;
@@ -587,7 +607,11 @@ export class FiltersService {
     // localStorage.setItem("lastUpdateTime", String(Date()));
     // console.log(String(Date()));
     var dbFormatWithAddedHiddenYears = cloneDeep(this.newDBFormat);
-    dbFormatWithAddedHiddenYears["-4"]={"4":[this.portalYearsOnly,{},[]]}
+    if (this.portalYearsOnly.length > 0) {
+      dbFormatWithAddedHiddenYears["-4"] = {
+        "4": [this.portalYearsOnly, {}, []]
+      };
+    }
     this.pullData.constructAndSendFilters(dbFormatWithAddedHiddenYears);
     this.testSendFilters2();
     this.setActiveClub();
@@ -932,27 +956,44 @@ export class FiltersService {
   }
 
   //convert the db format variable to the other ones for display
+  //SET THE ACTIVE PORTAL VARIABLES AND EXTRACT OUT THE HIDDEN YEARS
   pushDBFormat(DBFormat: any) {
     this.clearAll();
     this.newDBFormat = cloneDeep(DBFormat);
     for (let bin in this.newDBFormat) {
       for (let fid in this.newDBFormat[bin]) {
-        var currentFid = cloneDeep(this.newDBFormat[bin][fid][1]);
-        this.newFIDBID[fid] = bin;
-        if (this.newDBFormat[bin][fid][0].length > 0) {
-          currentFid[String(-1 * Number(bin))] = this.newDBFormat[bin][fid][0];
-          if (String(bin) == "-2") {
-            this.teamPortalActiveClubID = cloneDeep(
-              this.newDBFormat[bin][fid][0][0]
-            );
+        if (Number(bin) == -4) {
+          this.portalYearsSelected = cloneDeep(this.newDBFormat[bin][fid][0]);
+          this.portalYearsOnly = cloneDeep(this.newDBFormat[bin][fid][0]);
+          delete this.newDBFormat[bin];
+        } else {
+          var currentFid = cloneDeep(this.newDBFormat[bin][fid][1]);
+          this.newFIDBID[fid] = bin;
+          if (this.newDBFormat[bin][fid][0].length > 0) {
+            currentFid[String(-1 * Number(bin))] = this.newDBFormat[bin][
+              fid
+            ][0];
+            if (String(bin) == "-2") {
+              this.teamPortalActiveClubID = cloneDeep(
+                this.newDBFormat[bin][fid][0][0]
+              );
 
-            this.teamPortalSelected = this.teamsMap[
-              this.teamPortalActiveClubID
-            ];
+              this.teamPortalSelected = this.teamsMap[
+                this.teamPortalActiveClubID
+              ];
+            }
+            if (String(bin) == "-3") {
+              this.playerPortalActivePlayerID = cloneDeep(
+                this.newDBFormat[bin][fid][0][0]
+              );
+              this.playerPortalSelected = this.pullValueMap["3"][
+                this.playerPortalActivePlayerID
+              ];
+            }
           }
-        }
 
-        this.newFIDs[fid] = currentFid;
+          this.newFIDs[fid] = currentFid;
+        }
       }
     }
   }
@@ -969,9 +1010,14 @@ export class FiltersService {
           this.removeQuery(active);
         }
       }
-      var tempDict = {};
-      tempDict[add[1]] = add[2];
-      this.newWorkingQuery[add[0]] = tempDict;
+      if (Number(add[0]) == -4) {
+        this.portalYearsSelected = cloneDeep(add[2]);
+        this.portalYearsOnly = cloneDeep(add[2]);
+      } else {
+        var tempDict = {};
+        tempDict[add[1]] = add[2];
+        this.newWorkingQuery[add[0]] = tempDict;
+      }
     }
     this.pushQueryToActiveFilter("0");
     return true;
@@ -999,6 +1045,7 @@ export class FiltersService {
     }
   }
 
+  //WHEN CLICKING ON PLAYER PAGE TAKE OUT ALL OTHER PLAYERS
   reduceFiltersSinglePlayer() {
     var tempDict = {};
     tempDict["3"] = [cloneDeep(this.playerPortalActivePlayerID)];
@@ -1017,6 +1064,7 @@ export class FiltersService {
       }
     }
   }
+  //SET THE ACTIVE CLUB BY GOING THROUGH THE DB OR SET DEFAULT
 
   setActiveClub() {
     var notFound = true;
@@ -1046,6 +1094,8 @@ export class FiltersService {
       };
     }
   }
+
+  //SET THE ACTIVE PLAYER BY GOING THROUGH THE DB OR SET DEFAULT
   setActivePlayer() {
     var notFound = true;
     for (let activeFID in this.newFIDBID) {
@@ -1073,31 +1123,17 @@ export class FiltersService {
     }
   }
 
-  //This function will add the selected to the data function
-  // portalYearItemSelected(event: any){
-  //   console.log("SELECTONE", this.portalYearsSelected)
-  //   console.log("EVENT", event)
-
-  // }
-  // //This function will select and deselect all
-  // portalYearSelectedAll(event: any){
-  //   console.log("SELECTALL", this.portalYearsSelected)
-  //   console.log("EVENT", event)
-  // }
-  // portalYearUnSelectedAll(event: any){
-  //   console.log("UNSELECTALL", this.portalYearsSelected)
-  //   console.log("EVENT", event)
-  // }
-  // portalYearChange(event:any){
-  //   console.log("Change", this.portalYearsSelected)
-  //   console.log("EVENT", event)
-  // }
-  portalYearDropDownClose(){
+  //This function will add add the years selected to the object that will be sent up
+  portalYearDropDownClose() {
+    var prior = cloneDeep(this.portalYearsOnly);
     this.portalYearsOnly = [];
-    for(let yearItem in this.portalYearsSelected){
+    for (let yearItem in this.portalYearsSelected) {
       this.portalYearsOnly.push(this.portalYearsSelected[yearItem]["text"]);
     }
-    this.saveAndSend();
+    //Only update and send to DB if new list
+    if (JSON.stringify(prior) != JSON.stringify(this.portalYearsOnly)) {
+      this.saveAndSend();
+    }
   }
 
   constructor(
