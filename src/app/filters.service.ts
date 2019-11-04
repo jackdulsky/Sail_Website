@@ -76,6 +76,9 @@ export class FiltersService {
   portalSelected = "";
   viewingURL;
   reportTabs;
+  portalYearsSelected: String[] = [];
+  portalYearsList = ["2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011"];
+  portalYearsOnly: String[] = [];
   //This function returns the list of reports based on the location id
   getReportHeaders(location: any) {
     var tabs;
@@ -583,7 +586,9 @@ export class FiltersService {
     // localStorage.setItem("reversePaths", JSON.stringify(this.reversePaths));
     // localStorage.setItem("lastUpdateTime", String(Date()));
     // console.log(String(Date()));
-    this.pullData.constructAndSendFilters(this.newDBFormat);
+    var dbFormatWithAddedHiddenYears = cloneDeep(this.newDBFormat);
+    dbFormatWithAddedHiddenYears["-4"]={"4":[this.portalYearsOnly,{},[]]}
+    this.pullData.constructAndSendFilters(dbFormatWithAddedHiddenYears);
     this.testSendFilters2();
     this.setActiveClub();
     this.setActivePlayer();
@@ -1066,6 +1071,33 @@ export class FiltersService {
       };
     } else {
     }
+  }
+
+  //This function will add the selected to the data function
+  // portalYearItemSelected(event: any){
+  //   console.log("SELECTONE", this.portalYearsSelected)
+  //   console.log("EVENT", event)
+
+  // }
+  // //This function will select and deselect all
+  // portalYearSelectedAll(event: any){
+  //   console.log("SELECTALL", this.portalYearsSelected)
+  //   console.log("EVENT", event)
+  // }
+  // portalYearUnSelectedAll(event: any){
+  //   console.log("UNSELECTALL", this.portalYearsSelected)
+  //   console.log("EVENT", event)
+  // }
+  // portalYearChange(event:any){
+  //   console.log("Change", this.portalYearsSelected)
+  //   console.log("EVENT", event)
+  // }
+  portalYearDropDownClose(){
+    this.portalYearsOnly = [];
+    for(let yearItem in this.portalYearsSelected){
+      this.portalYearsOnly.push(this.portalYearsSelected[yearItem]["text"]);
+    }
+    this.saveAndSend();
   }
 
   constructor(

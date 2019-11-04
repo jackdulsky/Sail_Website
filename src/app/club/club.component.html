@@ -29,11 +29,14 @@
   </div>
   <ng-multiselect-dropdown
     [placeholder]="'Year'"
-    [data]="dropdownList"
-    [(ngModel)]="selectedItems"
+    [data]="filterService.portalYearsList"
+    [(ngModel)]="filterService.portalYearsSelected"
     [settings]="dropdownSettings"
-    (onSelect)="onItemSelect($event)"
-    (onSelectAll)="onSelectAll($event)"
+    (onSelect)="filterService.portalYearItemSelected($event)"
+    (onSelectAll)="filterService.portalYearSelectedAll($event)"
+    (onUnSelectAll)="filterService.portalYearUnSelectAll($event)"
+    (onFilterChange)="filterService.portalYearChange($event)"
+    (onDropDownClose)="filterService.portalYearDropDownClose()"
     class="yearSelect"
   >
   </ng-multiselect-dropdown>
