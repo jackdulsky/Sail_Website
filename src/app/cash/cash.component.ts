@@ -5,7 +5,6 @@ import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
-import { IDropdownSettings } from "ng-multiselect-dropdown";
 
 @Component({
   selector: "app-cash",
@@ -24,19 +23,7 @@ export class CashComponent implements OnInit {
     public cdref: ChangeDetectorRef
   ) {}
   cashTabSelected;
-
-  dropdownList = [2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011];
-  selectedItems = [];
-  dropdownSettings: IDropdownSettings = {
-    singleSelection: false,
-    // idField: "item_id",
-    // textField: "item_text",
-    allowSearchFilter: false,
-
-    selectAllText: "Select All",
-    unSelectAllText: "UnSelect All",
-    itemsShowLimit: 3
-  };
+  showYear = false;
 
   ngOnInit() {
     this.body.portalHighlight("cash");
@@ -103,5 +90,13 @@ export class CashComponent implements OnInit {
         this.router.navigate([newRoute + "/base-reports/" + String(name)]);
       }
     } catch (e) {}
+  }
+
+  //Show The list of years to select
+  showYearList() {
+    this.showYear = !this.showYear;
+    if (!this.showYear) {
+      this.filterService.portalYearDisplayClose();
+    }
   }
 }

@@ -6,13 +6,12 @@
     />
     <div class="teamText">
       &nbsp;&nbsp;{{ getCityName(filterService.teamPortalSelected) }}
-      {{ filterService.teamPortalSelected[ClubNickName] }}
     </div>
     <div class="tableCenter" style="display: inline; float: right;">
       <i class="fa fa-angle-down fa-lg"></i>
     </div>
   </div>
-  <div class="teamList" *ngIf="showList">
+  <div class="teamList shadow" *ngIf="showList">
     <div
       class="team"
       style="border-bottom: 1px solid black; margin-right: 0px !important;     display: grid;
@@ -21,28 +20,42 @@
       *ngFor="let team of filterService.teams"
     >
       <img class="imgLogo tableCenter" [src]="getActiveLogo(team)" />
-      <div class="teamText">
-        &nbsp;&nbsp;{{ getCityName(team) }}
-        {{ team[ClubNickName] }}
-      </div>
+      <div class="teamText">&nbsp;&nbsp;{{ getCityName(team) }}</div>
     </div>
   </div>
-  <ng-multiselect-dropdown
-    [placeholder]="'Year'"
-    [data]="filterService.portalYearsList"
-    [(ngModel)]="filterService.portalYearsSelected"
-    [settings]="filterService.portalYearDropDownSettings"
-    (onDropDownClose)="filterService.portalYearDropDownClose()"
-    class="yearSelect"
-    id="yearSelect"
-  >
-  </ng-multiselect-dropdown>
-  <div class="tableCenter yearArrow" id="yearSelectArrow">
-    <i class="fa fa-angle-down fa-lg"></i>
+
+  <div class="yearContainer" (click)="showYearList()">
+    <div class="yearLabel" *ngIf="filterService.portalYearsOnly.length > 0">
+      {{ filterService.getYearDisplay() }}
+    </div>
+    <div class="yearLabel" *ngIf="filterService.portalYearsOnly.length == 0">
+      Year
+    </div>
   </div>
   <div
+    class="tableCenter yearArrow"
+    id="yearSelectArrow"
+    (click)="showYearList()"
+  >
+    <i class="fa fa-angle-down fa-lg"></i>
+  </div>
+  <div class="yearListAll shadow" *ngIf="showYear">
+    <div
+      class="yearDropDown"
+      *ngFor="let year of filterService.portalYearsList"
+      (click)="filterService.toggleYearsSelected(year)"
+      [ngStyle]="filterService.setStyleYearSelect(year)"
+      id="{{ year }}yearSelect"
+    >
+      {{ year }}
+    </div>
+  </div>
+
+  <div
     class="topLink"
-    *ngFor="let cat of filterService.getReportHeaders(2) | keyvalue: valueOrder"
+    *ngFor="
+      let cat of filterService.getReportHeaders(2) | keyvalue: body.valueOrder
+    "
     id="{{ cat.key }}clubBarHighlightid"
     (click)="subRoute(cat.key)"
   >

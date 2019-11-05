@@ -69,16 +69,7 @@
   max-height: 500px;
   text-align: center;
 }
-.yearSelect {
-  height: 73px;
-  width: 205px;
-  min-width: 205px;
-  padding-right: 26px;
-}
-.yearSelect:hover {
-  cursor: pointer;
-  background-color: rgba(158, 158, 158, 0.568);
-}
+
 .yearArrow {
   display: inline;
   margin-top: 26px;
@@ -86,4 +77,62 @@
   left: -43px;
   background: transparent;
   width: 0px;
+  text-align: center;
+}
+.yearArrow:hover {
+  cursor: pointer;
+}
+#yearSelectArrow > i {
+  top: -9px;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  position: relative;
+}
+.yearContainer {
+  min-width: 220px;
+  display: inline-grid;
+}
+.yearLabel {
+  font-size: 20px;
+  font-family: "DIN";
+  color: black;
+  font-weight: bold;
+  padding: 15px 5px;
+  height: 43px;
+  line-height: 38px;
+  text-align: center;
+}
+.yearLabel:hover {
+  cursor: pointer;
+  background-color: rgba(158, 158, 158, 0.568);
+}
+.yearListAll {
+  background-color: white;
+  border: 1px solid black;
+  position: absolute;
+  top: 124px;
+  left: 553px;
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+
+  max-height: 500px;
+  text-align: center;
+}
+.yearDropDown {
+  height: 50px;
+  color: black;
+  width: 220px;
+  line-height: 50px;
+  min-width: 220px;
+  font-size: 20px;
+  font-family: "DIN";
+  color: black;
+  font-weight: bold;
+  padding-right: 30px;
+  background-color: white;
+}
+.shadow {
+  box-shadow: 2px 4px 10px black;
 }

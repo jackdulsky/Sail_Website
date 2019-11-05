@@ -25,6 +25,7 @@ export class PlayerComponent implements OnInit {
   playerSelected;
   ClubCityName = "ClubCityName";
   showList = false;
+  showYear = false;
   id;
   teamsDict = {};
   playerTabSelected;
@@ -145,7 +146,7 @@ export class PlayerComponent implements OnInit {
   }
 
   //Toggle Display of Teams Selection
-  displayPlayers(onOff: number) {
+  displayPlayers(onOff: any) {
     if (!onOff) {
       this.showList = true;
     } else {
@@ -204,5 +205,13 @@ export class PlayerComponent implements OnInit {
         this.router.navigate([newRoute + "/base-reports/" + String(name)]);
       }
     } catch (e) {}
+  }
+  //Show The list of years to select
+
+  showYearList() {
+    this.showYear = !this.showYear;
+    if (!this.showYear) {
+      this.filterService.portalYearDisplayClose();
+    }
   }
 }

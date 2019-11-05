@@ -5,7 +5,6 @@ import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
-import { IDropdownSettings } from "ng-multiselect-dropdown";
 
 @Component({
   selector: "app-club",
@@ -26,11 +25,12 @@ export class ClubComponent implements OnInit {
 
   teamSelected;
   ClubCityName = "ClubCityName";
+  ClubNickName = "ClubNickName";
   showList = false;
   id;
   teamsDict = {};
   clubTabSelected;
-  private sub: any;
+  showYear = false;
 
   ngOnInit() {
     this.body.portalHighlight("club");
@@ -116,7 +116,7 @@ export class ClubComponent implements OnInit {
     }
   }
   //Toggle Display of Teams Selection
-  displayTeams(onOff: number) {
+  displayTeams(onOff: any) {
     if (!onOff) {
       this.showList = true;
     } else {
@@ -172,5 +172,14 @@ export class ClubComponent implements OnInit {
         this.router.navigate([newRoute + "/base-reports/" + String(name)]);
       }
     } catch (e) {}
+  }
+
+  //Show The list of years to select
+
+  showYearList() {
+    this.showYear = !this.showYear;
+    if (!this.showYear) {
+      this.filterService.portalYearDisplayClose();
+    }
   }
 }

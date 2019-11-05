@@ -54,8 +54,7 @@ import { LoadingComponent } from "./loading/loading.component";
 import { ReportUploadComponent } from "./report-upload/report-upload.component";
 import { PlayerComponent } from "./player/player.component";
 import { CashComponent } from "./cash/cash.component";
-import { NgMultiSelectDropDownModule } from "ng-multiselect-dropdown";
-
+import { AngularMultiSelectModule } from "angular2-multiselect-dropdown";
 @NgModule({
   declarations: [
     SmartFilterPipe,
@@ -80,7 +79,7 @@ import { NgMultiSelectDropDownModule } from "ng-multiselect-dropdown";
     CashComponent
   ],
   imports: [
-    NgMultiSelectDropDownModule.forRoot(),
+    AngularMultiSelectModule,
     DragToSelectModule.forRoot(),
     OAuthModule.forRoot(),
     MatButtonToggleModule,

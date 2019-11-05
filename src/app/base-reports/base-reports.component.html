@@ -2,7 +2,8 @@
   <div class="grid-container">
     <div
       *ngFor="
-        let repo of filterService.reportsNew[reportList] | keyvalue: valueOrder
+        let repo of filterService.reportsNew[reportList]
+          | keyvalue: body.valueOrder
       "
     >
       <div

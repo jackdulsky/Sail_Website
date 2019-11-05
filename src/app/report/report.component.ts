@@ -17,7 +17,7 @@ export class ReportComponent implements OnInit {
   constructor(
     private ReportListServices: ReportListService,
     public sanitizer: DomSanitizer,
-    private filterService: FiltersService,
+    public filterService: FiltersService,
     public route: ActivatedRoute,
     public router: Router,
     public cdref: ChangeDetectorRef

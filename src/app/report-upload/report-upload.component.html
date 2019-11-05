@@ -1,5 +1,6 @@
 <div></div>
-<div [hidden]="submitted">
+<!-- <div [hidden]="submitted"> -->
+<div>
   <h1 style="margin-top:0px;">REPORT UPLOAD FORM</h1>
   <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
     <div class="form-group">
@@ -74,11 +75,7 @@
     >
       Submit
     </button>
-    <button
-      type="button"
-      class="btn btn-default"
-      (click)="newHero(); heroForm.reset()"
-    >
+    <button type="button" class="btn btn-default">
       Reset
     </button>
   </form>

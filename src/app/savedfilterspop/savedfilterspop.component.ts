@@ -19,7 +19,7 @@ export class SavedfilterspopComponent implements OnInit {
   visible: { [name: string]: boolean } = { USERS: true };
   justSelected: string;
   constructor(
-    private filterService: FiltersService,
+    public filterService: FiltersService,
     public pullData: PullDataService,
     public fb: FormBuilder,
     public dialogRef: MatDialogRef<SavedfilterspopComponent>,

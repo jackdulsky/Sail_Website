@@ -19,7 +19,7 @@ export class BodyComponent implements OnInit {
   constructor(
     public ReportListService: ReportListService,
     public dialog: MatDialog,
-    private filterService: FiltersService,
+    public filterService: FiltersService,
     public pullData: PullDataService,
     public route: ActivatedRoute,
     public router: Router

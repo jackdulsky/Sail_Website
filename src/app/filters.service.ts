@@ -6,11 +6,14 @@ import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { NonNullAssert, ThrowStmt } from "@angular/compiler";
 import { lor, reportsNew, views } from "./allReports";
-import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import {
+  DomSanitizer,
+  SafeUrl,
+  ɵELEMENT_PROBE_PROVIDERS__POST_R3__
+} from "@angular/platform-browser";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { ReplaceSource } from "webpack-sources";
 import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
-import { IDropdownSettings } from "ng-multiselect-dropdown";
 
 @Injectable({
   providedIn: "root"
@@ -90,14 +93,7 @@ export class FiltersService {
     "2011"
   ];
   portalYearsOnly: String[] = [];
-  portalYearDropDownSettings: IDropdownSettings = {
-    singleSelection: false,
-    allowSearchFilter: false,
-    selectAllText: "Select All",
-    unSelectAllText: "UnSelect All",
-    itemsShowLimit: 4,
-    maxHeight: 800
-  };
+  portalYearUpdated = false;
 
   //This function returns the list of reports based on the location id
   getReportHeaders(location: any) {
@@ -1124,6 +1120,7 @@ export class FiltersService {
   }
 
   //This function will add add the years selected to the object that will be sent up
+  //FOR THE NG_SELECT_DROPDOWN THAT PACKAGE DOESNT WORK
   portalYearDropDownClose() {
     var prior = cloneDeep(this.portalYearsOnly);
     this.portalYearsOnly = [];
@@ -1134,6 +1131,57 @@ export class FiltersService {
     if (JSON.stringify(prior) != JSON.stringify(this.portalYearsOnly)) {
       this.saveAndSend();
     }
+  }
+
+  //Return the string to be displayed containing the years selected
+  getYearDisplay() {
+    if (this.portalYearsOnly.length == 1) {
+      return String(this.portalYearsOnly[0]);
+    } else {
+      return (
+        String(this.portalYearsOnly[0]) +
+        " - " +
+        String(this.portalYearsOnly[this.portalYearsOnly.length - 1])
+      );
+    }
+  }
+
+  //Set highlighting of the year selected
+  setStyleYearSelect(year: any) {
+    let styles =
+      this.portalYearsOnly.indexOf(year) != -1
+        ? {
+            backgroundColor: "rgba(158, 158, 158, 0.568)"
+          }
+        : {
+            backgroundColor: "white"
+          };
+    return styles;
+  }
+
+  //ON CLOSE OF THE YEAR SELECT SEND UP
+  portalYearDisplayClose() {
+    if (this.portalYearUpdated) {
+      this.saveAndSend();
+      this.portalYearUpdated = false;
+    }
+  }
+
+  //Toggle the years selected in the portals
+  toggleYearsSelected(year: any) {
+    if (this.portalYearsOnly.indexOf(year) != -1) {
+      this.portalYearsOnly = this.portalYearsOnly.filter(
+        x => String(x) != String(year)
+      );
+    } else {
+      this.portalYearsOnly.push(String(year));
+      this.portalYearsOnly.sort((a, b) => {
+        if (a < b) return 1;
+        else if (a > b) return -1;
+        else return 0;
+      });
+    }
+    this.portalYearUpdated = true;
   }
 
   constructor(

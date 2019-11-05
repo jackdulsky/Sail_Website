@@ -60,20 +60,17 @@
     <div class="playCount">Plays</div>
     <div class="playCountNumber">{{ filterService.playCount }}</div>
 
-    <!--  -->
     <div *ngIf="filterService.playCount == ''">
       <div class="loading-spinner"></div>
     </div>
     <div class="funcbutton saveFilterNew" (click)="saveFilter()">
       <div class="btnGo">
-        <!-- <i class="fa fa-save fa-lg"></i> -->
         Save
       </div>
     </div>
 
     <div class="funcbutton saveFilterNew" (click)="clearAll()">
       <div class="btnGo">
-        <!-- <i class="fa fa-trash fa-lg"></i> -->
         Clear
       </div>
     </div>
