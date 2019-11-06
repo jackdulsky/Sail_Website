@@ -1,7 +1,8 @@
 <div></div>
-<!-- <div [hidden]="submitted"> -->
-<div>
-  <h1 style="margin-top:0px;">REPORT UPLOAD FORM</h1>
+<div class="overallForm">
+  <h1 style="margin-top:0px;margin-left:7px; margin-bottom: 10px;;">
+    REPORT UPLOAD FORM
+  </h1>
   <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
     <div class="form-group">
       <label for="label">Name</label>
@@ -14,24 +15,21 @@
         name="label"
         #label="ngModel"
       />
-      <div [hidden]="label.valid || label.pristine" class="alert alert-danger">
-        Name is required
-      </div>
     </div>
 
     <div class="form-group">
-      <label for="alterEgo">RD URL</label>
+      <label for="RDURL">RockDaisy URL:</label>
       <input
         type="text"
         class="form-control"
-        id="alterEgo"
+        id="RDURL"
         [(ngModel)]="report.url"
-        name="alterEgo"
+        name="RDURL"
       />
     </div>
 
     <div class="form-group">
-      <label for="tab">Is Tab?</label>
+      <label for="tab">Tab:</label>
       <select
         class="form-control"
         id="tab"
@@ -44,13 +42,10 @@
           option
         }}</option>
       </select>
-      <div [hidden]="tab.valid || tab.pristine" class="alert alert-danger">
-        Tab Selection is required
-      </div>
     </div>
 
     <div class="form-group">
-      <label for="list">Is A List?</label>
+      <label for="list">List:</label>
       <select
         class="form-control"
         id="list"
@@ -63,19 +58,100 @@
           option
         }}</option>
       </select>
-      <div [hidden]="list.valid || list.pristine" class="alert alert-danger">
-        Tab Selection is required
-      </div>
     </div>
 
+    <div class="form-group">
+      <label for="location">Location:</label>
+      <select
+        class="form-control"
+        id="location"
+        required
+        [(ngModel)]="report.location"
+        name="location"
+        #location="ngModel"
+      >
+        <option
+          *ngFor="let loc of filterService.reportTabLocation | keyvalue"
+          [value]="loc.key"
+          >{{ loc.value.Label }}</option
+        >
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="tabSelect">Parent List ID:</label>
+      <select
+        class="form-control"
+        id="tabSelect"
+        required
+        [(ngModel)]="report.parentListID"
+        name="tabSelect"
+        #tabSelect="ngModel"
+      >
+        <option
+          *ngFor="
+            let loc of filterService.reportTabs
+              | keyvalue
+              | filterReportLists: report.location
+          "
+          [value]="loc.key"
+          >{{ loc.value.Label }}</option
+        >
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="icon">Icon:</label>
+      <select
+        class="form-control"
+        id="icon"
+        required
+        [(ngModel)]="report.iconURL"
+        name="icon"
+        #icon="ngModel"
+      >
+        <option
+          *ngFor="let icon of icons | keyvalue"
+          [style.backgroundColor]="icon.value"
+          [value]="icon.value"
+          >{{ icon.key }}</option
+        >
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="color"
+        >Color:
+        <span style="text-transform: uppercase;">{{
+          report.color
+        }}</span></label
+      >
+      <input
+        class="form-control"
+        id="color"
+        name="color"
+        [style.background]="report.color"
+        [(colorPicker)]="report.color"
+      />
+    </div>
+
+    <div class="grid-itemGen" [ngStyle]="setSampleStyle()"></div>
+    <div class="labelText">
+      {{ report.label }}
+    </div>
     <button
       type="submit"
       class="btn btn-success"
       [disabled]="!heroForm.form.valid"
+      style="margin-left:15px"
+      class="submitButton"
     >
       Submit
     </button>
-    <button type="button" class="btn btn-default">
+    <button
+      type="button"
+      class="btn btn-default submitButton"
+      (click)="resetForm()"
+    >
       Reset
     </button>
   </form>

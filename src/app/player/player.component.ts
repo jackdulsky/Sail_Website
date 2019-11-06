@@ -47,19 +47,20 @@ export class PlayerComponent implements OnInit {
       }
       this.subRoute(this.playerTabSelected);
     } else {
-      console.log("WAITING TO LOAD");
-
       setTimeout(() => {
-        this.playerTabSelected = Object.keys(
-          this.filterService.getReportHeaders(3)
-        )[0];
+        try {
+          this.playerTabSelected = Object.keys(
+            this.filterService.getReportHeaders(3)
+          )[0];
+        } catch (e) {
+          this.playerTabSelected = 7;
+        }
         if (this.router.url.includes("/report")) {
           this.playerTabSelected = this.router.url.split("/report/")[1];
         }
         if (this.router.url.includes("/base-reports")) {
           this.playerTabSelected = this.router.url.split("/base-reports/")[1];
         }
-        console.log("WAITING TO LOAD", this.playerTabSelected);
 
         this.subRoute(this.playerTabSelected);
       }, 800);

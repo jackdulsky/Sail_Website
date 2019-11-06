@@ -203,6 +203,14 @@ export class PullDataService {
     });
   }
 
+  //PULL THE LOCATIONS OF THE REPORTS
+  pullReportTabLocation() {
+    var query = "SELECT *  FROM [SaildB].[Reports].[TabLocation]";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+
   //PULL THE REPORT URL
   pullReportURLs() {
     var query = "";

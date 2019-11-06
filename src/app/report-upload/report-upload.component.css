@@ -1,0 +1,52 @@
+.form-group {
+  padding: 6px;
+}
+.form-group > label {
+  font-weight: bold;
+  display: block;
+  padding-bottom: 5px;
+}
+.overallForm {
+  margin-left: 245px;
+}
+.form-control {
+  width: 200px;
+  height: 25px;
+}
+.grid-itemGen {
+  border-radius: 10px;
+  height: 180px;
+  width: 160px;
+  background-color: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: "DIN";
+  text-align: left;
+  background-color: #ebeced;
+  margin-top: 10px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+}
+.grid-itemGen:hover {
+  border-top-right-radius: 10px;
+  box-shadow: 2px 2px 2px black;
+  cursor: pointer;
+  text-shadow: 0px 0px 6px var(--color-white);
+  -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.97);
+  -mox-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.97);
+  transition: all 0.2s ease 0s;
+}
+.labelText {
+  margin-top: 4px;
+  font-size: 16px;
+  font-family: "DIN";
+  text-align: center;
+}
+
+.submitButton {
+  width: 70px;
+  height: 40px;
+  margin-right: 10px;
+  margin-top: 10px;
+}

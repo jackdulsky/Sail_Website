@@ -42,4 +42,7 @@ export class TopbarComponent implements OnInit {
   openReportUpload() {
     this.router.navigate(["../../report-upload"]);
   }
+  openSettingsMenu() {
+    console.log("OPENING SETTINGS MENU");
+  }
 }

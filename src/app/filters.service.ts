@@ -80,6 +80,7 @@ export class FiltersService {
   portalSelected = "";
   viewingURL;
   reportTabs;
+  reportTabLocation;
   portalYearsSelected: String[] = [];
   portalYearsList = [
     "2019",
@@ -300,6 +301,11 @@ export class FiltersService {
       this.reportTabs = {};
       this.extractID(data, "TabID", this.reportTabs);
       console.log("Pull Tabs", this.reportTabs);
+    });
+    this.pullData.pullReportTabLocation().subscribe(data => {
+      this.reportTabLocation = {};
+      this.extractID(data, "LocationID", this.reportTabLocation);
+      console.log("Pull TabLocations", this.reportTabLocation);
     });
   }
 
@@ -1169,10 +1175,12 @@ export class FiltersService {
 
   //Toggle the years selected in the portals
   toggleYearsSelected(year: any) {
+    var item = document.getElementById(String(year) + "yearSelect");
     if (this.portalYearsOnly.indexOf(year) != -1) {
       this.portalYearsOnly = this.portalYearsOnly.filter(
         x => String(x) != String(year)
       );
+      item.style.backgroundColor = "white";
     } else {
       this.portalYearsOnly.push(String(year));
       this.portalYearsOnly.sort((a, b) => {
@@ -1180,6 +1188,7 @@ export class FiltersService {
         else if (a > b) return -1;
         else return 0;
       });
+      item.style.backgroundColor = "rgba(158, 158, 158, 0.568)";
     }
     this.portalYearUpdated = true;
   }

@@ -25,7 +25,27 @@
         {{ cat.value.Label }}
       </div>
     </div>
-    <!-- <div class="XOSSection">
+
+    <div class="XOSSection">
+      <div class="group">
+        <div class="category" style="padding-top: 20px;">
+          PORTALS
+        </div>
+        <div
+          *ngFor="let port of portals"
+          id="{{ port }}id"
+          class="sidebutton"
+          (click)="portalHighlight(port)"
+        >
+          {{ port }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <router-outlet style="float:left"></router-outlet>
+</div>
+<!-- <div class="XOSSection">
         <div class="group">
           <div class="category">
             Tools
@@ -48,38 +68,3 @@
           </div>
         </div>
       </div> -->
-    <div class="XOSSection">
-      <div class="group">
-        <div class="category" style="padding-top: 20px;">
-          PORTALS
-        </div>
-        <div
-          *ngFor="let port of portals"
-          id="{{ port }}id"
-          class="sidebutton"
-          (click)="portalHighlight(port)"
-        >
-          {{ port }}
-        </div>
-        <!-- <div class="sidebutton" id="clubid" (click)="portalHighlight('club')">
-          CLUB
-        </div>
-        <div
-          class="sidebutton"
-          id="playerid"
-          (click)="portalHighlight('player')"
-        >
-          PLAYER
-        </div>
-        <div class="sidebutton">
-          CASH
-        </div>
-        <div class="sidebutton">
-          DRAFT
-        </div> -->
-      </div>
-    </div>
-  </div>
-
-  <router-outlet style="float:left"></router-outlet>
-</div>

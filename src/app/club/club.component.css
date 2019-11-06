@@ -131,9 +131,11 @@
   font-family: "DIN";
   color: black;
   font-weight: bold;
-  padding-right: 30px;
-  background-color: white;
 }
 .shadow {
-  box-shadow: 2px 4px 10px black;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+.yearDropDown:hover {
+  background-color: lightgray !important;
+  cursor: pointer;
 }

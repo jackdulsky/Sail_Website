@@ -30,6 +30,7 @@ import { MatFormFieldModule, MatSelectModule } from "@angular/material";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { FilterPipe } from "./filter.pipe";
 import { FilterPipe2 } from "./filter2.pipe";
+import { FilterReportListsPipe } from "./filterReportLists.pipe";
 
 import { SafeHtmlPipe } from "./safe.pipe";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -55,8 +56,11 @@ import { ReportUploadComponent } from "./report-upload/report-upload.component";
 import { PlayerComponent } from "./player/player.component";
 import { CashComponent } from "./cash/cash.component";
 import { AngularMultiSelectModule } from "angular2-multiselect-dropdown";
+import { ColorPickerModule } from "ngx-color-picker";
+
 @NgModule({
   declarations: [
+    FilterReportListsPipe,
     SmartFilterPipe,
     SafeHtmlPipe,
     FilterPipe,
@@ -79,6 +83,7 @@ import { AngularMultiSelectModule } from "angular2-multiselect-dropdown";
     CashComponent
   ],
   imports: [
+    ColorPickerModule,
     AngularMultiSelectModule,
     DragToSelectModule.forRoot(),
     OAuthModule.forRoot(),
