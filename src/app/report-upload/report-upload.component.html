@@ -11,19 +11,19 @@
         class="form-control"
         id="label"
         required
-        [(ngModel)]="report.label"
+        [(ngModel)]="report.Label"
         name="label"
         #label="ngModel"
       />
     </div>
 
     <div class="form-group">
-      <label for="RDURL">RockDaisy URL:</label>
+      <label for="RDURL">RockDaisy View ID:</label>
       <input
         type="text"
         class="form-control"
         id="RDURL"
-        [(ngModel)]="report.url"
+        [(ngModel)]="report.ViewID"
         name="RDURL"
       />
     </div>
@@ -34,13 +34,15 @@
         class="form-control"
         id="tab"
         required
-        [(ngModel)]="report.isTab"
+        [(ngModel)]="report.IsTab"
         name="tab"
         #tab="ngModel"
       >
-        <option *ngFor="let option of yesno" [value]="option">{{
-          option
-        }}</option>
+        <option
+          *ngFor="let option of yesnoTab | keyvalue"
+          [value]="option.key"
+          >{{ option.value }}</option
+        >
       </select>
     </div>
 
@@ -50,13 +52,15 @@
         class="form-control"
         id="list"
         required
-        [(ngModel)]="report.isTab"
+        [(ngModel)]="report.IsList"
         name="list"
         #list="ngModel"
       >
-        <option *ngFor="let option of yesno" [value]="option">{{
-          option
-        }}</option>
+        <option
+          *ngFor="let option of yesnoList | keyvalue"
+          [value]="option.key"
+          >{{ option.value }}</option
+        >
       </select>
     </div>
 
@@ -66,7 +70,7 @@
         class="form-control"
         id="location"
         required
-        [(ngModel)]="report.location"
+        [(ngModel)]="report.LocationID"
         name="location"
         #location="ngModel"
       >
@@ -83,7 +87,7 @@
         class="form-control"
         id="tabSelect"
         required
-        [(ngModel)]="report.parentListID"
+        [(ngModel)]="report.ParentTabID"
         name="tabSelect"
         #tabSelect="ngModel"
       >
@@ -91,7 +95,7 @@
           *ngFor="
             let loc of filterService.reportTabs
               | keyvalue
-              | filterReportLists: report.location
+              | filterReportLists: report.LocationID
           "
           [value]="loc.key"
           >{{ loc.value.Label }}</option
@@ -105,7 +109,7 @@
         class="form-control"
         id="icon"
         required
-        [(ngModel)]="report.iconURL"
+        [(ngModel)]="report.IconUrl"
         name="icon"
         #icon="ngModel"
       >
@@ -122,22 +126,20 @@
       <label for="color"
         >Color:
         <span style="text-transform: uppercase;">{{
-          report.color
+          report.Color
         }}</span></label
       >
       <input
         class="form-control"
-        id="color"
-        name="color"
-        [style.background]="report.color"
-        [(colorPicker)]="report.color"
+        id="Color"
+        name="Color"
+        [style.background]="report.Color"
+        [(colorPicker)]="report.Color"
       />
     </div>
 
     <div class="grid-itemGen" [ngStyle]="setSampleStyle()"></div>
-    <div class="labelText">
-      {{ report.label }}
-    </div>
+
     <button
       type="submit"
       class="btn btn-success"

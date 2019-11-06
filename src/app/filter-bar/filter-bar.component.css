@@ -99,10 +99,10 @@
   float: left;
   width: 190px;
   min-width: 190px;
-  background-color: var(--darker-grey);
+  background-color: var(--darker-gray);
   height: 100%;
   border-style: solid;
-  border-image: linear-gradient(to right, var(--medium-grey), white) 1 100%;
+  border-image: linear-gradient(to right, var(--medium-gray), white) 1 100%;
   border-right-width: 5px;
   border-left: 0px;
   border-top: 0px;
@@ -156,7 +156,7 @@
   font-family: "DIN";
 }
 .titleFilter:hover {
-  background-color: var(--raiders-grey);
+  background-color: var(--raiders-gray);
 
   cursor: pointer;
 
@@ -195,7 +195,7 @@
   background-color: white;
 }
 .saveFilterNew:hover {
-  background-color: var(--raiders-grey);
+  background-color: var(--raiders-gray);
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.4);
 }
 .clear {
@@ -321,7 +321,7 @@
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
 }
 .but:hover {
-  background-color: var(--radiers-grey);
+  background-color: var(--radiers-gray);
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.4);
 }
 .space {

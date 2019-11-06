@@ -1,8 +1,8 @@
 <Div class="area">
-  <div class="grid-container">
+  <div class="grid-container" *ngIf="filterService.reportReportsStructure">
     <div
       *ngFor="
-        let repo of filterService.reportsNew[reportList]
+        let repo of filterService.reportReportsStructure[reportList]
           | keyvalue: body.valueOrder
       "
     >

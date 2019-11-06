@@ -9,6 +9,7 @@ import "rxjs/add/operator/map";
 import { identifierModuleUrl } from "@angular/compiler";
 import { RequestOptions } from "@angular/http";
 import { UUID } from "angular2-uuid";
+import { dependenciesFromGlobalMetadata } from "@angular/compiler/src/render3/r3_factory";
 
 @Injectable({
   providedIn: "root"
@@ -168,7 +169,7 @@ export class PullDataService {
   //SEND THE DATA BACK UP TO THE DB
   // INSERT THE GUI AND FILTERS SELECTED
   constructAndSendFilters(filter) {
-    console.log("PULL DATA CONSTRUCT AND SEND", JSON.stringify(filter));
+    // console.log("PULL DATA CONSTRUCT AND SEND", JSON.stringify(filter));
 
     var query =
       "exec SailDB.filter.spSAIL_StoreUpdateFilter N'" +
@@ -178,13 +179,13 @@ export class PullDataService {
       "'";
     // console.log(query);
 
-    // this.http
-    //   .post(this.serverURL + "db/query", {
-    //     query: query
-    //   })
-    //   .subscribe(data => {
-    //     console.log(data);
-    //   });
+    this.http
+      .post(this.serverURL + "db/query", {
+        query: query
+      })
+      .subscribe(data => {
+        // console.log(data);
+      });
 
     //
   }
@@ -194,7 +195,10 @@ export class PullDataService {
   setGUID() {
     this.GUID = UUID.UUID();
   }
-
+  //GET GUID FOR URL LINK
+  getGUID() {
+    return this.GUID;
+  }
   //PULL THE REPORT TABS TABLE
   pullReportTabs() {
     var query = "SELECT *  FROM [SaildB].[Reports].[Tabs]";
@@ -211,18 +215,26 @@ export class PullDataService {
     });
   }
 
-  //PULL THE REPORT URL
-  pullReportURLs() {
-    var query = "";
+  //GET ALL THE PLAYERS FOR THE URL COMPOSITION
+  pullPlayers() {
+    var query =
+      " SELECT r.GSISPlayerID,r.SailID,v.StatValue,GSISID FROM saildb.stat.PlayerStats s LEFT JOIN saildb.org.Player r ON s.SailID = r.SailID LEFT JOIN saildb.stat.PlayerStatType t ON s.PlayerStatID = t.PlayerStatID LEFT JOIN saildb.import.ValueLookup v ON v.ValueID = s.PlayerStatValue WHERE t.PlayerStatType = 'PlayerName'";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
 
-  //GET ALL THE PLAYERS FOR THE URL COMPOSITION
-  pullPlayers() {
-    var query =
-      " SELECT r.GSISPlayerID,r.SailID,v.StatValue,GSISID FROM saildb.stat.PlayerStats s LEFT JOIN saildb.org.Player r ON s.SailID = r.SailID LEFT JOIN saildb.stat.PlayerStatType t ON s.PlayerStatID = t.PlayerStatID LEFT JOIN saildb.import.ValueLookup v ON v.ValueID = s.PlayerStatValue WHERE t.PlayerStatType = 'PlayerName'";
+  //Get the report structure
+  pullReports() {
+    var query = "SELECT *  FROM [SaildB].[Reports].[Reports]";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+
+  //PULL THE REPORT URL
+  pullReportURL() {
+    var query = "SELECT * FROM [SaildB].[Reports].[ReportURL]";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

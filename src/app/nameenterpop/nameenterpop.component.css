@@ -29,7 +29,7 @@
   margin-top: 0px;
 }
 .but {
-  background-color: var(--raiders-grey);
+  background-color: var(--raiders-gray);
 }
 .but:hover {
   background-color: var(--light-blue);

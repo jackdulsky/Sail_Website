@@ -46,7 +46,7 @@ export class BodyComponent implements OnInit {
         } catch (e) {}
       }
     }, 1);
-    this.reports = this.ReportListService.reports;
+    // this.reports = this.ReportListService.reports;
   }
 
   //THIS UPDATES THE REPORT TYPE TO VIEW FROM CLICK
@@ -84,7 +84,10 @@ export class BodyComponent implements OnInit {
     document.getElementById(name + "reportHighlightid").className =
       "sidebutton sidebuttonclicked";
     if (this.filterService.reportTabs[name]["IsList"] == 0) {
-      this.router.navigate(["../report/" + String(name)]);
+      var reportID = Object.keys(
+        this.filterService.reportReportsStructure[name]
+      )[0];
+      this.router.navigate(["../report/" + String(reportID)]);
     } else {
       this.router.navigate(["../base-reports/" + String(name)]);
     }
@@ -184,14 +187,61 @@ export class BodyComponent implements OnInit {
     }
   }
   setIconStyle(repo: any) {
+    // let styles = {
+    //   "background-repeat": "no-repeat,no-repeat",
+    //   "background-position": "center",
+    //   "background-size": "145px,cover",
+    //   "background-image":
+    //     "url(" +
+    //     this.report.IconUrl +
+    //     "), linear-gradient(" +
+    //     this.report.Color +
+    //     "," +
+    //     this.filterService.shadeColor(this.report.Color, 75) +
+    //     ")"
+    // };
+
+    var color;
+    var icon;
+    if (repo["Color"]) {
+      color = repo["Color"];
+    }
+    if (repo["colorBottom"]) {
+      color = repo["colorBottom"];
+    }
+    if (repo["ColorBottom"]) {
+      color = repo["ColorBottom"];
+    }
+    if (repo["IconUrl"]) {
+      icon = repo["IconUrl"];
+    } else {
+      icon =
+        "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Chart1.png";
+    }
     let styles = {
-      // "background-color": repo.value % 2 == 0 ? "skyblue" : "grey",
+      "background-repeat": "no-repeat,no-repeat",
+      "background-position": "center",
+      "background-size": "130px,cover",
+      "background-image":
+        "url(" +
+        icon +
+        "), linear-gradient(" +
+        this.filterService.shadeColor(color, 75) +
+        "," +
+        color +
+        ")"
+
+      // "background-color": repo.value % 2 == 0 ? "skyblue" : "gray",
       // "background-image":
       //   repo.value["id"] % 2 == 0
       //     ? "url('https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/OAK_logo.png')"
       //     : "url('https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/NYG_logo.png')",
-      "background-image":
-        "linear-gradient(" + repo["colorTop"] + "," + repo["colorBottom"] + ")"
+      // "background-image":
+      //   "linear-gradient(" +
+      //   color +
+      //   "," +
+      //   this.filterService.shadeColor(color, 75) +
+      //   ")"
     };
     return styles;
   }
@@ -201,9 +251,9 @@ export class BodyComponent implements OnInit {
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
   ): number => {
-    return a.value["order"] > b.value["order"]
+    return a.value["OrderID"] > b.value["OrderID"]
       ? -1
-      : b.value["order"] > a.value["order"]
+      : b.value["OrderID"] > a.value["OrderID"]
       ? 1
       : 0;
   };
@@ -211,9 +261,9 @@ export class BodyComponent implements OnInit {
   //RETURN THE ITEMS IN THE ORDER SPECIFIED
 
   valueOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
-    return a.value["order"] < b.value["order"]
+    return a.value["OrderID"] < b.value["OrderID"]
       ? -1
-      : b.value["order"] < a.value["order"]
+      : b.value["OrderID"] < a.value["OrderID"]
       ? 1
       : 0;
   };

@@ -218,11 +218,11 @@ export class FilterspopComponent implements OnInit {
     // if (event.buttons == 1) {
     //   //toggle
     //   if (
-    //     document.getElementById(id).style.backgroundColor != "grey" &&
+    //     document.getElementById(id).style.backgroundColor != "gray" &&
     //     this.highlighting &&
     //     this.yearsSelected.length > 0
     //   ) {
-    //     document.getElementById(id).style.backgroundColor = "grey";
+    //     document.getElementById(id).style.backgroundColor = "gray";
     //     for (let i = 0; i < this.yearsSelected.length; i++) {
     //       this.filterService.testSetSeasonWeek(
     //         "200",
@@ -234,7 +234,7 @@ export class FilterspopComponent implements OnInit {
     //   } else {
     //     if (
     //       !this.highlighting &&
-    //       document.getElementById(id).style.backgroundColor == "grey"
+    //       document.getElementById(id).style.backgroundColor == "gray"
     //     ) {
     //       document.getElementById(id).style.backgroundColor = "white";
     //       for (let i = 0; i < this.yearsSelected.length; i++) {
@@ -254,11 +254,11 @@ export class FilterspopComponent implements OnInit {
   toggleWeekHighlight(type: string, week: string) {
     // var id = type + week;
     // if (
-    //   document.getElementById(id).style.backgroundColor != "grey" &&
+    //   document.getElementById(id).style.backgroundColor != "gray" &&
     //   this.yearsSelected.length > 0
     // ) {
     //   this.highlighting = true;
-    //   document.getElementById(id).style.backgroundColor = "grey";
+    //   document.getElementById(id).style.backgroundColor = "gray";
     //   for (let i = 0; i < this.yearsSelected.length; i++) {
     //     this.filterService.testSetSeasonWeek(
     //       "200",
@@ -286,17 +286,17 @@ export class FilterspopComponent implements OnInit {
     // if (event.buttons == 1) {
     //   //toggle
     //   if (
-    //     document.getElementById(year).style.backgroundColor != "grey" &&
+    //     document.getElementById(year).style.backgroundColor != "gray" &&
     //     this.highlighting
     //   ) {
-    //     document.getElementById(year).style.backgroundColor = "grey";
+    //     document.getElementById(year).style.backgroundColor = "gray";
     //     if (this.yearsSelected.indexOf(year) == -1) {
     //       this.yearsSelected.push(year);
     //     }
     //   } else {
     //     if (
     //       !this.highlighting &&
-    //       document.getElementById(year).style.backgroundColor == "grey"
+    //       document.getElementById(year).style.backgroundColor == "gray"
     //     ) {
     //       document.getElementById(year).style.backgroundColor = "white";
     //       this.yearsSelected = this.yearsSelected.filter(x => x != year);
@@ -307,9 +307,9 @@ export class FilterspopComponent implements OnInit {
 
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
   toggleYearHighlight(year: string) {
-    // if (document.getElementById(year).style.backgroundColor != "grey") {
+    // if (document.getElementById(year).style.backgroundColor != "gray") {
     //   this.highlighting = true;
-    //   document.getElementById(year).style.backgroundColor = "grey";
+    //   document.getElementById(year).style.backgroundColor = "gray";
     //   if (this.yearsSelected.indexOf(year) == -1) {
     //     this.yearsSelected.push(year);
     //   }
@@ -353,7 +353,7 @@ export class FilterspopComponent implements OnInit {
     //   } else {
     //     for (let year of this.years) {
     //       this.highlighting = true;
-    //       document.getElementById(year).style.backgroundColor = "grey";
+    //       document.getElementById(year).style.backgroundColor = "gray";
     //       if (this.yearsSelected.indexOf(year) == -1) {
     //         this.yearsSelected.push(year);
     //       }
@@ -369,7 +369,7 @@ export class FilterspopComponent implements OnInit {
     //     ) {
     //       turned = false;
     //       document.getElementById(yearOrWeekSet + week).style.backgroundColor =
-    //         "grey";
+    //         "gray";
     //       this.highlighting = true;
     //       for (let i = 0; i < this.yearsSelected.length; i++) {
     //         this.filterService.testSetSeasonWeek(

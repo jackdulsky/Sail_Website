@@ -5,7 +5,7 @@ import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { NonNullAssert, ThrowStmt } from "@angular/compiler";
-import { lor, reportsNew, views } from "./allReports";
+import { lor, reportsNew, views, colours } from "./allReports";
 import {
   DomSanitizer,
   SafeUrl,
@@ -75,12 +75,20 @@ export class FiltersService {
   lor = lor;
   reportsNew = reportsNew;
   views = views;
+  colours = colours;
   Label = "Label";
   selected: string;
   portalSelected = "";
-  viewingURL;
+
+  viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+    "https://sail.raiders.com/"
+  );
+
   reportTabs;
   reportTabLocation;
+  reportReportsStructure;
+  reportReportsOnly;
+  reportURL;
   portalYearsSelected: String[] = [];
   portalYearsList = [
     "2019",
@@ -222,7 +230,7 @@ export class FiltersService {
           this.recursiveExtractLevel(d[b], "BinID", 2)
         );
       }
-      console.log("PULLStructure", this.pullStructure);
+      // console.log("PULLStructure", this.pullStructure);
     });
     this.pullData.pullDataType().subscribe(data => {
       this.pullDataType = {};
@@ -231,7 +239,7 @@ export class FiltersService {
     this.pullData.pullPlayers().subscribe(data => {
       this.pullPlayers = {};
       this.extractID(data, "SailID", this.pullPlayers);
-      console.log("PLAYERS", this.pullPlayers);
+      // console.log("PLAYERS", this.pullPlayers);
     });
     this.pullData.pullBin().subscribe(data => {
       this.pullBin = {};
@@ -241,32 +249,32 @@ export class FiltersService {
         this.reversePaths[binKey] = {};
         this.newWorkingFID[binKey] = "";
       }
-      console.log("BIN", this.pullBin);
+      // console.log("BIN", this.pullBin);
     });
     this.pullData.pullNavigation().subscribe(data => {
       this.pullNavigation = {};
       this.extractID(data, "ItemID", this.pullNavigation);
-      console.log("NAV", this.pullNavigation);
+      // console.log("NAV", this.pullNavigation);
     });
     this.pullData.pullNavigationElement().subscribe(data => {
       this.pullNavigationElement = {};
       this.extractID(data, "ItemID", this.pullNavigationElement);
-      console.log("NAVELEM", this.pullNavigationElement);
+      //console.log("NAVELEM", this.pullNavigationElement);
     });
     this.pullData.pullAttributeType().subscribe(data => {
       this.pullAttributeType = {};
       this.extractID(data, "AttributeTypeID", this.pullAttributeType);
-      console.log("ATT TYPE", this.pullAttributeType);
+      //console.log("ATT TYPE", this.pullAttributeType);
     });
     this.pullData.pullAttribute().subscribe(data => {
       this.pullAttribute = {};
       this.extractID(data, "AttributeID", this.pullAttribute);
-      console.log("PULLATTRIBUTE", this.pullAttribute);
+      //console.log("PULLATTRIBUTE", this.pullAttribute);
     });
     this.pullData.pullUIType().subscribe(data => {
       this.pullUIType = {};
       this.extractID(data, "UITypeID", this.pullUIType);
-      console.log("PULL UI TYPE", this.pullUIType);
+      //console.log("PULL UI TYPE", this.pullUIType);
     });
 
     this.pullData.pullValue().subscribe(data => {
@@ -289,8 +297,8 @@ export class FiltersService {
         this.pullValue[valID] = data[b];
       }
 
-      console.log("PULLValueMap", this.pullValueMap);
-      console.log("PULL ORDER MAP", this.pullOrderMap);
+      //console.log("PULLValueMap", this.pullValueMap);
+      //console.log("PULL ORDER MAP", this.pullOrderMap);
     });
     this.pullData.getTeams().subscribe(data => {
       this.teams = cloneDeep(data);
@@ -300,12 +308,40 @@ export class FiltersService {
     this.pullData.pullReportTabs().subscribe(data => {
       this.reportTabs = {};
       this.extractID(data, "TabID", this.reportTabs);
-      console.log("Pull Tabs", this.reportTabs);
+      //console.log("Pull Tabs", this.reportTabs);
     });
     this.pullData.pullReportTabLocation().subscribe(data => {
       this.reportTabLocation = {};
       this.extractID(data, "LocationID", this.reportTabLocation);
-      console.log("Pull TabLocations", this.reportTabLocation);
+      //console.log("Pull TabLocations", this.reportTabLocation);
+    });
+    this.pullData.pullReports().subscribe(data => {
+      var tempReports = {};
+      this.reportReportsStructure = {};
+      this.extractID(data, "ViewID", tempReports);
+      for (let report in tempReports) {
+        if (!this.reportReportsStructure[tempReports[report]["TabID"]]) {
+          this.reportReportsStructure[tempReports[report]["TabID"]] = {};
+        }
+        this.reportReportsStructure[tempReports[report]["TabID"]][report] =
+          tempReports[report];
+      }
+      this.reportReportsOnly = cloneDeep(tempReports);
+      for (let base in reportsNew) {
+        for (let report in reportsNew[base]) {
+          if (!this.reportReportsStructure[base]) {
+            this.reportReportsStructure[base] = {};
+          }
+          this.reportReportsStructure[base][report] = reportsNew[base][report];
+        }
+      }
+      //console.log("Pull ReportsOnly", this.reportReportsOnly);
+      //console.log("Pull Reports", this.reportReportsStructure);
+    });
+    this.pullData.pullReportURL().subscribe(data => {
+      this.reportURL = {};
+      this.extractID(data, "ViewID", this.reportURL);
+      //console.log("URLS", this.reportURL);
     });
   }
 
@@ -945,7 +981,25 @@ export class FiltersService {
   //Thisfunction creates and stores the RD URL
   createRDURL(id: any) {
     var newURL = this.views[id];
-    this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(newURL);
+    // var baseURL = "https://sail.raiders.com/view/REPLACEME///true/true/true";
+    this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+      "https://sail.raiders.com/"
+    );
+
+    if (Number(id) > 100) {
+      try {
+        var baseURL = this.reportURL[id]["ViewURL"];
+        this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+          baseURL.replace("[GUID]", this.pullData.GUID.toUpperCase())
+        );
+      } catch (e) {
+        setTimeout(() => {
+          return this.createRDURL(id);
+        }, 100);
+      }
+    } else {
+      this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(newURL);
+    }
   }
 
   //THIS FUNCTION UPDATES THE
@@ -1145,9 +1199,9 @@ export class FiltersService {
       return String(this.portalYearsOnly[0]);
     } else {
       return (
-        String(this.portalYearsOnly[0]) +
+        String(this.portalYearsOnly[this.portalYearsOnly.length - 1]) +
         " - " +
-        String(this.portalYearsOnly[this.portalYearsOnly.length - 1])
+        String(this.portalYearsOnly[0])
       );
     }
   }
@@ -1200,4 +1254,36 @@ export class FiltersService {
     public route: ActivatedRoute,
     public router: Router
   ) {}
+
+  //Takes a hex color and percent change and returns new hex color
+  shadeColor(color, percent) {
+    if (!color.includes("#")) {
+      color = this.colorNameToHex(color);
+    }
+    var R = parseInt(color.substring(1, 3), 16);
+    var G = parseInt(color.substring(3, 5), 16);
+    var B = parseInt(color.substring(5, 7), 16);
+
+    R = parseInt(String((Number(R) * (100 + percent)) / 100));
+    G = parseInt(String((Number(G) * (100 + percent)) / 100));
+    B = parseInt(String((Number(B) * (100 + percent)) / 100));
+
+    R = R < 255 ? R : 255;
+    G = G < 255 ? G : 255;
+    B = B < 255 ? B : 255;
+
+    var RR = R.toString(16).length == 1 ? "0" + R.toString(16) : R.toString(16);
+    var GG = G.toString(16).length == 1 ? "0" + G.toString(16) : G.toString(16);
+    var BB = B.toString(16).length == 1 ? "0" + B.toString(16) : B.toString(16);
+
+    return "#" + RR + GG + BB;
+  }
+
+  //Convert color name to hex
+  colorNameToHex(colour) {
+    if (typeof colours[colour.toLowerCase()] != "undefined")
+      return colours[colour.toLowerCase()];
+
+    return false;
+  }
 }

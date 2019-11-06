@@ -3,7 +3,11 @@ import { FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { FiltersService } from "../filters.service";
 import { PullDataService } from "../pull-data.service";
-
+import {
+  DomSanitizer,
+  SafeUrl,
+  ɵELEMENT_PROBE_PROVIDERS__POST_R3__
+} from "@angular/platform-browser";
 @Component({
   selector: "app-report-upload",
   templateUrl: "./report-upload.component.html",
@@ -11,19 +15,19 @@ import { PullDataService } from "../pull-data.service";
 })
 export class ReportUploadComponent implements OnInit {
   template = {
-    label: "",
-    isTab: "No",
-    isList: "No",
-    location: 1,
+    Label: "",
+    IsTab: 0,
+    IsList: 0,
+    LocationID: 1,
 
-    parentListID: 0,
-    css: {},
-    url: "",
-    iconURL:
+    ParentTabID: 0,
+    ViewID: "",
+    IconUrl:
       "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Chart1.png",
-    color: "#FFFFFF"
+    Color: "#FFFFFF"
   };
-  yesno = ["Yes", "No"];
+  yesnoTab = { 0: "No", 1: "Yes" };
+  yesnoList = { 0: "No", 1: "Yes" };
 
   profileForm = new FormGroup({
     firstName: new FormControl(""),
@@ -33,9 +37,6 @@ export class ReportUploadComponent implements OnInit {
   checked = false;
 
   icons = {
-    Cash1:
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Cash1.png",
-
     Cash2:
       "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Cash2.png",
 
@@ -51,20 +52,14 @@ export class ReportUploadComponent implements OnInit {
     Chart2:
       "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Chart2.png",
 
-    Chart3:
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Chart3.png",
-
-    Chart4:
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Chart4.png",
-
     Chart5:
       "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Chart5.png",
 
     Clock2:
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Clock1.png",
+      "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Clock2.png",
 
     Clock3:
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Clock2.png",
+      "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Clock3.png",
 
     Database1:
       "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Database1.png",
@@ -80,9 +75,6 @@ export class ReportUploadComponent implements OnInit {
 
     Line1:
       "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Line1.png",
-
-    Line2:
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Line2.png",
 
     PDF1: "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/PDF1.png",
 
@@ -120,7 +112,7 @@ export class ReportUploadComponent implements OnInit {
 
   constructor(
     public filterService: FiltersService,
-
+    public sanitizer: DomSanitizer,
     public pullData: PullDataService
   ) {}
   report;
@@ -128,26 +120,26 @@ export class ReportUploadComponent implements OnInit {
     this.report = cloneDeep(this.template);
   }
   onSubmit() {
-    // TODO: Use EventEmitter with form value
-    console.warn(this.report);
+    console.log(JSON.stringify(this.report));
   }
   resetForm() {
     this.report = cloneDeep(this.template);
   }
 
+  //Set the view sample icon images and background color
   setSampleStyle() {
     let styles = {
-      "background-color": String(this.report.color),
-      "background-image": "url(" + this.report.iconURL + ")",
-      "background-repeat": "no-repeat",
+      "background-repeat": "no-repeat,no-repeat",
       "background-position": "center",
-      "background-size": "contain"
-      // "background-size": "160px 160px"
-      //   repo.value["id"] % 2 == 0
-      //     ? "url('https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/OAK_logo.png')"
-      //     : "url('https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/NYG_logo.png')",
-      // "background-image":
-      // "linear-gradient(" + repo["colorTop"] + "," + repo["colorBottom"] + ")"
+      "background-size": "145px,cover",
+      "background-image":
+        "url(" +
+        this.report.IconUrl +
+        "), linear-gradient(" +
+        this.filterService.shadeColor(this.report.Color, 75) +
+        "," +
+        this.report.Color +
+        ")"
     };
     return styles;
   }

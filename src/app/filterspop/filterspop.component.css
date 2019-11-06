@@ -34,7 +34,7 @@
   background-color: black !important;
 }
 ::ng-deep.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
-  color: grey;
+  color: gray;
 }
 .mat-seudo-checkbox::after {
   color: white !important;
@@ -61,7 +61,7 @@ input {
   border-radius: 5px;
 }
 .save:hover {
-  background-color: var(--raiders-grey) !important;
+  background-color: var(--raiders-gray) !important;
   cursor: pointer !important;
 }
 .clickedWhite::after {
@@ -106,7 +106,7 @@ input {
   width: 100%;
   background-color: white;
   align-content: center;
-  border-bottom: 2px solid var(--raiders-grey);
+  border-bottom: 2px solid var(--raiders-gray);
 }
 .tier1Tab {
   height: 38px;
@@ -218,7 +218,7 @@ input {
 .selectKey {
   margin-left: 4px;
   margin-right: 4px;
-  color: grey;
+  color: gray;
 }
 .filterSearch {
   background: transparent;
@@ -274,7 +274,7 @@ input {
   color: black;
   border-bottom: 1px solid black;
   border-left: 1px solid black;
-  background-color: var(--raiders-grey);
+  background-color: var(--raiders-gray);
   list-style-type: none;
   position: relative;
   display: flex;
@@ -662,7 +662,7 @@ input {
     border-radius: 3px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2),
       inset 0 1px 1px rgba(255, 255, 255, 0.45);
-    background-color: var(--raiders-grey);
+    background-color: var(--raiders-gray);
     background-image: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
   }
   #switchConferenceDEF,
@@ -1045,7 +1045,7 @@ input {
 }
 .numberInput {
   color: black;
-  border: 1px solid grey;
+  border: 1px solid gray;
   border-radius: 3px;
   text-align: center;
 }
@@ -1105,13 +1105,13 @@ input {
 }
 
 .rowTeams {
-  background-color: var(--raiders-grey);
+  background-color: var(--raiders-gray);
 }
 .league {
   border-left: 8px solid white;
   border-right: 8px solid white;
   border-radius: 6px;
-  border: 3px solid var(--raiders-grey);
+  border: 3px solid var(--raiders-gray);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4), 0 1.5px 5px 0 rgba(0, 0, 0, 0.38);
   width: 150px !important;
   height: 165px !important;
@@ -1142,7 +1142,7 @@ input {
   color: black;
 }
 .mat-button-toggle-label-content {
-  background-color: var(--raiders-grey) !important;
+  background-color: var(--raiders-gray) !important;
 }
 .yearSelection {
   width: 40px;
@@ -1163,13 +1163,13 @@ input {
   transition: background-position 0.3s ease-out;
 }
 .typeButton:hover {
-  /* background-color: var(--raiders-grey); */
+  /* background-color: var(--raiders-gray); */
   background-position: -99.99% 0;
 
   cursor: pointer;
 }
 .swSelection {
-  border: 1px solid var(--raiders-grey);
+  border: 1px solid var(--raiders-gray);
   float: left;
   width: 40px;
   height: 30px;
@@ -1189,7 +1189,7 @@ input {
 .yearSelection:hover,
 .weekSelection:hover {
   cursor: pointer;
-  box-shadow: 0px 3px 2px var(--darker-grey);
+  box-shadow: 0px 3px 2px var(--darker-gray);
 }
 .commonNote {
   font-size: 12px;

@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { reports } from "./allReports";
 import { Observable, of } from "rxjs";
 
 @Injectable({
@@ -7,7 +6,6 @@ import { Observable, of } from "rxjs";
 })
 export class ReportListService {
   currentReportTypeID: number = 0;
-  reports = reports;
   constructor() {}
 
   //SET RD REPORT NUMBER

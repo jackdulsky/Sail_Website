@@ -400,7 +400,7 @@
           <div>
             <div
               class="switch-toggle switch-3 switch-candy"
-              style="background-color: var(--raiders-grey); max-width: 607px; margin-left: 79px;"
+              style="background-color: var(--raiders-gray); max-width: 607px; margin-left: 79px;"
             >
               <input
                 id="onconf{{ id }}"
@@ -682,7 +682,7 @@
         <div class="toggleLabelClub2">
           <div
             class="switch-toggle switch-3 switch-candy"
-            style="background-color: var(--raiders-grey); max-width: 607px; margin-left: 79px;"
+            style="background-color: var(--raiders-gray); max-width: 607px; margin-left: 79px;"
           >
             <input
               id="onconf{{ id }}"
@@ -909,7 +909,7 @@
 
         <div *ngIf="level2Selected == 200" class="seasonWeek">
           <div
-            style="display: flex; border-bottom: 1px solid var(--darker-grey); padding-bottom:10px;"
+            style="display: flex; border-bottom: 1px solid var(--darker-gray); padding-bottom:10px;"
           >
             <div class="typeButton" (click)="selectAllSeasonWeek('year')">
               Years:
@@ -941,7 +941,7 @@
                 id="{{ weekSet }}{{ week }}"
                 (mousedown)="toggleWeekHighlight(weekSet, week)"
                 *ngIf="checkIfSelected(weekSet, week)"
-                style="background-color: grey"
+                style="background-color: gray"
                 class="swSelection weekSelection"
               >
                 {{ week }}

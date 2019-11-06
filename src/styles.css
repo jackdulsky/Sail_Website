@@ -3,11 +3,11 @@
 /* @import '~bootstrap/dist/css/bootstrap.min.css'; */
 /* @import '../node_modules/bootstrap/dist/css/bootstrap.css' */
 :root {
-  --raiders-grey: #c3c8cb;
+  --raiders-gray: #c3c8cb;
   --lighter-blue: #92a2ac;
   --medium-blue: #778d9b;
-  --medium-grey: #91989c;
-  --darker-grey: #7f878c;
+  --medium-gray: #91989c;
+  --darker-gray: #7f878c;
   --color-white: white;
   --color-black: black;
   --light-blue: #799fb7;

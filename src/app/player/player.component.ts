@@ -198,7 +198,10 @@ export class PlayerComponent implements OnInit {
       if (this.filterService.reportTabs[name]["IsList"] == 0) {
         var newRoute = this.router.url.split("/base-report")[0];
         newRoute = newRoute.split("/report")[0];
-        this.router.navigate([newRoute + "/report/" + String(name)]);
+        var reportID = Object.keys(
+          this.filterService.reportReportsStructure[name]
+        )[0];
+        this.router.navigate([newRoute + "/report/" + String(reportID)]);
       } else {
         this.filterService.selected = name;
         var newRoute = this.router.url.split("/report")[0];

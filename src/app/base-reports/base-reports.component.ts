@@ -36,7 +36,7 @@ export class BaseReportsComponent implements OnInit {
   ngAfterViewInit() {
     this.sub = this.route.params.subscribe(params => {
       this.reportList = String(params["base-reportsid"]); // (+) converts string 'id' to a number
-      if (this.filterService.reportsNew) {
+      if (this.filterService.reportReportsStructure) {
       } else {
         setTimeout(() => {}, 800);
       }
