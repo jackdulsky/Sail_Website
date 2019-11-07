@@ -103,7 +103,13 @@ export class FiltersService {
   ];
   portalYearsOnly: String[] = [];
   portalYearUpdated = false;
-
+  constructor(
+    public sanitizer: DomSanitizer,
+    public pullData: PullDataService,
+    public fb: FormBuilder,
+    public route: ActivatedRoute,
+    public router: Router
+  ) {}
   //This function returns the list of reports based on the location id
   getReportHeaders(location: any) {
     var tabs;
@@ -551,12 +557,14 @@ export class FiltersService {
     if (this.router.url.includes("club/")) {
       this.reduceFiltersSingleClub();
     }
+
     if (
       this.router.url.includes("player/") &&
       this.playerPortalActivePlayerID != ""
     ) {
       this.reduceFiltersSinglePlayer();
     }
+
     for (let bin in this.newWorkingQuery) {
       //PUSH EMPTY PERFORM DELETES
       if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
@@ -626,7 +634,12 @@ export class FiltersService {
     //SEND UP TO THE DB
 
     this.saveAndSend();
-    if (this.router.url.includes("club")) {
+
+    if (
+      this.router.url.includes("club") ||
+      this.router.url.includes("player") ||
+      this.router.url.includes("cash")
+    ) {
       this.updateRDURL();
     }
   }
@@ -1246,14 +1259,6 @@ export class FiltersService {
     }
     this.portalYearUpdated = true;
   }
-
-  constructor(
-    public sanitizer: DomSanitizer,
-    public pullData: PullDataService,
-    public fb: FormBuilder,
-    public route: ActivatedRoute,
-    public router: Router
-  ) {}
 
   //Takes a hex color and percent change and returns new hex color
   shadeColor(color, percent) {

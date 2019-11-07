@@ -12,6 +12,7 @@ import { SavedfilterspopComponent } from "../savedfilterspop/savedfilterspop.com
 import { NameenterpopComponent } from "../nameenterpop/nameenterpop.component";
 import { PullDataService } from "../pull-data.service";
 import * as cloneDeep from "lodash/cloneDeep";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 
 @Component({
   selector: "app-filter-bar",
@@ -23,7 +24,9 @@ export class FilterBarComponent implements OnInit {
     public dialog: MatDialog,
     public filterService: FiltersService,
     public pullData: PullDataService,
-    public cdref: ChangeDetectorRef
+    public cdref: ChangeDetectorRef,
+    public route: ActivatedRoute,
+    public router: Router
   ) {}
 
   //VARIABLES
@@ -61,7 +64,15 @@ export class FilterBarComponent implements OnInit {
       const dialogRef = this.dialog.open(FilterspopComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(result => {
         this.filterOpen = false;
-        this.filterService.pushQueryToActiveFilter("0", false);
+        if (
+          this.router.url.includes("club") ||
+          this.router.url.includes("player") ||
+          this.router.url.includes("cash")
+        ) {
+          this.filterService.pushQueryToActiveFilter("0");
+        } else {
+          this.filterService.pushQueryToActiveFilter("0", false);
+        }
       });
     } else {
       this.filterService.level1Selected = selected;

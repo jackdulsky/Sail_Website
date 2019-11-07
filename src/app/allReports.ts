@@ -50,7 +50,7 @@ export const lor: any = {
 };
 export const reportsNew: any = {
   4: {
-    2664: {
+    5: {
       ColorBottom: "#3544cc",
       ColorTop: "#4254f5",
       IconUrl:
@@ -61,7 +61,7 @@ export const reportsNew: any = {
     }
   },
   7: {
-    2665: {
+    5: {
       ColorBottom: "#3544cc",
       ColorTop: "#4254f5",
       IconUrl:
