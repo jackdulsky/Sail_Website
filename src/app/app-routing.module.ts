@@ -10,7 +10,7 @@ import { LoadingComponent } from "./loading/loading.component";
 import { ReportUploadComponent } from "./report-upload/report-upload.component";
 import { PlayerComponent } from "./player/player.component";
 import { CashComponent } from "./cash/cash.component";
-
+import { HomeComponent } from "./home/home.component";
 const routes: Routes = [
   // {
   //     path: 'home',
@@ -35,8 +35,9 @@ const routes: Routes = [
     pathMatch: "full"
   },
   {
-    path: "home",
-    component: BodyComponent
+    path: "home/:guid",
+    component: HomeComponent,
+    children: []
   },
   {
     path: "setting",

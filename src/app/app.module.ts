@@ -57,6 +57,7 @@ import { PlayerComponent } from "./player/player.component";
 import { CashComponent } from "./cash/cash.component";
 import { AngularMultiSelectModule } from "angular2-multiselect-dropdown";
 import { ColorPickerModule } from "ngx-color-picker";
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,8 @@ import { ColorPickerModule } from "ngx-color-picker";
     LoadingComponent,
     ReportUploadComponent,
     PlayerComponent,
-    CashComponent
+    CashComponent,
+    HomeComponent
   ],
   imports: [
     ColorPickerModule,
