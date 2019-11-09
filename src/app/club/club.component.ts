@@ -33,46 +33,46 @@ export class ClubComponent implements OnInit {
   showYear = false;
 
   ngOnInit() {
+    this.initFunction();
+  }
+  ngOnDestroy() {}
+  ngAfterViewInit() {
+    this.afterInitFunction();
+  }
+  afterInitFunction() {
+    if (this.filterService.teamsMap) {
+      this.filterService.teamPortalSelected = this.filterService.teamsMap[
+        this.filterService.teamPortalActiveClubID
+      ];
+
+      this.initTeam(this.filterService.teamPortalSelected);
+    } else {
+      setTimeout(() => {
+        this.afterInitFunction();
+      }, 200);
+    }
+  }
+
+  initFunction() {
     this.body.portalHighlight("club");
     if (this.filterService.reportTabs) {
       this.clubTabSelected = Object.keys(
         this.filterService.getReportHeaders(2)
-      )[0];
+      )[1];
       if (this.router.url.includes("/report")) {
         this.clubTabSelected = this.router.url.split("/report/")[1];
       }
       if (this.router.url.includes("/base-reports")) {
         this.clubTabSelected = this.router.url.split("/base-reports/")[1];
       }
-      this.subRoute(this.clubTabSelected);
+      setTimeout(() => {
+        this.subRoute(this.clubTabSelected);
+      }, 1);
     } else {
       setTimeout(() => {
-        this.clubTabSelected = Object.keys(
-          this.filterService.getReportHeaders(2)
-        )[0];
-        if (this.router.url.includes("/report")) {
-          this.clubTabSelected = this.router.url.split("/report/")[1];
-        }
-        if (this.router.url.includes("/base-reports")) {
-          this.clubTabSelected = this.router.url.split("/base-reports/")[1];
-        }
-        this.subRoute(this.clubTabSelected);
-      }, 800);
+        this.initFunction();
+      }, 200);
     }
-
-    setTimeout(() => {
-      this.subRoute(this.clubTabSelected);
-    }, 1);
-  }
-  ngOnDestroy() {}
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.filterService.teamPortalSelected = this.filterService.teamsMap[
-        this.filterService.teamPortalActiveClubID
-      ];
-
-      this.initTeam(this.filterService.teamPortalSelected);
-    }, 800);
   }
 
   //TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
@@ -137,7 +137,10 @@ export class ClubComponent implements OnInit {
   initTeam(team: any) {
     //FID is -2
     //ATT is 2
-    this.filterService.pushQueryToActiveFilter("0");
+    if (JSON.stringify(this.filterService.newDBFormat) != JSON.stringify({})) {
+      this.filterService.pushQueryToActiveFilter("0");
+    } else {
+    }
   }
 
   //This function will route to reports page or display the report
@@ -168,12 +171,18 @@ export class ClubComponent implements OnInit {
         var reportID = Object.keys(
           this.filterService.reportReportsStructure[name]
         )[0];
-        this.router.navigate([newRoute + "/report/" + String(reportID)]);
+        this.router.navigate(["./report", String(reportID)], {
+          relativeTo: this.route
+        });
+        // this.router.navigate([newRoute + "/report/" + String(reportID)]);
       } else {
         this.filterService.selected = name;
         var newRoute = this.router.url.split("/report")[0];
         newRoute = newRoute.split("/base-report")[0];
-        this.router.navigate([newRoute + "/base-reports/" + String(name)]);
+        this.router.navigate(["./base-reports", String(name)], {
+          relativeTo: this.route
+        });
+        // this.router.navigate([newRoute + "/base-reports/" + String(name)]);
       }
     } catch (e) {}
   }

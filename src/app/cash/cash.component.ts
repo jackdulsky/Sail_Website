@@ -85,12 +85,19 @@ export class CashComponent implements OnInit {
         var reportID = Object.keys(
           this.filterService.reportReportsStructure[name]
         )[0];
-        this.router.navigate([newRoute + "/report/" + String(reportID)]);
+        // this.router.navigate([newRoute + "/report/" + String(reportID)]);
+        this.router.navigate(["./report", String(reportID)], {
+          relativeTo: this.route
+        });
       } else {
         this.filterService.selected = name;
         var newRoute = this.router.url.split("/report")[0];
         newRoute = newRoute.split("/base-report")[0];
-        this.router.navigate([newRoute + "/base-reports/" + String(name)]);
+        // this.router.navigate([newRoute + "/base-reports/" + String(name)]);
+
+        this.router.navigate(["./base-reports", String(name)], {
+          relativeTo: this.route
+        });
       }
     } catch (e) {}
   }

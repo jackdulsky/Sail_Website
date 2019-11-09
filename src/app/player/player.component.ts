@@ -33,12 +33,34 @@ export class PlayerComponent implements OnInit {
   baseURL =
     "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
   ngOnInit() {
+    this.initFunction();
+  }
+  ngOnDestroy() {}
+  ngAfterViewInit() {
+    this.afterInitFunction();
+  }
+
+  afterInitFunction() {
+    if (this.filterService.pullValueMap) {
+      if (this.filterService.playerPortalActivePlayerID != "") {
+        this.filterService.playerPortalSelected = this.filterService.pullValueMap[
+          "3"
+        ][this.filterService.playerPortalActivePlayerID];
+        this.initPlayer();
+      }
+    } else {
+      setTimeout(() => {
+        this.afterInitFunction();
+      }, 200);
+    }
+  }
+  initFunction() {
     this.body.portalHighlight("player");
 
     if (this.filterService.reportTabs) {
       this.playerTabSelected = Object.keys(
         this.filterService.getReportHeaders(3)
-      )[0];
+      )[1];
       if (this.router.url.includes("/report")) {
         this.playerTabSelected = this.router.url.split("/report/")[1];
       }
@@ -48,40 +70,14 @@ export class PlayerComponent implements OnInit {
       this.subRoute(this.playerTabSelected);
     } else {
       setTimeout(() => {
-        try {
-          this.playerTabSelected = Object.keys(
-            this.filterService.getReportHeaders(3)
-          )[0];
-        } catch (e) {
-          this.playerTabSelected = 7;
-        }
-        if (this.router.url.includes("/report")) {
-          this.playerTabSelected = this.router.url.split("/report/")[1];
-        }
-        if (this.router.url.includes("/base-reports")) {
-          this.playerTabSelected = this.router.url.split("/base-reports/")[1];
-        }
-
-        this.subRoute(this.playerTabSelected);
-      }, 800);
+        this.initFunction();
+      }, 200);
     }
 
     setTimeout(() => {
       this.subRoute(this.playerTabSelected);
     }, 1);
   }
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-      if (this.filterService.playerPortalActivePlayerID != "") {
-        this.filterService.playerPortalSelected = this.filterService.pullValueMap[
-          "3"
-        ][this.filterService.playerPortalActivePlayerID];
-        this.initPlayer();
-      }
-    }, 800);
-  }
-
   //TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
   extractID(data, idString: string, insertDict, keep: number = 0) {
     for (let b in data) {
@@ -201,12 +197,20 @@ export class PlayerComponent implements OnInit {
         var reportID = Object.keys(
           this.filterService.reportReportsStructure[name]
         )[0];
-        this.router.navigate([newRoute + "/report/" + String(reportID)]);
+        console.log("URL", this.router.url);
+        this.router.navigate(["./report", String(reportID)], {
+          relativeTo: this.route
+        });
       } else {
         this.filterService.selected = name;
         var newRoute = this.router.url.split("/report")[0];
         newRoute = newRoute.split("/base-report")[0];
-        this.router.navigate([newRoute + "/base-reports/" + String(name)]);
+        console.log("URL", this.router.url);
+
+        this.router.navigate(["./base-reports", String(name)], {
+          relativeTo: this.route
+        });
+        // this.router.navigate([newRoute + "../base-reports/" + String(name)]);
       }
     } catch (e) {}
   }

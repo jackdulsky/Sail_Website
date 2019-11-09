@@ -79,7 +79,8 @@ export class LoadingComponent implements OnInit {
     setTimeout(() => {
       if (this.jsonExists) {
         var filters = this.loadJSON;
-        this.filterService.loadJSON(JSON.parse(filters));
+        console.log("FILTERS", decodeURIComponent(filters));
+        this.filterService.loadJSON(JSON.parse(decodeURIComponent(filters)));
         for (let query in this.filterService.newFIDBID) {
           if (Number(this.filterService.newFIDBID[query]) == -2) {
             this.filterService.teamPortalActiveClubID = cloneDeep(

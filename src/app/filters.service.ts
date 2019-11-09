@@ -103,6 +103,7 @@ export class FiltersService {
   ];
   portalYearsOnly: String[] = [];
   portalYearUpdated = false;
+  sub: any;
   constructor(
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,
@@ -554,6 +555,7 @@ export class FiltersService {
 
   //PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
   pushQueryToActiveFilter(BID: string, clearWorking: boolean = true) {
+    var oldDB = cloneDeep(this.newDBFormat);
     if (this.router.url.includes("club/")) {
       this.reduceFiltersSingleClub();
     }
@@ -633,7 +635,9 @@ export class FiltersService {
 
     //SEND UP TO THE DB
 
-    this.saveAndSend();
+    if (!this.checkDBFormats(oldDB, cloneDeep(this.newDBFormat))) {
+      this.saveAndSend();
+    }
 
     if (
       this.router.url.includes("club") ||
@@ -646,6 +650,19 @@ export class FiltersService {
 
   //SAVE LOCAL STORAGE FOR REFRESH AND THEN SEND THE FILTERS TO THE DB
   saveAndSend() {
+    // var localSaving = {
+    //   GUID: JSON.stringify(this.pullData.GUID),
+    //   newFIDBID: JSON.stringify(this.newFIDBID),
+    //   newFIDs: JSON.stringify(this.newFIDs),
+    //   newDBFormat: JSON.stringify(this.newDBFormat),
+    //   newWorkingQuery: JSON.stringify(this.newWorkingQuery),
+    //   newWorkingFID: JSON.stringify(this.newWorkingFID),
+    //   reversePaths: JSON.stringify(this.reversePaths),
+    //   lastUpdateTime: String(Date())
+    // };
+    // localStorage.setItem(this.pullData.GUID, JSON.stringify(localSaving));
+
+    // localStorage.setItem("GUID", JSON.stringify(this.pullData.GUID));
     // localStorage.setItem("newFIDBID", JSON.stringify(this.newFIDBID));
     // localStorage.setItem("newFIDs", JSON.stringify(this.newFIDs));
     // localStorage.setItem("newDBFormat", JSON.stringify(this.newDBFormat));
@@ -668,6 +685,43 @@ export class FiltersService {
     this.setActiveClub();
     this.setActivePlayer();
     this.updateRDURL();
+  }
+
+  //CHECK IF TWO DB FORMAT's ARE THE SAME
+  checkDBFormats(structure1: any, structure2: any) {
+    console.log("STRUCTURE 1", structure1);
+    console.log("STRUCTURE 2", structure2);
+    if (Object.keys(structure1).length != Object.keys(structure2).length) {
+      console.log("RETURNING FALSE 1");
+
+      return false;
+    }
+    for (let bin in structure1) {
+      var fids1 = Object.keys(structure1[bin]).sort();
+      var fids2 = Object.keys(structure2[bin]).sort();
+      if (fids1.length != fids2.length) {
+        console.log("RETURNING FALSE 2");
+
+        return false;
+      }
+      for (let i = 0; i <= fids2.length - 1; i++) {
+        console.log(
+          JSON.stringify(structure1[bin][fids1[i]]),
+          JSON.stringify(structure2[bin][fids2[i]])
+        );
+        if (
+          JSON.stringify(structure1[bin][fids1[i]]) !=
+          JSON.stringify(structure2[bin][fids2[i]])
+        ) {
+          console.log("RETURNING FALSE 3");
+
+          return false;
+        }
+      }
+    }
+    console.log("RETURNING TRUE");
+    return true;
+    return false;
   }
 
   //EMPTY THE WORKING QUERY
@@ -1029,41 +1083,69 @@ export class FiltersService {
   pushDBFormat(DBFormat: any) {
     this.clearAll();
     this.newDBFormat = cloneDeep(DBFormat);
-    for (let bin in this.newDBFormat) {
-      for (let fid in this.newDBFormat[bin]) {
-        if (Number(bin) == -4) {
-          this.portalYearsSelected = cloneDeep(this.newDBFormat[bin][fid][0]);
-          this.portalYearsOnly = cloneDeep(this.newDBFormat[bin][fid][0]);
-          delete this.newDBFormat[bin];
-        } else {
-          var currentFid = cloneDeep(this.newDBFormat[bin][fid][1]);
-          this.newFIDBID[fid] = bin;
-          if (this.newDBFormat[bin][fid][0].length > 0) {
-            currentFid[String(-1 * Number(bin))] = this.newDBFormat[bin][
-              fid
-            ][0];
-            if (String(bin) == "-2") {
-              this.teamPortalActiveClubID = cloneDeep(
-                this.newDBFormat[bin][fid][0][0]
-              );
+    console.log("PUSHING", DBFormat);
+    if (JSON.stringify(DBFormat) == JSON.stringify({})) {
+      this.saveAndSend();
+      return;
+    }
+    if (!this.teamsMap || !this.pullValueMap || !this.pullAttribute) {
+      setTimeout(() => {
+        this.pushDBFormat(DBFormat);
+      }, 200);
+    } else {
+      for (let bin in this.newDBFormat) {
+        for (let fid in this.newDBFormat[bin]) {
+          if (Number(bin) == -4) {
+            this.portalYearsSelected = cloneDeep(this.newDBFormat[bin][fid][0]);
+            this.portalYearsOnly = cloneDeep(this.newDBFormat[bin][fid][0]);
+            delete this.newDBFormat[bin];
+          } else {
+            var currentFid = cloneDeep(this.newDBFormat[bin][fid][1]);
+            this.newFIDBID[fid] = bin;
+            if (this.newDBFormat[bin][fid][0].length > 0) {
+              currentFid[String(-1 * Number(bin))] = this.newDBFormat[bin][
+                fid
+              ][0];
+              if (String(bin) == "-2") {
+                this.teamPortalActiveClubID = cloneDeep(
+                  this.newDBFormat[bin][fid][0][0]
+                );
 
-              this.teamPortalSelected = this.teamsMap[
-                this.teamPortalActiveClubID
-              ];
+                this.teamPortalSelected = this.teamsMap[
+                  this.teamPortalActiveClubID
+                ];
+              }
+              if (String(bin) == "-3") {
+                this.playerPortalActivePlayerID = cloneDeep(
+                  this.newDBFormat[bin][fid][0][0]
+                );
+                this.playerPortalSelected = this.pullValueMap["3"][
+                  this.playerPortalActivePlayerID
+                ];
+              }
             }
-            if (String(bin) == "-3") {
-              this.playerPortalActivePlayerID = cloneDeep(
-                this.newDBFormat[bin][fid][0][0]
-              );
-              this.playerPortalSelected = this.pullValueMap["3"][
-                this.playerPortalActivePlayerID
-              ];
-            }
+
+            this.newFIDs[fid] = currentFid;
           }
-
-          this.newFIDs[fid] = currentFid;
         }
       }
+
+      try {
+        this.sub = this.route.params.subscribe(params => {
+          var viewing = String(params["reportid"]); // (+) converts string 'id' to a number
+
+          if (this.reportReportsOnly && this.reportReportsStructure) {
+            this.updateRDURL();
+          } else {
+            setTimeout(() => {
+              this.updateRDURL();
+
+              // this.createRDURL(viewing);
+            }, 500);
+          }
+        });
+      } catch (e) {}
+      this.saveAndSend();
     }
   }
 
@@ -1098,40 +1180,64 @@ export class FiltersService {
     var tempDict = {};
     tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
 
-    this.removeAllTeamFilters();
-    this.newWorkingQuery["-2"] = tempDict;
+    var add = this.removeAllTeamFilters();
+    if (add) {
+      this.newWorkingQuery["-2"] = tempDict;
+    }
   }
 
   //remove all team filter querys
   removeAllTeamFilters() {
+    var returnBool = true;
+
     for (let active in this.newFIDBID) {
       if (
         String(this.newFIDBID[active]) == "-2" &&
         this.newWorkingFID["-2"] != active
       ) {
-        this.removeQuery(active);
+        // this.removeQuery(active);
+        if (
+          JSON.stringify(this.newFIDs[active]) !=
+          JSON.stringify({ "2": [this.teamPortalActiveClubID] })
+        ) {
+          this.removeQuery(active);
+        } else {
+          returnBool = false;
+        }
       }
     }
+    return returnBool;
   }
 
   //WHEN CLICKING ON PLAYER PAGE TAKE OUT ALL OTHER PLAYERS
   reduceFiltersSinglePlayer() {
     var tempDict = {};
     tempDict["3"] = [cloneDeep(this.playerPortalActivePlayerID)];
-    this.removeAllPlayerFilters();
-    this.newWorkingQuery["-3"] = tempDict;
+    var add = this.removeAllPlayerFilters();
+    if (add) {
+      this.newWorkingQuery["-3"] = tempDict;
+    }
   }
 
   //remove all team filter querys
   removeAllPlayerFilters() {
+    var returnBool = true;
     for (let active in this.newFIDBID) {
       if (
         String(this.newFIDBID[active]) == "-3" &&
         this.newWorkingFID["-3"] != active
       ) {
-        this.removeQuery(active);
+        if (
+          JSON.stringify(this.newFIDs[active]) !=
+          JSON.stringify({ "3": [this.playerPortalActivePlayerID] })
+        ) {
+          this.removeQuery(active);
+        } else {
+          returnBool = false;
+        }
       }
     }
+    return returnBool;
   }
   //SET THE ACTIVE CLUB BY GOING THROUGH THE DB OR SET DEFAULT
 

@@ -51,9 +51,28 @@ export class BodyComponent implements OnInit {
 
   //THIS UPDATES THE REPORT TYPE TO VIEW FROM CLICK
   changeReportType(newNumb: number) {
-    var newRoute =
-      this.router.url.split("/base-reports/")[0] + "/report/" + String(newNumb);
-    this.router.navigate([newRoute]);
+    console.log("ROUTING CHANGE REPORT TYPE");
+    // var newRoute =
+    //   this.router.url.split("/base-reports/")[0] + "/report/" + String(newNumb);
+    // this.router.navigate([newRoute]);
+    console.log(this.router.url.split("/base-reports/")[0].split("/"));
+    var comp = this.router.url.split("/base-reports/")[0].split("/");
+    console.log(comp[comp.length - 1], this.portals);
+    if (this.portals.indexOf(comp[comp.length - 1]) != -1) {
+      this.router.navigate(
+        ["./" + comp[comp.length - 1], "report", +String(newNumb)],
+        {
+          relativeTo: this.route
+        }
+      );
+      // this.router.navigate(["../report", +String(newNumb)], {
+      //   relativeTo: this.route
+      // });
+    } else {
+      this.router.navigate(["./report", +String(newNumb)], {
+        relativeTo: this.route
+      });
+    }
   }
 
   //CHANGE DISPLAY REPORTS BASED ON CLICKED REPORT
@@ -87,9 +106,14 @@ export class BodyComponent implements OnInit {
       var reportID = Object.keys(
         this.filterService.reportReportsStructure[name]
       )[0];
-      this.router.navigate(["../report/" + String(reportID)]);
+
+      this.router.navigate(["./report", String(reportID)], {
+        relativeTo: this.route
+      });
     } else {
-      this.router.navigate(["../base-reports/" + String(name)]);
+      this.router.navigate(["./base-reports", String(name)], {
+        relativeTo: this.route
+      });
     }
   }
 
@@ -124,7 +148,10 @@ export class BodyComponent implements OnInit {
       "sidebutton sidebuttonclicked";
     this.filterService.portalSelected = name;
     if (!this.router.url.includes(name)) {
-      this.router.navigate(["../" + name]);
+      // this.router.navigate(["../" + name]);
+      this.router.navigate(["./" + name], {
+        relativeTo: this.route
+      });
     }
   }
 
