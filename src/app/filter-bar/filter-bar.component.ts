@@ -206,44 +206,49 @@ export class FilterBarComponent implements OnInit {
   //MAY HAVE TO TAILER THIS FOR EACH PKID
   //RIGHT NOW IT SHOWS PKID's AND ATTRIBUTES OF NON PKID's
   createFilterDisplayString(fid: string, value: any) {
-    var BID = this.filterService.newFIDBID[fid];
-    var dispName = "";
-    var tempFilter = { ...value };
+    if (!this.filterService.newFIDBID[fid]) {
+      setTimeout(() => {
+        this.createFilterDisplayString(fid, value);
+      }, 100);
+    } else {
+      var BID = this.filterService.newFIDBID[fid];
+      var dispName = "";
+      var tempFilter = { ...value };
+      try {
+        if (value[String(Number(BID) * -1)]) {
+          for (let val in value[String(Number(BID) * -1)]) {
+            dispName +=
+              ", " +
+              this.returnlabel(
+                this.filterService.pullValueMap[String(Number(BID) * -1)][
+                  value[String(Number(BID) * -1)][val]
+                ]
+              );
+            if (dispName.length > 100) {
+              break;
+            }
+          }
+        }
+        if (dispName.charAt(0) == ",") {
+          dispName = dispName.substr(1);
+        }
+        delete tempFilter[String(Number(BID) * -1)];
 
-    try {
-      if (value[String(Number(BID) * -1)]) {
-        for (let val in value[String(Number(BID) * -1)]) {
+        for (let att in tempFilter) {
           dispName +=
-            ", " +
-            this.returnlabel(
-              this.filterService.pullValueMap[String(Number(BID) * -1)][
-                value[String(Number(BID) * -1)][val]
-              ]
-            );
+            ", " + this.returnlabel(this.filterService.pullAttribute[att]);
           if (dispName.length > 100) {
             break;
           }
         }
-      }
-      if (dispName.charAt(0) == ",") {
-        dispName = dispName.substr(1);
-      }
-      delete tempFilter[String(Number(BID) * -1)];
-
-      for (let att in tempFilter) {
-        dispName +=
-          ", " + this.returnlabel(this.filterService.pullAttribute[att]);
-        if (dispName.length > 100) {
-          break;
+        if (dispName.charAt(0) == ",") {
+          dispName = dispName.substr(2);
         }
+      } catch (e) {
+        null;
       }
-      if (dispName.charAt(0) == ",") {
-        dispName = dispName.substr(2);
-      }
-    } catch (e) {
-      null;
+      return dispName;
     }
-    return dispName;
   }
 
   //RETURN THE STRING LABEL OF THE OBJECT PASSED IN

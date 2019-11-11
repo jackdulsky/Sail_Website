@@ -16,8 +16,6 @@ export class NewpageComponent implements OnInit {
 
   ngOnInit() {
     var guid = this.pullData.GUID;
-    console.log(guid);
-    console.log(this.router.url);
     this.router.navigate(["/home/" + String(guid) + this.router.url]);
   }
 }

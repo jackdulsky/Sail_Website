@@ -55,7 +55,10 @@ export class ClubComponent implements OnInit {
 
   initFunction() {
     this.body.portalHighlight("club");
-    if (this.filterService.reportTabs) {
+    if (
+      this.filterService.reportTabs &&
+      this.filterService.getReportHeaders(2)
+    ) {
       this.clubTabSelected = Object.keys(
         this.filterService.getReportHeaders(2)
       )[1];

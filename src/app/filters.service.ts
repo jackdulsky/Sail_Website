@@ -689,39 +689,25 @@ export class FiltersService {
 
   //CHECK IF TWO DB FORMAT's ARE THE SAME
   checkDBFormats(structure1: any, structure2: any) {
-    console.log("STRUCTURE 1", structure1);
-    console.log("STRUCTURE 2", structure2);
     if (Object.keys(structure1).length != Object.keys(structure2).length) {
-      console.log("RETURNING FALSE 1");
-
       return false;
     }
     for (let bin in structure1) {
       var fids1 = Object.keys(structure1[bin]).sort();
       var fids2 = Object.keys(structure2[bin]).sort();
       if (fids1.length != fids2.length) {
-        console.log("RETURNING FALSE 2");
-
         return false;
       }
       for (let i = 0; i <= fids2.length - 1; i++) {
-        console.log(
-          JSON.stringify(structure1[bin][fids1[i]]),
-          JSON.stringify(structure2[bin][fids2[i]])
-        );
         if (
           JSON.stringify(structure1[bin][fids1[i]]) !=
           JSON.stringify(structure2[bin][fids2[i]])
         ) {
-          console.log("RETURNING FALSE 3");
-
           return false;
         }
       }
     }
-    console.log("RETURNING TRUE");
     return true;
-    return false;
   }
 
   //EMPTY THE WORKING QUERY
@@ -1083,7 +1069,6 @@ export class FiltersService {
   pushDBFormat(DBFormat: any) {
     this.clearAll();
     this.newDBFormat = cloneDeep(DBFormat);
-    console.log("PUSHING", DBFormat);
     if (JSON.stringify(DBFormat) == JSON.stringify({})) {
       this.saveAndSend();
       return;
@@ -1132,15 +1117,11 @@ export class FiltersService {
 
       try {
         this.sub = this.route.params.subscribe(params => {
-          var viewing = String(params["reportid"]); // (+) converts string 'id' to a number
-
           if (this.reportReportsOnly && this.reportReportsStructure) {
             this.updateRDURL();
           } else {
             setTimeout(() => {
               this.updateRDURL();
-
-              // this.createRDURL(viewing);
             }, 500);
           }
         });

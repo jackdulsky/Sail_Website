@@ -26,10 +26,16 @@ export class CashComponent implements OnInit {
   showYear = false;
 
   ngOnInit() {
+    this.initFunction();
+  }
+  initFunction() {
     this.body.portalHighlight("cash");
-    if (this.filterService.reportTabs) {
+    if (
+      this.filterService.reportTabs &&
+      this.filterService.getReportHeaders(4)
+    ) {
       this.cashTabSelected = Object.keys(
-        this.filterService.getReportHeaders(2)
+        this.filterService.getReportHeaders(4)
       )[0];
       if (this.router.url.includes("/report")) {
         this.cashTabSelected = this.router.url.split("/report/")[1];
@@ -37,25 +43,14 @@ export class CashComponent implements OnInit {
       if (this.router.url.includes("/base-reports")) {
         this.cashTabSelected = this.router.url.split("/base-reports/")[1];
       }
-      this.subRoute(this.cashTabSelected);
+      setTimeout(() => {
+        this.subRoute(this.cashTabSelected);
+      }, 1);
     } else {
       setTimeout(() => {
-        this.cashTabSelected = Object.keys(
-          this.filterService.getReportHeaders(2)
-        )[0];
-        if (this.router.url.includes("/report")) {
-          this.cashTabSelected = this.router.url.split("/report/")[1];
-        }
-        if (this.router.url.includes("/base-reports")) {
-          this.cashTabSelected = this.router.url.split("/base-reports/")[1];
-        }
-        this.subRoute(this.cashTabSelected);
-      }, 800);
+        this.initFunction();
+      }, 200);
     }
-
-    setTimeout(() => {
-      this.subRoute(this.cashTabSelected);
-    }, 1);
   }
 
   //This function will route to reports page or display the report

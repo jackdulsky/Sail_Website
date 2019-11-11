@@ -197,7 +197,6 @@ export class PlayerComponent implements OnInit {
         var reportID = Object.keys(
           this.filterService.reportReportsStructure[name]
         )[0];
-        console.log("URL", this.router.url);
         this.router.navigate(["./report", String(reportID)], {
           relativeTo: this.route
         });
@@ -205,7 +204,6 @@ export class PlayerComponent implements OnInit {
         this.filterService.selected = name;
         var newRoute = this.router.url.split("/report")[0];
         newRoute = newRoute.split("/base-report")[0];
-        console.log("URL", this.router.url);
 
         this.router.navigate(["./base-reports", String(name)], {
           relativeTo: this.route
