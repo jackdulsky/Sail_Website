@@ -64,6 +64,7 @@
   /* background-color: white; */
 
   background-color: RGB(13, 13, 13);
+  border-style: none;
 }
 .XOSSection {
   margin-top: 20px;

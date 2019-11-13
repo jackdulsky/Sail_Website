@@ -67,7 +67,7 @@
   border: 1px solid white;
   background-color: white;
   color: var(--color-white);
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.4);
+  /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.4); */
 }
 .insideGrid-container {
   display: grid;
@@ -172,7 +172,7 @@
   border-radius: 4px;
   align-content: center;
   font-family: "DIN";
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+  /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19); */
 }
 .apply {
   float: right;
@@ -187,12 +187,13 @@
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.4);
 }
 .saveFilterNew {
-  float: right;
-  width: 60px !important;
-  margin-right: 5px;
+  float: left;
+  width: 48px !important;
+  margin-left: 5px;
   margin-top: 5px;
   line-height: 37px;
-  background-color: white;
+  background-color: #262626;
+  color: white;
 }
 .saveFilterNew:hover {
   background-color: var(--raiders-gray);
@@ -221,17 +222,17 @@
 .btn2 {
   text-align: center;
   border-radius: 4px;
-  color: var(--color-black);
+  color: white;
   margin-left: 20%;
   margin-right: 20%;
 }
 .btnGo {
   text-align: center;
   border-radius: 4px;
-  color: var(--color-black);
-  margin-left: 20%;
+  color: white;
+  margin-left: 8%;
   font-weight: bolder;
-  margin-right: 20%;
+  margin-right: 8%;
   font-size: 16px;
   font-family: "DIN";
   margin-top: 1px;
@@ -239,7 +240,7 @@
 .playCount {
   text-align: right;
   border-radius: 4px;
-  color: var(--color-white);
+  /* color: var(--color-white); */
   font-weight: bold;
   float: right;
   font-size: 16px;
@@ -255,7 +256,7 @@
 .playCountNumber {
   text-align: right;
   border-radius: 4px;
-  color: var(--color-white);
+  /* color: var(--color-white); */
   font-weight: bold;
   float: right;
   font-size: 16px;
@@ -364,8 +365,8 @@
   margin-left: 0px;
   align-content: center;
   border: 0px solid white;
-  background-color: white;
-  color: var(--color-black);
+  background-color: #262626;
+  color: white;
 }
 .saveFilter {
   line-height: 0px;
@@ -379,10 +380,12 @@
 }
 
 .filterBar {
-  /* background-color: #ebeced; */
-  background-image: linear-gradient(to right, #ebeced, #ebeced, #ebeced, black);
+  background-color: #f0f2f5;
+  /* background-image: linear-gradient(to right, #ebeced, #ebeced, #ebeced, black); */
   padding-left: 5px;
-  border-bottom: 1px solid black;
+  /* border-bottom: 1px solid black; */
+  border-bottom: 1px solid white;
+
   height: 50px;
   width: 100%;
   display: inline-block;

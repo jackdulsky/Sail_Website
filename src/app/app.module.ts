@@ -57,8 +57,9 @@ import { PlayerComponent } from "./player/player.component";
 import { CashComponent } from "./cash/cash.component";
 import { AngularMultiSelectModule } from "angular2-multiselect-dropdown";
 import { ColorPickerModule } from "ngx-color-picker";
-import { HomeComponent } from './home/home.component';
-import { NewpageComponent } from './newpage/newpage.component';
+import { HomeComponent } from "./home/home.component";
+import { NewpageComponent } from "./newpage/newpage.component";
+import { ClickOutsideModule } from "ng-click-outside";
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { NewpageComponent } from './newpage/newpage.component';
     NewpageComponent
   ],
   imports: [
+    ClickOutsideModule,
     ColorPickerModule,
     AngularMultiSelectModule,
     DragToSelectModule.forRoot(),

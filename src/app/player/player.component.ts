@@ -20,8 +20,23 @@ export class PlayerComponent implements OnInit {
     public router: Router,
     public body: BodyComponent,
     public cdref: ChangeDetectorRef
-  ) {}
+  ) {
+    document.addEventListener("click", e => this.onClick(e));
+  }
 
+  onClick(event) {
+    var target = event.target || event.srcElement || event.currentTarget;
+    var idAttr = target.attributes.id;
+    var value;
+    if (idAttr) {
+      value = idAttr.nodeValue;
+    } else {
+      value = "";
+    }
+    if (this.showYear && !value.includes("year")) {
+      this.showYearList();
+    }
+  }
   playerSelected;
   ClubCityName = "ClubCityName";
   showList = false;
@@ -57,7 +72,10 @@ export class PlayerComponent implements OnInit {
   initFunction() {
     this.body.portalHighlight("player");
 
-    if (this.filterService.reportTabs) {
+    if (
+      this.filterService.reportTabs &&
+      this.filterService.getReportHeaders(3)
+    ) {
       this.playerTabSelected = Object.keys(
         this.filterService.getReportHeaders(3)
       )[1];

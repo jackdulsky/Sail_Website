@@ -1,9 +1,16 @@
 <!-- <div>ReportID: {{ this.typeID }}</div> -->
 <!-- <iframe src="{{ this.sourceURL }}" style="width:100%;height:600px;"> </iframe> -->
-<div>
+<!-- <div>
   <iframe
     [src]="filterService.viewingURL"
     style="width:calc(100vw - 209px);height:calc(100vh - 125px);"
+    crossorigin="anonymous"
+  ></iframe>
+</div> -->
+<div>
+  <iframe
+    [src]="filterService.viewingURL"
+    style="width:calc(100vw - 209px);height:calc(100vh - 304px);"
     crossorigin="anonymous"
   ></iframe>
 </div>
