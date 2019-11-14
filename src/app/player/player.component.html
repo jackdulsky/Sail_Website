@@ -1,91 +1,54 @@
 <div class="topBar">
-  <!-- <div class="player" (click)="displayPlayers(showList)">
-    <img
-      class="imgLogo tableCenter"
-      [src]="getActivePlayerImage(filterService.playerPortalActivePlayerID)"
-      onError="this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
-    />
-    <div class="playerText">
-      &nbsp;&nbsp;{{ filterService.playerPortalSelected.Label }}
-    </div>
-    <div class="tableCenter" style="display: inline; float: right;">
-      <i class="fa fa-angle-down fa-lg"></i>
-    </div>
-  </div> -->
-  <!-- <div class="playerInfo" (click)="displayPlayers(showList)">
-    <img
-      class="imgLogoNew tableCenter"
-      [src]="getActivePlayerImage(filterService.playerPortalActivePlayerID)"
-      onError="this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
-    />
-    <div class="playerDisplayTextContainer">
-
-    </div>
-  </div> -->
-  <div style="width: 98%;">
+  <div style="width: 100%;">
     <div class="g-profile">
       <div class="g-profile__grid overflow-hidden">
-        <div class="g-profile__profile">
+        <div class="g-profile__profile" id="player">
           <img
             [src]="
               getActivePlayerImage(filterService.playerPortalActivePlayerID)
             "
-            class="g-profile__photo"
+            id="player"
+            class="g-profile__photo_player"
+            (click)="displayPlayers(showList)"
           />
-          <div class="g-profile__team-color"></div>
-          <!--             style="background-color: rgb(0, 103, 120); border-right-color: rgb(215, 162, 42);"
- -->
         </div>
         <div class="g-profile__identity">
           <div style="display: flow-root;">
-            <div style="float: left; width: 400px;">
+            <div id="player" class="nameBox">
               <h2
+                id="player"
                 class="g-profile__name"
-                style="float: left;    max-width: 400px;
-                float: left;
-                text-overflow: ellipsis !important;
-                overflow: hidden !important;
-                white-space: nowrap;"
                 (click)="displayPlayers(showList)"
               >
                 {{ filterService.playerPortalSelected.Label
-                }}<i class="fa fa-angle-down fa-lg"></i>
+                }}<i id="player" class="fa fa-angle-down fa-lg"></i>
               </h2>
             </div>
-            <div
-              #teamAndRosterStaturs
-              class="din"
-              style="float: left; display: flex; width: 200px;"
-            >
+            <div #teamAndRosterStaturs class="din teamRoster">
               <img
+                class="clubLogo"
                 [src]="
                   getActiveLogo({
                     ClubCityName: 'Oakland',
                     ClubNickName: 'Raiders'
                   })
                 "
-                style="max-height:34px;max-width: 34px;"
               />
-              <span
-                style="line-height: 35px; margin-left: 6px; font-weight: bold;"
-              >
+              <span class="clubLogoText">
                 Active - Raiders
               </span>
             </div>
-            <div #draftInfo class="din" style="float: left; display: flex;">
-              <span class="g-profile__bio-element"
-                ><span class="g-label g-mb-1">Draft</span
-                ><span class="g-data"
-                  >2013: 5/186 - Jacksonville (Compensatory)</span
-                ></span
-              >
+            <div #draftInfo class="din draftInfo">
+              <div class=" din g-profile__bio">
+                <span class="g-profile__bio-element"
+                  ><span class="g-label g-mb-1">Draft</span
+                  ><span class="g-data"
+                    >2013: 5/186 - Jacksonville (Compensatory)</span
+                  ></span
+                >
+              </div>
             </div>
-            <div
-              id="year"
-              class=""
-              style="float: right; display: flex; margin-top: 5px;"
-              (click)="showYearList()"
-            >
+            <div id="year" class="yearBox" (click)="showYearList()">
               <div
                 id="year"
                 class=""
@@ -104,36 +67,17 @@
               <i id="year" class="fa fa-angle-down fa-lg"></i>
             </div>
           </div>
-          <!-- <div class="g-profile__team-info" style="display: none;">
-            <p class="g-profile__position">LB #44</p>
-            <div class="g-profile__team" style="">
-              <a class="qa-TeamLink g-profile__link" href="">
-                 <svg
-                  class="kyber-svg kyber-svg-jacksonville-jaguars g-svg g-svg-jacksonville-jaguars g-profile__team-logo"
-                  viewBox="0 0 256 256"
-                >
-                  <use xlink:href="#g-icon-jacksonville-jaguars"></use></svg> 
-                Jacksonville Jaguars</a
-              >
-            </div>
-          </div> -->
         </div>
         <div class="g-profile__bio-container" style="display:flex">
-          <div style="float:left;width:200px; font-weight: bold;">
+          <div class="posCollege">
             <div>
-              P - UCLA
+              &nbsp; &nbsp;P - UCLA
             </div>
             <div>
-              #12
+              &nbsp; &nbsp; #12
             </div>
           </div>
-          <div class="g-profile__bio" style=" width: 400px ; float: left;">
-            <!-- <span class="g-profile__bio-element"
-              ><span class="g-label g-mb-1">DOB</span
-              ><span class="g-data"
-                >1995-09-03 <small class="text-muted">(24)</small></span
-              ></span
-            > -->
+          <div class="g-profile__bio w400FloatLeft">
             <span class="g-profile__bio-element"
               ><span class="g-label g-mb-1">Height</span
               ><span class="g-data">6012</span></span
@@ -149,21 +93,13 @@
               ><span class="g-data">3218</span></span
             >
           </div>
-          <div
-            #birthInfo
-            class="din"
-            style="float: left; display: flex; padding-top:8px; width: 160px"
-          >
+          <div #birthInfo class="din birthInfo">
             <span class="g-profile__bio-element"
               ><span class="g-label g-mb-1">Birth Date</span
               ><span class="g-data">10/07/1991 (28.1)</span></span
             >
           </div>
-          <div
-            #agentInfo
-            class="din"
-            style="float: left; display: flex; padding-top:8px; width: 250px"
-          >
+          <div #agentInfo class="din agentInfo">
             <span class="g-profile__bio-element"
               ><span class="g-label g-mb-1">Agent</span
               ><span class="g-data"
@@ -195,21 +131,7 @@
       <div class="playerText">&nbsp;&nbsp;{{ player.value.Label }}</div>
     </div>
   </div>
-  <!-- <div class="yearContainer" (click)="showYearList()">
-    <div class="yearLabel" *ngIf="filterService.portalYearsOnly.length > 0">
-      {{ filterService.getYearDisplay() }}
-    </div>
-    <div class="yearLabel" *ngIf="filterService.portalYearsOnly.length == 0">
-      Year
-    </div>
-  </div>
-  <div
-    class="tableCenter yearArrow"
-    id="yearSelectArrow"
-    (click)="showYearList()"
-  >
-    <i class="fa fa-angle-down fa-lg"></i>
-  </div> -->
+
   <div class="yearListAll shadow" id="yearList" *ngIf="showYear">
     <div
       class="yearDropDown"
@@ -236,6 +158,22 @@
 </div>
 
 <router-outlet></router-outlet>
+<!-- <div class="yearContainer" (click)="showYearList()">
+    <div class="yearLabel" *ngIf="filterService.portalYearsOnly.length > 0">
+      {{ filterService.getYearDisplay() }}
+    </div>
+    <div class="yearLabel" *ngIf="filterService.portalYearsOnly.length == 0">
+      Year
+    </div>
+  </div>
+  <div
+    class="tableCenter yearArrow"
+    id="yearSelectArrow"
+    (click)="showYearList()"
+  >
+    <i class="fa fa-angle-down fa-lg"></i>
+  </div> -->
+
 <!-- <div style="width: 98%;">
     <div class="g-profile">
       <div class="g-profile__grid overflow-hidden">
@@ -327,5 +265,28 @@
           </div>
         </div>
       </div>
+    </div>
+  </div> -->
+<!-- <div class="player" (click)="displayPlayers(showList)">
+    <img
+      class="imgLogo tableCenter"
+      [src]="getActivePlayerImage(filterService.playerPortalActivePlayerID)"
+      onError="this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
+    />
+    <div class="playerText">
+      &nbsp;&nbsp;{{ filterService.playerPortalSelected.Label }}
+    </div>
+    <div class="tableCenter" style="display: inline; float: right;">
+      <i class="fa fa-angle-down fa-lg"></i>
+    </div>
+  </div> -->
+<!-- <div class="playerInfo" (click)="displayPlayers(showList)">
+    <img
+      class="imgLogoNew tableCenter"
+      [src]="getActivePlayerImage(filterService.playerPortalActivePlayerID)"
+      onError="this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
+    />
+    <div class="playerDisplayTextContainer">
+
     </div>
   </div> -->

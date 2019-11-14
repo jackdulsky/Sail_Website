@@ -23,7 +23,15 @@ export class PlayerComponent implements OnInit {
   ) {
     document.addEventListener("click", e => this.onClick(e));
   }
+  playerSelected;
+  ClubCityName = "ClubCityName";
+  showList = false;
+  showYear = false;
+  id;
+  teamsDict = {};
+  playerTabSelected;
 
+  //Turn Off the year panel on click outside, runs every click on the component
   onClick(event) {
     var target = event.target || event.srcElement || event.currentTarget;
     var idAttr = target.attributes.id;
@@ -36,14 +44,10 @@ export class PlayerComponent implements OnInit {
     if (this.showYear && !value.includes("year")) {
       this.showYearList();
     }
+    if (this.showList && !value.includes("player")) {
+      this.displayPlayers(this.showList);
+    }
   }
-  playerSelected;
-  ClubCityName = "ClubCityName";
-  showList = false;
-  showYear = false;
-  id;
-  teamsDict = {};
-  playerTabSelected;
   //baseURL ="https://nfl-fisa-assets.s3.amazonaws.com/images/headshots/REPLACEME_headshot.jpg";
   baseURL =
     "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
@@ -74,18 +78,25 @@ export class PlayerComponent implements OnInit {
 
     if (
       this.filterService.reportTabs &&
+      this.filterService.reportReportsOnly &&
       this.filterService.getReportHeaders(3)
     ) {
-      this.playerTabSelected = Object.keys(
-        this.filterService.getReportHeaders(3)
-      )[1];
-      if (this.router.url.includes("/report")) {
-        this.playerTabSelected = this.router.url.split("/report/")[1];
+      try {
+        this.playerTabSelected = Object.keys(
+          this.filterService.getReportHeaders(3)
+        )[1];
+        if (this.router.url.includes("/report")) {
+          this.playerTabSelected = this.filterService.reportReportsOnly[
+            this.router.url.split("/report/")[1]
+          ]["TabID"];
+        }
+        if (this.router.url.includes("/base-reports")) {
+          this.playerTabSelected = this.router.url.split("/base-reports/")[1];
+        }
+        this.subRoute(this.playerTabSelected);
+      } catch (e) {
+        this.playerTabSelected = -1;
       }
-      if (this.router.url.includes("/base-reports")) {
-        this.playerTabSelected = this.router.url.split("/base-reports/")[1];
-      }
-      this.subRoute(this.playerTabSelected);
     } else {
       setTimeout(() => {
         this.initFunction();

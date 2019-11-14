@@ -239,4 +239,21 @@ export class PullDataService {
       query: query
     });
   }
+
+  //PULL CLUB DATA
+  pullClubData() {
+    var query = "";
+    return {};
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+  //PULL PLAYER DATA
+  pullPlayerData() {
+    var query = "";
+    return {};
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
 }

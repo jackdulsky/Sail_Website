@@ -56,4 +56,26 @@ export class ReportComponent implements OnInit {
   changeReport(input: any) {
     this.createRDURL();
   }
+  //SETTING CSS OF THE iframe
+  setIFrameStyle() {
+    var h;
+    if (
+      this.router.url.includes("club") ||
+      this.router.url.includes("player")
+    ) {
+      h = 250;
+    } else {
+      if (this.router.url.includes("cash")) {
+        h = 179;
+      } else {
+        h = 104;
+      }
+    }
+    let styles = {
+      width: "calc(100vw - 209px)",
+      height: "calc(100vh - " + String(h) + "px)"
+    };
+
+    return styles;
+  }
 }

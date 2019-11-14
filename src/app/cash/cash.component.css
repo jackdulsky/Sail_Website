@@ -1,4 +1,4 @@
-.topLink {
+.topLinkCash {
   padding: 15px 5px;
   height: 38px;
 
@@ -15,7 +15,7 @@
   width: -webkit-fill-available;
   min-width: 120px;
 }
-.topLink:hover {
+.topLinkCash:hover {
   background-color: #f2f2f2 !important;
   border-bottom: 4px solid var(--lighter-blue) !important;
   cursor: pointer;

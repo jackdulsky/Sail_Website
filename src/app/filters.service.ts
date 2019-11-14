@@ -566,6 +566,7 @@ export class FiltersService {
     ) {
       this.reduceFiltersSinglePlayer();
     }
+    console.log("Spot1", this.newDBFormat);
 
     for (let bin in this.newWorkingQuery) {
       //PUSH EMPTY PERFORM DELETES

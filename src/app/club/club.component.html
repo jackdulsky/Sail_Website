@@ -1,44 +1,18 @@
 <div class="topBar">
-  <div class="team" (click)="displayTeams(showList)">
-    <img
-      class="imgLogo tableCenter"
-      [src]="getActiveLogo(filterService.teamPortalSelected)"
-    />
-    <div class="teamText">
-      &nbsp;&nbsp;{{ getCityName(filterService.teamPortalSelected) }}
-    </div>
-    <div class="tableCenter" style="display: inline; float: right;">
-      <i class="fa fa-angle-down fa-lg"></i>
-    </div>
-  </div>
-  <div class="teamList shadow" *ngIf="showList">
+  <div id="team" class="teamList shadow" *ngIf="showList">
     <div
+      id="team"
       class="team"
       style="border-bottom: 1px solid black; margin-right: 0px !important;     display: grid;
       grid-template-columns: 80px 1fr;"
       (click)="changeTeam(team)"
       *ngFor="let team of filterService.teams"
     >
-      <img class="imgLogo tableCenter" [src]="getActiveLogo(team)" />
-      <div class="teamText">&nbsp;&nbsp;{{ getCityName(team) }}</div>
+      <img id="team" class="imgLogo tableCenter" [src]="getActiveLogo(team)" />
+      <div id="team" class="teamText">&nbsp;&nbsp;{{ getCityName(team) }}</div>
     </div>
   </div>
 
-  <div class="yearContainer" (click)="showYearList()">
-    <div class="yearLabel" *ngIf="filterService.portalYearsOnly.length > 0">
-      {{ filterService.getYearDisplay() }}
-    </div>
-    <div class="yearLabel" *ngIf="filterService.portalYearsOnly.length == 0">
-      Year
-    </div>
-  </div>
-  <div
-    class="tableCenter yearArrow"
-    id="yearSelectArrow"
-    (click)="showYearList()"
-  >
-    <i class="fa fa-angle-down fa-lg"></i>
-  </div>
   <div class="yearListAll shadow" *ngIf="showYear">
     <div
       class="yearDropDown"
@@ -50,7 +24,158 @@
       {{ year }}
     </div>
   </div>
+  <div style="width: 100%;">
+    <div class="g-profile">
+      <div class="g-profile__grid overflow-hidden">
+        <div class="g-profile__profile">
+          <img
+            [src]="getActiveLogo(filterService.teamPortalSelected)"
+            class="g-profile__photo_club"
+            (click)="displayTeams(showList)"
+          />
+        </div>
+        <div class="g-profile__identity">
+          <div style="display: flow-root;">
+            <div id="team" class="nameBox">
+              <h2
+                id="team"
+                class="g-profile__name"
+                (click)="displayTeams(showList)"
+              >
+                {{ getCityName(filterService.teamPortalSelected) }}&nbsp;{{
+                  filterService.teamPortalSelected.ClubNickName
+                }}<i id="team" class="fa fa-angle-down fa-lg"></i>
+              </h2>
+            </div>
+            <div #coachAndGM class="din coachAndGM">
+              <div class=" din g-profile__bio">
+                <span class="g-profile__bio-element"
+                  ><span class="g-label g-mb-1">Coach</span
+                  ><span class="g-data">Jon Gruden</span></span
+                >
+              </div>
+            </div>
+            <div #coachAndGM class="din coachAndGM">
+              <div class=" din g-profile__bio">
+                <span class="g-profile__bio-element"
+                  ><span class="g-label g-mb-1">GM</span
+                  ><span class="g-data">Mike Mayock</span></span
+                >
+              </div>
+            </div>
+            <div class="g-label sobText">
+              OFFENSE
+            </div>
+            <div
+              class=" din g-profile__bio w400FloatLeft"
+              style="justify-content: left !important;"
+            >
+              <span class="g-profile__bio-element"
+                ><span class="g-label g-mb-1">PPG</span
+                ><span class="g-data"
+                  >24.7 <span class="rankText">(15)</span></span
+                ></span
+              ><span class="g-profile__bio-element"
+                ><span class="g-label g-mb-1">Rush YPG</span
+                ><span class="g-data"
+                  >130.2 <span class="rankText">(8)</span></span
+                ></span
+              ><span class="g-profile__bio-element"
+                ><span class="g-label g-mb-1">Pass YPG</span
+                ><span class="g-data"
+                  >245.4 <span class="rankText">(17)</span></span
+                ></span
+              ><span class="g-profile__bio-element"
+                ><span class="g-label g-mb-1">Turnover Margin</span
+                ><span class="g-data"
+                  >-3 <span class="rankText">(14)</span></span
+                ></span
+              >
+            </div>
+            <div id="year" class="yearBox" (click)="showYearList()">
+              <div
+                id="year"
+                class=""
+                *ngIf="filterService.portalYearsOnly.length > 0"
+              >
+                {{ filterService.getYearDisplay() }} &nbsp;
+              </div>
+              <div
+                id="year"
+                class=""
+                *ngIf="filterService.portalYearsOnly.length == 0"
+              >
+                Year &nbsp;
+              </div>
 
+              <i id="year" class="fa fa-angle-down fa-lg"></i>
+            </div>
+          </div>
+        </div>
+        <div class="g-profile__bio-container" style="display:flex">
+          <div class="divRecord">
+            <div class="divRecordSub">
+              <span>
+                AFC West
+              </span>
+              <span class="marginLeft10"
+                >5 - 4 <span class="rankText">(2-1)</span></span
+              >
+            </div>
+          </div>
+          <div class="g-profile__bio w350FloatLeft">
+            <span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Cap</span
+              ><span class="g-data"
+                >$200.0 <span class="rankText">(M)</span></span
+              ></span
+            ><span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Total</span
+              ><span class="g-data"
+                >$140.3 <span class="rankText">(M)</span></span
+              ></span
+            ><span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Space</span
+              ><span class="g-data"
+                >$59.7 <span class="rankText">(M)</span></span
+              ></span
+            >
+          </div>
+          <div class="g-label sobText">
+            DEFENSE
+          </div>
+          <div
+            class=" din g-profile__bio w400FloatLeft"
+            style="justify-content: left !important;"
+          >
+            <span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">PPG</span
+              ><span class="g-data"
+                >24.7 <span class="rankText">(15)</span></span
+              ></span
+            ><span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Rush YPG</span
+              ><span class="g-data"
+                >130.2 <span class="rankText">(8)</span></span
+              ></span
+            ><span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Pass YPG</span
+              ><span class="g-data"
+                >245.4 <span class="rankText">(17)</span></span
+              ></span
+            ><span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Sacks</span
+              ><span class="g-data"
+                >20 <span class="rankText">(12)</span></span
+              ></span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="linkBar">
   <div
     class="topLink"
     *ngFor="
@@ -64,3 +189,106 @@
 </div>
 
 <router-outlet></router-outlet>
+<!-- <div style="width: 100%;">
+    <div class="g-profile">
+      <div class="g-profile__grid overflow-hidden">
+        <div class="g-profile__profile">
+          <img
+            [src]="
+              getActiveLogo(filterService.teamPortalSelected)
+            "
+            class="g-profile__photo"
+          />
+        </div>
+        <div class="g-profile__identity">
+          <div style="display: flow-root;">
+            <div class="nameBox">
+              <h2 class="g-profile__name" (click)="displayTeams(showList)">
+               {{ getCityName(filterService.teamPortalSelected) }}<i class="fa fa-angle-down fa-lg"></i>
+              </h2>
+            </div>
+            <div #teamAndRosterStaturs class="din teamRoster">
+              <img
+                class="clubLogo"
+                [src]="
+                  getActiveLogo({
+                    ClubCityName: 'Oakland',
+                    ClubNickName: 'Raiders'
+                  })
+                "
+              />
+              <span class="clubLogoText">
+                Active - Raiders
+              </span>
+            </div>
+            <div #draftInfo class="din draftInfo">
+              <span class="g-profile__bio-element"
+                ><span class="g-label g-mb-1">Draft</span
+                ><span class="g-data"
+                  >2013: 5/186 - Jacksonville (Compensatory)</span
+                ></span
+              >
+            </div>
+            <div id="year" class="yearBox" (click)="showYearList()">
+              <div
+                id="year"
+                class=""
+                *ngIf="filterService.portalYearsOnly.length > 0"
+              >
+                {{ filterService.getYearDisplay() }} &nbsp;
+              </div>
+              <div
+                id="year"
+                class=""
+                *ngIf="filterService.portalYearsOnly.length == 0"
+              >
+                Year &nbsp;
+              </div>
+
+              <i id="year" class="fa fa-angle-down fa-lg"></i>
+            </div>
+          </div>
+        </div>
+        <div class="g-profile__bio-container" style="display:flex">
+          <div class="posCollege">
+            <div>
+              P - UCLA
+            </div>
+            <div>
+              #12
+            </div>
+          </div>
+          <div class="g-profile__bio w400FloatLeft">
+            <span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Height</span
+              ><span class="g-data">6012</span></span
+            ><span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Weight</span
+              ><span class="g-data">244</span></span
+            ><span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Speed</span
+              ><span class="g-data">4.90</span></span
+            >
+            <span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Arm</span
+              ><span class="g-data">3218</span></span
+            >
+          </div>
+          <div #birthInfo class="din birthInfo">
+            <span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Birth Date</span
+              ><span class="g-data">10/07/1991 (28.1)</span></span
+            >
+          </div>
+          <div #agentInfo class="din agentInfo">
+            <span class="g-profile__bio-element"
+              ><span class="g-label g-mb-1">Agent</span
+              ><span class="g-data"
+                >Joel Segal - Lagarderra Unlimited</span
+              ></span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->

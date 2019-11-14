@@ -21,7 +21,9 @@ export class ClubComponent implements OnInit {
     public router: Router,
     public body: BodyComponent,
     public cdref: ChangeDetectorRef
-  ) {}
+  ) {
+    document.addEventListener("click", e => this.onClick(e));
+  }
 
   teamSelected;
   ClubCityName = "ClubCityName";
@@ -32,6 +34,23 @@ export class ClubComponent implements OnInit {
   clubTabSelected;
   showYear = false;
 
+  //Turn Off the year panel on click outside, runs every click on the component
+  onClick(event) {
+    var target = event.target || event.srcElement || event.currentTarget;
+    var idAttr = target.attributes.id;
+    var value;
+    if (idAttr) {
+      value = idAttr.nodeValue;
+    } else {
+      value = "";
+    }
+    if (this.showYear && !value.includes("year")) {
+      this.showYearList();
+    }
+    if (this.showList && !value.includes("team")) {
+      this.displayTeams(this.showList);
+    }
+  }
   ngOnInit() {
     this.initFunction();
   }
@@ -57,20 +76,27 @@ export class ClubComponent implements OnInit {
     this.body.portalHighlight("club");
     if (
       this.filterService.reportTabs &&
+      this.filterService.reportReportsOnly &&
       this.filterService.getReportHeaders(2)
     ) {
-      this.clubTabSelected = Object.keys(
-        this.filterService.getReportHeaders(2)
-      )[1];
-      if (this.router.url.includes("/report")) {
-        this.clubTabSelected = this.router.url.split("/report/")[1];
+      try {
+        this.clubTabSelected = Object.keys(
+          this.filterService.getReportHeaders(2)
+        )[1];
+        if (this.router.url.includes("/report")) {
+          this.clubTabSelected = this.filterService.reportReportsOnly[
+            this.router.url.split("/report/")[1]
+          ]["TabID"];
+        }
+        if (this.router.url.includes("/base-reports")) {
+          this.clubTabSelected = this.router.url.split("/base-reports/")[1];
+        }
+        setTimeout(() => {
+          this.subRoute(this.clubTabSelected);
+        }, 1);
+      } catch (e) {
+        this.clubTabSelected = -1;
       }
-      if (this.router.url.includes("/base-reports")) {
-        this.clubTabSelected = this.router.url.split("/base-reports/")[1];
-      }
-      setTimeout(() => {
-        this.subRoute(this.clubTabSelected);
-      }, 1);
     } else {
       setTimeout(() => {
         this.initFunction();
@@ -92,21 +118,25 @@ export class ClubComponent implements OnInit {
 
   //Returns the logo src url to the club selection display
   getActiveLogo(team: any) {
-    var citySplit = team["ClubCityName"].split(" ");
-    var city;
-    if (citySplit.length > 1) {
-      city = citySplit[0] + citySplit[1];
-    } else {
-      city = citySplit[0];
+    try {
+      var citySplit = team["ClubCityName"].split(" ");
+      var city;
+      if (citySplit.length > 1) {
+        city = citySplit[0] + citySplit[1];
+      } else {
+        city = citySplit[0];
+      }
+      var nick = team["ClubNickName"];
+      return (
+        "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/" +
+        city +
+        "_" +
+        nick +
+        ".png?"
+      );
+    } catch (e) {
+      return "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/NFL_.png";
     }
-    var nick = team["ClubNickName"];
-    return (
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/" +
-      city +
-      "_" +
-      nick +
-      ".png?"
-    );
   }
 
   //Retuns proper city name
@@ -120,6 +150,7 @@ export class ClubComponent implements OnInit {
   }
   //Toggle Display of Teams Selection
   displayTeams(onOff: any) {
+    console.log("IN HERE", onOff);
     if (!onOff) {
       this.showList = true;
     } else {
@@ -129,21 +160,38 @@ export class ClubComponent implements OnInit {
 
   //This function changes the team selected
   changeTeam(team: any) {
+    console.log("TRYING TO DISPLAY", team);
     this.displayTeams(1);
+    console.log(
+      "before",
+      this.filterService.newDBFormat,
+      this.filterService.newFIDs
+    );
 
     this.teamSelected = team;
     this.filterService.teamPortalActiveClubID = team["SailTeamID"];
     this.filterService.teamPortalSelected = team;
     this.initTeam(this.filterService.teamPortalSelected);
+    console.log(
+      "AFTER",
+      this.filterService.newDBFormat,
+      this.filterService.newFIDs
+    );
     this.filterService.updateRDURL();
   }
   initTeam(team: any) {
     //FID is -2
     //ATT is 2
-    if (JSON.stringify(this.filterService.newDBFormat) != JSON.stringify({})) {
-      this.filterService.pushQueryToActiveFilter("0");
-    } else {
-    }
+    //  if (JSON.stringify(this.filterService.newDBFormat) != JSON.stringify({})) {
+    this.filterService.pushQueryToActiveFilter("0");
+    console.log("Spot2", this.filterService.newDBFormat);
+    // } else {
+    // }
+    console.log(
+      "AFTER 2",
+      this.filterService.newDBFormat,
+      this.filterService.newFIDs
+    );
   }
 
   //This function will route to reports page or display the report

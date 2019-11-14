@@ -6,11 +6,12 @@
     style="width:calc(100vw - 209px);height:calc(100vh - 125px);"
     crossorigin="anonymous"
   ></iframe>
+  style="width:calc(100vw - 209px);height:calc(100vh - 304px);"
 </div> -->
 <div>
   <iframe
     [src]="filterService.viewingURL"
-    style="width:calc(100vw - 209px);height:calc(100vh - 304px);"
+    [ngStyle]="setIFrameStyle()"
     crossorigin="anonymous"
   ></iframe>
 </div>
