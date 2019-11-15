@@ -251,4 +251,13 @@ export class PullDataService {
       query: query
     });
   }
+
+  //INSERT THE REPORT
+  pushNewReport(reportJSON: string) {
+    var query = "SailDB.Reports.spAddNewReport N'" + reportJSON + "'";
+    console.log(query);
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
 }

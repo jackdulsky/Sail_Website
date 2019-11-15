@@ -119,6 +119,7 @@ export class FiltersService {
   fullScreenMode = false;
   clubSpecifics;
   playerSpecifics;
+  clickedReport = false;
   constructor(
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,

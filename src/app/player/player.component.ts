@@ -95,7 +95,6 @@ export class PlayerComponent implements OnInit {
         if (this.router.url.includes("/base-reports")) {
           this.playerTabSelected = this.router.url.split("/base-reports/")[1];
         }
-        this.subRoute(this.playerTabSelected);
       } catch (e) {
         this.playerTabSelected = -1;
       }
