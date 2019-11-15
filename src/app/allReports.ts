@@ -594,3 +594,232 @@ export const colours = {
   yellow: "#ffff00",
   yellowgreen: "#9acd32"
 };
+export const clubData = [
+  {
+    Location: "1",
+    OrderID: "1",
+    Label: "",
+    Value: "AFC WEST",
+    SubValue: "",
+    Color: "Black"
+  },
+  {
+    Location: "1",
+    OrderID: "2",
+    Label: "",
+    Value: "5-4",
+    SubValue: "(2-1)",
+    Color: "Black"
+  },
+  {
+    Location: "2",
+    OrderID: "1",
+    Label: "HC",
+    Value: "Gruden",
+    SubValue: "",
+    Color: "Black"
+  },
+  {
+    Location: "2",
+    OrderID: "2",
+    Label: "GM",
+    Value: "Mayock",
+    SubValue: "",
+    Color: "Black"
+  },
+  {
+    Location: "2",
+    OrderID: "3",
+    Label: "OC",
+    Value: "Olson",
+    SubValue: "",
+    Color: "Green"
+  },
+  {
+    Location: "2",
+    OrderID: "4",
+    Label: "DC",
+    Value: "Guenther",
+    SubValue: "",
+    Color: "Black"
+  },
+  {
+    Location: "3",
+    OrderID: "1",
+    Label: "Cap",
+    Value: "200.0",
+    SubValue: "(M)",
+    Color: "Black"
+  },
+  {
+    Location: "3",
+    OrderID: "2",
+    Label: "Spending",
+    Value: "140.3",
+    SubValue: "(M)",
+    Color: "Black"
+  },
+  {
+    Location: "3",
+    OrderID: "3",
+    Label: "O",
+    Value: "89.7",
+    SubValue: "(M)",
+    Color: "Black"
+  },
+  {
+    Location: "3",
+    OrderID: "4",
+    Label: "D",
+    Value: "74.2",
+    SubValue: "(M)",
+    Color: "Black"
+  },
+  {
+    Location: "4",
+    OrderID: "1",
+    Label: "Offense",
+    Value: "80.1",
+    SubValue: "",
+    Color: "#3c9dff"
+  },
+  {
+    Location: "4",
+    OrderID: "2",
+    Label: "Defense",
+    Value: "56.9",
+    SubValue: "",
+    Color: "#78C000"
+  },
+  {
+    Location: "4",
+    OrderID: "3",
+    Label: "Specials",
+    Value: "24.2",
+    SubValue: "",
+    Color: "#ff3c3c"
+  },
+  {
+    Location: "5",
+    OrderID: "1",
+    Label: "PPG",
+    Value: "24.7",
+    SubValue: "(15)",
+    Color: "Black"
+  },
+  {
+    Location: "5",
+    OrderID: "2",
+    Label: "RUSH YPG",
+    Value: "130.2",
+    SubValue: "(8)",
+    Color: "Black"
+  },
+  {
+    Location: "5",
+    OrderID: "3",
+    Label: "PASS YPG",
+    Value: "245.4",
+    SubValue: "(17)",
+    Color: "Black"
+  },
+  {
+    Location: "6",
+    OrderID: "1",
+    Label: "PPG",
+    Value: "26.2",
+    SubValue: "(11)",
+    Color: "Black"
+  },
+  {
+    Location: "6",
+    OrderID: "2",
+    Label: "RUSH YPG",
+    Value: "125.5",
+    SubValue: "(9)",
+    Color: "Black"
+  },
+  {
+    Location: "6",
+    OrderID: "3",
+    Label: "PASS YPG",
+    Value: "278.1",
+    SubValue: "(13)",
+    Color: "Black"
+  }
+];
+export const playerData = [
+  {
+    Location: "1",
+    OrderID: "1",
+    Label: "",
+    Value: "P-UCLA",
+    SubValue: "#12",
+    Color: "Black"
+  },
+  {
+    Location: "2",
+    OrderID: "1",
+    Label: "",
+    Value: "Active-Raiders",
+    SubValue: "",
+    Color: "Black",
+    teamID: "1014"
+  },
+  {
+    Location: "3",
+    OrderID: "1",
+    Label: "Height",
+    Value: "6012",
+    SubValue: "",
+    Color: "Black"
+  },
+  {
+    Location: "3",
+    OrderID: "2",
+    Label: "Weight",
+    Value: "244",
+    SubValue: "",
+    Color: "Black"
+  },
+  {
+    Location: "3",
+    OrderID: "3",
+    Label: "Speed",
+    Value: "4.97",
+    SubValue: "",
+    Color: "Black"
+  },
+  {
+    Location: "3",
+    OrderID: "4",
+    Label: "Arm",
+    Value: "3218",
+    SubValue: "",
+    Color: "Black"
+  },
+  {
+    Location: "4",
+    OrderID: "1",
+    Label: "Draft",
+    Value: "2013: 5/186 - Jacksonville",
+    SubValue: "(Compensatory)",
+    Color: "Black"
+  },
+  {
+    Location: "5",
+    OrderID: "1",
+    Label: "Birth Date",
+    Value: "10/07/1991",
+    SubValue: "(28.1)",
+    Color: "Black"
+  },
+  {
+    Location: "6",
+    OrderID: "1",
+    Label: "Agent",
+    Value: "Joel Segal - Lagarderra Unlimited",
+    SubValue: "",
+    Color: "Black"
+  }
+];

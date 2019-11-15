@@ -10,8 +10,21 @@
 </div> -->
 <div>
   <iframe
+    id="iframe"
     [src]="filterService.viewingURL"
     [ngStyle]="setIFrameStyle()"
     crossorigin="anonymous"
   ></iframe>
+</div>
+<div
+  id="fullScreenClose"
+  style="position: absolute;
+  top: -35px;
+  left: calc(100vw - 34px);
+  z-index: 4;
+  color: red;"
+  *ngIf="filterService.fullScreenMode == true"
+  (click)="filterService.fullScreenOff()"
+>
+  <i class="fa fa-close fa-lg"></i>
 </div>

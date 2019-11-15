@@ -142,6 +142,8 @@
 .linkBar {
   border-top: 2px solid black;
   display: flex;
+  float: left;
+  width: calc(100vw - 250px);
 }
 html {
   line-height: 1.15;
@@ -530,7 +532,7 @@ body {
   align-items: center;
   position: relative;
   width: 100%;
-  max-width: 100rem;
+
   grid-template-columns: minmax(8rem, 25%) 1fr;
 }
 @media (min-width: 60em) {
@@ -967,7 +969,7 @@ h6,
 .coachAndGM {
   float: left;
   display: flex;
-  width: 175px;
+  width: 90px;
 }
 .clubLogo {
   max-height: 34px;
@@ -995,6 +997,14 @@ h6,
 
 .w400FloatLeft {
   width: 400px;
+  float: left;
+}
+.w450FloatLeft {
+  width: 450px;
+  float: left;
+}
+.w500FloatLeft {
+  width: 500px;
   float: left;
 }
 .w350FloatLeft {
@@ -1025,9 +1035,43 @@ h6,
 }
 .rankText {
   font-size: 12px;
+  margin-left: 1px;
 }
 .sobText {
   float: left;
   margin-top: 28px;
   margin-right: 10px;
+  padding-left: 20px;
+}
+.fullScreen {
+  width: 50px;
+  text-align: center;
+  float: right;
+  border-top: 2px solid black;
+  line-height: 29px;
+  border-left: 1px solid lightblue;
+}
+.fullScreen:hover {
+  background-color: var(--light-blue);
+  cursor: pointer;
+}
+.fullScreenInactive {
+  width: 50px;
+  text-align: center;
+  float: right;
+  border-top: 2px solid black;
+  line-height: 29px;
+  color: lightgray;
+  border-left: 1px solid lightblue;
+}
+.spinnerLabels {
+  font-size: 0.75rem;
+  line-height: 1.33333;
+  font-family: "DIN";
+  letter-spacing: 0.5px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  color: #585d63;
+  vertical-align: middle;
 }

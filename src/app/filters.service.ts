@@ -5,7 +5,14 @@ import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { NonNullAssert, ThrowStmt } from "@angular/compiler";
-import { lor, reportsNew, views, colours } from "./allReports";
+import {
+  lor,
+  reportsNew,
+  views,
+  colours,
+  clubData,
+  playerData
+} from "./allReports";
 import {
   DomSanitizer,
   SafeUrl,
@@ -19,6 +26,7 @@ import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
   providedIn: "root"
 })
 export class FiltersService {
+  tryingToSendDBFormat;
   newFilter: { [bid: string]: {} } = {};
   newFIDBID: { [FID: string]: string } = {};
   newFIDs: { [FID: string]: {} } = {};
@@ -76,6 +84,8 @@ export class FiltersService {
   reportsNew = reportsNew;
   views = views;
   colours = colours;
+  clubData = clubData;
+  playerData = playerData;
   Label = "Label";
   selected: string;
   portalSelected = "";
@@ -91,6 +101,8 @@ export class FiltersService {
   reportURL;
   portalYearsSelected: String[] = [];
   portalYearsList = [
+    "2021",
+    "2020",
     "2019",
     "2018",
     "2017",
@@ -101,9 +113,12 @@ export class FiltersService {
     "2012",
     "2011"
   ];
-  portalYearsOnly: String[] = [];
+  portalYearsOnly: String[] = ["2019"];
   portalYearUpdated = false;
   sub: any;
+  fullScreenMode = false;
+  clubSpecifics;
+  playerSpecifics;
   constructor(
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,
@@ -651,41 +666,31 @@ export class FiltersService {
 
   //SAVE LOCAL STORAGE FOR REFRESH AND THEN SEND THE FILTERS TO THE DB
   saveAndSend() {
-    // var localSaving = {
-    //   GUID: JSON.stringify(this.pullData.GUID),
-    //   newFIDBID: JSON.stringify(this.newFIDBID),
-    //   newFIDs: JSON.stringify(this.newFIDs),
-    //   newDBFormat: JSON.stringify(this.newDBFormat),
-    //   newWorkingQuery: JSON.stringify(this.newWorkingQuery),
-    //   newWorkingFID: JSON.stringify(this.newWorkingFID),
-    //   reversePaths: JSON.stringify(this.reversePaths),
-    //   lastUpdateTime: String(Date())
-    // };
-    // localStorage.setItem(this.pullData.GUID, JSON.stringify(localSaving));
-
-    // localStorage.setItem("GUID", JSON.stringify(this.pullData.GUID));
-    // localStorage.setItem("newFIDBID", JSON.stringify(this.newFIDBID));
-    // localStorage.setItem("newFIDs", JSON.stringify(this.newFIDs));
-    // localStorage.setItem("newDBFormat", JSON.stringify(this.newDBFormat));
-    // localStorage.setItem(
-    //   "newWorkingQuery",
-    //   JSON.stringify(this.newWorkingQuery)
-    // );
-    // localStorage.setItem("newWorkingFID", JSON.stringify(this.newWorkingFID));
-    // localStorage.setItem("reversePaths", JSON.stringify(this.reversePaths));
-    // localStorage.setItem("lastUpdateTime", String(Date()));
-    // console.log(String(Date()));
     var dbFormatWithAddedHiddenYears = cloneDeep(this.newDBFormat);
     if (this.portalYearsOnly.length > 0) {
       dbFormatWithAddedHiddenYears["-4"] = {
         "4": [this.portalYearsOnly, {}, []]
       };
     }
-    this.pullData.constructAndSendFilters(dbFormatWithAddedHiddenYears);
-    this.testSendFilters2();
-    this.setActiveClub();
-    this.setActivePlayer();
-    this.updateRDURL();
+    this.tryingToSendDBFormat = JSON.stringify(dbFormatWithAddedHiddenYears);
+    setTimeout(() => {
+      if (
+        this.tryingToSendDBFormat ==
+        JSON.stringify(dbFormatWithAddedHiddenYears)
+      ) {
+        this.pullData
+          .constructAndSendFilters(dbFormatWithAddedHiddenYears)
+          .subscribe(data => {
+            console.log("DATA DONE", data);
+            this.updatePlayerData();
+            this.uppdateClubData();
+          });
+        this.testSendFilters2();
+        this.setActiveClub();
+        this.setActivePlayer();
+        this.updateRDURL();
+      }
+    }, 500);
   }
 
   //CHECK IF TWO DB FORMAT's ARE THE SAME
@@ -1378,5 +1383,87 @@ export class FiltersService {
       return colours[colour.toLowerCase()];
 
     return false;
+  }
+
+  //THIS FUNCTION CALLS FULL SCREEN MODE
+  fullScreenOn() {
+    try {
+      document.getElementById("iframe").className = "fullScreen";
+      this.fullScreenMode = true;
+      this.updateRDURL();
+    } catch (e) {}
+  }
+  //THIS FUNCTION EXITS FULL SCREEN MODE
+  fullScreenOff() {
+    document.getElementById("iframe").className = "";
+    this.fullScreenMode = false;
+    this.updateRDURL();
+  }
+
+  //GET SPINNER COLOR STYLE
+  setStyleSpinner(input: any) {
+    var offset = (Number(input["OrderID"]) - 1) * 78;
+    let styles = {
+      position: "fixed",
+      "margin-left": String(offset) + "px"
+    };
+    return styles;
+  }
+
+  //RETURN CLUB SPECIFICS  OR NUL
+  getClubSpecifics(location) {
+    try {
+      return this.clubSpecifics[String(location)];
+    } catch (e) {
+      return [];
+    }
+  }
+  //RETURN CLUB SPECIFICS  OR NUL
+  getPlayerSpecifics(location) {
+    try {
+      return this.playerSpecifics[String(location)];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  //Gets the update club data to be run after save and send
+  uppdateClubData() {
+    this.pullData.pullClubData().subscribe(data => {
+      console.log("data", data);
+      this.clubSpecifics = {};
+      for (let b in data) {
+        var id = String(data[b]["Location"]);
+        if (!this.clubSpecifics[id]) {
+          this.clubSpecifics[id] = [];
+        }
+        this.clubSpecifics[id].push(data[b]);
+      }
+    });
+  }
+
+  //Gets the update player data to be run after save and send
+
+  updatePlayerData() {
+    this.pullData.pullPlayerData().subscribe(data => {
+      this.playerSpecifics = {};
+      for (let b in this.playerData) {
+        var id = String(this.playerData[b]["Location"]);
+        if (!this.playerSpecifics[id]) {
+          this.playerSpecifics[id] = [];
+        }
+        this.playerSpecifics[id].push(this.playerData[b]);
+      }
+      console.log("PLAYER SPECS", this.playerSpecifics);
+    });
+  }
+
+  //RETURN "Label" from obj
+  getLabel(obj: any, text: string) {
+    try {
+      return obj[text];
+    } catch (e) {
+      return "";
+    }
   }
 }

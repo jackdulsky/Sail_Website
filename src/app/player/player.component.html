@@ -40,10 +40,20 @@
             </div>
             <div #draftInfo class="din draftInfo">
               <div class=" din g-profile__bio">
-                <span class="g-profile__bio-element"
-                  ><span class="g-label g-mb-1">Draft</span
+                <span
+                  class="g-profile__bio-element"
+                  *ngFor="
+                    let disp of filterService.getPlayerSpecifics(4)
+                      | Sort: 'order'
+                  "
+                  ><span class="g-label g-mb-1">{{
+                    filterService.getLabel(disp, "Label")
+                  }}</span
                   ><span class="g-data"
-                    >2013: 5/186 - Jacksonville (Compensatory)</span
+                    >{{ filterService.getLabel(disp, "Value")
+                    }}<span class="rankText">{{
+                      filterService.getLabel(disp, "SubValue")
+                    }}</span></span
                   ></span
                 >
               </div>
@@ -68,43 +78,67 @@
             </div>
           </div>
         </div>
-        <div class="g-profile__bio-container" style="display:flex">
-          <div class="posCollege">
+        <div
+          class="g-profile__bio-container"
+          style="display:flex; min-height: 47px;"
+        >
+          <div
+            class="posCollege"
+            *ngFor="
+              let disp of filterService.getPlayerSpecifics(1) | Sort: 'order'
+            "
+          >
+            <div>&nbsp; &nbsp;{{ filterService.getLabel(disp, "Value") }}</div>
             <div>
-              &nbsp; &nbsp;P - UCLA
-            </div>
-            <div>
-              &nbsp; &nbsp; #12
+              &nbsp; &nbsp;{{ filterService.getLabel(disp, "SubValue") }}
             </div>
           </div>
           <div class="g-profile__bio w400FloatLeft">
-            <span class="g-profile__bio-element"
-              ><span class="g-label g-mb-1">Height</span
-              ><span class="g-data">6012</span></span
-            ><span class="g-profile__bio-element"
-              ><span class="g-label g-mb-1">Weight</span
-              ><span class="g-data">244</span></span
-            ><span class="g-profile__bio-element"
-              ><span class="g-label g-mb-1">Speed</span
-              ><span class="g-data">4.90</span></span
-            >
-            <span class="g-profile__bio-element"
-              ><span class="g-label g-mb-1">Arm</span
-              ><span class="g-data">3218</span></span
+            <span
+              class="g-profile__bio-element"
+              *ngFor="
+                let disp of filterService.getPlayerSpecifics(3) | Sort: 'order'
+              "
+              ><span class="g-label g-mb-1">{{
+                filterService.getLabel(disp, "Label")
+              }}</span
+              ><span class="g-data"
+                >{{ filterService.getLabel(disp, "Value")
+                }}<span class="rankText">{{
+                  filterService.getLabel(disp, "SubValue")
+                }}</span></span
+              ></span
             >
           </div>
           <div #birthInfo class="din birthInfo">
-            <span class="g-profile__bio-element"
-              ><span class="g-label g-mb-1">Birth Date</span
-              ><span class="g-data">10/07/1991 (28.1)</span></span
+            <span
+              class="g-profile__bio-element"
+              *ngFor="
+                let disp of filterService.getPlayerSpecifics(5) | Sort: 'order'
+              "
+              ><span class="g-label g-mb-1">{{
+                filterService.getLabel(disp, "Label")
+              }}</span
+              ><span class="g-data">
+                {{ filterService.getLabel(disp, "Value")
+                }}<span class="rankText">{{
+                  filterService.getLabel(disp, "SubValue")
+                }}</span></span
+              ></span
             >
           </div>
           <div #agentInfo class="din agentInfo">
-            <span class="g-profile__bio-element"
-              ><span class="g-label g-mb-1">Agent</span
-              ><span class="g-data"
-                >Joel Segal - Lagarderra Unlimited</span
-              ></span
+            <span
+              class="g-profile__bio-element"
+              *ngFor="
+                let disp of filterService.getPlayerSpecifics(6) | Sort: 'order'
+              "
+              ><span class="g-label g-mb-1">{{
+                filterService.getLabel(disp, "Label")
+              }}</span
+              ><span class="g-data">{{
+                filterService.getLabel(disp, "Value")
+              }}</span></span
             >
           </div>
         </div>
@@ -144,16 +178,25 @@
     </div>
   </div>
 </div>
-<div class="linkBar">
+<div style="display: flex;">
+  <div class="linkBar">
+    <div
+      class="topLink"
+      *ngFor="
+        let cat of filterService.getReportHeaders(3) | keyvalue: body.valueOrder
+      "
+      id="{{ cat.key }}playerBarHighlightid"
+      (click)="subRoute(cat.key)"
+    >
+      {{ cat.value.Label }}
+    </div>
+  </div>
   <div
-    class="topLink"
-    *ngFor="
-      let cat of filterService.getReportHeaders(3) | keyvalue: body.valueOrder
-    "
-    id="{{ cat.key }}playerBarHighlightid"
-    (click)="subRoute(cat.key)"
+    class="fullScreenInactive"
+    id="fullScreenButton"
+    (click)="filterService.fullScreenOn()"
   >
-    {{ cat.value.Label }}
+    <i class="fa fa-window-maximize fa-sm"></i>
   </div>
 </div>
 

@@ -1,0 +1,8 @@
+.fullScreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: absolute;
+  top: -52px;
+  left: 0px;
+  z-index: 3;
+}

@@ -160,6 +160,8 @@
 .linkBar {
   border-top: 2px solid black;
   display: flex;
+  float: left;
+  width: calc(100vw - 250px);
 }
 .playerDisplayTextContainer {
 }
@@ -557,7 +559,6 @@ body {
   align-items: center;
   position: relative;
   width: 100%;
-  max-width: 100rem;
   grid-template-columns: minmax(8rem, 25%) 1fr;
 }
 @media (min-width: 60em) {
@@ -1036,4 +1037,29 @@ h6,
   display: flex;
   padding-top: 8px;
   width: 250px;
+}
+.fullScreen {
+  width: 50px;
+  text-align: center;
+  float: right;
+  border-top: 2px solid black;
+  line-height: 29px;
+  border-left: 1px solid lightblue;
+}
+.fullScreen:hover {
+  background-color: var(--light-blue);
+  cursor: pointer;
+}
+.fullScreenInactive {
+  width: 50px;
+  text-align: center;
+  float: right;
+  border-top: 2px solid black;
+  line-height: 29px;
+  color: lightgray;
+  border-left: 1px solid lightblue;
+}
+.rankText {
+  font-size: 12px;
+  margin-left: 1px;
 }

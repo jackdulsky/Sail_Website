@@ -5,7 +5,6 @@ import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
-
 @Component({
   selector: "app-club",
   templateUrl: "./club.component.html",
@@ -84,6 +83,7 @@ export class ClubComponent implements OnInit {
           this.filterService.getReportHeaders(2)
         )[1];
         if (this.router.url.includes("/report")) {
+          document.getElementById("fullScreenButton").className = "fullScreen";
           this.clubTabSelected = this.filterService.reportReportsOnly[
             this.router.url.split("/report/")[1]
           ]["TabID"];
@@ -150,7 +150,6 @@ export class ClubComponent implements OnInit {
   }
   //Toggle Display of Teams Selection
   displayTeams(onOff: any) {
-    console.log("IN HERE", onOff);
     if (!onOff) {
       this.showList = true;
     } else {
@@ -160,38 +159,19 @@ export class ClubComponent implements OnInit {
 
   //This function changes the team selected
   changeTeam(team: any) {
-    console.log("TRYING TO DISPLAY", team);
     this.displayTeams(1);
-    console.log(
-      "before",
-      this.filterService.newDBFormat,
-      this.filterService.newFIDs
-    );
 
     this.teamSelected = team;
     this.filterService.teamPortalActiveClubID = team["SailTeamID"];
     this.filterService.teamPortalSelected = team;
     this.initTeam(this.filterService.teamPortalSelected);
-    console.log(
-      "AFTER",
-      this.filterService.newDBFormat,
-      this.filterService.newFIDs
-    );
     this.filterService.updateRDURL();
   }
   initTeam(team: any) {
     //FID is -2
     //ATT is 2
-    //  if (JSON.stringify(this.filterService.newDBFormat) != JSON.stringify({})) {
+
     this.filterService.pushQueryToActiveFilter("0");
-    console.log("Spot2", this.filterService.newDBFormat);
-    // } else {
-    // }
-    console.log(
-      "AFTER 2",
-      this.filterService.newDBFormat,
-      this.filterService.newFIDs
-    );
   }
 
   //This function will route to reports page or display the report
@@ -225,6 +205,7 @@ export class ClubComponent implements OnInit {
         this.router.navigate(["./report", String(reportID)], {
           relativeTo: this.route
         });
+        document.getElementById("fullScreenButton").className = "fullScreen";
         // this.router.navigate([newRoute + "/report/" + String(reportID)]);
       } else {
         this.filterService.selected = name;
@@ -233,6 +214,8 @@ export class ClubComponent implements OnInit {
         this.router.navigate(["./base-reports", String(name)], {
           relativeTo: this.route
         });
+        document.getElementById("fullScreenButton").className =
+          "fullScreenInactive";
         // this.router.navigate([newRoute + "/base-reports/" + String(name)]);
       }
     } catch (e) {}

@@ -35,6 +35,7 @@ import { FilterReportListsPipe } from "./filterReportLists.pipe";
 import { SafeHtmlPipe } from "./safe.pipe";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { SmartFilterPipe } from "./smartFilter.pipe";
+import { SortPipe } from "./sort.pipe";
 
 // import { Ng5SliderModule } from "ng5-slider";
 import { MatSliderModule } from "@angular/material/slider";
@@ -60,11 +61,13 @@ import { ColorPickerModule } from "ngx-color-picker";
 import { HomeComponent } from "./home/home.component";
 import { NewpageComponent } from "./newpage/newpage.component";
 import { ClickOutsideModule } from "ng-click-outside";
+import { NgCircleProgressModule } from "ng-circle-progress";
 
 @NgModule({
   declarations: [
     FilterReportListsPipe,
     SmartFilterPipe,
+    SortPipe,
     SafeHtmlPipe,
     FilterPipe,
     FilterPipe2,
@@ -88,6 +91,15 @@ import { ClickOutsideModule } from "ng-click-outside";
     NewpageComponent
   ],
   imports: [
+    NgCircleProgressModule.forRoot({
+      // set defaults
+      radius: 100,
+      outerStrokeWidth: 16,
+      innerStrokeWidth: 8,
+      outerStrokeColor: "#78C000",
+      innerStrokeColor: "#C7E596",
+      animationDuration: 300
+    }),
     ClickOutsideModule,
     ColorPickerModule,
     AngularMultiSelectModule,

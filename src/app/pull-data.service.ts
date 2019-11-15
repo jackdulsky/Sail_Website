@@ -177,15 +177,10 @@ export class PullDataService {
       "', N'" +
       JSON.stringify(filter) +
       "'";
-    // console.log(query);
 
-    this.http
-      .post(this.serverURL + "db/query", {
-        query: query
-      })
-      .subscribe(data => {
-        // console.log(data);
-      });
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
 
     //
   }
@@ -242,16 +237,16 @@ export class PullDataService {
 
   //PULL CLUB DATA
   pullClubData() {
-    var query = "";
-    return {};
+    var query =
+      "exec [SaildB].[SAILSite].[spHeaders_Club] N'" + this.GUID + "'";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
   //PULL PLAYER DATA
   pullPlayerData() {
-    var query = "";
-    return {};
+    var query = "SELECT *  FROM [SaildB].[Reports].[Reports]";
+
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

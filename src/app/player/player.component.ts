@@ -86,6 +86,8 @@ export class PlayerComponent implements OnInit {
           this.filterService.getReportHeaders(3)
         )[1];
         if (this.router.url.includes("/report")) {
+          document.getElementById("fullScreenButton").className = "fullScreen";
+
           this.playerTabSelected = this.filterService.reportReportsOnly[
             this.router.url.split("/report/")[1]
           ]["TabID"];
@@ -229,6 +231,7 @@ export class PlayerComponent implements OnInit {
         this.router.navigate(["./report", String(reportID)], {
           relativeTo: this.route
         });
+        document.getElementById("fullScreenButton").className = "fullScreen";
       } else {
         this.filterService.selected = name;
         var newRoute = this.router.url.split("/report")[0];
@@ -237,6 +240,8 @@ export class PlayerComponent implements OnInit {
         this.router.navigate(["./base-reports", String(name)], {
           relativeTo: this.route
         });
+        document.getElementById("fullScreenButton").className =
+          "fullScreenInactive";
         // this.router.navigate([newRoute + "../base-reports/" + String(name)]);
       }
     } catch (e) {}
