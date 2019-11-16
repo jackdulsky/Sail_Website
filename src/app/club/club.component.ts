@@ -78,10 +78,10 @@ export class ClubComponent implements OnInit {
       this.filterService.reportReportsOnly &&
       this.filterService.getReportHeaders(2)
     ) {
+      this.clubTabSelected = Object.keys(
+        this.filterService.getReportHeaders(2)
+      )[0];
       try {
-        this.clubTabSelected = Object.keys(
-          this.filterService.getReportHeaders(2)
-        )[1];
         if (this.router.url.includes("/report")) {
           document.getElementById("fullScreenButton").className = "fullScreen";
           this.clubTabSelected = this.filterService.reportReportsOnly[
@@ -91,16 +91,47 @@ export class ClubComponent implements OnInit {
         if (this.router.url.includes("/base-reports")) {
           this.clubTabSelected = this.router.url.split("/base-reports/")[1];
         }
-        setTimeout(() => {
-          this.subRoute(this.clubTabSelected);
-        }, 1);
       } catch (e) {
-        this.clubTabSelected = -1;
+        // this.clubTabSelected = -1;
       }
     } else {
       setTimeout(() => {
         this.initFunction();
       }, 200);
+    }
+    this.performHighlightOrSubRoute();
+  }
+
+  //timeout Recursive method
+  performHighlightOrSubRoute() {
+    if (this.filterService.getReportHeaders(2)) {
+      if (
+        Object.keys(this.filterService.getReportHeaders(2)).indexOf(
+          String(this.clubTabSelected)
+        ) != -1 &&
+        this.router.url.includes("base")
+      ) {
+        this.subRoute(this.clubTabSelected);
+      } else {
+        this.justHighlight(this.clubTabSelected);
+      }
+    } else {
+      setTimeout(() => {
+        this.performHighlightOrSubRoute();
+      }, 200);
+    }
+  }
+
+  //HIGHLIGHT A TAB, USED FOR INIT ON REPORT
+  justHighlight(name: any) {
+    if (document.getElementById(name + "clubBarHighlightid")) {
+      var newTab = document.getElementById(name + "clubBarHighlightid");
+      newTab.style.backgroundColor = "#f2f2f2";
+      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+    } else {
+      setTimeout(() => {
+        this.justHighlight(name);
+      }, 100);
     }
   }
 
@@ -202,6 +233,7 @@ export class ClubComponent implements OnInit {
         var reportID = Object.keys(
           this.filterService.reportReportsStructure[name]
         )[0];
+
         this.router.navigate(["./report", String(reportID)], {
           relativeTo: this.route
         });
@@ -211,6 +243,7 @@ export class ClubComponent implements OnInit {
         this.filterService.selected = name;
         var newRoute = this.router.url.split("/report")[0];
         newRoute = newRoute.split("/base-report")[0];
+
         this.router.navigate(["./base-reports", String(name)], {
           relativeTo: this.route
         });

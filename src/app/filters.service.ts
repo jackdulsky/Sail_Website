@@ -582,7 +582,6 @@ export class FiltersService {
     ) {
       this.reduceFiltersSinglePlayer();
     }
-    console.log("Spot1", this.newDBFormat);
 
     for (let bin in this.newWorkingQuery) {
       //PUSH EMPTY PERFORM DELETES
@@ -682,7 +681,6 @@ export class FiltersService {
         this.pullData
           .constructAndSendFilters(dbFormatWithAddedHiddenYears)
           .subscribe(data => {
-            console.log("DATA DONE", data);
             this.updatePlayerData();
             this.uppdateClubData();
           });
@@ -1431,7 +1429,6 @@ export class FiltersService {
   //Gets the update club data to be run after save and send
   uppdateClubData() {
     this.pullData.pullClubData().subscribe(data => {
-      console.log("data", data);
       this.clubSpecifics = {};
       for (let b in data) {
         var id = String(data[b]["Location"]);
@@ -1455,7 +1452,6 @@ export class FiltersService {
         }
         this.playerSpecifics[id].push(this.playerData[b]);
       }
-      console.log("PLAYER SPECS", this.playerSpecifics);
     });
   }
 

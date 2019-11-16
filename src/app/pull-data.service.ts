@@ -169,7 +169,7 @@ export class PullDataService {
   //SEND THE DATA BACK UP TO THE DB
   // INSERT THE GUI AND FILTERS SELECTED
   constructAndSendFilters(filter) {
-    console.log("PULL DATA CONSTRUCT AND SEND", JSON.stringify(filter));
+    // console.log("PULL DATA CONSTRUCT AND SEND", JSON.stringify(filter));
 
     var query =
       "exec SailDB.filter.spSAIL_StoreUpdateFilter N'" +
@@ -255,7 +255,7 @@ export class PullDataService {
   //INSERT THE REPORT
   pushNewReport(reportJSON: string) {
     var query = "SailDB.Reports.spAddNewReport N'" + reportJSON + "'";
-    console.log(query);
+    console.log("PUSHING NEW REPORT JSON: ", reportJSON);
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

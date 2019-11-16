@@ -52,12 +52,16 @@ export class BodyComponent implements OnInit {
   changeReportType(newNumb: number) {
     var comp = this.router.url.split("/base-reports/")[0].split("/");
     if (this.portals.indexOf(comp[comp.length - 1]) != -1) {
-      this.router.navigate(
-        ["./" + comp[comp.length - 1], "report", +String(newNumb)],
-        {
-          relativeTo: this.route
-        }
-      );
+      console.log("ROUTE CHILDREN", this.route.firstChild.firstChild);
+      // this.router.navigate(
+      //   ["./" + comp[comp.length - 1], "report", +String(newNumb)],
+      //   {
+      //     relativeTo: this.route
+      //   }
+      // );
+      this.router.navigate(["report", String(newNumb)], {
+        relativeTo: this.route.firstChild.firstChild
+      });
     } else {
       this.router.navigate(["./report", +String(newNumb)], {
         relativeTo: this.route
@@ -228,6 +232,12 @@ export class BodyComponent implements OnInit {
     }
     if (repo["ColorBottom"]) {
       color = repo["ColorBottom"];
+    }
+    if (repo["colorTop"]) {
+      color = repo["colorTop"];
+    }
+    if (repo["ColorTop"]) {
+      color = repo["ColorTop"];
     }
     if (repo["IconUrl"]) {
       icon = repo["IconUrl"];

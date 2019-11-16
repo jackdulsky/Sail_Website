@@ -1,48 +1,48 @@
 export const lor: any = {
   0: {
-    OrderID: 0,
+    OrderID: -0,
     Label: "General",
     Location: 0,
     List: 1
   },
   1: {
-    OrderID: 1,
+    OrderID: -1,
     Label: "Offense",
     Location: 0,
     List: 1
   },
   2: {
-    OrderID: 2,
+    OrderID: -2,
     Label: "Defense",
     Location: 0,
     List: 1
   },
   3: {
-    OrderID: 3,
+    OrderID: -3,
     Label: "Special Teams",
     Location: 0,
     List: 1
   },
   4: {
-    OrderID: 3,
+    OrderID: -3,
     Label: "Home",
     Location: 1,
     List: 1
   },
   5: {
-    OrderID: 3,
+    OrderID: -3,
     Label: "Cash",
     Location: 1,
     List: 0
   },
   6: {
-    OrderID: 3,
+    OrderID: -3,
     Label: "Depth",
     Location: 1,
     List: 0
   },
   7: {
-    OrderID: 3,
+    OrderID: -3,
     Label: "All Reports",
     Location: 1,
     List: 1
@@ -50,25 +50,25 @@ export const lor: any = {
 };
 export const reportsNew: any = {
   4: {
-    5: {
+    4: {
       ColorBottom: "#3544cc",
       ColorTop: "#4254f5",
       IconUrl:
         "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Cash2.png",
       Label: "Club Cash Summary",
-      OrderID: 1,
-      TabID: 5
+      OrderID: -1,
+      TabID: 4
     }
   },
   7: {
-    5: {
+    7: {
       ColorBottom: "#3544cc",
       ColorTop: "#4254f5",
       IconUrl:
         "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Cash2.png",
       Label: "Club Cash Summary",
-      OrderID: 1,
-      TabID: 5
+      OrderID: -1,
+      TabID: 7
     }
   },
   0: {
@@ -76,56 +76,56 @@ export const reportsNew: any = {
       Label: "Quick cuts",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 1
+      OrderID: -1
     },
     2: {
       Label: "Run/Pass Report",
       id: 2,
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 2
+      OrderID: -2
     },
     3: {
       Label: "Cutups Generator",
       id: 3,
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 3
+      OrderID: -3
     },
     4: {
       Label: "Player/Position Pivot",
       id: 4,
       colorTop: "skyblue",
       colorBottom: "lightblue",
-      OrderID: 4
+      OrderID: -4
     },
     5: {
       Label: "Grade Distribution",
       id: 5,
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 5
+      OrderID: -5
     },
     6: {
       Label: "Penalty Stats",
       id: 6,
       colorTop: "skyblue",
       colorBottom: "green",
-      OrderID: 6
+      OrderID: -6
     },
     7: {
       Label: "Player Report",
       id: 7,
       colorTop: "skyblue",
       colorBottom: "gold",
-      OrderID: 7
+      OrderID: -7
     },
     8: {
       Label: "Team Report",
       id: 8,
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 8
+      OrderID: -8
     }
   },
   3: {
@@ -133,49 +133,49 @@ export const reportsNew: any = {
       Label: "Special Teams Summary",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 1
+      OrderID: -1
     },
     33: {
       Label: "Punt Spray Chart",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 2
+      OrderID: -2
     },
     34: {
       Label: "FG/XP Kicking Report",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 3
+      OrderID: -3
     },
     35: {
       Label: "Kickoff Spray Chart",
       colorTop: "skyblue",
       colorBottom: "lightblue",
-      OrderID: 4
+      OrderID: -4
     },
     36: {
       Label: "Kickoff Report",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 5
+      OrderID: -5
     },
     37: {
       Label: "Kickoff and Punt Returns Report",
       colorTop: "skyblue",
       colorBottom: "green",
-      OrderID: 6
+      OrderID: -6
     },
     38: {
       Label: "Punt Report",
       colorTop: "skyblue",
       colorBottom: "gold",
-      OrderID: 7
+      OrderID: -7
     },
     39: {
       Label: "Phase Snap Report",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 8
+      OrderID: -8
     }
   },
   1: {
@@ -183,73 +183,73 @@ export const reportsNew: any = {
       Label: "Offensive Summary",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 1
+      OrderID: -1
     },
     10: {
       Label: "Passing Stats",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 2
+      OrderID: -2
     },
     11: {
       Label: "Offensive Run Concept",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 3
+      OrderID: -3
     },
     12: {
       Label: "Passing Map",
       colorTop: "skyblue",
       colorBottom: "lightblue",
-      OrderID: 4
+      OrderID: -4
     },
     13: {
       Label: "QB Throw Accuracy",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 5
+      OrderID: -5
     },
     14: {
       Label: "Team Offense Bar Charts",
       colorTop: "skyblue",
       colorBottom: "green",
-      OrderID: 6
+      OrderID: -6
     },
     15: {
       Label: "Receiving Stats",
       colorTop: "skyblue",
       colorBottom: "gold",
-      OrderID: 7
+      OrderID: -7
     },
     16: {
       Label: "Pass Protection Stats",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 8
+      OrderID: -8
     },
     17: {
       Label: "Offense Blocking Matchup Stats",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 9
+      OrderID: -9
     },
     18: {
       Label: "Rushing Stats",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 10
+      OrderID: -10
     },
     19: {
       Label: "Offense vs Coverage Schemes",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 11
+      OrderID: -11
     },
     20: {
       Label: "Team Offense Scatter Plot",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 12
+      OrderID: -12
     }
   },
   2: {
@@ -257,67 +257,67 @@ export const reportsNew: any = {
       Label: "Defensive Summary",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 1
+      OrderID: -1
     },
     22: {
       Label: "Coverage Stats",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 2
+      OrderID: -2
     },
     23: {
       Label: "Team Defense Bar Charts",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 3
+      OrderID: -3
     },
     24: {
       Label: "Defensive Player Stats",
       colorTop: "skyblue",
       colorBottom: "lightblue",
-      OrderID: 4
+      OrderID: -4
     },
     25: {
       Label: "Tackling Stats",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 5
+      OrderID: -5
     },
     26: {
       Label: "Defense Blocking Matchup Stats",
       colorTop: "skyblue",
       colorBottom: "green",
-      OrderID: 6
+      OrderID: -6
     },
     27: {
       Label: "Pass Rushing Stats",
       colorTop: "skyblue",
       colorBottom: "gold",
-      OrderID: 7
+      OrderID: -7
     },
     28: {
       Label: "Defense Coverage Schemes",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 8
+      OrderID: -8
     },
     29: {
       Label: "Team Defense Scatter Plot",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 9
+      OrderID: -9
     },
     30: {
       Label: "Run Defense Stats",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 10
+      OrderID: -10
     },
     31: {
       Label: "Defensive Run Concept Frequency",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 11
+      OrderID: -11
     }
   },
   6: {
@@ -325,25 +325,25 @@ export const reportsNew: any = {
       Label: "Kickoff Report",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 5
+      OrderID: -5
     },
     41: {
       Label: "Kickoff and Punt Returns Report",
       colorTop: "skyblue",
       colorBottom: "green",
-      OrderID: 6
+      OrderID: -6
     },
     42: {
       Label: "Punt Report",
       colorTop: "skyblue",
       colorBottom: "gold",
-      OrderID: 7
+      OrderID: -7
     },
     43: {
       Label: "Phase Snap Report",
       colorTop: "skyblue",
       colorBottom: "gray",
-      OrderID: 8
+      OrderID: -8
     }
   },
   10: {
@@ -351,25 +351,25 @@ export const reportsNew: any = {
       Label: "Kickoff Report",
       colorTop: "skyblue",
       colorBottom: "purple",
-      OrderID: 5
+      OrderID: -5
     },
     45: {
       Label: "Kickoff and Punt Returns Report",
       colorTop: "gray",
       colorBottom: "green",
-      OrderID: 6
+      OrderID: -6
     },
     46: {
       Label: "Punt Report",
       colorTop: "gold",
       colorBottom: "skyblue",
-      OrderID: 7
+      OrderID: -7
     },
     47: {
       Label: "Phase Snap Report",
       colorTop: "orange",
       colorBottom: "gray",
-      OrderID: 8
+      OrderID: -8
     }
   },
   9: {
@@ -377,25 +377,25 @@ export const reportsNew: any = {
       Label: "Kickoff Report",
       colorTop: "skyblue",
       colorBottom: "purple",
-      OrderID: 5
+      OrderID: -5
     },
     45: {
       Label: "Kickoff and Punt Returns Report",
       colorTop: "gray",
       colorBottom: "green",
-      OrderID: 6
+      OrderID: -6
     },
     46: {
       Label: "Punt Report",
       colorTop: "gold",
       colorBottom: "skyblue",
-      OrderID: 7
+      OrderID: -7
     },
     47: {
       Label: "Phase Snap Report",
       colorTop: "orange",
       colorBottom: "gray",
-      OrderID: 8
+      OrderID: -8
     }
   }
 };
@@ -597,7 +597,7 @@ export const colours = {
 export const clubData = [
   {
     Location: "1",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "",
     Value: "AFC WEST",
     SubValue: "",
@@ -605,7 +605,7 @@ export const clubData = [
   },
   {
     Location: "1",
-    OrderID: "2",
+    OrderID: -"2",
     Label: "",
     Value: "5-4",
     SubValue: "(2-1)",
@@ -613,7 +613,7 @@ export const clubData = [
   },
   {
     Location: "2",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "HC",
     Value: "Gruden",
     SubValue: "",
@@ -621,7 +621,7 @@ export const clubData = [
   },
   {
     Location: "2",
-    OrderID: "2",
+    OrderID: -"2",
     Label: "GM",
     Value: "Mayock",
     SubValue: "",
@@ -629,7 +629,7 @@ export const clubData = [
   },
   {
     Location: "2",
-    OrderID: "3",
+    OrderID: -"3",
     Label: "OC",
     Value: "Olson",
     SubValue: "",
@@ -637,7 +637,7 @@ export const clubData = [
   },
   {
     Location: "2",
-    OrderID: "4",
+    OrderID: -"4",
     Label: "DC",
     Value: "Guenther",
     SubValue: "",
@@ -645,7 +645,7 @@ export const clubData = [
   },
   {
     Location: "3",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "Cap",
     Value: "200.0",
     SubValue: "(M)",
@@ -653,7 +653,7 @@ export const clubData = [
   },
   {
     Location: "3",
-    OrderID: "2",
+    OrderID: -"2",
     Label: "Spending",
     Value: "140.3",
     SubValue: "(M)",
@@ -661,7 +661,7 @@ export const clubData = [
   },
   {
     Location: "3",
-    OrderID: "3",
+    OrderID: -"3",
     Label: "O",
     Value: "89.7",
     SubValue: "(M)",
@@ -669,7 +669,7 @@ export const clubData = [
   },
   {
     Location: "3",
-    OrderID: "4",
+    OrderID: -"4",
     Label: "D",
     Value: "74.2",
     SubValue: "(M)",
@@ -677,7 +677,7 @@ export const clubData = [
   },
   {
     Location: "4",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "Offense",
     Value: "80.1",
     SubValue: "",
@@ -685,7 +685,7 @@ export const clubData = [
   },
   {
     Location: "4",
-    OrderID: "2",
+    OrderID: -"2",
     Label: "Defense",
     Value: "56.9",
     SubValue: "",
@@ -693,7 +693,7 @@ export const clubData = [
   },
   {
     Location: "4",
-    OrderID: "3",
+    OrderID: -"3",
     Label: "Specials",
     Value: "24.2",
     SubValue: "",
@@ -701,7 +701,7 @@ export const clubData = [
   },
   {
     Location: "5",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "PPG",
     Value: "24.7",
     SubValue: "(15)",
@@ -709,7 +709,7 @@ export const clubData = [
   },
   {
     Location: "5",
-    OrderID: "2",
+    OrderID: -"2",
     Label: "RUSH YPG",
     Value: "130.2",
     SubValue: "(8)",
@@ -717,7 +717,7 @@ export const clubData = [
   },
   {
     Location: "5",
-    OrderID: "3",
+    OrderID: -"3",
     Label: "PASS YPG",
     Value: "245.4",
     SubValue: "(17)",
@@ -725,7 +725,7 @@ export const clubData = [
   },
   {
     Location: "6",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "PPG",
     Value: "26.2",
     SubValue: "(11)",
@@ -733,7 +733,7 @@ export const clubData = [
   },
   {
     Location: "6",
-    OrderID: "2",
+    OrderID: -"2",
     Label: "RUSH YPG",
     Value: "125.5",
     SubValue: "(9)",
@@ -741,7 +741,7 @@ export const clubData = [
   },
   {
     Location: "6",
-    OrderID: "3",
+    OrderID: -"3",
     Label: "PASS YPG",
     Value: "278.1",
     SubValue: "(13)",
@@ -751,7 +751,7 @@ export const clubData = [
 export const playerData = [
   {
     Location: "1",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "",
     Value: "P-UCLA",
     SubValue: "#12",
@@ -759,7 +759,7 @@ export const playerData = [
   },
   {
     Location: "2",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "",
     Value: "Active-Raiders",
     SubValue: "",
@@ -768,7 +768,7 @@ export const playerData = [
   },
   {
     Location: "3",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "Height",
     Value: "6012",
     SubValue: "",
@@ -776,7 +776,7 @@ export const playerData = [
   },
   {
     Location: "3",
-    OrderID: "2",
+    OrderID: -"2",
     Label: "Weight",
     Value: "244",
     SubValue: "",
@@ -784,7 +784,7 @@ export const playerData = [
   },
   {
     Location: "3",
-    OrderID: "3",
+    OrderID: -"3",
     Label: "Speed",
     Value: "4.97",
     SubValue: "",
@@ -792,7 +792,7 @@ export const playerData = [
   },
   {
     Location: "3",
-    OrderID: "4",
+    OrderID: -"4",
     Label: "Arm",
     Value: "3218",
     SubValue: "",
@@ -800,7 +800,7 @@ export const playerData = [
   },
   {
     Location: "4",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "Draft",
     Value: "2013: 5/186 - Jacksonville",
     SubValue: "(Compensatory)",
@@ -808,7 +808,7 @@ export const playerData = [
   },
   {
     Location: "5",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "Birth Date",
     Value: "10/07/1991",
     SubValue: "(28.1)",
@@ -816,7 +816,7 @@ export const playerData = [
   },
   {
     Location: "6",
-    OrderID: "1",
+    OrderID: -"1",
     Label: "Agent",
     Value: "Joel Segal - Lagarderra Unlimited",
     SubValue: "",

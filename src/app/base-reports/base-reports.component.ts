@@ -8,6 +8,7 @@ import { MatDialog, MatDialogConfig } from "@angular/material";
 import { PullDataService } from "../pull-data.service";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { ChangeDetectorRef } from "@angular/core";
+// import { PlayerComponent } from "../player/player.component";
 
 @Component({
   selector: "app-base-reports",
@@ -23,7 +24,7 @@ export class BaseReportsComponent implements OnInit {
     public pullData: PullDataService,
     public route: ActivatedRoute,
     public router: Router,
-    public cdref: ChangeDetectorRef
+    public cdref: ChangeDetectorRef // public player: PlayerComponent
   ) {}
   private sub: any;
   reportList = null;
@@ -43,5 +44,10 @@ export class BaseReportsComponent implements OnInit {
       this.cdref.detectChanges();
       // In a real app: dispatch action to load the details here.
     });
+  }
+
+  changeReportType(num: any) {
+    this.filterService.clickedReport = true;
+    this.body.changeReportType(num);
   }
 }

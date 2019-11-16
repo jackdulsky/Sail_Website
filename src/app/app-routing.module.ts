@@ -40,7 +40,7 @@ const routes: Routes = [
         component: SettingComponent
       },
       {
-        path: "report/:reportid",
+        path: "report2/:reportid",
         component: ReportComponent,
         pathMatch: "full"
       },

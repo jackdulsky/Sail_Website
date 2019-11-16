@@ -81,10 +81,10 @@ export class PlayerComponent implements OnInit {
       this.filterService.reportReportsOnly &&
       this.filterService.getReportHeaders(3)
     ) {
+      this.playerTabSelected = Object.keys(
+        this.filterService.getReportHeaders(3)
+      )[0];
       try {
-        this.playerTabSelected = Object.keys(
-          this.filterService.getReportHeaders(3)
-        )[1];
         if (this.router.url.includes("/report")) {
           document.getElementById("fullScreenButton").className = "fullScreen";
 
@@ -95,19 +95,50 @@ export class PlayerComponent implements OnInit {
         if (this.router.url.includes("/base-reports")) {
           this.playerTabSelected = this.router.url.split("/base-reports/")[1];
         }
-      } catch (e) {
-        this.playerTabSelected = -1;
-      }
+      } catch (e) {}
     } else {
       setTimeout(() => {
         this.initFunction();
       }, 200);
     }
 
-    setTimeout(() => {
-      this.subRoute(this.playerTabSelected);
-    }, 1);
+    this.performHighlightOrSubRoute();
   }
+
+  //timeout Recursive method
+  performHighlightOrSubRoute() {
+    if (this.filterService.getReportHeaders(3)) {
+      if (
+        Object.keys(this.filterService.getReportHeaders(3)).indexOf(
+          String(this.playerTabSelected)
+        ) != -1 &&
+        this.router.url.includes("base")
+      ) {
+        this.subRoute(this.playerTabSelected);
+      } else {
+        this.justHighlight(this.playerTabSelected);
+      }
+    } else {
+      setTimeout(() => {
+        this.performHighlightOrSubRoute();
+      }, 200);
+    }
+  }
+
+  //HIGHLIGHT A TAB, USED FOR INIT ON REPORT
+
+  justHighlight(name: any) {
+    if (document.getElementById(name + "playerBarHighlightid")) {
+      var newTab = document.getElementById(name + "playerBarHighlightid");
+      newTab.style.backgroundColor = "#f2f2f2";
+      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+    } else {
+      setTimeout(() => {
+        this.justHighlight(name);
+      }, 100);
+    }
+  }
+
   //TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
   extractID(data, idString: string, insertDict, keep: number = 0) {
     for (let b in data) {
@@ -220,6 +251,7 @@ export class PlayerComponent implements OnInit {
     } catch (e) {}
 
     //Route Appropriately
+
     try {
       if (this.filterService.reportTabs[name]["IsList"] == 0) {
         var newRoute = this.router.url.split("/base-report")[0];
