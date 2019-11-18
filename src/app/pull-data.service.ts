@@ -169,7 +169,7 @@ export class PullDataService {
   //SEND THE DATA BACK UP TO THE DB
   // INSERT THE GUI AND FILTERS SELECTED
   constructAndSendFilters(filter) {
-    // console.log("PULL DATA CONSTRUCT AND SEND", JSON.stringify(filter));
+    console.log("PULL DATA CONSTRUCT AND SEND", JSON.stringify(filter));
 
     var query =
       "exec SailDB.filter.spSAIL_StoreUpdateFilter N'" +

@@ -653,14 +653,8 @@ export class FiltersService {
 
     if (!this.checkDBFormats(oldDB, cloneDeep(this.newDBFormat))) {
       this.saveAndSend();
-    }
-
-    if (
-      this.router.url.includes("club") ||
-      this.router.url.includes("player") ||
-      this.router.url.includes("cash")
-    ) {
       this.updateRDURL();
+
     }
   }
 

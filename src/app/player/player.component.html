@@ -147,24 +147,46 @@
   </div>
 
   <div class="playerList shadow" *ngIf="showList">
+      <!-- style="border-bottom: 1px solid black; margin-right: 0px !important;     display: grid;
+      grid-template-columns: 80px 1fr;" -->
     <div
-      class="player"
-      style="border-bottom: 1px solid black; margin-right: 0px !important;     display: grid;
-        grid-template-columns: 80px 1fr;"
+      class=""
+
       (click)="changePlayer(player.key, player.value)"
       *ngFor="
         let player of getPlayers(filterService.pullValueMap['3']) | keyvalue
       "
     >
+    <div class="" style="">
+
       <img
-        class="imgLogo tableCenter"
-        src="{{ getActivePlayerImage(player.key) }}"
-        onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
-        alt=""
+      class="grid-itemGen"
+      src="{{ getActivePlayerImage(player.key) }}"
+      onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
+      alt=""
       />
-      <div class="playerText">&nbsp;&nbsp;{{ player.value.Label }}</div>
+    </div>
+      <div class="labelText ">&nbsp;&nbsp;{{ player.value.Label }}</div>
     </div>
   </div>
+<!-- 
+  <div class="grid-container" *ngIf="filterService.reportReportsStructure">
+    <div
+      *ngFor="
+        let repo of filterService.reportReportsStructure[reportList]
+          | keyvalue: body.valueOrder
+      "
+    >
+      <div
+        class="grid-itemGen"
+        (click)="changeReportType(repo.key)"
+        [ngStyle]="body.setIconStyle(repo.value)"
+      ></div>
+      <div class="labelText">
+        {{ repo.value.Label }}
+      </div>
+    </div>
+  </div> -->
 
   <div class="yearListAll shadow" id="yearList" *ngIf="showYear">
     <div

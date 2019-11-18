@@ -77,6 +77,36 @@
   font-size: 20px;
   font-family: "DIN", "DIN";
 }
+.grid-itemGen {
+  border-radius: 10px;
+  height: 110px;
+  width: 110px;
+  background-color: white;
+  /* padding-left: 20px;
+  padding-right: 20px; */
+  font-size: 20px;
+  font-weight: bold;
+  font-family: "DIN";
+  text-align: left;
+  background-color: #ebeced;
+  margin-top: 10px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+}
+.grid-itemGen:hover {
+  border-top-right-radius: 10px;
+  box-shadow: 2px 2px 2px black;
+  cursor: pointer;
+  text-shadow: 0px 0px 6px var(--color-white);
+  -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.97);
+  -mox-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.97);
+  transition: all 0.2s ease 0s;
+}
+.labelText {
+  margin-top: 4px;
+  font-size: 16px;
+  font-family: "DIN";
+  text-align: center;
+}
 .playerList {
   background-color: white;
   border: 1px solid black;
@@ -89,6 +119,18 @@
   overflow-y: scroll;
   max-height: 500px;
   text-align: center;
+  width: 800px;
+
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
+
+  /* padding-right: 35px; */
+
+  /* padding-left: 35px; */
+  grid-row-gap: 10px;
+  grid-column-gap: 35px;
+  /* border-radius: 10px; */
 }
 
 .yearArrow {

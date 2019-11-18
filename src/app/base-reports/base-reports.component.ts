@@ -47,6 +47,7 @@ export class BaseReportsComponent implements OnInit {
   }
 
   changeReportType(num: any) {
+    document.getElementById("fullScreenButton").className = "fullScreen";
     this.filterService.clickedReport = true;
     this.body.changeReportType(num);
   }
