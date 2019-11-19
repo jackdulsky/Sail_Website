@@ -108,29 +108,37 @@
   text-align: center;
 }
 .playerList {
-  background-color: white;
+  /* background-color: #b5b8be;
   border: 1px solid black;
   position: absolute;
   top: 124px;
-
-  z-index: 1000;
+  z-index: 1000; */
+  height: 341px;
   margin: 0;
   padding: 0;
   overflow-y: scroll;
   max-height: 500px;
   text-align: center;
-  width: 800px;
-
+  width: 665px;
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
-
-  /* padding-right: 35px; */
-
-  /* padding-left: 35px; */
+  overflow-y: auto;
   grid-row-gap: 10px;
-  grid-column-gap: 35px;
-  /* border-radius: 10px; */
+  grid-column-gap: 10px;
+}
+.playerListContainer {
+  background-color: #b5b8be;
+  border: 1px solid black;
+  position: absolute;
+  top: 124px;
+  height: 390px;
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+  max-height: 500px;
+  text-align: center;
+  width: 665px;
 }
 
 .yearArrow {
@@ -180,21 +188,26 @@
   z-index: 1000;
   margin: 0;
   padding: 0;
-
-  max-height: 500px;
+  overflow-y: auto;
+  max-height: 385px;
   text-align: center;
+  border-radius: 5px;
 }
 .yearDropDown {
   height: 50px;
   color: black;
-  width: 220px;
+  width: 115px;
   line-height: 50px;
-  min-width: 220px;
+  min-width: 115px;
   font-size: 20px;
   font-family: "DIN", "DIN";
   color: black;
   font-weight: bold;
   background-color: white;
+  overflow-y: auto;
+}
+.yearDropDown:hover {
+  background-color: #c8c8c8;
 }
 .shadow {
   box-shadow: 2px 4px 10px black;
@@ -1057,6 +1070,14 @@ h6,
   float: right;
   display: flex;
   margin-top: 5px;
+  margin-right: 5px;
+  background-color: var(--lighter-blue);
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 5px;
+  line-height: 30px;
+  height: 30px;
+  color: white;
 }
 .posCollege {
   float: left;
@@ -1104,4 +1125,36 @@ h6,
 .rankText {
   font-size: 12px;
   margin-left: 1px;
+}
+.searching {
+  position: relative;
+  background: #3e4345;
+  margin-bottom: 8px;
+  height: 34px;
+}
+.searching input {
+  height: 34px;
+  margin: 0;
+  padding: 0;
+  width: 83%;
+  margin-left: 2%;
+  border: none;
+  caret-color: white;
+  color: white;
+}
+.filterSearch {
+  background: transparent;
+  font-size: 18px;
+}
+.filterSearch:hover {
+  cursor: pointer;
+}
+.filterSearch:focus {
+  border: none;
+  outline: none;
+}
+.filterSearch::placeholder {
+  color: white;
+  font-size: 18px;
+  font-family: "DIN";
 }

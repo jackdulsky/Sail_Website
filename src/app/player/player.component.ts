@@ -41,10 +41,10 @@ export class PlayerComponent implements OnInit {
     } else {
       value = "";
     }
-    if (this.showYear && !value.includes("year")) {
+    if (this.showYear && !value.toLowerCase().includes("year")) {
       this.showYearList();
     }
-    if (this.showList && !value.includes("player")) {
+    if (this.showList && !value.toLowerCase().includes("player")) {
       this.displayPlayers(this.showList);
     }
   }
@@ -171,22 +171,19 @@ export class PlayerComponent implements OnInit {
 
   //RETURN THE PLAYER IMAGES
   getActivePlayerImage(playerID: any) {
-    if (playerID == "") {
-      return "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/NFL_.png";
-    } else {
-      var gsisID = this.filterService.pullPlayers[playerID]["GSISPlayerID"];
-      var url = this.baseURL.replace("REPLACEME", gsisID);
-      // this.urlExists(url, function(err, exists) {
-      //   if (!exists) {
-      //     url =
-      //       "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg";
-      //   }
-      // });
-
-      return url;
+    try {
+      if (playerID == "") {
+        return "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/NFL_.png";
+      } else {
+        var gsisID = this.filterService.pullPlayers[playerID]["GSISPlayerID"];
+        var url = this.baseURL.replace("REPLACEME", gsisID);
+        return url;
+      }
+    } catch (e) {
+      setTimeout(() => {
+        return this.getActivePlayerImage(playerID);
+      }, 100);
     }
-    var gsis = this.filterService.pullPlayers[playerID]["GSISID"];
-    return this.baseURL.replace("REPLACEME", gsis);
   }
 
   //RETURN LIST OF PLAYERS

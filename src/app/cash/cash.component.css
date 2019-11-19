@@ -1,15 +1,14 @@
 .topLinkCash {
-  padding: 15px 5px;
-  height: 38px;
+  height: 27px;
 
-  line-height: 38px;
+  line-height: 29px;
   width: auto;
   display: table;
   background-color: white;
   color: black;
   font-weight: bold;
   text-align: center;
-  font-size: 20px;
+  font-size: 15px;
   font-family: "DIN";
   border-bottom: 4px solid white;
   width: -webkit-fill-available;
@@ -20,9 +19,10 @@
   border-bottom: 4px solid var(--lighter-blue) !important;
   cursor: pointer;
 }
-.topBar {
+.topBarCash {
   display: flex;
   border-bottom: 2px solid black;
+  height: 32px;
 }
 .cash {
   height: 72px;
@@ -69,16 +69,16 @@
   max-height: 500px;
   text-align: center;
 }
-.yearArrow {
+.yearArrowCash {
   display: inline;
-  margin-top: 26px;
+  margin-top: 8px;
   position: relative;
   left: -43px;
   background: transparent;
   width: 0px;
   text-align: center;
 }
-.yearArrow:hover {
+.yearArrowCash:hover {
   cursor: pointer;
 }
 #yearSelectArrow > i {
@@ -88,38 +88,37 @@
   line-height: 35px;
   position: relative;
 }
-.yearContainer {
+.yearContainerCash {
   min-width: 220px;
   display: inline-grid;
 }
-.yearLabel {
+.yearLabelCash {
   font-size: 20px;
   font-family: "DIN";
   color: black;
   font-weight: bold;
-  padding: 15px 5px;
-  height: 43px;
-  line-height: 38px;
+  height: 32px;
+  line-height: 30px;
   text-align: center;
 }
-.yearLabel:hover {
+.yearLabelCash:hover {
   cursor: pointer;
   background-color: rgba(158, 158, 158, 0.568);
 }
-.yearListAll {
+.yearListAllCash {
   background-color: white;
   border: 1px solid black;
   position: absolute;
-  top: 124px;
-  left: 200px;
+  top: 84px;
+  right: 0px;
   z-index: 1000;
   margin: 0;
   padding: 0;
-
-  max-height: 500px;
+  overflow-y: auto;
+  max-height: 385px;
   text-align: center;
 }
-.yearDropDown {
+.yearDropDownCash {
   height: 50px;
   color: black;
   width: 220px;
@@ -130,6 +129,7 @@
   color: black;
   font-weight: bold;
   background-color: white;
+  overflow-y: auto;
 }
 .shadow {
   box-shadow: 2px 4px 10px black;

@@ -117,20 +117,25 @@
   z-index: 1000;
   margin: 0;
   padding: 0;
-
-  max-height: 500px;
+  overflow-y: auto;
+  max-height: 385px;
   text-align: center;
+  border-radius: 5px;
 }
 .yearDropDown {
   height: 50px;
   color: black;
-  width: 220px;
+  width: 115px;
   line-height: 50px;
-  min-width: 220px;
+  min-width: 115px;
   font-size: 20px;
   font-family: "DIN";
   color: black;
   font-weight: bold;
+  overflow-y: auto;
+}
+.yearDropDown:hover {
+  background-color: #c8c8c8;
 }
 .shadow {
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -988,6 +993,14 @@ h6,
   float: right;
   display: flex;
   margin-top: 5px;
+  margin-right: 5px;
+  background-color: var(--lighter-blue);
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 5px;
+  line-height: 30px;
+  height: 30px;
+  color: white;
 }
 .divRecord {
   float: left;
@@ -1009,6 +1022,10 @@ h6,
 }
 .w350FloatLeft {
   width: 350px;
+  float: left;
+}
+.w300FloatLeft {
+  width: 300px;
   float: left;
 }
 .birthInfo {
