@@ -245,8 +245,8 @@ export class PullDataService {
   }
   //PULL PLAYER DATA
   pullPlayerData() {
-    var query = "SELECT *  FROM [SaildB].[Reports].[Reports]";
-
+    var query =
+      "exec [SaildB].[SAILSite].[spHeaders_Player] N'" + this.GUID + "'";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

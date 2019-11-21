@@ -109,6 +109,127 @@ export class ReportUploadComponent implements OnInit {
 
     XOS1: "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/XOS1.png"
   };
+  icons2 = [
+    "bus_front_view.svg",
+    "calendar.svg",
+    "call.svg",
+    "chart.svg",
+    "chess.svg",
+    "clock.svg",
+    "cloud.svg",
+    "clouds.svg",
+    "clouds_sun.svg",
+    "cloud_down.svg",
+    "cloud_up.svg",
+    "code.svg",
+    "connection_pattern.svg",
+    "container.svg",
+    "contrast.svg",
+    "cunnect.svg",
+    "cut_corner.svg",
+    "dashboard.svg",
+    "database_system.svg",
+    "delete.svg",
+    "desktop.svg",
+    "dice.svg",
+    "directory_arrow_down.svg",
+    "directory_arrow_up.svg",
+    "directory_favorite.svg",
+    "directory_image.svg",
+    "directory_locked.svg",
+    "directory_search.svg",
+    "dollar.svg",
+    "download.svg",
+    "downloader.py",
+    "duplicate_round.svg",
+    "edit_cover.svg",
+    "email.svg",
+    "file.svg",
+    "fileboard_checklist.svg",
+    "file_arrow_down.svg",
+    "file_arrow_up.svg",
+    "file_doc.svg",
+    "file_image.svg",
+    "file_pdf.svg",
+    "file_player_media.svg",
+    "file_svg.svg",
+    "file_text_data.svg",
+    "file_txt.svg",
+    "file_zip.svg",
+    "finish_line.svg",
+    "gallery_grid_view.svg",
+    "game_controller_round.svg",
+    "google.svg",
+    "grid.svg",
+    "grid_system.svg",
+    "home.svg",
+    "IconList.csv",
+    "IconList.xlsx",
+    "image_picture.svg",
+    "inbox_up_round.svg",
+    "key.svg",
+    "link_round.svg",
+    "list.svg",
+    "lock_open_round.svg",
+    "map_round.svg",
+    "megaphone.svg",
+    "message.svg",
+    "microphone.svg",
+    "microsoft.svg",
+    "money_round.svg",
+    "moon.svg",
+    "mouse.svg",
+    "movie_frames.svg",
+    "network_3.svg",
+    "news_grid.svg",
+    "notebook.svg",
+    "notification_bell.svg",
+    "object_alignment.svg",
+    "option_bar_settings.svg",
+    "pac-man.svg",
+    "pen.svg",
+    "pin_sharp_circle.svg",
+    "play.svg",
+    "plus_circle.svg",
+    "printer.svg",
+    "profile.svg",
+    "profile_image.svg",
+    "projector.svg",
+    "radio_tower.svg",
+    "record.svg",
+    "rings.svg",
+    "road_round.svg",
+    "rss_cover.svg",
+    "ruler#1_round.svg",
+    "satellite.svg",
+    "save_item.svg",
+    "script.svg",
+    "search_left.svg",
+    "settings.svg",
+    "share.svg",
+    "ship_round.svg",
+    "showcase_round.svg",
+    "shuffle.svg",
+    "shut_down.svg",
+    "signal.svg",
+    "stairs.svg",
+    "star.svg",
+    "star_favorite.svg",
+    "stats.svg",
+    "steering_wheel.svg",
+    "swords.svg",
+    "syringe.svg",
+    "tag_round.svg",
+    "target.svg",
+    "tetrix.svg",
+    "thermometer.svg",
+    "toggle_button_round.svg",
+    "umbrella_round.svg",
+    "video_camera_round.svg",
+    "watch_round.svg",
+    "youtube.svg",
+    "zoom_in.svg"
+  ];
 
   constructor(
     public filterService: FiltersService,
@@ -118,11 +239,14 @@ export class ReportUploadComponent implements OnInit {
   report;
   ngOnInit() {
     this.report = cloneDeep(this.template);
+    for (let icon of this.icons2) {
+      this.icons[icon.slice(0, icon.length - 4)] =
+        "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/" + icon;
+    }
   }
   onSubmit() {
     console.log(JSON.stringify(this.report));
     this.pullData.pushNewReport(JSON.stringify(this.report)).subscribe(data => {
-      console.log("RETURN PUSH", data);
     });
   }
   resetForm() {
@@ -134,7 +258,7 @@ export class ReportUploadComponent implements OnInit {
     let styles = {
       "background-repeat": "no-repeat,no-repeat",
       "background-position": "center",
-      "background-size": "145px,cover",
+      "background-size": "140px 140px,cover",
       "background-image":
         "url(" +
         this.report.IconUrl +

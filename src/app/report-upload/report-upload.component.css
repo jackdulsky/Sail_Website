@@ -14,12 +14,14 @@
   height: 25px;
 }
 .grid-itemGen {
+  position: absolute;
+  top: 379px;
+  left: 600px;
   border-radius: 10px;
-  height: 195px;
+  height: 160px;
   width: 160px;
   background-color: white;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 20px;
   font-size: 20px;
   font-weight: bold;
   font-family: "DIN";

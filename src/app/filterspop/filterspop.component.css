@@ -1278,3 +1278,17 @@ input {
 .filterMiddleBorder:hover {
   cursor: pointer;
 }
+
+.fullWidth {
+  width: 100%;
+}
+.minMaxWidth {
+  width: 65%;
+}
+
+td {
+  padding-right: 8px;
+}
+.colorBlack {
+  color: black;
+}

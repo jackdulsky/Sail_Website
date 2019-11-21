@@ -134,3 +134,23 @@
 .shadow {
   box-shadow: 2px 4px 10px black;
 }
+
+.fullScreen {
+  width: 50px;
+  text-align: center;
+  float: right;
+  line-height: 29px;
+  border-left: 1px solid lightblue;
+}
+.fullScreen:hover {
+  background-color: var(--light-blue);
+  cursor: pointer;
+}
+.fullScreenInactive {
+  width: 50px;
+  text-align: center;
+  float: right;
+  line-height: 29px;
+  color: lightgray;
+  border-left: 1px solid lightblue;
+}

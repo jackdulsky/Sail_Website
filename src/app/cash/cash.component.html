@@ -38,6 +38,13 @@
       {{ year }}
     </div>
   </div>
+  <div
+    class="fullScreenInactive"
+    id="fullScreenButton"
+    (click)="filterService.fullScreenOn()"
+  >
+    <i class="fa fa-window-maximize fa-sm"></i>
+  </div>
 </div>
 
 <router-outlet></router-outlet>

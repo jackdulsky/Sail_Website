@@ -149,11 +149,12 @@ export class FilterspopComponent implements OnInit {
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
   ): number => {
-    return this.filterService.pullAttribute[a.key]["OrderID"] <
-      this.filterService.pullAttribute[b.key]["OrderID"]
+    // console.log("ORDER VALUE", a.key, b.key);
+    return this.filterService.pullNavigation[a.key]["OrderID"] <
+      this.filterService.pullNavigation[b.key]["OrderID"]
       ? -1
-      : this.filterService.pullAttribute[b.key]["OrderID"] <
-        this.filterService.pullAttribute[a.key]["OrderID"]
+      : this.filterService.pullNavigation[b.key]["OrderID"] <
+        this.filterService.pullNavigation[a.key]["OrderID"]
       ? 1
       : 0;
   };
@@ -192,7 +193,7 @@ export class FilterspopComponent implements OnInit {
 
   getPanelOptions(att: string) {
     var disp = this.filterService.pullStructure;
-    for (let level of this.panels.slice(0, -1)) {
+    for (let level of this.filterService.panels.slice(0, -1)) {
       if (level == att) {
         break;
       }

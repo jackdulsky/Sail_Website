@@ -789,7 +789,7 @@ body {
   .g-profile__bio {
     flex-wrap: nowrap;
     justify-content: space-around;
-    padding: 0.5rem 0 0;
+    padding: 0rem 0 0;
   }
 }
 @media (min-width: 68em) {
@@ -1050,7 +1050,7 @@ h6,
 .teamRoster {
   float: left;
   display: flex;
-  width: 200px;
+  width: 400px;
   padding-top: 10px;
 }
 .clubLogo {
@@ -1061,6 +1061,8 @@ h6,
   line-height: 35px;
   margin-left: 6px;
   font-weight: bold;
+  float: left;
+  width: 200px;
 }
 .draftInfo {
   float: left;
@@ -1081,7 +1083,7 @@ h6,
 }
 .posCollege {
   float: left;
-  width: 200px;
+  width: 240px;
   font-weight: bold;
 }
 
@@ -1092,14 +1094,14 @@ h6,
 .birthInfo {
   float: left;
   display: flex;
-  padding-top: 8px;
+  /* padding-top: 8px; */
   width: 160px;
 }
 .agentInfo {
   float: left;
   display: flex;
-  padding-top: 8px;
-  width: 250px;
+  /* padding-top: 8px; */
+  width: 400px;
 }
 .fullScreen {
   width: 50px;

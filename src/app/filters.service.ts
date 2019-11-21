@@ -120,6 +120,7 @@ export class FiltersService {
   clubSpecifics;
   playerSpecifics;
   clickedReport = false;
+  displayPlayers = {};
   constructor(
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,
@@ -253,7 +254,7 @@ export class FiltersService {
           this.recursiveExtractLevel(d[b], "BinID", 2)
         );
       }
-      // console.log("PULLStructure", this.pullStructure);
+      console.log("PULLStructure", this.pullStructure);
     });
     this.pullData.pullDataType().subscribe(data => {
       this.pullDataType = {};
@@ -277,27 +278,27 @@ export class FiltersService {
     this.pullData.pullNavigation().subscribe(data => {
       this.pullNavigation = {};
       this.extractID(data, "ItemID", this.pullNavigation);
-      // console.log("NAV", this.pullNavigation);
+      console.log("NAV", this.pullNavigation);
     });
     this.pullData.pullNavigationElement().subscribe(data => {
       this.pullNavigationElement = {};
       this.extractID(data, "ItemID", this.pullNavigationElement);
-      //console.log("NAVELEM", this.pullNavigationElement);
+      console.log("NAVELEM", this.pullNavigationElement);
     });
     this.pullData.pullAttributeType().subscribe(data => {
       this.pullAttributeType = {};
       this.extractID(data, "AttributeTypeID", this.pullAttributeType);
-      //console.log("ATT TYPE", this.pullAttributeType);
+      console.log("ATT TYPE", this.pullAttributeType);
     });
     this.pullData.pullAttribute().subscribe(data => {
       this.pullAttribute = {};
       this.extractID(data, "AttributeID", this.pullAttribute);
-      //console.log("PULLATTRIBUTE", this.pullAttribute);
+      console.log("PULLATTRIBUTE", this.pullAttribute);
     });
     this.pullData.pullUIType().subscribe(data => {
       this.pullUIType = {};
       this.extractID(data, "UITypeID", this.pullUIType);
-      //console.log("PULL UI TYPE", this.pullUIType);
+      console.log("PULL UI TYPE", this.pullUIType);
     });
 
     this.pullData.pullValue().subscribe(data => {
@@ -319,8 +320,7 @@ export class FiltersService {
 
         this.pullValue[valID] = data[b];
       }
-
-      //console.log("PULLValueMap", this.pullValueMap);
+      console.log("PULLValueMap", this.pullValueMap);
       //console.log("PULL ORDER MAP", this.pullOrderMap);
     });
     this.pullData.getTeams().subscribe(data => {
@@ -654,7 +654,6 @@ export class FiltersService {
     if (!this.checkDBFormats(oldDB, cloneDeep(this.newDBFormat))) {
       this.saveAndSend();
       this.updateRDURL();
-
     }
   }
 
@@ -683,7 +682,7 @@ export class FiltersService {
         this.setActivePlayer();
         this.updateRDURL();
       }
-    }, 500);
+    }, 250);
   }
 
   //CHECK IF TWO DB FORMAT's ARE THE SAME
@@ -977,7 +976,6 @@ export class FiltersService {
     var newPanels = [];
     var first = this.panels[0];
     var level = this.pullStructure[first];
-
     var toTurnOff = [];
     var addtoOff = false;
 
@@ -989,7 +987,7 @@ export class FiltersService {
     //IF THE PANEL EXISTS IN THE KEYS AT A LEVEL, CLOSE THE REST OF THE
     //OPEN PANELS
     for (let panel of this.panels.slice(1).concat([this.show])) {
-      if (level.hasOwnProperty(panel) || addtoOff) {
+      if (level.hasOwnProperty(att) || addtoOff) {
         addtoOff = true;
         if (panel != "") {
           toTurnOff.push(panel);
@@ -1017,10 +1015,13 @@ export class FiltersService {
       newPanels.push(att);
       this.show = "";
     }
+    console.log("5", newPanels);
+
     //RECONSTRUCT THE PANELS THROUGH ADDING THE BIN PANEL BACK AT THE BEGINNING
     this.panels = [first].concat(newPanels);
     this.reversePaths[this.level1Selected][att] = cloneDeep(this.panels);
-
+    console.log("6", this.panels);
+    console.log("7", this.reversePaths);
     //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
     if (document.getElementById("selectKey" + att)) {
       document.getElementById("buttonContainer" + att).style.backgroundColor =
@@ -1160,7 +1161,7 @@ export class FiltersService {
     var tempDict = {};
     tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
 
-    var add = this.removeAllTeamFilters();
+    var add = this.removeExplicitFilters("-2", this.teamPortalActiveClubID);
     if (add) {
       this.newWorkingQuery["-2"] = tempDict;
     }
@@ -1193,31 +1194,101 @@ export class FiltersService {
   reduceFiltersSinglePlayer() {
     var tempDict = {};
     tempDict["3"] = [cloneDeep(this.playerPortalActivePlayerID)];
-    var add = this.removeAllPlayerFilters();
+    var add = this.removeExplicitFilters("-3", this.playerPortalActivePlayerID);
     if (add) {
       this.newWorkingQuery["-3"] = tempDict;
     }
   }
 
-  //remove all team filter querys
-  removeAllPlayerFilters() {
+  //REMOVE AN EXPLICIT BASED ON THE INPUT BIN
+  removeExplicitFilters(bin: any, keepExplicit: any) {
+    if (!this.newDBFormat[bin]) {
+      return;
+    }
     var returnBool = true;
-    for (let active in this.newFIDBID) {
-      if (
-        String(this.newFIDBID[active]) == "-3" &&
-        this.newWorkingFID["-3"] != active
-      ) {
+    var alteredDBFormat = cloneDeep(this.newDBFormat);
+    for (let fid in alteredDBFormat[bin]) {
+      var explicits = cloneDeep(alteredDBFormat[bin][fid][0]);
+      if (explicits.indexOf(keepExplicit) != -1) {
+        alteredDBFormat[bin][fid][0] = [cloneDeep(keepExplicit)];
+        returnBool = false;
+      } else {
+        alteredDBFormat[bin][fid][0] = [];
         if (
-          JSON.stringify(this.newFIDs[active]) !=
-          JSON.stringify({ "3": [this.playerPortalActivePlayerID] })
+          JSON.stringify(alteredDBFormat[bin][fid]) ==
+          JSON.stringify([[], {}, []])
         ) {
-          this.removeQuery(active);
-        } else {
-          returnBool = false;
+          delete alteredDBFormat[bin][fid];
+
+          if (JSON.stringify(alteredDBFormat[bin]) == "{}") {
+            delete this.newDBFormat[bin];
+          }
         }
       }
     }
+    this.pushDBFormat(alteredDBFormat);
     return returnBool;
+  }
+
+  //remove all team filter querys
+  removeAllPlayerFilters() {
+    if (!this.newDBFormat["-3"]) {
+      return;
+    }
+    var returnBool = true;
+    var alteredDBFormat = cloneDeep(this.newDBFormat);
+    for (let fid in alteredDBFormat["-3"]) {
+      var explicits = cloneDeep(alteredDBFormat["-3"][fid][0]);
+      if (explicits.indexOf(this.playerPortalActivePlayerID) != -1) {
+        alteredDBFormat["-3"][fid][0] = [
+          cloneDeep(this.playerPortalActivePlayerID)
+        ];
+        returnBool = false;
+      } else {
+        alteredDBFormat["-3"][fid][0] = [];
+        if (
+          JSON.stringify(alteredDBFormat["-3"][fid]) ==
+          JSON.stringify([[], {}, []])
+        ) {
+          delete alteredDBFormat["-3"][fid];
+
+          if (JSON.stringify(alteredDBFormat["-3"]) == "{}") {
+            delete this.newDBFormat["-3"];
+          }
+        }
+      }
+    }
+    this.pushDBFormat(alteredDBFormat);
+    return returnBool;
+    // var returnBool = true;
+    // for (let active in this.newFIDBID) {
+    //   if (
+    //     String(this.newFIDBID[active]) == "-3" &&
+    //     this.newWorkingFID["-3"] != active
+    //   ) {
+
+    // if (
+    //   JSON.stringify(this.newFIDs[active]) !=
+    //   JSON.stringify({ "3": [this.playerPortalActivePlayerID] })
+    // ) {
+    //   console.log("REMOVING QUERY", this.newFIDs[active]);
+    //   console.log("For", active);
+    //   this.removeQuery(active);
+    // } else {
+    //   returnBool = false;
+    // }
+    // }
+    //}
+    // return returnBool;
+
+    // if (this.newFIDs[active]["3"] && this.newFIDs[active]["3"] != JSON.stringify([this.playerPortalActivePlayerID])
+    // ) {
+    //   console.log("REMOVING QUERY", this.newFIDs[active]);
+    //   console.log("For", active);
+    //   this.removeQuery(active);
+    // } else {
+    //   returnBool = false;
+    // }
   }
   //SET THE ACTIVE CLUB BY GOING THROUGH THE DB OR SET DEFAULT
 
@@ -1346,6 +1417,41 @@ export class FiltersService {
     this.portalYearUpdated = true;
   }
 
+  //CHANGE THE TYPE 4 (MIN MAX) INPUT
+  //minMax True = min, false = max
+  //value is number input
+  changeType4Input(attribute: any, value: any, minMax: boolean) {
+    var bin = this.pullAttribute[attribute]["BinID"];
+    var previous = [null, null];
+    var tempValue = null;
+    var returnArr;
+    if (JSON.stringify(value) != "") {
+      tempValue = cloneDeep(value);
+    }
+    if (this.newWorkingQuery[bin][attribute]) {
+      var previous = cloneDeep(this.newWorkingQuery[bin][attribute]);
+    }
+    if (minMax) {
+      returnArr = [tempValue, previous[1]];
+    } else {
+      returnArr = [previous[0], tempValue];
+    }
+    if (JSON.stringify(returnArr[0]) == JSON.stringify("")) {
+      returnArr[0] = null;
+    }
+    if (JSON.stringify(returnArr[1]) == JSON.stringify("")) {
+      returnArr[1] = null;
+    }
+    console.log("Before", this.newWorkingQuery[bin]);
+
+    if (JSON.stringify(returnArr) == JSON.stringify([null, null])) {
+      this.clearSingleIDWorking(attribute, bin);
+      console.log("After", this.newWorkingQuery[bin]);
+    } else {
+      this.type0change(attribute, returnArr, bin);
+    }
+  }
+
   //Takes a hex color and percent change and returns new hex color
   shadeColor(color, percent) {
     if (!color.includes("#")) {
@@ -1437,16 +1543,26 @@ export class FiltersService {
   //Gets the update player data to be run after save and send
 
   updatePlayerData() {
-    this.pullData.pullPlayerData().subscribe(data => {
-      this.playerSpecifics = {};
-      for (let b in this.playerData) {
-        var id = String(this.playerData[b]["Location"]);
-        if (!this.playerSpecifics[id]) {
-          this.playerSpecifics[id] = [];
+    if (
+      JSON.stringify(this.playerPortalSelected) !=
+      JSON.stringify({
+        Label: "Player Select"
+      })
+    ) {
+      this.pullData.pullPlayerData().subscribe(data => {
+        this.playerSpecifics = {};
+
+        for (let b in data) {
+          var id = String(data[b]["Location"]);
+          if (!this.playerSpecifics[id]) {
+            this.playerSpecifics[id] = [];
+          }
+          this.playerSpecifics[id].push(data[b]);
         }
-        this.playerSpecifics[id].push(this.playerData[b]);
-      }
-    });
+      });
+    } else {
+      this.playerSpecifics = {};
+    }
   }
 
   //RETURN "Label" from obj

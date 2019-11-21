@@ -151,6 +151,7 @@ export class PlayerComponent implements OnInit {
     }
   }
 
+  //Return the logo url based on a team put in
   getActiveLogo(team: any) {
     var citySplit = team["ClubCityName"].split(" ");
     var city;
@@ -167,6 +168,24 @@ export class PlayerComponent implements OnInit {
       nick +
       ".png?"
     );
+  }
+
+  //GET TEAM ID FROM VALUE
+  getTeamID(disp: any) {
+    try {
+      if (disp["Value"]) {
+        return this.filterService.teamsMap[disp["Value"]];
+      } else {
+        return {
+          ClubCityName: "NFL",
+          ClubNickName: ""
+        };
+      }
+    } catch (e) {
+      setTimeout(() => {
+        // return this.getTeamID(disp);
+      }, 300);
+    }
   }
 
   //RETURN THE PLAYER IMAGES

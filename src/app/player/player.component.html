@@ -1,12 +1,13 @@
 <div class="topBar">
-  <div style="width: 100%;">
-    <div class="g-profile">
+  <div style="width: 100%; height: 93px;">
+    <div class="g-profile" style="height: 93px;">
       <div class="g-profile__grid overflow-hidden">
         <div class="g-profile__profile" id="player">
           <img
             [src]="
               getActivePlayerImage(filterService.playerPortalActivePlayerID)
             "
+            onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
             id="player"
             class="g-profile__photo_player"
             (click)="displayPlayers(showList)"
@@ -26,16 +27,23 @@
             </div>
             <div #teamAndRosterStaturs class="din teamRoster">
               <img
-                class="clubLogo"
-                [src]="
-                  getActiveLogo({
-                    ClubCityName: 'Oakland',
-                    ClubNickName: 'Raiders'
-                  })
+                *ngFor="
+                  let disp of filterService.getPlayerSpecifics(0)
+                    | Sort: 'OrderIDID'
                 "
+                class="clubLogo"
+                [src]="getActiveLogo(getTeamID(disp))"
+                onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/NFL_.png'"
               />
-              <span class="clubLogoText">
-                Active - Raiders
+
+              <span
+                *ngFor="
+                  let disp of filterService.getPlayerSpecifics(1)
+                    | Sort: 'OrderIDID'
+                "
+                class="clubLogoText"
+              >
+                {{ filterService.getLabel(disp, "Value") }}
               </span>
             </div>
             <div #draftInfo class="din draftInfo">
@@ -43,7 +51,7 @@
                 <span
                   class="g-profile__bio-element"
                   *ngFor="
-                    let disp of filterService.getPlayerSpecifics(4)
+                    let disp of filterService.getPlayerSpecifics(2)
                       | Sort: 'OrderIDID'
                   "
                   ><span class="g-label g-mb-1">{{
@@ -86,22 +94,21 @@
           class="g-profile__bio-container"
           style="display:flex; min-height: 47px;"
         >
-          <div
-            class="posCollege"
-            *ngFor="
-              let disp of filterService.getPlayerSpecifics(1) | Sort: 'OrderID'
-            "
-          >
-            <div>&nbsp; &nbsp;{{ filterService.getLabel(disp, "Value") }}</div>
-            <div>
-              &nbsp; &nbsp;{{ filterService.getLabel(disp, "SubValue") }}
+          <div class="posCollege">
+            <div
+              *ngFor="
+                let disp of filterService.getPlayerSpecifics(3)
+                  | Sort: 'OrderID'
+              "
+            >
+              &nbsp; &nbsp;{{ filterService.getLabel(disp, "Value") }}
             </div>
           </div>
           <div class="g-profile__bio w400FloatLeft">
             <span
               class="g-profile__bio-element"
               *ngFor="
-                let disp of filterService.getPlayerSpecifics(3)
+                let disp of filterService.getPlayerSpecifics(4)
                   | Sort: 'OrderID'
               "
               ><span class="g-label g-mb-1">{{

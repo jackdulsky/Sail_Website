@@ -52,13 +52,6 @@ export class BodyComponent implements OnInit {
   changeReportType(newNumb: number) {
     var comp = this.router.url.split("/base-reports/")[0].split("/");
     if (this.portals.indexOf(comp[comp.length - 1]) != -1) {
-      console.log("ROUTE CHILDREN", this.route.firstChild.firstChild);
-      // this.router.navigate(
-      //   ["./" + comp[comp.length - 1], "report", +String(newNumb)],
-      //   {
-      //     relativeTo: this.route
-      //   }
-      // );
       this.router.navigate(["report", String(newNumb)], {
         relativeTo: this.route.firstChild.firstChild
       });
@@ -248,7 +241,7 @@ export class BodyComponent implements OnInit {
     let styles = {
       "background-repeat": "no-repeat,no-repeat",
       "background-position": "center",
-      "background-size": "130px,cover",
+      "background-size": "130px 130px,cover",
       "background-image":
         "url(" +
         icon +

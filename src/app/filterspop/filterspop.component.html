@@ -52,7 +52,7 @@
       </div>
     </div>
     <div class="bottom">
-      <div class="wholecontent">
+      <div class="wholecontent" *ngIf="filterService.pullStructure">
         <div
           class="leftside"
           id="leftside{{ panel }}"
@@ -140,6 +140,20 @@
               style="width:100%"
             ></ng-container>
           </ng-container>
+          <ng-container
+            *ngIf="
+              filterService.pullAttribute[filterService.show] &&
+              4 == filterService.pullAttribute[filterService.show]['UITypeID']
+            "
+          >
+            <ng-container
+              *ngTemplateOutlet="
+                type4Selection;
+                context: { id: filterService.show, values: null }
+              "
+              style="width:100%"
+            ></ng-container>
+          </ng-container>
         </div>
         <div class="rightside">
           <ng-container
@@ -147,113 +161,82 @@
           >
             <div class="tier3Grid2" *ngIf="(bin.value | json) != '{}'">
               <ng-container *ngFor="let att of bin.value | keyvalue">
-                <div
-                  *ngFor="let val of att.value"
-                  class="ovrSingleFilter insideGrid-container3"
-                >
+                <ng-container *ngFor="let val of att.value">
                   <div
-                    class="filterLeftBorder"
-                    [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
-                  ></div>
-                  <div
-                    class="filterMiddleBorder"
-                    [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
-                    (click)="navigateToAttribute(bin.key, att.key)"
+                    class="ovrSingleFilter insideGrid-container3"
+                    *ngIf="val != null"
                   >
                     <div
-                      style="position: relative; top: -10px; font-size: 12px;"
-                    >
-                      &nbsp;{{ filterService.pullAttribute[att.key][Label] }}
-                      &nbsp;
-                    </div>
+                      class="filterLeftBorder"
+                      [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
+                    ></div>
                     <div
-                      style="top: -29px;
+                      class="filterMiddleBorder"
+                      [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
+                      (click)="navigateToAttribute(bin.key, att.key)"
+                    >
+                      <div
+                        style="position: relative; top: -10px; font-size: 12px;"
+                      >
+                        &nbsp;{{ filterService.pullAttribute[att.key][Label] }}
+                        &nbsp;
+                      </div>
+                      <div
+                        style="top: -29px;
                     position: relative;"
+                      >
+                        <ng-container
+                          *ngIf="
+                            filterService.pullAttribute[att.key]['UITypeID'] !=
+                            4
+                          "
+                        >
+                          &nbsp;&nbsp;&nbsp;{{
+                            filterService.pullValueMap[att.key][val][Label]
+                          }}&nbsp;&nbsp;&nbsp;
+                        </ng-container>
+                        <ng-container
+                          *ngIf="
+                            filterService.pullAttribute[att.key]['UITypeID']
+                          "
+                        >
+                          <ng-container
+                            *ngIf="
+                              filterService.newWorkingQuery[bin.key][
+                                att.key
+                              ][0] == val
+                            "
+                          >
+                            Min:
+                          </ng-container>
+                          <ng-container
+                            *ngIf="
+                              filterService.newWorkingQuery[bin.key][
+                                att.key
+                              ][0] != val
+                            "
+                          >
+                            Max:
+                          </ng-container>
+                          &nbsp;&nbsp;&nbsp;{{ val }}&nbsp;&nbsp;&nbsp;
+                        </ng-container>
+                      </div>
+                    </div>
+                    <div
+                      class="filterRightBorder"
+                      [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
+                      (click)="
+                        filterService.clearSingleValuePop(bin.key, att.key, val)
+                      "
                     >
-                      &nbsp;&nbsp;&nbsp;{{
-                        filterService.pullValueMap[att.key][val][Label]
-                      }}&nbsp;&nbsp;&nbsp;
+                      <i
+                        class="fa fa-times"
+                        style="margin-left: 4px;margin-right: 4px;margin-top: 8px;"
+                      ></i>
                     </div>
                   </div>
-                  <div
-                    class="filterRightBorder"
-                    [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
-                    (click)="
-                      filterService.clearSingleValuePop(bin.key, att.key, val)
-                    "
-                  >
-                    <i
-                      class="fa fa-times"
-                      style="margin-left: 4px;margin-right: 4px;margin-top: 8px;"
-                    ></i>
-                  </div>
-                </div>
+                </ng-container>
               </ng-container>
-              <!-- <div
-                *ngFor="let att of bin.value | keyvalue"
-                style="width:fit-content;display:flex;color:black; margin-top:5px;"
-              >
-                <ng-container
-                  *ngIf="0 == filterService.pullAttribute[att.key]['UITypeID']"
-                >
-                  <ng-container
-                    *ngTemplateOutlet="
-                      type0;
-                      context: {
-                        id: att.key,
-                        values: att.value,
-                        bin: bin.key
-                      }
-                    "
-                    style="width:100%"
-                  ></ng-container>
-                </ng-container>
-                <ng-container
-                  *ngIf="1 == filterService.pullAttribute[att.key]['UITypeID']"
-                >
-                  <ng-container
-                    *ngTemplateOutlet="
-                      type0;
-                      context: {
-                        id: att.key,
-                        values: att.value,
-                        bin: bin.key
-                      }
-                    "
-                    style="width:100%"
-                  ></ng-container>
-                </ng-container>
-                <ng-container
-                  *ngIf="3 == filterService.pullAttribute[att.key]['UITypeID']"
-                >
-                  <ng-container
-                    *ngTemplateOutlet="
-                      type3;
-                      context: {
-                        id: att.key,
-                        values: att.value,
-                        bin: bin.key
-                      }
-                    "
-                    style="width:100%"
-                  ></ng-container>
-                </ng-container>
-                <ng-container
-                  *ngIf="2 == filterService.pullAttribute[att.key]['UITypeID']"
-                >
-                  <ng-container
-                    *ngTemplateOutlet="
-                      type0;
-                      context: {
-                        id: att.key,
-                        values: att.value,
-                        bin: bin.key
-                      }
-                    "
-                    style="width:100%"
-                  ></ng-container>
-                </ng-container>
-              </div> -->
             </div>
           </ng-container>
           <div class="bottomQueryButtons">
@@ -266,29 +249,6 @@
           </div>
         </div>
       </div>
-      <!-- <div>
-        <button
-          class="mat-raised-button mat-primary save"
-          (click)="openAttributeSelection()"
-        >
-          <i class="fa fa-plus fa-md"></i>
-        </button>
-        <button
-          class="mat-raised-button mat-primary save"
-          style="float:right;"
-          (click)="pushWorkingQuery()"
-        >
-          SUBMIT
-        </button>
-        <button
-          class="mat-raised-button mat-primary save"
-          style="float:right;"
-          (click)="clearWorkingQuery()"
-        >
-          CLEAR
-        </button>
-      </div> -->
-      <!-- *ngIf="filterService.level1Selected == filterService.level1Selected" -->
 
       <ng-template #type0 let-id="id" let-values="values" let-bin="bin">
         <div class="toggleContainer">
@@ -868,24 +828,68 @@
           </div>
         </div>
       </ng-template>
+      <ng-template #type4Selection let-id="id" let-values="values">
+        <div class="toggleContainerSelection">
+          <div class="togglelabel">
+            {{ filterService.pullAttribute[id][Label] }}:
+          </div>
+          <div>
+            <div class="form-group">
+              <table class="fullWidth" cellspacing="0">
+                <tr>
+                  <td>
+                    <mat-form-field class="minMaxWidth">
+                      <input
+                        class="colorBlack"
+                        id="type4InputMin{{ id }}"
+                        name="type4InputMin{{ id }}"
+                        value="null"
+                        matInput
+                        type="number"
+                        maxlength="5"
+                        placeholder="Min"
+                        (input)="
+                          filterService.changeType4Input(
+                            id,
+                            $event.target.value,
+                            true
+                          )
+                        "
+                      />
+                      <!-- (change)="filterService.changeType4Input(id," -->
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <mat-form-field class="minMaxWidth">
+                      <input
+                        class="colorBlack"
+                        id="type4InputMax{{ id }}"
+                        name="type4InputMax{{ id }}"
+                        value="null"
+                        matInput
+                        type="number"
+                        maxlength="5"
+                        placeholder="Max"
+                        (input)="
+                          filterService.changeType4Input(
+                            id,
+                            $event.target.value,
+                            false
+                          )
+                        "
+                      />
+                    </mat-form-field>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </div>
 
     <!--     
-    <div class="bottom griditem2 bottom-container">
-      <div class="tier2-container">
-        <div class="searching">
-          <div>
-            <span>
-              <i class="sicon fa fa-search fa-sm" style="color:black"></i>
-              <input
-                type="text"
-                id="searchGlobalText"
-                placeholder="  Search"
-                (input)="searching($event.target.value)"
-                autocomplete="off"
-              />
-            </span>
-          </div>
+  
           <div class="suggestionList" *ngIf="showSuggestions">
             <div
               *ngFor="
@@ -961,217 +965,8 @@
         </div>
         
 
-        <div class="tier3Grid">
-          <div
-            style="width:100%;"
-            *ngFor="
-              let filt of activeLevel3From2
-                | keyvalue
-                | SmartFilter: filterService.testFilters
-            "
-          >
-            <div class="toggleContainer" *ngIf="0 == meta[filt.key]['type']">
-              <div class="togglelabel">
-                {{ idToString[filt.key] }}
-              </div>
-
-              <mat-form-field
-                id="tier3Tab{{ filt.key }}"
-                style="width:100%; padding-right:5%;"
-              >
-                <mat-select
-                  formControlName="{{ filt.key }}"
-                  placeholder="Search"
-                  multiple
-                  (selectionChange)="updateSingleFilter(filt.key)"
-                  style="color:black;"
-                >
-                  <ngx-mat-select-search
-                    id="{{ filt.key }}search"
-                    formControlName="{{ filt.key }}search"
-                    placeholderLabel="Search"
-                    [noEntriesFoundLabel]="'None Found'"
-                    [clearSearchInput]="false"
-                    style="caret-color: white !important;"
-                  ></ngx-mat-select-search>
-
-                  <mat-option
-                    *ngFor="
-                      let cat of filt.value
-                        | filter: form.value[filt.key + 'search']
-                        | SmartFilter: filterService.testFilters
-                    "
-                    [value]="cat"
-                    class="clickedWhite"
-                    >{{ idToString[cat] }}</mat-option
-                  >
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div class="toggleContainer" *ngIf="3 == meta[filt.key]['type']">
-              <div class="togglelabel">
-                {{ idToString[filt.key] }}
-              </div>
-              <div class="form-group" style="width: auto !important;">
-                <mat-form-field style="width:100%; padding-right:5%;">
-                  <input
-                    matInput
-                    placeholder="Enter Condition"
-                    id="enter{{ filt.key }}"
-                    formControlName="{{ filt.key }}"
-                    (input)="enterInput(filt.key, $event.target.value)"
-                    style="color:black !important"
-                  />
-                </mat-form-field>
-              </div>
-            </div>
-            <div class="toggleContainer" *ngIf="2 == meta[filt.key]['type']">
-              <div class="togglelabel">
-                {{ idToString[filt.key] }}
-              </div>
-              <div>
-                <div class="form-group">
-                  <div class="switch-toggle switch-3 switch-candy">
-                    <input
-                      id="on{{ filt.key }}"
-                      name="state-d{{ filt.key }}"
-                      type="radio"
-                      *ngIf="
-                        !activeFilters[filt.key] ||
-                        activeFilters[filt.key][0] != idToOptions[filt.key][0]
-                      "
-                    />
-                    <input
-                      id="on{{ filt.key }}"
-                      name="state-d{{ filt.key }}"
-                      type="radio"
-                      checked="checked"
-                      *ngIf="
-                        activeFilters[filt.key] &&
-                        activeFilters[filt.key][0] == idToOptions[filt.key][0]
-                      "
-                    />
-                    <label
-                      for="on{{ filt.key }}"
-                      (click)="changeToggleValue(filt.key, '0')"
-                      >OFF</label
-                    >
-
-                    <input
-                      id="na{{ filt.key }}"
-                      name="state-d{{ filt.key }}"
-                      type="radio"
-                      *ngIf="activeFilters[filt.key]"
-                    />
-                    <input
-                      id="na{{ filt.key }}"
-                      name="state-d{{ filt.key }}"
-                      type="radio"
-                      checked="checked"
-                      *ngIf="!activeFilters[filt.key]"
-                    />
-                    <label
-                      for="na{{ filt.key }}"
-                      (click)="changeToggleValue(filt.key, '2')"
-                      >N/A</label
-                    >
-
-                    <input
-                      id="off{{ filt.key }}"
-                      name="state-d{{ filt.key }}"
-                      type="radio"
-                      *ngIf="
-                        !activeFilters[filt.key] ||
-                        activeFilters[filt.key][0] != idToOptions[filt.key][1]
-                      "
-                    />
-                    <input
-                      id="off{{ filt.key }}"
-                      name="state-d{{ filt.key }}"
-                      type="radio"
-                      checked="checked"
-                      *ngIf="
-                        activeFilters[filt.key] &&
-                        activeFilters[filt.key][0] == idToOptions[filt.key][1]
-                      "
-                    />
-                    <label
-                      for="off{{ filt.key }}"
-                      (click)="changeToggleValue(filt.key, '1')"
-                      >ON</label
-                    >
-
-                    <a></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="toggleContainer" *ngIf="1 == meta[filt.key]['type']">
-              <div class="togglelabel">
-                {{ idToString[filt.key] }}
-              </div>
-
-              <mat-form-field
-                id="tier3Tab{{ filt.key }}"
-                style="width:100%; padding-right:5%;"
-              >
-                <mat-select
-                  formControlName="{{ filt.key }}"
-                  placeholder="Select"
-                  multiple
-                  (selectionChange)="updateSingleFilter(filt.key)"
-                  style="color:black;"
-                >
-                  <mat-option>
-                    <ngx-mat-select-search
-                      id="{{ filt.key }}search"
-                      formControlName="{{ filt.key }}search"
-                      placeholderLabel="Search"
-                      [noEntriesFoundLabel]="'None Found'"
-                      [clearSearchInput]="false"
-                      style="caret-color: white !important;"
-                    ></ngx-mat-select-search>
-                  </mat-option>
-                  <mat-option disabled>
-                    <button
-                      id="{{ filt.key }}all"
-                      mat-button
-                      (click)="toggleAllSelections(filt.key, true)"
-                    >
-                      Select All
-                    </button>
-                    <button
-                      id="{{ filt.key }}none"
-                      (click)="toggleAllSelections(filt.key, false)"
-                      mat-button
-                    >
-                      Deselect All
-                    </button>
-                  </mat-option>
-                  <mat-option
-                    *ngFor="
-                      let cat of filt.value
-                        | filter: form.value[filt.key + 'search']
-                        | SmartFilter: filterService.testFilters
-                    "
-                    [value]="cat"
-                    class="clickedWhite"
-                    >{{ idToString[cat] }}</mat-option
-                  >
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </div>
-        </div>
-      </div>
+    
     </div> -->
   </Div>
 </mat-dialog-content>
-<mat-dialog-actions style="min-height: 0px !important;">
-  <!-- <button class="mat-raised-button mat-primary save" (click)="close()">
-    Close
-  </button>
-  <button class="mat-raised-button mat-primary save" (click)="save()">
-    Save
-  </button> -->
-</mat-dialog-actions>
+<mat-dialog-actions style="min-height: 0px !important;"> </mat-dialog-actions>
