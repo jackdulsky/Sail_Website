@@ -224,6 +224,7 @@ export class FiltersService {
 
     this.form.addControl(id, new FormControl());
     this.form.addControl(id + "search", new FormControl());
+
     element[id] = next;
     return element;
   }
@@ -746,11 +747,9 @@ export class FiltersService {
       this.newWorkingQuery[bin][att] = this.newWorkingQuery[bin][att].filter(
         x => x != String(val)
       );
-
       var oldValue = this.form.value[att];
 
       this.form.controls[att].setValue(oldValue.filter(x => x != String(val)));
-
       if (this.newWorkingFID[bin] != "") {
         this.pushQueryToActiveFilter(bin, false);
       }
@@ -1015,13 +1014,10 @@ export class FiltersService {
       newPanels.push(att);
       this.show = "";
     }
-    console.log("5", newPanels);
 
     //RECONSTRUCT THE PANELS THROUGH ADDING THE BIN PANEL BACK AT THE BEGINNING
     this.panels = [first].concat(newPanels);
     this.reversePaths[this.level1Selected][att] = cloneDeep(this.panels);
-    console.log("6", this.panels);
-    console.log("7", this.reversePaths);
     //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
     if (document.getElementById("selectKey" + att)) {
       document.getElementById("buttonContainer" + att).style.backgroundColor =
@@ -1167,29 +1163,6 @@ export class FiltersService {
     }
   }
 
-  //remove all team filter querys
-  removeAllTeamFilters() {
-    var returnBool = true;
-
-    for (let active in this.newFIDBID) {
-      if (
-        String(this.newFIDBID[active]) == "-2" &&
-        this.newWorkingFID["-2"] != active
-      ) {
-        // this.removeQuery(active);
-        if (
-          JSON.stringify(this.newFIDs[active]) !=
-          JSON.stringify({ "2": [this.teamPortalActiveClubID] })
-        ) {
-          this.removeQuery(active);
-        } else {
-          returnBool = false;
-        }
-      }
-    }
-    return returnBool;
-  }
-
   //WHEN CLICKING ON PLAYER PAGE TAKE OUT ALL OTHER PLAYERS
   reduceFiltersSinglePlayer() {
     var tempDict = {};
@@ -1226,70 +1199,16 @@ export class FiltersService {
         }
       }
     }
+    var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
+    var oldWorkingFID = cloneDeep(this.newWorkingFID);
+    var oldForm = cloneDeep(this.form);
     this.pushDBFormat(alteredDBFormat);
+    this.newWorkingQuery = oldWorkingQuery;
+    this.newWorkingFID = oldWorkingFID;
+    this.form = oldForm;
     return returnBool;
   }
 
-  //remove all team filter querys
-  removeAllPlayerFilters() {
-    if (!this.newDBFormat["-3"]) {
-      return;
-    }
-    var returnBool = true;
-    var alteredDBFormat = cloneDeep(this.newDBFormat);
-    for (let fid in alteredDBFormat["-3"]) {
-      var explicits = cloneDeep(alteredDBFormat["-3"][fid][0]);
-      if (explicits.indexOf(this.playerPortalActivePlayerID) != -1) {
-        alteredDBFormat["-3"][fid][0] = [
-          cloneDeep(this.playerPortalActivePlayerID)
-        ];
-        returnBool = false;
-      } else {
-        alteredDBFormat["-3"][fid][0] = [];
-        if (
-          JSON.stringify(alteredDBFormat["-3"][fid]) ==
-          JSON.stringify([[], {}, []])
-        ) {
-          delete alteredDBFormat["-3"][fid];
-
-          if (JSON.stringify(alteredDBFormat["-3"]) == "{}") {
-            delete this.newDBFormat["-3"];
-          }
-        }
-      }
-    }
-    this.pushDBFormat(alteredDBFormat);
-    return returnBool;
-    // var returnBool = true;
-    // for (let active in this.newFIDBID) {
-    //   if (
-    //     String(this.newFIDBID[active]) == "-3" &&
-    //     this.newWorkingFID["-3"] != active
-    //   ) {
-
-    // if (
-    //   JSON.stringify(this.newFIDs[active]) !=
-    //   JSON.stringify({ "3": [this.playerPortalActivePlayerID] })
-    // ) {
-    //   console.log("REMOVING QUERY", this.newFIDs[active]);
-    //   console.log("For", active);
-    //   this.removeQuery(active);
-    // } else {
-    //   returnBool = false;
-    // }
-    // }
-    //}
-    // return returnBool;
-
-    // if (this.newFIDs[active]["3"] && this.newFIDs[active]["3"] != JSON.stringify([this.playerPortalActivePlayerID])
-    // ) {
-    //   console.log("REMOVING QUERY", this.newFIDs[active]);
-    //   console.log("For", active);
-    //   this.removeQuery(active);
-    // } else {
-    //   returnBool = false;
-    // }
-  }
   //SET THE ACTIVE CLUB BY GOING THROUGH THE DB OR SET DEFAULT
 
   setActiveClub() {
@@ -1442,12 +1361,11 @@ export class FiltersService {
     if (JSON.stringify(returnArr[1]) == JSON.stringify("")) {
       returnArr[1] = null;
     }
-    console.log("Before", this.newWorkingQuery[bin]);
 
     if (JSON.stringify(returnArr) == JSON.stringify([null, null])) {
       this.clearSingleIDWorking(attribute, bin);
-      console.log("After", this.newWorkingQuery[bin]);
     } else {
+      this.form.controls[attribute].setValue(returnArr);
       this.type0change(attribute, returnArr, bin);
     }
   }

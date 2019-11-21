@@ -843,7 +843,7 @@
                         class="colorBlack"
                         id="type4InputMin{{ id }}"
                         name="type4InputMin{{ id }}"
-                        value="null"
+                        [value]="getInitValuesMinMax(id,0)"
                         matInput
                         type="number"
                         maxlength="5"
@@ -856,7 +856,6 @@
                           )
                         "
                       />
-                      <!-- (change)="filterService.changeType4Input(id," -->
                     </mat-form-field>
                   </td>
                   <td>
@@ -865,7 +864,7 @@
                         class="colorBlack"
                         id="type4InputMax{{ id }}"
                         name="type4InputMax{{ id }}"
-                        value="null"
+                        [value]="getInitValuesMinMax(id,1)"
                         matInput
                         type="number"
                         maxlength="5"

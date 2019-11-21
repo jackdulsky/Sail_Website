@@ -213,6 +213,15 @@ export class FilterspopComponent implements OnInit {
     this.filterService.show = att;
   }
 
+  //GET INIT VALUES MIN MAX
+  getInitValuesMinMax(id: any, minmax: any) {
+    if (this.filterService.form.value[id] != null) {
+      return cloneDeep(this.filterService.form.value[id][minmax]);
+    } else {
+      return null;
+    }
+  }
+
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
   toggleWeek(type: string, week: string, event: any) {
     // var id = type + week;
