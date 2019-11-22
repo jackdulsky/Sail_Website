@@ -206,7 +206,6 @@ export class FilterspopComponent implements OnInit {
       }
       startAtt = adding;
     }
-    var old = cloneDeep(newPanels);
 
     this.filterService.selectingAttributes = Object.keys(
       this.filterService.getPanelOptions(
@@ -225,10 +224,6 @@ export class FilterspopComponent implements OnInit {
       newPanels = newPanels.slice(1);
     }
     this.filterService.panels = newPanels.reverse();
-    // this.filterService.panels = cloneDeep(
-    //   this.filterService.reversePaths[bin][att]
-    // );
-    // this.filterService.show = att;
   }
 
   //GET INIT VALUES MIN MAX

@@ -174,7 +174,9 @@
                     <div
                       class="filterMiddleBorder"
                       [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
-                      (click)="navigateToAttribute(bin.key, att.key)"
+                      (click)="
+                        filterService.navigateToAttribute(bin.key, att.key)
+                      "
                     >
                       <div
                         style="position: relative; top: -10px; font-size: 12px;"
@@ -198,7 +200,8 @@
                         </ng-container>
                         <ng-container
                           *ngIf="
-                            filterService.pullAttribute[att.key]['UITypeID'] == 4
+                            filterService.pullAttribute[att.key]['UITypeID'] ==
+                            4
                           "
                         >
                           <ng-container

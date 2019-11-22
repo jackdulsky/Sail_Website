@@ -193,7 +193,7 @@ export class ClubComponent implements OnInit {
     this.displayTeams(1);
 
     this.teamSelected = team;
-    this.filterService.teamPortalActiveClubID = team["SailTeamID"];
+    this.filterService.teamPortalActiveClubID = String(team["SailTeamID"]);
     this.filterService.teamPortalSelected = team;
     this.initTeam(this.filterService.teamPortalSelected);
     this.filterService.updateRDURL();

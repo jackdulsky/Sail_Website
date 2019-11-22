@@ -532,10 +532,11 @@ export class FiltersService {
   }
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
   //REMOVE FROM THE WORKING QUERY AND
-  clearSingleIDWorking(id: string, BID: string) {
+  clearSingleIDWorking(id: string, BID: string, input: boolean = true) {
     delete this.newWorkingQuery[BID][id]; //this.workingQuery[id];
+
     if (this.newWorkingFID[BID] != "") {
-      this.pushQueryToActiveFilter(BID);
+      this.pushQueryToActiveFilter(BID, input);
     }
     if (this.form.value[id + "search"] != null) {
       this.form.controls[String(id) + "search"].setValue(null);
@@ -584,7 +585,6 @@ export class FiltersService {
     ) {
       this.reduceFiltersSinglePlayer();
     }
-
     for (let bin in this.newWorkingQuery) {
       //PUSH EMPTY PERFORM DELETES
       if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
@@ -609,6 +609,7 @@ export class FiltersService {
           continue;
         }
       }
+
       //SET FID TO CURRENT OR GENERATE NEW ONE
       var newFIDNumber;
       if (this.newWorkingFID[bin] != "") {
@@ -616,6 +617,7 @@ export class FiltersService {
       } else {
         newFIDNumber = String(Math.floor(Math.random() * 1000));
       }
+
       //PUT THE WORKING QUERY IN NEW FIDs
       var pkID = [];
       this.newFIDs[newFIDNumber] = Object.assign(
@@ -652,7 +654,6 @@ export class FiltersService {
     }
 
     //SEND UP TO THE DB
-
     if (!this.checkDBFormats(oldDB, cloneDeep(this.newDBFormat))) {
       this.saveAndSend();
       this.updateRDURL();
@@ -738,12 +739,17 @@ export class FiltersService {
 
   //This function clears a single value from the newWorking query, if a
   //Working FID is set it pushes the updates
-  clearSingleValuePop(bin: any, att: any, val: any) {
+  clearSingleValuePop(bin: any, att: any, val: any, input: boolean = true) {
+    console.log();
     if (
       JSON.stringify(this.newWorkingQuery[bin][att]) ==
-      JSON.stringify([String(val)])
+        JSON.stringify([String(val)]) ||
+      JSON.stringify(this.newWorkingQuery[bin][att]) ==
+        JSON.stringify([val, null]) ||
+      JSON.stringify(this.newWorkingQuery[bin][att]) ==
+        JSON.stringify([null, val])
     ) {
-      this.clearSingleIDWorking(att, bin);
+      this.clearSingleIDWorking(att, bin, false);
     } else {
       this.newWorkingQuery[bin][att] = this.newWorkingQuery[bin][att].filter(
         x => x != String(val)
@@ -972,6 +978,7 @@ export class FiltersService {
     var newTab = document.getElementById("tier1Tab" + id);
     newTab.style.backgroundColor = "#f2f2f2";
     newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+    this.attributeSelected(String(Number(id) * -100));
   }
 
   //THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
@@ -1039,9 +1046,39 @@ export class FiltersService {
     this.reversePaths[this.level1Selected][att] = cloneDeep(this.panels);
   }
 
+  //This function navigates the panels and displays where the
+  //Attribute was selected from if its clicked on the right area
+  navigateToAttribute(bin: any, att: any) {
+    this.changelevel2(bin);
+    this.show = String(this.pullNavigation[att]["ParentItemID"]);
+    var newPanels = [];
+    var atRoot = false;
+    var startAtt = att;
+    while (!atRoot) {
+      var adding = this.pullNavigation[startAtt]["ParentItemID"];
+      newPanels.push(String(adding));
+      if (Number(adding) <= 0) {
+        atRoot = true;
+      }
+      startAtt = adding;
+    }
+
+    this.selectingAttributes = Object.keys(
+      this.getPanelOptions(newPanels[0], cloneDeep(newPanels).reverse())
+    ).filter(x => this.pullNavigationElement[x]["IsAttribute"]);
+    if (
+      JSON.stringify(
+        this.getPanelOptions(newPanels[0], cloneDeep(newPanels).reverse())
+      ) == "{}"
+    ) {
+      newPanels = newPanels.slice(1);
+    }
+    this.panels = newPanels.reverse();
+  }
+
   //GET COLOR FOR PANELS
   buttonContainerColor(id: any) {
-    if (this.panels.concat([this.show]).indexOf(id) != -1) {
+    if (this.panels.concat([String(this.show)]).indexOf(String(id)) != -1) {
       return {
         backgroundColor: "#f2f2f2",
         borderLeft: "4px solid lightskyblue"
@@ -1202,6 +1239,7 @@ export class FiltersService {
     tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
 
     var add = this.removeExplicitFilters("-2", this.teamPortalActiveClubID);
+    console.log("ADD", add);
     if (add) {
       this.newWorkingQuery["-2"] = tempDict;
     }
@@ -1220,7 +1258,7 @@ export class FiltersService {
   //REMOVE AN EXPLICIT BASED ON THE INPUT BIN
   removeExplicitFilters(bin: any, keepExplicit: any) {
     if (!this.newDBFormat[bin]) {
-      return;
+      return true;
     }
     var returnBool = true;
     var alteredDBFormat = cloneDeep(this.newDBFormat);
@@ -1282,7 +1320,6 @@ export class FiltersService {
       JSON.stringify(alteredDBFormat[bin][fid]) == JSON.stringify([[], {}, []])
     ) {
       delete alteredDBFormat[bin][fid];
-      console.log("REMOVED", JSON.stringify(alteredDBFormat[bin]));
       if (JSON.stringify(alteredDBFormat[bin]) == "{}") {
         delete alteredDBFormat[bin];
       }

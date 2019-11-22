@@ -75,7 +75,9 @@ export class FilterBarComponent implements OnInit {
         }
       });
     } else {
-      this.filterService.level1Selected = selected;
+      this.filterService.changelevel2(selected);
+      // this.filterService.attributeSelected(String(Number(selected) * -100));
+      // this.filterService.level1Selected = selected;
     }
   }
 
@@ -95,13 +97,15 @@ export class FilterBarComponent implements OnInit {
   //  FID- the FID number as a string
   //  QUERY- the dictionary of Atributes to selected values (all strings)
   singleOpen(fid: string, query: any) {
-    console.log("SINGLE OPEN", fid, query);
     //SET WORKING DICTIONARY, WORKINGBIN, AND WORKINGFID
     var bin = cloneDeep(this.filterService.newFIDBID[fid]);
     var old = document.getElementById(
       "tier1Tab" + cloneDeep(this.filterService.level1Selected)
     );
     this.filterService.level1Selected = bin;
+    for (let id in this.filterService.newWorkingQuery[bin]) {
+      this.filterService.form.controls[id].setValue(null);
+    }
     this.filterService.newWorkingQuery[bin] = cloneDeep(query);
     this.filterService.workingBin = cloneDeep(bin);
     this.filterService.newWorkingFID[bin] = cloneDeep(fid);
@@ -127,8 +131,49 @@ export class FilterBarComponent implements OnInit {
       newTab.style.borderBottom = "4px solid var(--lighter-blue)";
     }
     this.openFilterPage(bin);
-    //this.filterService.changelevel2(bin);
     this.filterService.show = "";
+  }
+
+  singleOpenExp(fid: any, query: any, bin: any) {
+    if (this.filterOpen) {
+      this.filterService.changelevel2(String(bin));
+      for (let id in this.filterService.newWorkingQuery[bin]) {
+        this.filterService.form.controls[id].setValue(null);
+      }
+      this.filterService.newWorkingQuery[bin] = cloneDeep(query);
+      this.filterService.workingBin = cloneDeep(bin);
+      this.filterService.newWorkingFID[bin] = cloneDeep(fid);
+
+      //SET THE FORM CONTROL
+      for (let id in this.filterService.newWorkingQuery[bin]) {
+        this.filterService.form.controls[id].setValue(
+          this.filterService.newWorkingQuery[bin][id]
+        );
+      }
+    } else {
+      this.singleOpen(fid, query);
+    }
+  }
+  //OPEN SINGLE PANEL
+  singleOpenAtt(fid: any, query: any, att: any, bin: any) {
+    if (this.filterOpen) {
+      for (let id in this.filterService.newWorkingQuery[bin]) {
+        this.filterService.form.controls[id].setValue(null);
+      }
+      this.filterService.newWorkingQuery[bin] = cloneDeep(query);
+      this.filterService.workingBin = cloneDeep(bin);
+      this.filterService.newWorkingFID[bin] = cloneDeep(fid);
+
+      //SET THE FORM CONTROL
+      for (let id in this.filterService.newWorkingQuery[bin]) {
+        this.filterService.form.controls[id].setValue(
+          this.filterService.newWorkingQuery[bin][id]
+        );
+      }
+    } else {
+      this.singleOpen(fid, query);
+    }
+    this.filterService.navigateToAttribute(bin, String(att));
   }
 
   //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT
@@ -253,7 +298,7 @@ export class FilterBarComponent implements OnInit {
             break;
           }
         }
-        if (dispName.charAt(0) == ",") {
+        while (dispName.charAt(0) == ",") {
           dispName = dispName.substr(2);
         }
       } catch (e) {
@@ -298,7 +343,7 @@ export class FilterBarComponent implements OnInit {
         break;
       }
     }
-    if (dispName.charAt(0) == ",") {
+    while (dispName.charAt(0) == ",") {
       dispName = dispName.substr(2);
     }
     return dispName;
@@ -314,7 +359,7 @@ export class FilterBarComponent implements OnInit {
         break;
       }
     }
-    if (dispName.charAt(0) == ",") {
+    while (dispName.charAt(0) == ",") {
       dispName = dispName.substr(2);
     }
     return dispName;
@@ -323,13 +368,19 @@ export class FilterBarComponent implements OnInit {
   getMultipleQueryBottomString(fid: any, contents: any) {
     var dispName = "";
     if (contents[0].length != 0) {
-      dispName = this.filterService.pullNavigationElement[
+      dispName = this.getExplicitValues(
+        contents[0],
         this.filterService.newFIDBID[fid]
-      ]["Label"];
+      );
     }
-    var potentialAdd = this.getAttOrPanelStringsValues(contents[1]);
+    var potentialAdd = this.getAttOrPanelStringsValues(
+      Object.keys(contents[1])
+    );
     if (String(potentialAdd) != "") {
       dispName += ", " + potentialAdd;
+    }
+    while (dispName.charAt(0) == ",") {
+      dispName = dispName.substr(2);
     }
     return dispName;
   }

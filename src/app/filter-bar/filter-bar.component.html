@@ -47,7 +47,9 @@
           <div
             class="filterMiddleBorder"
             [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
-            (click)="singleOpen(fid.key, filterService.newFIDs[fid.key])"
+            (click)="
+              singleOpenExp(fid.key, filterService.newFIDs[fid.key], bin.key)
+            "
           >
             <div style="position: relative; top: -10px; font-size: 12px;">
               &nbsp;
@@ -88,7 +90,14 @@
           <div
             class="filterMiddleBorder"
             [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
-            (click)="singleOpen(fid.key, filterService.newFIDs[fid.key])"
+            (click)="
+              singleOpenAtt(
+                fid.key,
+                filterService.newFIDs[fid.key],
+                panel.value[0],
+                bin.key
+              )
+            "
           >
             <div style="position: relative; top: -10px; font-size: 12px;">
               &nbsp;
@@ -125,7 +134,9 @@
           <div
             class="filterMiddleBorder"
             [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
-            (click)="singleOpen(fid.key, filterService.newFIDs[fid.key])"
+            (click)="
+              singleOpenExp(fid.key, filterService.newFIDs[fid.key], bin.key)
+            "
           >
             <div style="position: relative; top: -10px; font-size: 12px;">
               &nbsp;
