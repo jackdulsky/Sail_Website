@@ -37,6 +37,7 @@ export class FiltersService {
   reversePaths = {};
   show: string = "";
   panels: string[] = [];
+  selectingAttributes: string[] = [];
   combined = {};
   workingBin = "";
   workingFID = "";
@@ -963,6 +964,9 @@ export class FiltersService {
     // SET PANELS
     this.panels = [id];
     this.show = "";
+    this.selectingAttributes = [null];
+
+    // this.selectingAttributes = [];
 
     //CHANGE NEW CSS
     var newTab = document.getElementById("tier1Tab" + id);
@@ -973,8 +977,8 @@ export class FiltersService {
   //THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
   attributeSelected(att: string) {
     var newPanels = [];
-    var first = this.panels[0];
-    var level = this.pullStructure[first];
+    var first = cloneDeep(this.panels[0]);
+    var level = cloneDeep(this.pullStructure[first]);
     var toTurnOff = [];
     var addtoOff = false;
 
@@ -1009,22 +1013,62 @@ export class FiltersService {
 
     //ADD TO PANEL OR SHOW THE SELECTION FORM
     if (this.pullNavigationElement[att]["IsAttribute"] == true) {
-      this.show = att;
+      console.log("ATTRIBUTE IS IN THE PANELS THIS SHOULD NEVER OCCUR");
     } else {
+      var old = cloneDeep(newPanels);
       newPanels.push(att);
-      this.show = "";
+      this.show = att;
+      this.selectingAttributes = Object.keys(
+        this.getPanelOptions(att, [first].concat(newPanels))
+      ).filter(x => this.pullNavigationElement[x]["IsAttribute"]);
+      if (
+        JSON.stringify(this.getPanelOptions(att, [first].concat(newPanels))) ==
+        "{}"
+      ) {
+        newPanels = old;
+      }
     }
 
     //RECONSTRUCT THE PANELS THROUGH ADDING THE BIN PANEL BACK AT THE BEGINNING
-    this.panels = [first].concat(newPanels);
-    this.reversePaths[this.level1Selected][att] = cloneDeep(this.panels);
-    //DONT SET THE NEW PANEL TO NEW PANEL NECESSARILY BUT CHANGE CSS TO SELECTED
-    if (document.getElementById("selectKey" + att)) {
-      document.getElementById("buttonContainer" + att).style.backgroundColor =
-        "#f2f2f2";
-      document.getElementById("buttonContainer" + att).style.borderLeft =
-        "4px solid lightskyblue";
+    if (
+      JSON.stringify([first].concat(newPanels)) != JSON.stringify(this.panels)
+    ) {
+      this.panels = [first].concat(newPanels);
     }
+
+    this.reversePaths[this.level1Selected][att] = cloneDeep(this.panels);
+  }
+
+  //GET COLOR FOR PANELS
+  buttonContainerColor(id: any) {
+    if (this.panels.concat([this.show]).indexOf(id) != -1) {
+      return {
+        backgroundColor: "#f2f2f2",
+        borderLeft: "4px solid lightskyblue"
+      };
+    } else {
+      return { backgroundColor: "white", borderLeft: "4px solid white" };
+    }
+  }
+
+  //GET PANEL OPTIONS OF THE PANEL INPUT
+  getPanelOptions(att: string, p: any = this.panels) {
+    var disp = this.pullStructure;
+    for (let level of p.slice(0, -1)) {
+      if (level == att) {
+        break;
+      }
+      disp = disp[level];
+    }
+    disp = cloneDeep(disp[att]);
+    // console.log("DISP", disp);
+    // for (let option in disp) {
+    //   if (this.pullNavigationElement[option]["IsAttribute"]) {
+    //     delete disp[option];
+    //   }
+    // }
+
+    return disp;
   }
 
   //Thisfunction creates and stores the RD URL
@@ -1194,7 +1238,7 @@ export class FiltersService {
           delete alteredDBFormat[bin][fid];
 
           if (JSON.stringify(alteredDBFormat[bin]) == "{}") {
-            delete this.newDBFormat[bin];
+            delete alteredDBFormat[bin];
           }
         }
       }
@@ -1207,6 +1251,49 @@ export class FiltersService {
     this.newWorkingFID = oldWorkingFID;
     this.form = oldForm;
     return returnBool;
+  }
+
+  //REMOVE AN EXPLICIT FROM THE FILTER TOP
+  removeExplicit(fid: any, bin: any) {
+    var alteredDBFormat = cloneDeep(this.newDBFormat);
+    alteredDBFormat[bin][fid][0] = [];
+    if (
+      JSON.stringify(alteredDBFormat[bin][fid]) == JSON.stringify([[], {}, []])
+    ) {
+      delete alteredDBFormat[bin][fid];
+
+      if (JSON.stringify(alteredDBFormat[bin]) == "{}") {
+        delete alteredDBFormat[bin];
+      }
+    }
+    var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
+    var oldWorkingFID = cloneDeep(this.newWorkingFID);
+    var oldForm = cloneDeep(this.form);
+    this.pushDBFormat(alteredDBFormat);
+    this.newWorkingQuery = oldWorkingQuery;
+    this.newWorkingFID = oldWorkingFID;
+    this.form = oldForm;
+  }
+
+  removeAttributes(fid: any, bin: any) {
+    var alteredDBFormat = cloneDeep(this.newDBFormat);
+    alteredDBFormat[bin][fid][1] = {};
+    if (
+      JSON.stringify(alteredDBFormat[bin][fid]) == JSON.stringify([[], {}, []])
+    ) {
+      delete alteredDBFormat[bin][fid];
+      console.log("REMOVED", JSON.stringify(alteredDBFormat[bin]));
+      if (JSON.stringify(alteredDBFormat[bin]) == "{}") {
+        delete alteredDBFormat[bin];
+      }
+    }
+    var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
+    var oldWorkingFID = cloneDeep(this.newWorkingFID);
+    var oldForm = cloneDeep(this.form);
+    this.pushDBFormat(alteredDBFormat);
+    this.newWorkingQuery = oldWorkingQuery;
+    this.newWorkingFID = oldWorkingFID;
+    this.form = oldForm;
   }
 
   //SET THE ACTIVE CLUB BY GOING THROUGH THE DB OR SET DEFAULT

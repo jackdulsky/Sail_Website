@@ -60,12 +60,13 @@
         >
           <div
             *ngFor="
-              let first of getPanelOptions(panel)
+              let first of filterService.getPanelOptions(panel)
                 | keyvalue: valueOrderSideButtons
             "
             class="singlePanel"
             (click)="filterService.attributeSelected(first.key)"
             id="buttonContainer{{ first.key }}"
+            [ngStyle]="filterService.buttonContainerColor(first.key)"
           >
             <div class="tier2-name" id="firstname{{ first.key }}">
               {{ returnlabel(filterService.pullNavigationElement[first.key]) }}
@@ -75,84 +76,84 @@
             </div>
           </div>
         </div>
+        <!-- *ngIf="filterService.show != ''" -->
         <div class="guiArea">
-          <div style="width: 100%">
-            <H2 class="l2Title" *ngIf="filterService.show != ''"
-              >{{
-                filterService.pullAttribute[filterService.show][Label]
-              }}
-              Filters</H2
+          <ng-container *ngFor="let att of filterService.selectingAttributes">
+            <!-- <div style="width: 100%">
+              <H2 class="l2Title"
+                >{{ filterService.pullAttribute[att][Label] }} Filters</H2
+              >
+            </div> -->
+            <ng-container
+              *ngIf="
+                filterService.pullAttribute[att] &&
+                0 == filterService.pullAttribute[att]['UITypeID']
+              "
             >
-          </div>
-          <ng-container
-            *ngIf="
-              filterService.pullAttribute[filterService.show] &&
-              0 == filterService.pullAttribute[filterService.show]['UITypeID']
-            "
-          >
+              <ng-container
+                *ngTemplateOutlet="
+                  type0Selection;
+                  context: { id: att, values: null }
+                "
+                style="width:100%"
+              ></ng-container>
+            </ng-container>
             <ng-container
-              *ngTemplateOutlet="
-                type0Selection;
-                context: { id: filterService.show, values: null }
+              *ngIf="
+                filterService.pullAttribute[att] &&
+                1 == filterService.pullAttribute[att]['UITypeID']
               "
-              style="width:100%"
-            ></ng-container>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              filterService.pullAttribute[filterService.show] &&
-              1 == filterService.pullAttribute[filterService.show]['UITypeID']
-            "
-          >
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  type1Selection;
+                  context: { id: att, values: null }
+                "
+                style="width:100%"
+              ></ng-container>
+            </ng-container>
             <ng-container
-              *ngTemplateOutlet="
-                type1Selection;
-                context: { id: filterService.show, values: null }
+              *ngIf="
+                filterService.pullAttribute[att] &&
+                2 == filterService.pullAttribute[att]['UITypeID']
               "
-              style="width:100%"
-            ></ng-container>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              filterService.pullAttribute[filterService.show] &&
-              2 == filterService.pullAttribute[filterService.show]['UITypeID']
-            "
-          >
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  type2Selection;
+                  context: { id: att, values: null }
+                "
+                style="width:100%"
+              ></ng-container>
+            </ng-container>
             <ng-container
-              *ngTemplateOutlet="
-                type2Selection;
-                context: { id: filterService.show, values: null }
+              *ngIf="
+                filterService.pullAttribute[att] &&
+                3 == filterService.pullAttribute[att]['UITypeID']
               "
-              style="width:100%"
-            ></ng-container>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              filterService.pullAttribute[filterService.show] &&
-              3 == filterService.pullAttribute[filterService.show]['UITypeID']
-            "
-          >
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  type3Selection;
+                  context: { id: att, values: null }
+                "
+                style="width:100%"
+              ></ng-container>
+            </ng-container>
             <ng-container
-              *ngTemplateOutlet="
-                type3Selection;
-                context: { id: filterService.show, values: null }
+              *ngIf="
+                filterService.pullAttribute[att] &&
+                '4' == filterService.pullAttribute[att]['UITypeID']
               "
-              style="width:100%"
-            ></ng-container>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              filterService.pullAttribute[filterService.show] &&
-              4 == filterService.pullAttribute[filterService.show]['UITypeID']
-            "
-          >
-            <ng-container
-              *ngTemplateOutlet="
-                type4Selection;
-                context: { id: filterService.show, values: null }
-              "
-              style="width:100%"
-            ></ng-container>
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  type4Selection;
+                  context: { id: att, values: null }
+                "
+                style="width:100%"
+              ></ng-container>
+            </ng-container>
           </ng-container>
         </div>
         <div class="rightside">
@@ -197,7 +198,7 @@
                         </ng-container>
                         <ng-container
                           *ngIf="
-                            filterService.pullAttribute[att.key]['UITypeID']
+                            filterService.pullAttribute[att.key]['UITypeID'] == 4
                           "
                         >
                           <ng-container
@@ -843,7 +844,7 @@
                         class="colorBlack"
                         id="type4InputMin{{ id }}"
                         name="type4InputMin{{ id }}"
-                        [value]="getInitValuesMinMax(id,0)"
+                        [value]="getInitValuesMinMax(id, 0)"
                         matInput
                         type="number"
                         maxlength="5"
@@ -864,7 +865,7 @@
                         class="colorBlack"
                         id="type4InputMax{{ id }}"
                         name="type4InputMax{{ id }}"
-                        [value]="getInitValuesMinMax(id,1)"
+                        [value]="getInitValuesMinMax(id, 1)"
                         matInput
                         type="number"
                         maxlength="5"

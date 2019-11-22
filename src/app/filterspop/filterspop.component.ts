@@ -191,26 +191,44 @@ export class FilterspopComponent implements OnInit {
     this.type0change(id, bin);
   }
 
-  getPanelOptions(att: string) {
-    var disp = this.filterService.pullStructure;
-    for (let level of this.filterService.panels.slice(0, -1)) {
-      if (level == att) {
-        break;
-      }
-      disp = disp[level];
-    }
-    disp = disp[att];
-    return disp;
-  }
-
   //This function navigates the panels and displays where the
   //Attribute was selected from if its clicked on the right area
   navigateToAttribute(bin: any, att: any) {
     this.filterService.changelevel2(bin);
-    this.filterService.panels = cloneDeep(
-      this.filterService.reversePaths[bin][att]
-    );
-    this.filterService.show = att;
+    var newPanels = [];
+    var atRoot = false;
+    var startAtt = att;
+    while (!atRoot) {
+      var adding = this.filterService.pullNavigation[startAtt]["ParentItemID"];
+      newPanels.push(adding);
+      if (Number(adding) <= 0) {
+        atRoot = true;
+      }
+      startAtt = adding;
+    }
+    var old = cloneDeep(newPanels);
+
+    this.filterService.selectingAttributes = Object.keys(
+      this.filterService.getPanelOptions(
+        newPanels[0],
+        cloneDeep(newPanels).reverse()
+      )
+    ).filter(x => this.filterService.pullNavigationElement[x]["IsAttribute"]);
+    if (
+      JSON.stringify(
+        this.filterService.getPanelOptions(
+          newPanels[0],
+          cloneDeep(newPanels).reverse()
+        )
+      ) == "{}"
+    ) {
+      newPanels = newPanels.slice(1);
+    }
+    this.filterService.panels = newPanels.reverse();
+    // this.filterService.panels = cloneDeep(
+    //   this.filterService.reversePaths[bin][att]
+    // );
+    // this.filterService.show = att;
   }
 
   //GET INIT VALUES MIN MAX

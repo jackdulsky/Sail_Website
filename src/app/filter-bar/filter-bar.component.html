@@ -33,7 +33,129 @@
       <i class="fa fa-times" style="margin-left: 4px;"></i>
     </div>
   </div> -->
-  <div
+  <ng-container *ngFor="let bin of filterService.newDBFormat | keyvalue">
+    <ng-container *ngFor="let fid of bin.value | keyvalue">
+      <ng-container *ngIf="checkKeys(bin)">
+        <div
+          *ngIf="fid.value[0].length != 0"
+          class="ovrSingleFilter insideGrid-container3"
+        >
+          <div
+            class="filterLeftBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
+          ></div>
+          <div
+            class="filterMiddleBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
+            (click)="singleOpen(fid.key, filterService.newFIDs[fid.key])"
+          >
+            <div style="position: relative; top: -10px; font-size: 12px;">
+              &nbsp;
+              {{ getNavElLabel(bin.key) }}
+              &nbsp;
+            </div>
+            <div
+              style="top: -29px;
+    position: relative;"
+            >
+              &nbsp;&nbsp;&nbsp;{{
+                getExplicitValues(fid.value[0], bin.key)
+              }}&nbsp;&nbsp;&nbsp;
+            </div>
+          </div>
+          <div
+            class="filterRightBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
+            (click)="filterService.removeExplicit(fid.key, bin.key)"
+          >
+            <i
+              class="fa fa-times"
+              style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
+            ></i>
+          </div>
+        </div>
+        <div
+          *ngFor="
+            let panel of createSingleQueryPanelAttributeMap(fid.value[1])
+              | keyvalue
+          "
+          class="ovrSingleFilter insideGrid-container3"
+        >
+          <div
+            class="filterLeftBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
+          ></div>
+          <div
+            class="filterMiddleBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
+            (click)="singleOpen(fid.key, filterService.newFIDs[fid.key])"
+          >
+            <div style="position: relative; top: -10px; font-size: 12px;">
+              &nbsp;
+              {{ getNavElLabel(panel.key) }}
+              &nbsp;
+            </div>
+            <div
+              style="top: -29px;
+  position: relative;"
+            >
+              &nbsp;&nbsp;&nbsp;{{
+                getAttOrPanelStringsValues(panel.value)
+              }}&nbsp;&nbsp;&nbsp;
+            </div>
+          </div>
+          <div
+            class="filterRightBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
+            (click)="filterService.removeAttributes(fid.key, bin.key)"
+          >
+            <i
+              class="fa fa-times"
+              style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
+            ></i>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!checkKeys(bin)">
+        <div class="ovrSingleFilter insideGrid-container3">
+          <div
+            class="filterLeftBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
+          ></div>
+          <div
+            class="filterMiddleBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
+            (click)="singleOpen(fid.key, filterService.newFIDs[fid.key])"
+          >
+            <div style="position: relative; top: -10px; font-size: 12px;">
+              &nbsp;
+              {{ getNavElLabel(bin.key) }} {{ fid.key }}
+              &nbsp;
+            </div>
+            <div
+              style="top: -29px;
+  position: relative;"
+            >
+              &nbsp;&nbsp;&nbsp;{{
+                getMultipleQueryBottomString(fid.key, fid.value)
+              }}&nbsp;&nbsp;&nbsp;
+            </div>
+          </div>
+          <div
+            class="filterRightBorder"
+            [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
+            (click)="removeQuery(fid.key)"
+          >
+            <i
+              class="fa fa-times"
+              style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
+            ></i>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <!-- <div
     *ngFor="let query of filterService.newFIDs | keyvalue"
     class="ovrSingleFilter insideGrid-container3"
   >
@@ -50,9 +172,17 @@
       "
       (click)="singleOpen(query.key, query.value)"
     >
-      &nbsp;&nbsp;&nbsp;{{
-        createFilterDisplayString(query.key, query.value)
-      }}&nbsp;&nbsp;&nbsp;
+      <div style="position: relative; top: -10px; font-size: 12px;">
+        &nbsp; {{ createFilterTopDisplayString(query.key, query.value) }} &nbsp;
+      </div>
+      <div
+        style="top: -29px;
+position: relative;"
+      >
+        &nbsp;&nbsp;&nbsp;{{
+          createFilterDisplayString(query.key, query.value)
+        }}&nbsp;&nbsp;&nbsp;
+      </div>
     </div>
     <div
       class="filterRightBorder"
@@ -66,7 +196,7 @@
         style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
       ></i>
     </div>
-  </div>
+  </div> -->
   <div>
     <div class="playCount">Plays</div>
     <div class="playCountNumber">{{ filterService.playCount }}</div>

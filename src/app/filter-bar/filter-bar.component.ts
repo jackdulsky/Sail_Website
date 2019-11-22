@@ -79,11 +79,23 @@ export class FilterBarComponent implements OnInit {
     }
   }
 
+  //check if one fid in a bin
+  checkKeys(key: any) {
+    return Object.keys(key.value).length == 1;
+  }
+
+  getNavElLabel(element: any) {
+    return this.filterService.pullNavigationElement[element]["Label"];
+  }
+
+  //Check if the explicits are empty
+
   //THIS OPENS A SINGLE QUERY IN THE FILTER PAGE
   //INPUTS-
   //  FID- the FID number as a string
   //  QUERY- the dictionary of Atributes to selected values (all strings)
   singleOpen(fid: string, query: any) {
+    console.log("SINGLE OPEN", fid, query);
     //SET WORKING DICTIONARY, WORKINGBIN, AND WORKINGFID
     var bin = cloneDeep(this.filterService.newFIDBID[fid]);
     var old = document.getElementById(
@@ -249,6 +261,77 @@ export class FilterBarComponent implements OnInit {
       }
       return dispName;
     }
+  }
+
+  createFilterTopDisplayString(fid: string, value: any) {
+    //MULTIPLE CASE
+    var BID = this.filterService.newFIDBID[fid];
+    return (
+      String(this.filterService.pullNavigationElement[BID]["Label"]) +
+      " : " +
+      String(fid)
+    );
+  }
+
+  //Return the panel to att mapping for a single query in a bin
+  createSingleQueryPanelAttributeMap(attsMap: any) {
+    var panelMap = {};
+    for (let att in attsMap) {
+      var panel = this.filterService.pullNavigation[att]["ParentItemID"];
+      if (panelMap[panel]) {
+        panelMap[panel] = panelMap[panel].concat([att]);
+      } else {
+        panelMap[panel] = [att];
+      }
+    }
+    return panelMap;
+  }
+
+  //GET EXPLICIT VALUES String Labels
+  getExplicitValues(values: any, bin: any) {
+    var dispName = "";
+    var att = String(Number(bin) * -1);
+    for (let val in values) {
+      dispName +=
+        ", " + this.filterService.pullValueMap[att][values[val]]["Label"];
+      if (dispName.length > 100) {
+        break;
+      }
+    }
+    if (dispName.charAt(0) == ",") {
+      dispName = dispName.substr(2);
+    }
+    return dispName;
+  }
+
+  //GET NON EXPLICIT VALUES String Labels, panels or Atts
+  getAttOrPanelStringsValues(values: any) {
+    var dispName = "";
+    for (let val in values) {
+      dispName +=
+        ", " + this.filterService.pullNavigationElement[values[val]]["Label"];
+      if (dispName.length > 100) {
+        break;
+      }
+    }
+    if (dispName.charAt(0) == ",") {
+      dispName = dispName.substr(2);
+    }
+    return dispName;
+  }
+
+  getMultipleQueryBottomString(fid: any, contents: any) {
+    var dispName = "";
+    if (contents[0].length != 0) {
+      dispName = this.filterService.pullNavigationElement[
+        this.filterService.newFIDBID[fid]
+      ]["Label"];
+    }
+    var potentialAdd = this.getAttOrPanelStringsValues(contents[1]);
+    if (String(potentialAdd) != "") {
+      dispName += ", " + potentialAdd;
+    }
+    return dispName;
   }
 
   //RETURN THE STRING LABEL OF THE OBJECT PASSED IN
