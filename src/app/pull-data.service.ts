@@ -260,4 +260,13 @@ export class PullDataService {
       query: query
     });
   }
+
+  //Pull position heirarchy
+  pullPositionHierarchy() {
+    var query =
+      "Select * from SailDB.filter.PositionHierarchy p order by orderID";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
 }

@@ -9,7 +9,9 @@
       *ngFor="let team of filterService.teams"
     >
       <img id="team" class="imgLogo tableCenter" [src]="getActiveLogo(team)" />
-      <div id="team" class="teamText">&nbsp;&nbsp;{{ getCityName(team) }}</div>
+      <div id="team" class="teamText">
+        &nbsp;&nbsp;{{ team["ClubNickName"] }}
+      </div>
     </div>
   </div>
 
@@ -42,12 +44,11 @@
                 class="g-profile__name"
                 (click)="displayTeams(showList)"
               >
-                {{ getCityName(filterService.teamPortalSelected) }}&nbsp;{{
-                  filterService.teamPortalSelected.ClubNickName
+                &nbsp;{{ filterService.teamPortalSelected.ClubNickName
                 }}<i id="team" class="fa fa-angle-down fa-lg"></i>
               </h2>
             </div>
-            <div class="g-profile__bio w450FloatLeft">
+            <div class="g-profile__bio w400FloatLeft">
               <span
                 class="g-profile__bio-element"
                 *ngFor="
@@ -63,14 +64,15 @@
               >
             </div>
 
-            <div style="float: left; margin-left: 25px;">
+            <div style="float: left; margin-left: 10px;">
               <div
                 style="display: flex;    -webkit-box-orient: horizontal;
               -webkit-box-direction: normal;
               flex-flow: row wrap;    flex-wrap: nowrap;
     -webkit-box-pack: justify;
-    justify-content: space-around;
-    padding: 0.5rem 0 0; width: 238px;"
+    justify-content: space-between;
+    padding: 0.5rem 0 0;  width: 193px;
+    padding-left: 8px;"
               >
                 <span
                   *ngFor="
@@ -103,12 +105,9 @@
               ></circle-progress>
             </div>
             <div class="g-label sobText">
-              OFFENSE
+              OFF:
             </div>
-            <div
-              class=" din g-profile__bio w300FloatLeft"
-              style="justify-content: left !important;"
-            >
+            <div class=" din g-profile__bio w250FloatLeft" style="">
               <span
                 class="g-profile__bio-element"
                 *ngFor="
@@ -171,7 +170,7 @@
               >
             </div>
           </div>
-          <div class="g-profile__bio w450FloatLeft">
+          <div class="g-profile__bio w400FloatLeft">
             <span
               class="g-profile__bio-element"
               *ngFor="
@@ -189,13 +188,10 @@
             >
           </div>
           <div style="float: left; width:25px;"></div>
-          <div class="g-label sobText" style="margin-left: 238px;">
-            DEFENSE
+          <div class="g-label sobText" style="margin-left: 187px;">
+            DEF:
           </div>
-          <div
-            class=" din g-profile__bio w300FloatLeft"
-            style="justify-content: left !important;"
-          >
+          <div class=" din g-profile__bio w250FloatLeft" style="">
             <span
               class="g-profile__bio-element"
               *ngFor="
@@ -217,7 +213,7 @@
     </div>
   </div>
 </div>
-<div style="display: flex;">
+<div style="display: flex; border-top: 1px solid black;">
   <div class="linkBar">
     <div
       class="topLink"

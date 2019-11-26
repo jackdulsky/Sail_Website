@@ -213,7 +213,6 @@
   box-shadow: 2px 4px 10px black;
 }
 .linkBar {
-  border-top: 2px solid black;
   display: flex;
   float: left;
   width: calc(100vw - 250px);
@@ -1107,7 +1106,6 @@ h6,
   width: 50px;
   text-align: center;
   float: right;
-  border-top: 2px solid black;
   line-height: 29px;
   border-left: 1px solid lightblue;
 }
@@ -1119,7 +1117,6 @@ h6,
   width: 50px;
   text-align: center;
   float: right;
-  border-top: 2px solid black;
   line-height: 29px;
   color: lightgray;
   border-left: 1px solid lightblue;

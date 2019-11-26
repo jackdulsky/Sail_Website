@@ -1,0 +1,35 @@
+<mat-menu #childMenu="matMenu" [overlapTrigger]="false">
+  <ng-container *ngFor="let child of items">
+    {{ child }}
+    <!-- Handle branch node menu items -->
+    <span
+      *ngIf="
+        filterService.positionHItem[child] &&
+        filterService.positionHItem[child].length > 0
+      "
+    >
+      <button
+        mat-menu-item
+        color="secondary"
+        [matMenuTriggerFor]="menu.childMenu"
+      >
+        <span>{{ filterService.positionHItem[child]["PosName"] }}</span>
+      </button>
+      <app-menu-item
+        #menu
+        [items]="filterService.positionHItem[child]"
+      ></app-menu-item>
+    </span>
+    <!-- Handle leaf node menu items -->
+    <span
+      *ngIf="
+        !filterService.positionHItem[child] ||
+        filterService.positionHItem[child].length === 0
+      "
+    >
+      <button mat-menu-item>
+        <span>{{ filterService.positionHItem[child]["PosName"] }}</span>
+      </button>
+    </span>
+  </ng-container>
+</mat-menu>

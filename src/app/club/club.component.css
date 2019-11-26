@@ -145,7 +145,6 @@
   cursor: pointer;
 }
 .linkBar {
-  border-top: 2px solid black;
   display: flex;
   float: left;
   width: calc(100vw - 250px);
@@ -969,7 +968,7 @@ h6,
 }
 .nameBox {
   float: left;
-  width: 350px;
+  width: 230px;
 }
 .coachAndGM {
   float: left;
@@ -1004,7 +1003,7 @@ h6,
 }
 .divRecord {
   float: left;
-  width: 350px;
+  min-width: 230px;
   font-weight: bold;
 }
 
@@ -1026,6 +1025,10 @@ h6,
 }
 .w300FloatLeft {
   width: 300px;
+  float: left;
+}
+.w250FloatLeft {
+  width: 250px;
   float: left;
 }
 .birthInfo {
@@ -1064,7 +1067,6 @@ h6,
   width: 50px;
   text-align: center;
   float: right;
-  border-top: 2px solid black;
   line-height: 29px;
   border-left: 1px solid lightblue;
 }
@@ -1076,7 +1078,6 @@ h6,
   width: 50px;
   text-align: center;
   float: right;
-  border-top: 2px solid black;
   line-height: 29px;
   color: lightgray;
   border-left: 1px solid lightblue;

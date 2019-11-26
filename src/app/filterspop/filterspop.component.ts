@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ɵConsole } from "@angular/core";
+import { Component, OnInit, Inject, ɵConsole, ViewChild } from "@angular/core";
 import { MatDialog, MatDialogRef, MatDialogConfig } from "@angular/material";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MAT_DIALOG_DATA } from "@angular/material";
@@ -6,7 +6,10 @@ import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { FiltersService } from "../filters.service";
 import { PullDataService } from "../pull-data.service";
 import { Options } from "selenium-webdriver/safari";
-import { BrowserModule } from "@angular/platform-browser";
+import {
+  BrowserModule,
+  ɵELEMENT_PROBE_PROVIDERS__POST_R3__
+} from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 import { SafeHtmlPipe } from "../safe.pipe";
@@ -14,6 +17,7 @@ import { SmartFilterPipe } from "../smartFilter.pipe";
 import { TEMPORARY_NAME } from "@angular/compiler/src/render3/view/util";
 import { KeyValue } from "@angular/common";
 import * as cloneDeep from "lodash/cloneDeep";
+import { MatMenuTrigger } from "@angular/material";
 
 // import { AdalService } from 'adal-angular4';
 import { MsAdalAngular6Module } from "microsoft-adal-angular6";
@@ -53,6 +57,7 @@ export class FilterspopComponent implements OnInit {
     ],
     POST: ["1", "2", "3", "4"]
   };
+  positionLevel1 = { 101: "Offense", 102: "Defense", 103: "Specials" };
   public selected: any[] = [];
   yearsSelected: string[] = [];
   highlighting: boolean = false;
@@ -62,13 +67,16 @@ export class FilterspopComponent implements OnInit {
   selectedPath;
   show: string = "";
   panels: string[] = [];
+  posHTML = "";
 
+  @ViewChild(MatMenuTrigger, { static: false }) trigger: MatMenuTrigger;
   constructor(
     public pullData: PullDataService,
     public fb: FormBuilder,
     public dialogRef: MatDialogRef<FilterspopComponent>,
     public filterService: FiltersService,
     public dialog: MatDialog,
+    public sanitizer: DomSanitizer,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.title = data.title;
@@ -78,6 +86,7 @@ export class FilterspopComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({});
     this.formG = this.fb.group({});
+    //this.createPosMenus();
     this.filterService.conferenceSelections["2"] = "AFC";
     setTimeout(() => {
       this.filterService.changelevel2(this.filterService.level1Selected);
@@ -233,6 +242,82 @@ export class FilterspopComponent implements OnInit {
     } else {
       return null;
     }
+  }
+  openMyMenu() {
+    this.trigger.toggleMenu();
+  }
+  closeMyMenu() {
+    this.trigger.closeMenu();
+  }
+
+  //Creates the menu html to copy and past in html file
+  createPosMenus() {
+    var template01 = "<mat-menu #"; //menuname
+    var template02 = '="matMenu">';
+    var template11 = '<button mat-menu-item (click)="toggleNestedSelect(id,'; //child id
+    var template12 = ')"[matMenuTriggerFor]="'; //childmenu
+    var template13 = '">'; //display name
+    var template14 = "</button>";
+    var template21 = '<button mat-menu-item (click)="toggleNestedSelect(id,'; //child id
+    var template22 = ')">'; //display name
+    var template23 = "</button>";
+    var template30 = "</mat-menu>";
+    var overallString = "";
+    for (let menuName in this.filterService.positionHierarchy) {
+      overallString +=
+        template01 +
+        String(this.filterService.positionHItem[menuName]["PosAbbr"]) +
+        template02;
+      for (let child of this.filterService.positionHierarchy[menuName]) {
+        if (this.filterService.positionHierarchy[child]) {
+          overallString +=
+            template11 +
+            String(child) +
+            template12 +
+            String(this.filterService.positionHItem[child]["PosAbbr"]) +
+            template13 +
+            String(this.filterService.positionHItem[child]["PosAbbr"]) +
+            template14;
+        } else {
+          overallString +=
+            template21 +
+            String(child) +
+            template22 +
+            String(this.filterService.positionHItem[child]["PosAbbr"]) +
+            template23;
+        }
+      }
+      overallString += template30;
+    }
+    console.log("OVR STRING", overallString);
+    //this.posHTML = overallString;
+    //return this.sanitizer.bypassSecurityTrustHtml(overallString);
+  }
+
+  //Toggle for UI TYPE 5
+  toggleNestedSelect(id: any, key: any) {
+    var oldValue: String[] = cloneDeep(this.filterService.form.value[id]);
+    if (oldValue == null) {
+      this.filterService.form.controls[id].setValue([String(key)]);
+    } else {
+      if (
+        this.filterService.form.value[id] != null &&
+        this.filterService.form.value[id].indexOf(String(key)) != -1
+      ) {
+        this.filterService.form.controls[id].setValue(
+          oldValue.filter(x => x != String(key))
+        );
+      } else {
+        this.filterService.form.controls[id].setValue(
+          oldValue.concat([String(key)])
+        );
+      }
+    }
+    this.filterService.type0change(
+      id,
+      this.filterService.form.value[id],
+      this.filterService.level1Selected
+    );
   }
 
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********

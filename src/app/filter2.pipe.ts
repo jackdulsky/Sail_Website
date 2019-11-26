@@ -28,19 +28,37 @@ export class FilterPipe2 implements PipeTransform {
     }
     //BASE CASES
     if (!items) return [];
-    if (!searchText) return items;
+    if (!searchText)
+      return items.filter(it => {
+        if (["0", "101", "102", "103"].indexOf(String(it.key)) != -1) {
+          return false;
+        } else {
+          return true;
+        }
+      });
 
     //REGULAR CASE RETURN IF THE STRING SEARCHED FOR IS IN THE LABEL
     //NOT CASE SENSITIVE
     searchText = searchText.toLowerCase();
     return items.filter(it => {
+      if (["0", "101", "102", "103"].indexOf(String(it.key)) != -1) {
+        return false;
+      }
       try {
         return (
           it.value["Label"].toLowerCase().includes(searchText) ||
           this.filt.form.value[id].indexOf(it.key) != -1
         );
       } catch {
-        return false;
+        try {
+          return (
+            it.value["PosAbbr"].toLowerCase().includes(searchText) ||
+            it.value["PosName"].toLowerCase().includes(searchText) ||
+            this.filt.form.value[id].indexOf(it.key) != -1
+          );
+        } catch (e) {
+          return false;
+        }
       }
     });
   }

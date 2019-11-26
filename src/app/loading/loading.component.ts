@@ -82,13 +82,22 @@ export class LoadingComponent implements OnInit {
         this.filterService.loadJSON(JSON.parse(decodeURIComponent(filters)));
         for (let query in this.filterService.newFIDBID) {
           if (Number(this.filterService.newFIDBID[query]) == -2) {
-            this.filterService.teamPortalActiveClubID = cloneDeep(
-              this.filterService.newFIDs[query]["2"][0]
-            );
+            try {
+              this.filterService.teamPortalActiveClubID = cloneDeep(
+                this.filterService.newFIDs[query]["2"][0]
+              );
 
-            this.filterService.teamPortalSelected = this.filterService.teamsMap[
-              this.filterService.teamPortalActiveClubID
-            ];
+              this.filterService.teamPortalSelected = this.filterService.teamsMap[
+                this.filterService.teamPortalActiveClubID
+              ];
+            } catch (e) {}
+          }
+          if (Number(this.filterService.newFIDBID[query]) == -3) {
+            try {
+              this.filterService.playerPortalActivePlayerID = cloneDeep(
+                this.filterService.newFIDs[query]["3"][0]
+              );
+            } catch (e) {}
           }
           this.doneloading += 1;
           this.doneChecking = false;

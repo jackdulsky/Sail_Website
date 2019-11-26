@@ -62,6 +62,7 @@ import { HomeComponent } from "./home/home.component";
 import { NewpageComponent } from "./newpage/newpage.component";
 import { ClickOutsideModule } from "ng-click-outside";
 import { NgCircleProgressModule } from "ng-circle-progress";
+import { MenuItemComponent } from './menu-item/menu-item.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import { NgCircleProgressModule } from "ng-circle-progress";
     PlayerComponent,
     CashComponent,
     HomeComponent,
-    NewpageComponent
+    NewpageComponent,
+    MenuItemComponent
   ],
   imports: [
     NgCircleProgressModule.forRoot({

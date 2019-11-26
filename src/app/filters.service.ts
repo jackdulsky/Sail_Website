@@ -122,6 +122,8 @@ export class FiltersService {
   playerSpecifics;
   clickedReport = false;
   displayPlayers = {};
+  positionHierarchy;
+  positionHItem;
   constructor(
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,
@@ -228,6 +230,19 @@ export class FiltersService {
 
     element[id] = next;
     return element;
+  }
+
+  hierarchyTableToMap(data, idCol, parentCol) {
+    var tempMap = {};
+    for (let row in data) {
+      if (!tempMap[data[row][parentCol]]) {
+        tempMap[data[row][parentCol]] = [data[row][idCol]];
+      } else {
+        tempMap[data[row][parentCol]].push(data[row][idCol]);
+      }
+      // tempMap[data[row][parentCol]][data[row][idCol]] = data[row];
+    }
+    return tempMap;
   }
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
   getBulkImport() {
@@ -366,7 +381,49 @@ export class FiltersService {
     this.pullData.pullReportURL().subscribe(data => {
       this.reportURL = {};
       this.extractID(data, "ViewID", this.reportURL);
-      //console.log("URLS", this.reportURL);
+    });
+
+    this.pullData.pullPositionHierarchy().subscribe(data => {
+      this.positionHierarchy = {};
+      this.positionHItem = {};
+      this.positionHierarchy = this.hierarchyTableToMap(
+        cloneDeep(data),
+        "FilterPosID",
+        "ParentPosID"
+      );
+      this.extractID(data, "FilterPosID", this.positionHItem);
+      this.positionHItem[102] = {
+        PosName: "Offense",
+        PosAbbr: "OFF",
+        OrderID: -3,
+        FilterPosID: 102,
+        ParentPosID: 0
+      };
+      this.positionHItem[101] = {
+        PosName: "Defense",
+        PosAbbr: "DEF",
+        OrderID: -2,
+        FilterPosID: 101,
+        ParentPosID: 0
+      };
+      this.positionHItem[103] = {
+        PosName: "Specials",
+        PosAbbr: "ST",
+        OrderID: -1,
+        FilterPosID: 103,
+        ParentPosID: 0
+      };
+      this.positionHItem[0] = {
+        PosName: "Position",
+        PosAbbr: "Pos",
+        OrderID: 0,
+        FilterPosID: 0,
+        ParentPosID: null
+      };
+      this.positionHierarchy[0] = [101, 102, 103];
+
+      // console.log("POS ITEMS", this.positionHItem);
+      // console.log("POS HIERARCHY", this.positionHierarchy);
     });
   }
 
@@ -1239,7 +1296,6 @@ export class FiltersService {
     tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
 
     var add = this.removeExplicitFilters("-2", this.teamPortalActiveClubID);
-    console.log("ADD", add);
     if (add) {
       this.newWorkingQuery["-2"] = tempDict;
     }
@@ -1543,7 +1599,7 @@ export class FiltersService {
 
   //GET SPINNER COLOR STYLE
   setStyleSpinner(input: any) {
-    var offset = (Number(input["OrderID"]) - 1) * 78;
+    var offset = (Number(input["OrderID"]) - 1) * 68;
     let styles = {
       position: "fixed",
       "margin-left": String(offset) + "px"
