@@ -34,6 +34,7 @@ export class FiltersService {
   workingQuery = {};
   newWorkingQuery = {};
   newWorkingFID = {};
+  newFIDOrder = {};
   reversePaths = {};
   show: string = "";
   panels: string[] = [];
@@ -334,6 +335,7 @@ export class FiltersService {
         this.newWorkingQuery[binKey] = {};
         this.reversePaths[binKey] = {};
         this.newWorkingFID[binKey] = "";
+        this.newFIDOrder[binKey] = [];
       }
       // console.log("BIN", this.pullBin);
     });
@@ -718,6 +720,7 @@ export class FiltersService {
         newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
       } else {
         newFIDNumber = String(Math.floor(Math.random() * 1000));
+        this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([newFIDNumber]);
       }
 
       //PUT THE WORKING QUERY IN NEW FIDs
@@ -765,11 +768,34 @@ export class FiltersService {
   //SAVE LOCAL STORAGE FOR REFRESH AND THEN SEND THE FILTERS TO THE DB
   saveAndSend() {
     var dbFormatWithAddedHiddenYears = cloneDeep(this.newDBFormat);
+
+    //set the Order of FIDs by double checking against what is sent to DB
+    for (let bin in dbFormatWithAddedHiddenYears) {
+      var activeFIDs = [];
+      for (let fid in this.newFIDOrder[bin]) {
+        if (
+          Object.keys(dbFormatWithAddedHiddenYears[bin]).indexOf(
+            this.newFIDOrder[bin][fid]
+          ) != -1
+        ) {
+          activeFIDs = activeFIDs.concat([this.newFIDOrder[bin][fid]]);
+        }
+      }
+      for (let fid in Object.keys(dbFormatWithAddedHiddenYears[bin])) {
+        var activeFID = Object.keys(dbFormatWithAddedHiddenYears[bin])[fid];
+        if (activeFIDs.indexOf(activeFID) == -1) {
+          activeFIDs = activeFIDs.concat([activeFID]);
+        }
+      }
+      this.newFIDOrder[bin] = activeFIDs;
+    }
+    //Add in the years
     if (this.portalYearsOnly.length > 0) {
       dbFormatWithAddedHiddenYears["-4"] = {
         "4": [this.portalYearsOnly, {}, []]
       };
     }
+
     this.tryingToSendDBFormat = JSON.stringify(dbFormatWithAddedHiddenYears);
     setTimeout(() => {
       if (
@@ -834,10 +860,12 @@ export class FiltersService {
     for (let bin in this.newWorkingQuery) {
       this.newWorkingFID[bin] = "";
       this.newWorkingQuery[bin] = {};
+      this.newFIDOrder[bin] = [];
     }
     this.newDBFormat = {};
     this.newFIDs = {};
     this.newFIDBID = {};
+
     this.form.reset();
     this.saveAndSend();
   }
@@ -1269,6 +1297,7 @@ export class FiltersService {
           } else {
             var currentFid = cloneDeep(this.newDBFormat[bin][fid][1]);
             this.newFIDBID[fid] = bin;
+            this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([fid]);
             if (this.newDBFormat[bin][fid][0].length > 0) {
               currentFid[String(-1 * Number(bin))] = this.newDBFormat[bin][
                 fid

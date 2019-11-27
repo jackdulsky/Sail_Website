@@ -29,7 +29,7 @@
               <img
                 *ngFor="
                   let disp of filterService.getPlayerSpecifics(0)
-                    | Sort: 'OrderIDID'
+                    | Sort: 'OrderID'
                 "
                 class="clubLogo"
                 [src]="getActiveLogo(getTeamID(disp))"
@@ -173,8 +173,8 @@
             placeholder="  SEARCH"
             autocomplete="off"
             class="filterSearch"
+            (input)="playerSearching($event.target.value)"
           />
-          <!-- (input)="searching($event.target.value)" -->
         </span>
       </div>
     </div>

@@ -13,6 +13,7 @@ import { NameenterpopComponent } from "../nameenterpop/nameenterpop.component";
 import { PullDataService } from "../pull-data.service";
 import * as cloneDeep from "lodash/cloneDeep";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { KeyValue } from "@angular/common";
 
 @Component({
   selector: "app-filter-bar",
@@ -43,6 +44,7 @@ export class FilterBarComponent implements OnInit {
   //OPENS ENTIRE FILTER PAGE CLEAN
   openFilterPage(selected: string) {
     if (!this.filterOpen) {
+      this.filterService.setPlayers();
       //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
       const dialogConfig = new MatDialogConfig();
       dialogConfig.width = "100vw";
@@ -394,4 +396,19 @@ export class FilterBarComponent implements OnInit {
   removeQuery(fid: string) {
     this.filterService.removeQuery(fid);
   }
+
+  //ORDER SIDE BUTTONS ON THEIR ORDER ID
+  valueOrderFIDs = (
+    a: KeyValue<string, any>,
+    b: KeyValue<string, any>
+  ): number => {
+    var bin = this.filterService.newFIDBID[a.key];
+    return this.filterService.newFIDOrder[bin].indexOf(a.key) <
+      this.filterService.newFIDOrder[bin].indexOf(b.key)
+      ? -1
+      : this.filterService.newFIDOrder[bin].indexOf(b.key) <
+        this.filterService.newFIDOrder[bin].indexOf(a.key)
+      ? 1
+      : 0;
+  };
 }

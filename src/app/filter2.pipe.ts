@@ -11,7 +11,7 @@ export class FilterPipe2 implements PipeTransform {
     //SPECIAL CASES
     //FOR LENGTHY OPTION RESTRICT MINIMUM SEARCH TEXT (OR SHOW SELECTED)
     if (
-      (id == "3" && (searchText == null || searchText.length <= 2)) ||
+      (id == "3" && (searchText == null || searchText.length <= 3)) ||
       (id == "8" && (searchText == null || searchText.length <= 1))
     ) {
       //IF IT IS A SPECIAL CASE BUT NONE ARE SELECTED RETURN EMPTY ARRAY

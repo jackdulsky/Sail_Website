@@ -5,6 +5,7 @@ import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
+import * as cloneDeep from "lodash/cloneDeep";
 
 @Component({
   selector: "app-player",
@@ -219,7 +220,33 @@ export class PlayerComponent implements OnInit {
     return returnPlayers;
   }
 
-  //Toggle Display of Teams Selection
+  //populate display players
+  playerSearching(input: string) {
+    if (input.length > 3) {
+      this.filterService.playersToDisplay = [];
+      for (let player in this.filterService.pullValueMap["3"]) {
+        var playerValue = this.filterService.pullValueMap["3"][player];
+        if (playerValue) {
+          if (playerValue["Label"].toLowerCase().includes(input)) {
+            this.filterService.playersToDisplay[player] = playerValue;
+          }
+        }
+      }
+      // this.filterService.playersToDisplay = _.pickBy(
+      //   cloneDeep(this.filterService.pullValueMap["3"]),
+      //   function(value, key) {
+      //     return value["Label"].toLowerCase().includes(input);
+      //   }
+      // );
+      // this.filterService.pullValueMap[
+      //   "3"
+      // ].filter(it => {
+      //   return it.value["Label"].toLowerCase().includes(input);
+      // });
+    }
+  }
+
+  //Toggle Display of Player Selection
   displayPlayers(onOff: any) {
     if (!onOff) {
       this.showList = true;
