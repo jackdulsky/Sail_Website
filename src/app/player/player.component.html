@@ -183,9 +183,7 @@
         id="playerList"
         class=""
         (click)="changePlayer(player.key, player.value)"
-        *ngFor="
-          let player of getPlayers(filterService.pullValueMap['3']) | keyvalue
-        "
+        *ngFor="let player of filterService.playersToDisplay | keyvalue"
       >
         <div class="" style="">
           <img

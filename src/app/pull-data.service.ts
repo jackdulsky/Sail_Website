@@ -252,6 +252,15 @@ export class PullDataService {
     });
   }
 
+  //PULL PLAYER DATA
+  pullPlayersToDisplay() {
+    var query =
+      "exec [SaildB].[filter].[spGetPlayersList] N'" + this.GUID + "'";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+
   //INSERT THE REPORT
   pushNewReport(reportJSON: string) {
     var query = "SailDB.Reports.spAddNewReport N'" + reportJSON + "'";

@@ -86,6 +86,7 @@ export class FilterspopComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({});
     this.formG = this.fb.group({});
+    this.filterService.setPlayers();
     //this.createPosMenus();
     this.filterService.conferenceSelections["2"] = "AFC";
     setTimeout(() => {

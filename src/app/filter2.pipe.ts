@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import { FiltersService } from "./filters.service";
+import * as cloneDeep from "lodash/cloneDeep";
 
 //THSI FILTER PIPE IS USED FOR THE TYPE0 ENTRY FORMS
 @Pipe({ name: "filter2" })
@@ -14,13 +15,26 @@ export class FilterPipe2 implements PipeTransform {
       (id == "8" && (searchText == null || searchText.length <= 1))
     ) {
       //IF IT IS A SPECIAL CASE BUT NONE ARE SELECTED RETURN EMPTY ARRAY
-      if (this.filt.form.value[id] == null) {
-        return [];
+      // if (this.filt.form.value[id] == null) {
+      //   return [];
+      // }
+      var playersDisplayed = this.filt.playersToDisplay;
+      var selected = [];
+      if (this.filt.form.value[id] != null) {
+        selected = cloneDeep(this.filt.form.value[id]);
       }
+      if (id == "3") {
+        selected = selected.concat(Object.keys(playersDisplayed));
+      }
+
       //ELSE RETURN THE ITEMS SELECTED EVEN IF MINIMUM SEARCH THRESHOLD IS NOT SET
       return items.filter(it => {
         try {
-          return this.filt.form.value[id].indexOf(it.key) != -1;
+          return (
+            selected.indexOf(it.key) != -1
+            //this.filt.form.value[id].indexOf(it.key) != -1 ||
+            // Object.keys(playersDisplayed).indexOf(String(it.key)) != -1
+          );
         } catch {
           return false;
         }

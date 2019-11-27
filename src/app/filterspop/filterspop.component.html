@@ -76,14 +76,8 @@
             </div>
           </div>
         </div>
-        <!-- *ngIf="filterService.show != ''" -->
         <div class="guiArea">
           <ng-container *ngFor="let att of filterService.selectingAttributes">
-            <!-- <div style="width: 100%">
-              <H2 class="l2Title"
-                >{{ filterService.pullAttribute[att][Label] }} Filters</H2
-              >
-            </div> -->
             <ng-container
               *ngIf="
                 filterService.pullAttribute[att] &&
@@ -168,6 +162,20 @@
                 style="width:100%"
               ></ng-container>
             </ng-container>
+            <ng-container
+            *ngIf="
+              filterService.pullAttribute[att] &&
+              6 == filterService.pullAttribute[att]['UITypeID']
+            "
+          >
+            <ng-container
+              *ngTemplateOutlet="
+                type6Selection;
+                context: { id: att, values: null }
+              "
+              style="width:100%"
+            ></ng-container>
+          </ng-container>
           </ng-container>
         </div>
         <div class="rightside">
@@ -707,6 +715,90 @@
 
 <mat-menu #Pos="matMenu"><button mat-menu-item [matMenuTriggerFor]="DEF">DEF</button><button mat-menu-item [matMenuTriggerFor]="OFF">OFF</button><button mat-menu-item [matMenuTriggerFor]="ST">ST</button></mat-menu><mat-menu #DEF="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,202)"[matMenuTriggerFor]="DL">DL</button><button mat-menu-item (click)="toggleNestedSelect(id,204)"[matMenuTriggerFor]="LB">LB</button><button mat-menu-item (click)="toggleNestedSelect(id,201)"[matMenuTriggerFor]="DB">DB</button></mat-menu><mat-menu #OFF="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,208)"[matMenuTriggerFor]="QB">QB</button><button mat-menu-item (click)="toggleNestedSelect(id,209)"[matMenuTriggerFor]="RB">RB</button><button mat-menu-item (click)="toggleNestedSelect(id,210)"[matMenuTriggerFor]="TE">TE</button><button mat-menu-item (click)="toggleNestedSelect(id,211)"[matMenuTriggerFor]="WR">WR</button><button mat-menu-item (click)="toggleNestedSelect(id,206)"[matMenuTriggerFor]="OL">OL</button></mat-menu><mat-menu #ST="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,205)">LS</button><button mat-menu-item (click)="toggleNestedSelect(id,207)"[matMenuTriggerFor]="P">P</button><button mat-menu-item (click)="toggleNestedSelect(id,203)"[matMenuTriggerFor]="K">K</button></mat-menu><mat-menu #DB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,317)"[matMenuTriggerFor]="S">S</button><button mat-menu-item (click)="toggleNestedSelect(id,301)"[matMenuTriggerFor]="CB">CB</button></mat-menu><mat-menu #DL="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,304)"[matMenuTriggerFor]="EDGE">EDGE</button><button mat-menu-item (click)="toggleNestedSelect(id,307)"[matMenuTriggerFor]="IDL">IDL</button></mat-menu><mat-menu #K="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,562)">RFK</button><button mat-menu-item (click)="toggleNestedSelect(id,540)">LFK</button><button mat-menu-item (click)="toggleNestedSelect(id,414)">KS</button></mat-menu><mat-menu #LB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,313)"[matMenuTriggerFor]="OLB">OLB</button><button mat-menu-item (click)="toggleNestedSelect(id,306)"[matMenuTriggerFor]="ILB">ILB</button></mat-menu><mat-menu #OL="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,318)"[matMenuTriggerFor]="T">T</button><button mat-menu-item (click)="toggleNestedSelect(id,308)"[matMenuTriggerFor]="IOL">IOL</button></mat-menu><mat-menu #P="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,563)">RFP</button><button mat-menu-item (click)="toggleNestedSelect(id,541)">LFP</button></mat-menu><mat-menu #QB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,555)">AQB</button><button mat-menu-item (click)="toggleNestedSelect(id,554)">PQB</button><button mat-menu-item (click)="toggleNestedSelect(id,520)">DQB</button></mat-menu><mat-menu #RB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,574)">URB</button><button mat-menu-item (click)="toggleNestedSelect(id,514)">CRB</button><button mat-menu-item (click)="toggleNestedSelect(id,566)">SRB</button><button mat-menu-item (click)="toggleNestedSelect(id,553)">PRB</button><button mat-menu-item (click)="toggleNestedSelect(id,305)"[matMenuTriggerFor]="FB">FB</button></mat-menu><mat-menu #TE="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,578)">YTE</button><button mat-menu-item (click)="toggleNestedSelect(id,522)">FTE</button><button mat-menu-item (click)="toggleNestedSelect(id,529)">HTE</button><button mat-menu-item (click)="toggleNestedSelect(id,534)">JTE</button></mat-menu><mat-menu #WR="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,423)"[matMenuTriggerFor]="OWR">OWR</button><button mat-menu-item (click)="toggleNestedSelect(id,428)">SWR</button></mat-menu><mat-menu #CB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,421)"[matMenuTriggerFor]="OCB">OCB</button><button mat-menu-item (click)="toggleNestedSelect(id,417)">NCB</button></mat-menu><mat-menu #EDGE="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,513)">CED</button><button mat-menu-item (click)="toggleNestedSelect(id,550)">OED</button><button mat-menu-item (click)="toggleNestedSelect(id,523)">FED</button></mat-menu><mat-menu #FB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,558)">RFB</button><button mat-menu-item (click)="toggleNestedSelect(id,509)">BFB</button></mat-menu><mat-menu #ILB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,429)"[matMenuTriggerFor]="MLB">MLB</button><button mat-menu-item (click)="toggleNestedSelect(id,433)"[matMenuTriggerFor]="WLB">WLB</button></mat-menu><mat-menu #IDL="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,419)">NT</button><button mat-menu-item (click)="toggleNestedSelect(id,405)"[matMenuTriggerFor]="DT">DT</button></mat-menu><mat-menu #IOL="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,409)"[matMenuTriggerFor]="G">G</button><button mat-menu-item (click)="toggleNestedSelect(id,401)"[matMenuTriggerFor]="C">C</button></mat-menu><mat-menu #OLB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,506)">4OLB</button></mat-menu><mat-menu #S="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,407)">FS</button><button mat-menu-item (click)="toggleNestedSelect(id,430)"[matMenuTriggerFor]="SS">SS</button><button mat-menu-item (click)="toggleNestedSelect(id,418)">NS</button></mat-menu><mat-menu #T="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,508)">T5</button><button mat-menu-item (click)="toggleNestedSelect(id,572)">TG</button><button mat-menu-item (click)="toggleNestedSelect(id,539)">LT</button><button mat-menu-item (click)="toggleNestedSelect(id,561)">RT</button><button mat-menu-item (click)="toggleNestedSelect(id,570)">SWT</button></mat-menu><mat-menu #C="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,512)">CG</button><button mat-menu-item (click)="toggleNestedSelect(id,511)">CO</button></mat-menu><mat-menu #DT="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,505)">3T</button><button mat-menu-item (click)="toggleNestedSelect(id,502)">34DE</button></mat-menu><mat-menu #G="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,507)">G5</button><button mat-menu-item (click)="toggleNestedSelect(id,528)">GT</button><button mat-menu-item (click)="toggleNestedSelect(id,527)">GC</button><button mat-menu-item (click)="toggleNestedSelect(id,538)">LG</button><button mat-menu-item (click)="toggleNestedSelect(id,560)">RG</button></mat-menu><mat-menu #OCB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,537)">LCB</button><button mat-menu-item (click)="toggleNestedSelect(id,559)">RCB</button><button mat-menu-item (click)="toggleNestedSelect(id,544)">MCB</button></mat-menu><mat-menu #OWR="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,577)">XWR</button><button mat-menu-item (click)="toggleNestedSelect(id,579)">ZWR</button><button mat-menu-item (click)="toggleNestedSelect(id,533)">JWR</button></mat-menu><mat-menu #MLB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,501)">2DM</button><button mat-menu-item (click)="toggleNestedSelect(id,503)">3DM</button></mat-menu><mat-menu #SS="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,519)">DLB</button></mat-menu><mat-menu #WLB="matMenu"><button mat-menu-item (click)="toggleNestedSelect(id,504)">3DW</button><button mat-menu-item (click)="toggleNestedSelect(id,547)">NW</button></mat-menu>
       </ng-template>
+      <ng-template #type6Selection let-id="id" let-values="values">
+        <div class= "playerGUIContainer">
+
+          <div class="playerDisplayContainer">
+            <div class="togglelabel">
+              {{ filterService.pullAttribute[id][Label] }}:
+            </div>
+            
+            <mat-form-field
+              id="tier3Tab{{ id }}"
+              style="width:100%; padding-right:5%;"
+              >
+              <mat-select
+              [formControl]="filterService.form.controls[id]"
+              multiple
+              (selectionChange)="type0change(id, filterService.level1Selected)"
+              style="color:black;"
+              >
+                <mat-option>
+                  <ngx-mat-select-search
+                    id="{{ id }}search"
+                    formControlName="{{ id }}search"
+                    placeholderLabel="Search"
+                    [noEntriesFoundLabel]="'None Found'"
+                    [clearSearchInput]="false"
+                    style="caret-color: white !important;"
+                    ></ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option disabled>
+                    <button
+                    id="{{ id }}all"
+                    mat-button
+                    (click)="
+                      toggleAllSelections(id, true, filterService.level1Selected)
+                      "
+                  >
+                  Select All
+                </button>
+                <button
+                id="{{ id }}none"
+                (click)="
+                toggleAllSelections(id, false, filterService.level1Selected)
+                "
+                mat-button
+                >
+                Deselect All
+              </button>
+            </mat-option>
+            
+            <mat-option
+            *ngFor="
+            let cat of filterService.pullValueMap[id]
+            | keyvalue
+            | filter2: filterService.form.value[id + 'search']:id
+            "
+            [value]="cat.key"
+            class="clickedWhite"
+            >{{ cat.value[Label] }}</mat-option
+            >
+              </mat-select>
+            </mat-form-field>
+          </div>
+              <div class="playerList ">
+                  <div
+                  id="playerList"
+                  class=""
+                  (click)="toggleNestedSelect(id,player.key)"
+                    *ngFor="
+                    let player of filterService.playersToDisplay | keyvalue
+                    "
+                    >
+                    <div class="" style="">
+                      <img
+                      class="grid-itemGen"
+                      src="{{ filterService.getActivePlayerImage(player.key) }}"
+                      onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
+                      alt=""
+                      />
+                    </div>
+                    <div class="labelText ">&nbsp;&nbsp;{{ player.value.Label }}</div>
+                  </div>
+                </div>
+          </div>
+          </ng-template>
     </div>
 
     <!--     

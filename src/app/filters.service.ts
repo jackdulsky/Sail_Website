@@ -124,6 +124,7 @@ export class FiltersService {
   displayPlayers = {};
   positionHierarchy;
   positionHItem;
+  playersToDisplay: any[] = [];
   constructor(
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,
@@ -244,6 +245,49 @@ export class FiltersService {
     }
     return tempMap;
   }
+
+  //return players to be displayed limit 15
+  getPlayers(players: any) {
+    var returnPlayers = {};
+    var i = 0;
+    for (let player in players) {
+      if (i == 15) {
+        break;
+      }
+      returnPlayers[player] = players[player];
+      i += 1;
+    }
+
+    return cloneDeep(this.playersToDisplay);
+    return returnPlayers;
+  }
+  setPlayers() {
+    this.pullData.pullPlayersToDisplay().subscribe(data => {
+      var players = this.pullValueMap["3"];
+      var arrPlayers = {};
+      for (let row in data) {
+        if (players[data[row]["SailID"]]) {
+          arrPlayers[data[row]["SailID"]] = players[data[row]["SailID"]];
+        }
+      }
+      for (let item in this.form.value["3"]) {
+        if (players[item]) {
+          arrPlayers[item] = players[item];
+        }
+      }
+      for (let fid in this.newDBFormat["-3"]) {
+        if (this.newDBFormat["-3"][fid][0].length != 0) {
+          for (let explicit in this.newDBFormat["-3"][fid][0]) {
+            if (players[explicit]) {
+              arrPlayers[explicit] = players[explicit];
+            }
+          }
+        }
+      }
+      this.playersToDisplay = cloneDeep(arrPlayers);
+    });
+  }
+
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
   getBulkImport() {
     //console.log("IMPORT BULK");
@@ -741,6 +785,9 @@ export class FiltersService {
         this.setActiveClub();
         this.setActivePlayer();
         this.updateRDURL();
+        setTimeout(() => {
+          this.setPlayers();
+        }, 250);
       }
     }, 250);
   }
@@ -1669,6 +1716,25 @@ export class FiltersService {
       return obj[text];
     } catch (e) {
       return "";
+    }
+  }
+
+  //RETURN THE PLAYER IMAGES
+  getActivePlayerImage(playerID: any) {
+    var baseURL =
+      "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
+    try {
+      if (playerID == "") {
+        return "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/NFL_.png";
+      } else {
+        var gsisID = this.pullPlayers[playerID]["GSISPlayerID"];
+        var url = baseURL.replace("REPLACEME", gsisID);
+        return url;
+      }
+    } catch (e) {
+      setTimeout(() => {
+        return this.getActivePlayerImage(playerID);
+      }, 100);
     }
   }
 }
