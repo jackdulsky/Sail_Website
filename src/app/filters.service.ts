@@ -248,18 +248,18 @@ export class FiltersService {
 
   //return players to be displayed limit 15
   getPlayers(players: any) {
-    var returnPlayers = {};
-    var i = 0;
-    for (let player in players) {
-      if (i == 15) {
-        break;
-      }
-      returnPlayers[player] = players[player];
-      i += 1;
-    }
+    // var returnPlayers = {};
+    // var i = 0;
+    // for (let player in players) {
+    //   if (i == 15) {
+    //     break;
+    //   }
+    //   returnPlayers[player] = players[player];
+    //   i += 1;
+    // }
+    // return returnPlayers;
 
     return cloneDeep(this.playersToDisplay);
-    return returnPlayers;
   }
   setPlayers() {
     this.pullData.pullPlayersToDisplay().subscribe(data => {
@@ -278,8 +278,9 @@ export class FiltersService {
       for (let fid in this.newDBFormat["-3"]) {
         if (this.newDBFormat["-3"][fid][0].length != 0) {
           for (let explicit in this.newDBFormat["-3"][fid][0]) {
-            if (players[explicit]) {
-              arrPlayers[explicit] = players[explicit];
+            if (players[Number(this.newDBFormat["-3"][fid][0][explicit])]) {
+              arrPlayers[Number(this.newDBFormat["-3"][fid][0][explicit])] =
+                players[Number(this.newDBFormat["-3"][fid][0][explicit])];
             }
           }
         }
