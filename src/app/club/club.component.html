@@ -58,9 +58,11 @@
                 ><span class="g-label g-mb-1">{{
                   filterService.getLabel(disp, "Label")
                 }}</span
-                ><span class="g-data">{{
-                  filterService.getLabel(disp, "Value")
-                }}</span></span
+                ><span
+                  class="g-data"
+                  [ngStyle]="filterService.setStyleColor(disp)"
+                  >{{ filterService.getLabel(disp, "Value") }}</span
+                ></span
               >
             </div>
 
@@ -95,6 +97,7 @@
                 [outerStrokeWidth]="4"
                 [innerStrokeWidth]="2"
                 [outerStrokeColor]="filterService.shadeColor(disp['Color'], 0)"
+                [titleColor]="filterService.shadeColor(disp['Color'], 0)"
                 [innerStrokeColor]="filterService.shadeColor(disp['Color'], 68)"
                 [animation]="true"
                 [animationDuration]="300"
@@ -117,11 +120,15 @@
                 ><span class="g-label g-mb-1">{{
                   filterService.getLabel(disp, "Label")
                 }}</span
-                ><span class="g-data"
+                ><span
+                  class="g-data"
+                  [ngStyle]="filterService.setStyleColor(disp)"
                   >{{ filterService.getLabel(disp, "Value")
-                  }}<span class="rankText">{{
-                    filterService.getLabel(disp, "SubValue")
-                  }}</span></span
+                  }}<span
+                    class="rankText"
+                    [ngStyle]="filterService.setStyleColor(disp)"
+                    >{{ filterService.getLabel(disp, "SubValue") }}</span
+                  ></span
                 ></span
               >
             </div>
@@ -161,11 +168,15 @@
                 ><span class="g-label g-mb-1">{{
                   filterService.getLabel(disp, "Label")
                 }}</span
-                ><span class="marginLeft10"
+                ><span
+                  class="marginLeft10"
+                  [ngStyle]="filterService.setStyleColor(disp)"
                   >{{ filterService.getLabel(disp, "Value")
-                  }}<span class="rankText">{{
-                    filterService.getLabel(disp, "SubValue")
-                  }}</span></span
+                  }}<span
+                    class="rankText"
+                    [ngStyle]="filterService.setStyleColor(disp)"
+                    >{{ filterService.getLabel(disp, "SubValue") }}</span
+                  ></span
                 ></span
               >
             </div>
@@ -179,11 +190,15 @@
               ><span class="g-label g-mb-1">{{
                 filterService.getLabel(disp, "Label")
               }}</span
-              ><span class="g-data"
+              ><span
+                class="g-data"
+                [ngStyle]="filterService.setStyleColor(disp)"
                 >{{ filterService.getLabel(disp, "Value")
-                }}<span class="rankText">{{
-                  filterService.getLabel(disp, "SubValue")
-                }}</span></span
+                }}<span
+                  class="rankText"
+                  [ngStyle]="filterService.setStyleColor(disp)"
+                  >{{ filterService.getLabel(disp, "SubValue") }}</span
+                ></span
               ></span
             >
           </div>
@@ -200,11 +215,15 @@
               ><span class="g-label g-mb-1">{{
                 filterService.getLabel(disp, "Label")
               }}</span
-              ><span class="g-data"
+              ><span
+                class="g-data"
+                [ngStyle]="filterService.setStyleColor(disp)"
                 >{{ filterService.getLabel(disp, "Value")
-                }}<span class="rankText">{{
-                  filterService.getLabel(disp, "SubValue")
-                }}</span></span
+                }}<span
+                  class="rankText"
+                  [ngStyle]="filterService.setStyleColor(disp)"
+                  >{{ filterService.getLabel(disp, "SubValue") }}</span
+                ></span
               ></span
             >
           </div>

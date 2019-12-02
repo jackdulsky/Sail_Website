@@ -57,11 +57,15 @@
                   ><span class="g-label g-mb-1">{{
                     filterService.getLabel(disp, "Label")
                   }}</span
-                  ><span class="g-data"
+                  ><span
+                    class="g-data"
+                    [ngStyle]="filterService.setStyleColor(disp)"
                     >{{ filterService.getLabel(disp, "Value")
-                    }}<span class="rankText">{{
-                      filterService.getLabel(disp, "SubValue")
-                    }}</span></span
+                    }}<span
+                      class="rankText"
+                      [ngStyle]="filterService.setStyleColor(disp)"
+                      >{{ filterService.getLabel(disp, "SubValue") }}</span
+                    ></span
                   ></span
                 >
               </div>
@@ -114,11 +118,15 @@
               ><span class="g-label g-mb-1">{{
                 filterService.getLabel(disp, "Label")
               }}</span
-              ><span class="g-data"
+              ><span
+                class="g-data"
+                [ngStyle]="filterService.setStyleColor(disp)"
                 >{{ filterService.getLabel(disp, "Value")
-                }}<span class="rankText">{{
-                  filterService.getLabel(disp, "SubValue")
-                }}</span></span
+                }}<span
+                  class="rankText"
+                  [ngStyle]="filterService.setStyleColor(disp)"
+                  >{{ filterService.getLabel(disp, "SubValue") }}</span
+                ></span
               ></span
             >
           </div>
@@ -132,11 +140,16 @@
               ><span class="g-label g-mb-1">{{
                 filterService.getLabel(disp, "Label")
               }}</span
-              ><span class="g-data">
+              ><span
+                class="g-data"
+                [ngStyle]="filterService.setStyleColor(disp)"
+              >
                 {{ filterService.getLabel(disp, "Value")
-                }}<span class="rankText">{{
-                  filterService.getLabel(disp, "SubValue")
-                }}</span></span
+                }}<span
+                  class="rankText"
+                  [ngStyle]="filterService.setStyleColor(disp)"
+                  >{{ filterService.getLabel(disp, "SubValue") }}</span
+                ></span
               ></span
             >
           </div>
@@ -150,9 +163,11 @@
               ><span class="g-label g-mb-1">{{
                 filterService.getLabel(disp, "Label")
               }}</span
-              ><span class="g-data">{{
-                filterService.getLabel(disp, "Value")
-              }}</span></span
+              ><span
+                class="g-data"
+                [ngStyle]="filterService.setStyleColor(disp)"
+                >{{ filterService.getLabel(disp, "Value") }}</span
+              ></span
             >
           </div>
         </div>

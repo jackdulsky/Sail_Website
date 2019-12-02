@@ -1711,6 +1711,7 @@ export class FiltersService {
           this.clubSpecifics[id] = [];
         }
         this.clubSpecifics[id].push(data[b]);
+        console.log("CLUB SPECIFICS", this.clubSpecifics);
       }
     });
   }
@@ -1747,6 +1748,21 @@ export class FiltersService {
     } catch (e) {
       return "";
     }
+  }
+
+  //Set the color style
+  setStyleColor(obj: any) {
+    var styles = {};
+    try {
+      styles = {
+        color: obj["Color"]
+      };
+    } catch (e) {
+      styles = {
+        color: "Black"
+      };
+    }
+    return styles;
   }
 
   //RETURN THE PLAYER IMAGES

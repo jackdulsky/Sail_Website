@@ -1031,18 +1031,6 @@ h6,
   width: 250px;
   float: left;
 }
-.birthInfo {
-  float: left;
-  display: flex;
-  padding-top: 8px;
-  width: 160px;
-}
-.agentInfo {
-  float: left;
-  display: flex;
-  padding-top: 8px;
-  width: 250px;
-}
 .divRecordSub {
   width: fit-content;
   margin-top: auto;
