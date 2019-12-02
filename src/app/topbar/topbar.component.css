@@ -24,7 +24,7 @@ ul {
 }
 .rightBG {
   background-image: url(../../assets/Site_header_rightV3.png);
-  width: calc(100% - 434px);
+  width: calc(100% - 428px);
   min-width: 303px;
   height: 51px;
   min-height: 51px;
@@ -32,7 +32,7 @@ ul {
   background-size: contain;
   background-repeat: repeat;
   position: absolute;
-  left: 434px;
+  left: 428px;
 }
 .topbuttonleft {
   margin-left: 5px;

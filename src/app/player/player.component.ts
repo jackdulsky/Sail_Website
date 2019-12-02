@@ -232,17 +232,6 @@ export class PlayerComponent implements OnInit {
           }
         }
       }
-      // this.filterService.playersToDisplay = _.pickBy(
-      //   cloneDeep(this.filterService.pullValueMap["3"]),
-      //   function(value, key) {
-      //     return value["Label"].toLowerCase().includes(input);
-      //   }
-      // );
-      // this.filterService.pullValueMap[
-      //   "3"
-      // ].filter(it => {
-      //   return it.value["Label"].toLowerCase().includes(input);
-      // });
     }
   }
 

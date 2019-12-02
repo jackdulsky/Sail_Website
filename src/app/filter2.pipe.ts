@@ -54,7 +54,7 @@ export class FilterPipe2 implements PipeTransform {
     //REGULAR CASE RETURN IF THE STRING SEARCHED FOR IS IN THE LABEL
     //NOT CASE SENSITIVE
     searchText = searchText.toLowerCase();
-    return items.filter(it => {
+    var returnList = items.filter(it => {
       if (["0", "101", "102", "103"].indexOf(String(it.key)) != -1) {
         return false;
       }
@@ -75,5 +75,12 @@ export class FilterPipe2 implements PipeTransform {
         }
       }
     });
+    if (id == "3") {
+      this.filt.playersToDisplay = [];
+      for (let item of returnList) {
+        this.filt.playersToDisplay[item.key] = item.value;
+      }
+    }
+    return returnList;
   }
 }

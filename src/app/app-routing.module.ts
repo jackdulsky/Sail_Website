@@ -40,13 +40,9 @@ const routes: Routes = [
         component: SettingComponent
       },
       {
-        path: "report2/:reportid",
+        path: "report/:reportid",
         component: ReportComponent,
         pathMatch: "full"
-      },
-      {
-        path: "report",
-        redirectTo: "base-reports/0"
       },
       {
         path: "filters",

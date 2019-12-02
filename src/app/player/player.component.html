@@ -39,7 +39,7 @@
               <span
                 *ngFor="
                   let disp of filterService.getPlayerSpecifics(1)
-                    | Sort: 'OrderIDID'
+                    | Sort: 'OrderID'
                 "
                 class="clubLogoText"
               >
@@ -52,7 +52,7 @@
                   class="g-profile__bio-element"
                   *ngFor="
                     let disp of filterService.getPlayerSpecifics(2)
-                      | Sort: 'OrderIDID'
+                      | Sort: 'OrderID'
                   "
                   ><span class="g-label g-mb-1">{{
                     filterService.getLabel(disp, "Label")
