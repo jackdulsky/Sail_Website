@@ -54,14 +54,16 @@ export class FilterPipe2 implements PipeTransform {
     //REGULAR CASE RETURN IF THE STRING SEARCHED FOR IS IN THE LABEL
     //NOT CASE SENSITIVE
     searchText = searchText.toLowerCase();
+    var otherNameForm = this.filt.transformName(searchText);
     var returnList = items.filter(it => {
       if (["0", "101", "102", "103"].indexOf(String(it.key)) != -1) {
         return false;
       }
       try {
         return (
+          this.filt.form.value[id].indexOf(it.key) != -1 ||
           it.value["Label"].toLowerCase().includes(searchText) ||
-          this.filt.form.value[id].indexOf(it.key) != -1
+          it.value["Label"].toLowerCase().includes(otherNameForm)
         );
       } catch {
         try {

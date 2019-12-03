@@ -127,7 +127,7 @@ export class ClubComponent implements OnInit {
     if (document.getElementById(name + "clubBarHighlightid")) {
       var newTab = document.getElementById(name + "clubBarHighlightid");
       newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+      newTab.style.borderBottom = "4px solid lightskyblue";
     } else {
       setTimeout(() => {
         this.justHighlight(name);
@@ -221,7 +221,7 @@ export class ClubComponent implements OnInit {
     try {
       var newTab = document.getElementById(name + "clubBarHighlightid");
       newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+      newTab.style.borderBottom = "4px solid lightskyblue";
     } catch (e) {}
 
     //Route Appropriately

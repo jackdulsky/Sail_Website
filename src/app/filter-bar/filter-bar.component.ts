@@ -130,7 +130,7 @@ export class FilterBarComponent implements OnInit {
       var newTab = document.getElementById("tier1Tab" + bin);
 
       newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+      newTab.style.borderBottom = "4px solid lightskyblue";
     }
     this.openFilterPage(bin);
     this.filterService.show = "";
@@ -323,67 +323,75 @@ export class FilterBarComponent implements OnInit {
   //Return the panel to att mapping for a single query in a bin
   createSingleQueryPanelAttributeMap(attsMap: any) {
     var panelMap = {};
-    for (let att in attsMap) {
-      var panel = this.filterService.pullNavigation[att]["ParentItemID"];
-      if (panelMap[panel]) {
-        panelMap[panel] = panelMap[panel].concat([att]);
-      } else {
-        panelMap[panel] = [att];
+    try {
+      for (let att in attsMap) {
+        var panel = this.filterService.pullNavigation[att]["ParentItemID"];
+        if (panelMap[panel]) {
+          panelMap[panel] = panelMap[panel].concat([att]);
+        } else {
+          panelMap[panel] = [att];
+        }
       }
-    }
+    } catch (e) {}
     return panelMap;
   }
 
   //GET EXPLICIT VALUES String Labels
   getExplicitValues(values: any, bin: any) {
     var dispName = "";
-    var att = String(Number(bin) * -1);
-    for (let val in values) {
-      dispName +=
-        ", " + this.filterService.pullValueMap[att][values[val]]["Label"];
-      if (dispName.length > 100) {
-        break;
+    try {
+      var att = String(Number(bin) * -1);
+      for (let val in values) {
+        dispName +=
+          ", " + this.filterService.pullValueMap[att][values[val]]["Label"];
+        if (dispName.length > 100) {
+          break;
+        }
       }
-    }
-    while (dispName.charAt(0) == ",") {
-      dispName = dispName.substr(2);
-    }
+      while (dispName.charAt(0) == ",") {
+        dispName = dispName.substr(2);
+      }
+    } catch (e) {}
     return dispName;
   }
 
   //GET NON EXPLICIT VALUES String Labels, panels or Atts
   getAttOrPanelStringsValues(values: any) {
     var dispName = "";
-    for (let val in values) {
-      dispName +=
-        ", " + this.filterService.pullNavigationElement[values[val]]["Label"];
-      if (dispName.length > 100) {
-        break;
+    try {
+      for (let val in values) {
+        dispName +=
+          ", " + this.filterService.pullNavigationElement[values[val]]["Label"];
+        if (dispName.length > 100) {
+          break;
+        }
       }
-    }
-    while (dispName.charAt(0) == ",") {
-      dispName = dispName.substr(2);
-    }
+      while (dispName.charAt(0) == ",") {
+        dispName = dispName.substr(2);
+      }
+    } catch (e) {}
     return dispName;
   }
 
   getMultipleQueryBottomString(fid: any, contents: any) {
     var dispName = "";
-    if (contents[0].length != 0) {
-      dispName = this.getExplicitValues(
-        contents[0],
-        this.filterService.newFIDBID[fid]
+    try {
+      if (contents[0].length != 0) {
+        dispName = this.getExplicitValues(
+          contents[0],
+          this.filterService.newFIDBID[fid]
+        );
+      }
+      var potentialAdd = this.getAttOrPanelStringsValues(
+        Object.keys(contents[1])
       );
-    }
-    var potentialAdd = this.getAttOrPanelStringsValues(
-      Object.keys(contents[1])
-    );
-    if (String(potentialAdd) != "") {
-      dispName += ", " + potentialAdd;
-    }
-    while (dispName.charAt(0) == ",") {
-      dispName = dispName.substr(2);
-    }
+      if (String(potentialAdd) != "") {
+        dispName += ", " + potentialAdd;
+      }
+      while (dispName.charAt(0) == ",") {
+        dispName = dispName.substr(2);
+      }
+    } catch (e) {}
     return dispName;
   }
 

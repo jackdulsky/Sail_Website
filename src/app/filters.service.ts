@@ -764,6 +764,58 @@ export class FiltersService {
       this.updateRDURL();
     }
   }
+  //
+  combinedJSONstring() {
+    var combinedDB = cloneDeep(this.newDBFormat);
+    for (let bin in this.newWorkingQuery) {
+      //PUSH EMPTY PERFORM DELETES
+      if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
+        continue;
+      }
+
+      //DO NOT DOUBLE PUT IN ITEMS
+
+      for (let key in this.newFIDs) {
+        if (
+          this.isEqualObjectsContents(
+            this.newFIDs[key],
+            this.newWorkingQuery[bin]
+          )
+        ) {
+          continue;
+        }
+      }
+
+      //SET FID TO CURRENT OR GENERATE NEW ONE
+      var newFIDNumber;
+      if (this.newWorkingFID[bin] != "") {
+        newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
+      } else {
+        newFIDNumber = String(Math.floor(Math.random() * 1000));
+      }
+
+      //PUT THE WORKING QUERY IN NEW FIDs
+      var pkID = [];
+      var att = cloneDeep(this.newWorkingQuery[bin]);
+      //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
+      if (att[String(Number(bin) * -1)]) {
+        pkID = cloneDeep(att[String(Number(bin) * -1)]);
+        delete att[String(Number(bin) * -1)];
+      }
+
+      var FID = [];
+
+      //INIT THE NEW DB FORMAT BEFORE ADDING
+      if (!this.newDBFormat[bin]) {
+        this.newDBFormat[bin] = {};
+      }
+
+      //add
+      this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
+    }
+
+    //SEND TO UPDATE PLAYER LIST
+  }
 
   //SAVE LOCAL STORAGE FOR REFRESH AND THEN SEND THE FILTERS TO THE DB
   saveAndSend() {
@@ -928,7 +980,8 @@ export class FiltersService {
   //CHANGE A LEAGUES STATUS IN THE FORM FOR LEAGUE SELECT GUI
   //CHANGE THE CSS AND INSERT/REMOVE
   toggleLeague(attID: string, value: string, bin: string) {
-    var id = this.pullValue[value]["Label"];
+    var id = this.pullValueMap[attID][value]["Label"];
+    console.log("LOGO", id);
     var logo = document.getElementById(id);
     var oldValue = this.form.value[attID];
     if (oldValue == null) {
@@ -1109,8 +1162,8 @@ export class FiltersService {
 
     //CHANGE NEW CSS
     var newTab = document.getElementById("tier1Tab" + id);
-    newTab.style.backgroundColor = "#f2f2f2";
-    newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+    // newTab.style.backgroundColor = "#f2f2f2";
+    newTab.style.borderBottom = "4px solid lightskyblue";
     this.attributeSelected(String(Number(id) * -100));
   }
 
@@ -1213,7 +1266,8 @@ export class FiltersService {
   buttonContainerColor(id: any) {
     if (this.panels.concat([String(this.show)]).indexOf(String(id)) != -1) {
       return {
-        backgroundColor: "#f2f2f2",
+        //#f2f2f2
+        backgroundColor: "white",
         borderLeft: "4px solid lightskyblue"
       };
     } else {
@@ -1557,10 +1611,12 @@ export class FiltersService {
     let styles =
       this.portalYearsOnly.indexOf(year) != -1
         ? {
-            backgroundColor: "rgba(158, 158, 158, 0.568)"
+            backgroundColor: "#92A2AC",
+            color: "white"
           }
         : {
-            backgroundColor: "white"
+            backgroundColor: "white",
+            color: "black"
           };
     return styles;
   }
@@ -1628,7 +1684,8 @@ export class FiltersService {
   }
 
   //Takes a hex color and percent change and returns new hex color
-  shadeColor(color, percent) {
+  shadeColor(color, percentInput) {
+    var percent = Number(percentInput);
     if (!color.includes("#")) {
       color = this.colorNameToHex(color);
     }
@@ -1639,7 +1696,6 @@ export class FiltersService {
     R = parseInt(String((Number(R) * (100 + percent)) / 100));
     G = parseInt(String((Number(G) * (100 + percent)) / 100));
     B = parseInt(String((Number(B) * (100 + percent)) / 100));
-
     R = R < 255 ? R : 255;
     G = G < 255 ? G : 255;
     B = B < 255 ? B : 255;
@@ -1711,7 +1767,6 @@ export class FiltersService {
           this.clubSpecifics[id] = [];
         }
         this.clubSpecifics[id].push(data[b]);
-        console.log("CLUB SPECIFICS", this.clubSpecifics);
       }
     });
   }
@@ -1781,6 +1836,17 @@ export class FiltersService {
       setTimeout(() => {
         return this.getActivePlayerImage(playerID);
       }, 100);
+    }
+  }
+
+  //Transform Name
+  transformName(text: string) {
+    console.log("Input");
+    if (text.includes(" ")) {
+      var split = text.split(" ");
+      return split[1] + ", " + split[0];
+    } else {
+      return null;
     }
   }
 }

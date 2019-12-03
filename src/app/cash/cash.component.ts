@@ -69,7 +69,7 @@ export class CashComponent implements OnInit {
     try {
       var newTab = document.getElementById(name + "cashBarHighlightid");
       newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+      newTab.style.borderBottom = "4px solid lightskyblue";
     } catch (e) {}
 
     //Route Appropriately

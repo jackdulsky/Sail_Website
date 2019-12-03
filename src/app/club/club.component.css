@@ -17,7 +17,7 @@
 }
 .topLink:hover {
   background-color: #f2f2f2 !important;
-  border-bottom: 4px solid var(--lighter-blue) !important;
+  border-bottom: 4px solid lightskyblue !important;
   cursor: pointer;
 }
 .topBar {
@@ -31,7 +31,13 @@
   min-width: 220px;
 
   padding-right: 30px;
-  background-color: white;
+  /* background-color: white; */
+}
+.teamGrid {
+  border-bottom: 0px solid black;
+  margin-right: 0px !important;
+  display: grid;
+  grid-template-columns: 80px 1fr;
 }
 .yearDropDown:hover,
 .team:hover {
@@ -50,17 +56,19 @@
 .teamText {
   display: inline-block;
   /* background-color: white; */
-  color: black;
+  /* color: black; */
+  color: white;
   font-weight: bold;
   text-align: left;
   font-size: 20px;
   font-family: "DIN";
 }
 .teamList {
-  background-color: white;
-  border: 1px solid black;
+  /* background-color: white; */
+  background-color: grey;
+  border: 0px solid black;
   position: absolute;
-  top: 124px;
+  top: 100px;
 
   z-index: 1000;
   margin: 0;
@@ -109,11 +117,11 @@
 }
 .yearListAll {
   background-color: white;
-  border: 1px solid black;
+  border: 0px solid black;
   position: absolute;
-  top: 95px;
+  top: 87px;
   /* left: 553px; */
-  right: 0px;
+  right: 6px;
   z-index: 1000;
   margin: 0;
   padding: 0;
@@ -123,12 +131,15 @@
   border-radius: 5px;
 }
 .yearDropDown {
-  height: 50px;
+  /* height: 50px; */
   color: black;
-  width: 115px;
-  line-height: 50px;
-  min-width: 115px;
-  font-size: 20px;
+  /* width: 115px; */
+  line-height: 15px;
+  margin: 5px;
+  padding: 7px;
+  border-radius: 10px;
+  /* min-width: 115px; */
+  font-size: 16px;
   font-family: "DIN";
   color: black;
   font-weight: bold;
@@ -138,7 +149,7 @@
   background-color: #c8c8c8;
 }
 .shadow {
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5);
 }
 .yearDropDown:hover {
   background-color: lightgray !important;
@@ -493,6 +504,7 @@ body {
   color: #16181a;
   display: block;
   margin-bottom: 2px;
+  font-family: "DIN";
   font-weight: bold;
 }
 .g-data--inline {

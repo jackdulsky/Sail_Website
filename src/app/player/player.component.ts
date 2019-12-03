@@ -132,7 +132,7 @@ export class PlayerComponent implements OnInit {
     if (document.getElementById(name + "playerBarHighlightid")) {
       var newTab = document.getElementById(name + "playerBarHighlightid");
       newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+      newTab.style.borderBottom = "4px solid lightskyblue";
     } else {
       setTimeout(() => {
         this.justHighlight(name);
@@ -222,12 +222,18 @@ export class PlayerComponent implements OnInit {
 
   //populate display players
   playerSearching(input: string) {
+    var otherNameForm = this.filterService.transformName(input);
+
     if (input.length > 3) {
       this.filterService.playersToDisplay = [];
       for (let player in this.filterService.pullValueMap["3"]) {
         var playerValue = this.filterService.pullValueMap["3"][player];
         if (playerValue) {
-          if (playerValue["Label"].toLowerCase().includes(input)) {
+          var searchItem = playerValue["Label"].toLowerCase();
+          if (
+            searchItem.includes(input) ||
+            searchItem.includes(otherNameForm)
+          ) {
             this.filterService.playersToDisplay[player] = playerValue;
           }
         }
@@ -279,7 +285,7 @@ export class PlayerComponent implements OnInit {
     try {
       var newTab = document.getElementById(name + "playerBarHighlightid");
       newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid var(--lighter-blue)";
+      newTab.style.borderBottom = "4px solid lightskyblue";
     } catch (e) {}
 
     //Route Appropriately

@@ -2,15 +2,13 @@
   <div id="team" class="teamList shadow" *ngIf="showList">
     <div
       id="team"
-      class="team"
-      style="border-bottom: 1px solid black; margin-right: 0px !important;     display: grid;
-      grid-template-columns: 80px 1fr;"
+      class="team teamGrid"
       (click)="changeTeam(team)"
       *ngFor="let team of filterService.teams"
     >
       <img id="team" class="imgLogo tableCenter" [src]="getActiveLogo(team)" />
       <div id="team" class="teamText">
-        &nbsp;&nbsp;{{ team["ClubNickName"] }}
+        &nbsp;&nbsp;{{ filterService.getLabel(team, "ClubNickName") }}
       </div>
     </div>
   </div>

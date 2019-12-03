@@ -21,7 +21,11 @@
                 class="g-profile__name"
                 (click)="displayPlayers(showList)"
               >
-                {{ filterService.playerPortalSelected.Label
+                {{
+                  filterService.getLabel(
+                    filterService.playerPortalSelected,
+                    "Label"
+                  )
                 }}<i id="player" class="fa fa-angle-down fa-lg"></i>
               </h2>
             </div>

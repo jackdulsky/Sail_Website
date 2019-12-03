@@ -63,6 +63,7 @@ import { NewpageComponent } from "./newpage/newpage.component";
 import { ClickOutsideModule } from "ng-click-outside";
 import { NgCircleProgressModule } from "ng-circle-progress";
 import { MenuItemComponent } from './menu-item/menu-item.component';
+import { OrderAttributePipe } from './order-attribute.pipe';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
     CashComponent,
     HomeComponent,
     NewpageComponent,
-    MenuItemComponent
+    MenuItemComponent,
+    OrderAttributePipe
   ],
   imports: [
     NgCircleProgressModule.forRoot({

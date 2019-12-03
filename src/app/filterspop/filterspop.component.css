@@ -125,8 +125,8 @@ input {
   border-bottom: 4px solid white;
 }
 .tier1Tab:hover {
-  background-color: #f2f2f2 !important;
-  border-bottom: 4px solid var(--lighter-blue) !important;
+  /* background-color: #f2f2f2 !important; */
+  border-bottom: 4px solid lightskyblue !important;
   cursor: pointer;
 }
 .tableCenter {
@@ -205,9 +205,9 @@ input {
 }
 .singlePanel:hover,
 .tier2Tab:hover {
-  background-color: #f2f2f2 !important;
+  /* background-color: #f2f2f2 !important; */
   cursor: pointer !important;
-  border-left: 4px solid lightblue;
+  border-left: 4px solid lightblue !important;
 }
 .tier2-name {
   overflow: hidden;
