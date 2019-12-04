@@ -3,15 +3,17 @@
     <div class="g-profile" style="height: 93px;">
       <div class="g-profile__grid overflow-hidden">
         <div class="g-profile__profile" id="player">
-          <img
-            [src]="
-              getActivePlayerImage(filterService.playerPortalActivePlayerID)
-            "
-            onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
-            id="player"
-            class="g-profile__photo_player"
-            (click)="displayPlayers(showList)"
-          />
+          <div class="g-profile__photo_player_box">
+            <img
+              [src]="
+                getActivePlayerImage(filterService.playerPortalActivePlayerID)
+              "
+              onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player3.jpg'"
+              id="player"
+              class="g-profile__photo_player"
+              (click)="displayPlayers(showList)"
+            />
+          </div>
         </div>
         <div class="g-profile__identity">
           <div style="display: flow-root;">
@@ -204,11 +206,11 @@
         (click)="changePlayer(player.key, player.value)"
         *ngFor="let player of filterService.playersToDisplay | keyvalue"
       >
-        <div class="" style="">
+        <div class="grid-itemGen_box" style="">
           <img
             class="grid-itemGen"
             src="{{ getActivePlayerImage(player.key) }}"
-            onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player.jpg'"
+            onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player3.jpg'"
             alt=""
           />
         </div>

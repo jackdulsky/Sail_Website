@@ -87,7 +87,7 @@
   width: 0 !important;
 }
 .category {
-  font-family: "DIN";
+  font-family: "DIN_Rounded_Medium";
   /* background-color: #ebeced; */
   /* background-color: #3e4345; */
   background-color: RGB(13, 13, 13);
@@ -117,7 +117,7 @@
   display: block;
   text-align: left;
   font-weight: bold;
-  font-family: "DIN";
+  font-family: "DIN_Rounded_Medium";
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
   padding-left: 10px;

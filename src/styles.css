@@ -31,6 +31,11 @@ body {
     url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.svg")
       format("svg");
 }
+@font-face {
+  font-family: "DIN_Rounded_Medium";
+  src: url("/assets/Fonts/DIN_Next_Rounded/DINNextRoundedLTPro-Medium.otf")
+    format("opentype");
+}
 .multiselect-dropdown,
 .dropdown-btn {
   border: none !important;
