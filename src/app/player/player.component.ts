@@ -224,20 +224,23 @@ export class PlayerComponent implements OnInit {
   playerSearching(input: string) {
     var otherNameForm = this.filterService.transformName(input);
 
-    if (input.length > 3) {
-      this.filterService.playersToDisplay = [];
-      for (let player in this.filterService.pullValueMap["3"]) {
-        var playerValue = this.filterService.pullValueMap["3"][player];
-        if (playerValue) {
-          var searchItem = playerValue["Label"].toLowerCase();
-          if (
-            searchItem.includes(input) ||
-            searchItem.includes(otherNameForm)
-          ) {
-            this.filterService.playersToDisplay[player] = playerValue;
-          }
-        }
+    //get player name att ID
+    var playerNameInput;
+    for (let att in this.filterService.pullStructure["-3"]["300"]) {
+      if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
+        playerNameInput = att;
       }
+    }
+    var oldWorking = cloneDeep(this.filterService.newWorkingQuery);
+    if (input.length > 3) {
+      this.filterService.newWorkingQuery["-3"][playerNameInput] = [
+        String(input)
+      ];
+      this.filterService.setPlayers(this.filterService.combinedJSONstring());
+      this.filterService.newWorkingQuery = oldWorking;
+    } else {
+      delete this.filterService.newWorkingQuery["-3"][playerNameInput];
+      this.filterService.setPlayers(this.filterService.combinedJSONstring());
     }
   }
 

@@ -654,16 +654,25 @@ body {
   }
 }
 .g-profile__photo_player {
+  /* bottom: 0; */
+  /* left: -15px; */
+  /* position: absolute; */
+  /* max-height: 92px !important; */
+  /* max-width: 92px !important; */
+  /* top: 0px; */
+  /* z-index: 2; */
   bottom: 0;
-  /* height: 100%; */
-  /* left: 0; */
   left: -15px;
   position: absolute;
-  /* width: 100%; */
-  max-height: 92px !important;
-  max-width: 92px !important;
-  top: 0px;
+  height: 80px !important;
+  width: 80px !important;
+  margin: 5px;
+  top: 0;
   z-index: 2;
+  border-radius: 10px;
+  border: 2px solid var(--lighter-blue);
+  background-color: var(--lighter-blue);
+  box-shadow: 0px 1px 0 rgba(0, 0, 0, 0.5);
 }
 .g-profile__team-color {
   border-right-width: 1rem;

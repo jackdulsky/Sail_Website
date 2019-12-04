@@ -258,6 +258,7 @@ export class PullDataService {
     //   "exec [SaildB].[filter].[spGetPlayersList] N'" + this.GUID + "'";
     var query =
       "exec [SaildB].[filter].[spGetPlayersList] N'" + sendString + "'";
+    console.log("NEW QUERY STRING", sendString);
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

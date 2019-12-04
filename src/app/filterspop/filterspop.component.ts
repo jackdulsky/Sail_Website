@@ -244,6 +244,14 @@ export class FilterspopComponent implements OnInit {
       return null;
     }
   }
+  //Get init values Type7 Basic Input
+  getInitValuesType7(id: any) {
+    if (this.filterService.form.value[id] != null) {
+      return cloneDeep(this.filterService.form.value[id][0]);
+    } else {
+      return null;
+    }
+  }
   openMyMenu() {
     this.trigger.toggleMenu();
   }

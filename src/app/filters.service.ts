@@ -658,6 +658,9 @@ export class FiltersService {
       this.form.controls[String(id) + "search"].setValue(null);
     }
     this.form.controls[id].setValue(null);
+    if (Number(id) > 14 || Number(id) == 2) {
+      this.setPlayers(this.combinedJSONstring());
+    }
   }
 
   //IS TWO OBJECTS EQUAL CONTENTS NOT MEMORY POINTERS
@@ -959,6 +962,9 @@ export class FiltersService {
       if (this.newWorkingFID[bin] != "") {
         this.pushQueryToActiveFilter(bin, false);
       }
+    }
+    if (Number(att) > 14 || Number(att) == 2) {
+      this.setPlayers(this.combinedJSONstring());
     }
   }
   //SETTING CSS OF THE LEAGUE ICONS
@@ -1522,11 +1528,9 @@ export class FiltersService {
   }
 
   removeAttributes(fid: any, bin: any, atts: any[]) {
-    console.log("ATTS", atts);
     var alteredDBFormat = cloneDeep(this.newDBFormat);
     var removed = cloneDeep(alteredDBFormat[bin][fid][1]);
     for (let att of atts) {
-      console.log("Att", att);
       delete removed[att];
     }
     alteredDBFormat[bin][fid][1] = removed;
@@ -1717,6 +1721,17 @@ export class FiltersService {
     }
   }
 
+  //change type7 basic input
+  changeType7Input(attribute: any, value: any) {
+    var bin = this.pullAttribute[attribute]["BinID"];
+    if (value == "") {
+      this.clearSingleIDWorking(attribute, bin);
+    } else {
+      this.form.controls[attribute].setValue([value]);
+      this.type0change(attribute, [value], bin);
+    }
+  }
+
   //Takes a hex color and percent change and returns new hex color
   shadeColor(color, percentInput) {
     var percent = Number(percentInput);
@@ -1880,6 +1895,15 @@ export class FiltersService {
       return split[1] + ", " + split[0];
     } else {
       return null;
+    }
+  }
+
+  //return the options for type0
+  type0Options(id: any) {
+    if (String(id) == "3") {
+      return this.playersToDisplay;
+    } else {
+      return this.pullValueMap[String(id)];
     }
   }
 }

@@ -10,36 +10,17 @@ export class FilterPipe2 implements PipeTransform {
   transform(items: any[], searchText: string, id: string): any[] {
     //SPECIAL CASES
     //FOR LENGTHY OPTION RESTRICT MINIMUM SEARCH TEXT (OR SHOW SELECTED)
-    if (
-      (id == "3" && (searchText == null || searchText.length <= 3)) ||
-      (id == "8" && (searchText == null || searchText.length <= 1))
-    ) {
-      //IF IT IS A SPECIAL CASE BUT NONE ARE SELECTED RETURN EMPTY ARRAY
-      // if (this.filt.form.value[id] == null) {
-      //   return [];
-      // }
-      var playersDisplayed = this.filt.playersToDisplay;
-      var selected = [];
-      if (this.filt.form.value[id] != null) {
-        selected = cloneDeep(this.filt.form.value[id]);
+    //does not show selected in top bar
+    if (id == "8" && (searchText == null || searchText.length <= 1)) {
+      if (this.filt.form.value[id] == null) {
+        return [];
+      } else {
+        return items.filter(it => {
+          this.filt.form.value[id].indexOf(it.key) != -1;
+        });
       }
-      if (id == "3") {
-        selected = selected.concat(Object.keys(playersDisplayed));
-      }
-
-      //ELSE RETURN THE ITEMS SELECTED EVEN IF MINIMUM SEARCH THRESHOLD IS NOT SET
-      return items.filter(it => {
-        try {
-          return (
-            selected.indexOf(it.key) != -1
-            //this.filt.form.value[id].indexOf(it.key) != -1 ||
-            // Object.keys(playersDisplayed).indexOf(String(it.key)) != -1
-          );
-        } catch {
-          return false;
-        }
-      });
     }
+
     //BASE CASES
     if (!items) return [];
     if (!searchText)
@@ -64,6 +45,7 @@ export class FilterPipe2 implements PipeTransform {
         if (
           returnedItems < 100 &&
           (it.value["Label"].toLowerCase().includes(searchText) ||
+            it.value["Label"].toLowerCase().includes(otherNameForm) ||
             this.filt.form.value[id].indexOf(it.key) != -1)
         ) {
           returnedItems += 1;
@@ -89,12 +71,6 @@ export class FilterPipe2 implements PipeTransform {
         }
       }
     });
-    if (id == "3") {
-      this.filt.playersToDisplay = [];
-      for (let item of returnList) {
-        this.filt.playersToDisplay[item.key] = item.value;
-      }
-    }
     return returnList;
   }
 }
