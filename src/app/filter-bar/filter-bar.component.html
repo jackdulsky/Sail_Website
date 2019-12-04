@@ -116,7 +116,9 @@
           <div
             class="filterRightBorder"
             [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
-            (click)="filterService.removeAttributes(fid.key, bin.key)"
+            (click)="
+              filterService.removeAttributes(fid.key, bin.key, panel.value)
+            "
           >
             <i
               class="fa fa-times"

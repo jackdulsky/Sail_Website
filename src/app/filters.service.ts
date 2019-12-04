@@ -262,32 +262,38 @@ export class FiltersService {
 
     return cloneDeep(this.playersToDisplay);
   }
-  setPlayers() {
-    this.pullData.pullPlayersToDisplay().subscribe(data => {
-      var players = this.pullValueMap["3"];
-      var arrPlayers = {};
-      for (let row in data) {
-        if (players[data[row]["SailID"]]) {
-          arrPlayers[data[row]["SailID"]] = players[data[row]["SailID"]];
-        }
-      }
-      for (let item in this.form.value["3"]) {
-        if (players[item]) {
-          arrPlayers[item] = players[item];
-        }
-      }
-      for (let fid in this.newDBFormat["-3"]) {
-        if (this.newDBFormat["-3"][fid][0].length != 0) {
-          for (let explicit in this.newDBFormat["-3"][fid][0]) {
-            if (players[Number(this.newDBFormat["-3"][fid][0][explicit])]) {
-              arrPlayers[Number(this.newDBFormat["-3"][fid][0][explicit])] =
-                players[Number(this.newDBFormat["-3"][fid][0][explicit])];
+  setPlayers(sendString: string = JSON.stringify(this.newDBFormat)) {
+    var curTime = cloneDeep(Date.now());
+    this.tryingToSendDBFormat = curTime;
+    setTimeout(() => {
+      if (Date.now() - this.tryingToSendDBFormat > 349) {
+        this.pullData.pullPlayersToDisplay(sendString).subscribe(data => {
+          var players = this.pullValueMap["3"];
+          var arrPlayers = {};
+          for (let row in data) {
+            if (players[data[row]["SailID"]]) {
+              arrPlayers[data[row]["SailID"]] = players[data[row]["SailID"]];
             }
           }
-        }
+          for (let item in this.form.value["3"]) {
+            if (players[item]) {
+              arrPlayers[item] = players[item];
+            }
+          }
+          for (let fid in this.newDBFormat["-3"]) {
+            if (this.newDBFormat["-3"][fid][0].length != 0) {
+              for (let explicit in this.newDBFormat["-3"][fid][0]) {
+                if (players[Number(this.newDBFormat["-3"][fid][0][explicit])]) {
+                  arrPlayers[Number(this.newDBFormat["-3"][fid][0][explicit])] =
+                    players[Number(this.newDBFormat["-3"][fid][0][explicit])];
+                }
+              }
+            }
+          }
+          this.playersToDisplay = cloneDeep(arrPlayers);
+        });
       }
-      this.playersToDisplay = cloneDeep(arrPlayers);
-    });
+    }, 350);
   }
 
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
@@ -602,6 +608,9 @@ export class FiltersService {
     if (JSON.stringify(this.newDBFormat[oldBID]) == "{}") {
       delete this.newDBFormat[oldBID];
     }
+    if (this.newWorkingFID[oldBID]) {
+      this.newWorkingFID[oldBID] = {};
+    }
     this.saveAndSend();
   }
 
@@ -633,6 +642,9 @@ export class FiltersService {
       }
       this.newWorkingQuery[bid][formKey] = formVals;
     }
+    if (Number(formKey) > 14 || Number(formKey) == 2) {
+      this.setPlayers(this.combinedJSONstring());
+    }
   }
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
   //REMOVE FROM THE WORKING QUERY AND
@@ -642,7 +654,7 @@ export class FiltersService {
     if (this.newWorkingFID[BID] != "") {
       this.pushQueryToActiveFilter(BID, input);
     }
-    if (this.form.value[id + "search"] != null) {
+    if (this.form.value[String(id) + "search"] != null) {
       this.form.controls[String(id) + "search"].setValue(null);
     }
     this.form.controls[id].setValue(null);
@@ -764,7 +776,8 @@ export class FiltersService {
       this.updateRDURL();
     }
   }
-  //
+  //CREATE THE FAKE JSON DB FORMAT AS IS PUSH QUERY
+  //HAS OCCURED TO SEND TO DATABASE WITH STAGED CHANGES
   combinedJSONstring() {
     var combinedDB = cloneDeep(this.newDBFormat);
     for (let bin in this.newWorkingQuery) {
@@ -807,12 +820,13 @@ export class FiltersService {
 
       //INIT THE NEW DB FORMAT BEFORE ADDING
       if (!this.newDBFormat[bin]) {
-        this.newDBFormat[bin] = {};
+        combinedDB[bin] = {};
       }
 
       //add
-      this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
+      combinedDB[bin][newFIDNumber] = [pkID, att, FID];
     }
+    return JSON.stringify(combinedDB);
 
     //SEND TO UPDATE PLAYER LIST
   }
@@ -858,7 +872,7 @@ export class FiltersService {
           .constructAndSendFilters(dbFormatWithAddedHiddenYears)
           .subscribe(data => {
             this.updatePlayerData();
-            this.uppdateClubData();
+            this.updateClubData();
           });
         this.testSendFilters2();
         this.setActiveClub();
@@ -866,7 +880,7 @@ export class FiltersService {
         this.updateRDURL();
         setTimeout(() => {
           this.setPlayers();
-        }, 250);
+        }, 200);
       }
     }, 250);
   }
@@ -981,7 +995,6 @@ export class FiltersService {
   //CHANGE THE CSS AND INSERT/REMOVE
   toggleLeague(attID: string, value: string, bin: string) {
     var id = this.pullValueMap[attID][value]["Label"];
-    console.log("LOGO", id);
     var logo = document.getElementById(id);
     var oldValue = this.form.value[attID];
     if (oldValue == null) {
@@ -1146,9 +1159,11 @@ export class FiltersService {
   //TIER 1 TAB THAT WAS SELECTED
   changelevel2(id: string) {
     //CHANGE OLD CSS
-    var old = document.getElementById("tier1Tab" + this.level1Selected);
-    old.style.backgroundColor = "white";
-    old.style.borderBottom = "4px solid white";
+    try {
+      var old = document.getElementById("tier1Tab" + this.level1Selected);
+      old.style.backgroundColor = "white";
+      old.style.borderBottom = "4px solid white";
+    } catch (e) {}
 
     //SET THE LEVEL SELECTED
     this.level1Selected = id;
@@ -1424,6 +1439,9 @@ export class FiltersService {
   //go through active filters and delete if in club bin and replace with last selected club
   reduceFiltersSingleClub() {
     var tempDict = {};
+    if (this.newWorkingQuery["-2"]) {
+      tempDict = cloneDeep(this.newWorkingQuery["-2"]);
+    }
     tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
 
     var add = this.removeExplicitFilters("-2", this.teamPortalActiveClubID);
@@ -1435,6 +1453,9 @@ export class FiltersService {
   //WHEN CLICKING ON PLAYER PAGE TAKE OUT ALL OTHER PLAYERS
   reduceFiltersSinglePlayer() {
     var tempDict = {};
+    if (this.newWorkingQuery["-3"]) {
+      tempDict = cloneDeep(this.newWorkingQuery["-3"]);
+    }
     tempDict["3"] = [cloneDeep(this.playerPortalActivePlayerID)];
     var add = this.removeExplicitFilters("-3", this.playerPortalActivePlayerID);
     if (add) {
@@ -1500,9 +1521,15 @@ export class FiltersService {
     this.form = oldForm;
   }
 
-  removeAttributes(fid: any, bin: any) {
+  removeAttributes(fid: any, bin: any, atts: any[]) {
+    console.log("ATTS", atts);
     var alteredDBFormat = cloneDeep(this.newDBFormat);
-    alteredDBFormat[bin][fid][1] = {};
+    var removed = cloneDeep(alteredDBFormat[bin][fid][1]);
+    for (let att of atts) {
+      console.log("Att", att);
+      delete removed[att];
+    }
+    alteredDBFormat[bin][fid][1] = removed;
     if (
       JSON.stringify(alteredDBFormat[bin][fid]) == JSON.stringify([[], {}, []])
     ) {
@@ -1518,6 +1545,13 @@ export class FiltersService {
     this.newWorkingQuery = oldWorkingQuery;
     this.newWorkingFID = oldWorkingFID;
     this.form = oldForm;
+    for (let att of atts) {
+      delete this.newWorkingQuery[bin][att];
+      if (this.form.value[String(att) + "search"] != null) {
+        this.form.controls[String(att) + "search"].setValue(null);
+      }
+      this.form.controls[String(att)].setValue(null);
+    }
   }
 
   //SET THE ACTIVE CLUB BY GOING THROUGH THE DB OR SET DEFAULT
@@ -1758,7 +1792,7 @@ export class FiltersService {
   }
 
   //Gets the update club data to be run after save and send
-  uppdateClubData() {
+  updateClubData() {
     this.pullData.pullClubData().subscribe(data => {
       this.clubSpecifics = {};
       for (let b in data) {
@@ -1841,7 +1875,6 @@ export class FiltersService {
 
   //Transform Name
   transformName(text: string) {
-    console.log("Input");
     if (text.includes(" ")) {
       var split = text.split(" ");
       return split[1] + ", " + split[0];

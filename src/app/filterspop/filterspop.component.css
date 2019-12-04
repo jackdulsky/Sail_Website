@@ -1004,13 +1004,13 @@ input {
   /* padding-bottom: 10px; */
   width: 99%;
   display: grid;
-  grid-template-columns: 25% 1fr;
-  line-height: 40px;
-  max-width: 450px;
+  grid-template-columns: 135px 1fr;
+  line-height: 60px;
+  max-width: 375px;
   float: left;
-  border: 1px solid black;
+  border: 1px solid var(--raiders-gray);
   border-radius: 10px;
-  padding-top: 13px;
+  padding-top: 0px;
   margin-bottom: 20px;
   margin-left: 20px;
   height: 49px;
@@ -1032,7 +1032,7 @@ input {
 }
 .playerGUIContainer {
   margin-bottom: 10px;
-  border: 1px solid black;
+  border: 1px solid var(--raiders-gray);
   border-radius: 10px;
   width: 95%;
   margin-left: 20px;
@@ -1126,7 +1126,7 @@ input {
   float: left;
   font-family: "DIN";
   font-size: 18px;
-  line-height: 43px;
+  line-height: 52px;
   padding-left: 3px;
 }
 .toggleLabelClub2 {

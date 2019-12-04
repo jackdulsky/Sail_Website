@@ -253,9 +253,11 @@ export class PullDataService {
   }
 
   //PULL PLAYER DATA
-  pullPlayersToDisplay() {
+  pullPlayersToDisplay(sendString: String) {
+    // var query =
+    //   "exec [SaildB].[filter].[spGetPlayersList] N'" + this.GUID + "'";
     var query =
-      "exec [SaildB].[filter].[spGetPlayersList] N'" + this.GUID + "'";
+      "exec [SaildB].[filter].[spGetPlayersList] N'" + sendString + "'";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

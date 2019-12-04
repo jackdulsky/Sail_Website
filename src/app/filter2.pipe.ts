@@ -55,23 +55,35 @@ export class FilterPipe2 implements PipeTransform {
     //NOT CASE SENSITIVE
     searchText = searchText.toLowerCase();
     var otherNameForm = this.filt.transformName(searchText);
+    var returnedItems = 0;
     var returnList = items.filter(it => {
       if (["0", "101", "102", "103"].indexOf(String(it.key)) != -1) {
         return false;
       }
       try {
-        return (
-          this.filt.form.value[id].indexOf(it.key) != -1 ||
-          it.value["Label"].toLowerCase().includes(searchText) ||
-          it.value["Label"].toLowerCase().includes(otherNameForm)
-        );
+        if (
+          returnedItems < 100 &&
+          (it.value["Label"].toLowerCase().includes(searchText) ||
+            this.filt.form.value[id].indexOf(it.key) != -1)
+        ) {
+          returnedItems += 1;
+          return true;
+        } else {
+          return false;
+        }
       } catch {
         try {
-          return (
-            it.value["PosAbbr"].toLowerCase().includes(searchText) ||
-            it.value["PosName"].toLowerCase().includes(searchText) ||
-            this.filt.form.value[id].indexOf(it.key) != -1
-          );
+          if (
+            returnedItems < 100 &&
+            (it.value["PosAbbr"].toLowerCase().includes(searchText) ||
+              it.value["PosName"].toLowerCase().includes(searchText) ||
+              this.filt.form.value[id].indexOf(it.key) != -1)
+          ) {
+            returnedItems += 1;
+            return true;
+          } else {
+            return false;
+          }
         } catch (e) {
           return false;
         }
