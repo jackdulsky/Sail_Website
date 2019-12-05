@@ -258,7 +258,6 @@ export class PullDataService {
     //   "exec [SaildB].[filter].[spGetPlayersList] N'" + this.GUID + "'";
     var query =
       "exec [SaildB].[filter].[spGetPlayersList] N'" + sendString + "'";
-    console.log("NEW QUERY STRING", sendString);
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
@@ -280,5 +279,42 @@ export class PullDataService {
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
+  }
+
+  //Pull position heirarchy
+  pullSearchOptions(input: string) {
+    return this.http.post(
+      this.serverURL + "execute/file/bodyinput/search_tool",
+      {
+        input: String(input),
+        guid: String(this.GUID)
+      },
+      { responseType: "text" }
+    );
+
+    // console.log(
+    //   "BODY",
+    //   JSON.stringify({
+    //     input: String(input),
+    //     guid: String(this.GUID)
+    //   })
+    // );
+    // console.log(
+    //   "URL",
+    //   this.serverURL +
+    //     "execute/file/bodyinput/search_tool" +
+    //     "?input=" +
+    //     String(input) +
+    //     "&guid=" +
+    //     String(this.GUID)
+    // );
+    // return this.http.get(
+    //   this.serverURL +
+    //     "execute/file/bodyinput/search_tool" +
+    //     "?input=" +
+    //     String(input) +
+    //     "&guid=" +
+    //     String(this.GUID)
+    // );
   }
 }

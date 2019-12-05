@@ -7,6 +7,8 @@ import { User } from "../user";
 import { USERS } from "../mock-users";
 import { FiltersService } from "../filters.service";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { PullDataService } from "../pull-data.service";
+import * as cloneDeep from "lodash/cloneDeep";
 
 @Component({
   selector: "app-topbar",
@@ -15,14 +17,15 @@ import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 })
 export class TopbarComponent implements OnInit {
   allUsers: User[];
-
+  timeSent;
   constructor(
     public filterService: FiltersService,
     private userService: UserService,
     private modalService: NgbModal,
     public dialog: MatDialog,
     public route: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    public pullData: PullDataService
   ) {}
 
   ngOnInit() {
@@ -44,5 +47,25 @@ export class TopbarComponent implements OnInit {
   }
   openSettingsMenu() {
     console.log("OPENING SETTINGS MENU");
+  }
+
+  searching(input: string) {
+    if (input.length > 3) {
+      this.timeSent = cloneDeep(Date.now());
+      setTimeout(() => {
+        if (Date.now() - this.timeSent > 499) {
+          this.pullData.pullSearchOptions(input).subscribe(data => {
+            this.filterService.temp = JSON.parse(
+              String(data)
+                .split("'")
+                .join('"')
+            )[0];
+          });
+        }
+      }, 500);
+      this.filterService.globalSearchShowSuggestions = true;
+    } else {
+      this.filterService.globalSearchShowSuggestions = false;
+    }
   }
 }

@@ -17,6 +17,31 @@
     </div>
   </div>
 
+  <div
+    class="suggestionListG"
+    *ngIf="filterService.globalSearchShowSuggestions"
+  >
+    <div
+      *ngFor="let result of filterService.temp | keyvalue"
+      class="gSearchBlockG"
+      (click)="
+        filterService.goToLink(
+          'http://oakcmsreports01.raiders.com:88' + result.value
+        )
+      "
+    >
+      <!-- <a
+        [href]="
+          filterService.sanitizer.bypassSecurityTrustResourceUrl(
+            'http:/oakcmsreprots.raiders.com:88' + result.value
+          )
+        "
+        target="_blank"
+      > -->
+      {{ result.key }}
+      <!-- </a> -->
+    </div>
+  </div>
   <div class="funcbutton saveFilterNew" (click)="clearAll()">
     <div class="btnGo">
       Clear

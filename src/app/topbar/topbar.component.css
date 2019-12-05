@@ -160,3 +160,70 @@ ul {
 
 .settingsOption {
 }
+.filterSearchG {
+  background: transparent;
+  font-size: 18px;
+}
+.filterSearchG:hover {
+  cursor: pointer;
+}
+.filterSearchG:focus {
+  border: none;
+  outline: none;
+}
+.filterSearchG::placeholder {
+  color: black;
+  font-size: 18px;
+  font-family: "DIN_Rounded_Medium";
+}
+.searchingTop {
+  position: relative;
+  /* background: #3e4345; */
+  margin-bottom: 8px;
+  border-radius: 5px;
+  height: 28px;
+  border: 1px solid #3e4345;
+  top: 17px;
+  color: black;
+}
+.searchingTop input {
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  width: 81%;
+  margin-left: 4%;
+  border: none;
+  caret-color: black;
+  color: black;
+}
+.gSearchBlock {
+  color: black;
+  border-bottom: 1px solid black;
+  border-left: 1px solid black;
+  background-color: var(--raiders-gray);
+  list-style-type: none;
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 25px;
+  margin-left: 10%;
+  line-height: 25px;
+  align-content: center;
+  text-align: right;
+}
+.gSearchBlock:hover {
+  background-color: var(--lighter-blue);
+  color: var(--color-white);
+}
+.suggestionList {
+  background-color: transparent;
+  width: 100%;
+  position: absolute;
+  top: 30px;
+  left: 0;
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  text-align: center;
+}

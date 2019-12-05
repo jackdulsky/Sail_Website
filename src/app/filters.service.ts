@@ -126,6 +126,18 @@ export class FiltersService {
   positionHierarchy;
   positionHItem;
   playersToDisplay: any[] = [];
+
+  globalSearchShowSuggestions = false;
+  temp: any = {};
+  //   "OPTION 1":
+  //     "http://oakcmsreports01.raiders.com:88/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
+  //   "OPTION 2":
+  //     "oakcmsreports01.raiders.com:88/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
+  //   "OPTION 3":
+  //     "/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
+  //   "OPTION 4":
+  //     "/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46"
+  // };
   constructor(
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,
@@ -295,7 +307,6 @@ export class FiltersService {
       }
     }, 350);
   }
-
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
   getBulkImport() {
     //console.log("IMPORT BULK");
@@ -1905,5 +1916,11 @@ export class FiltersService {
     } else {
       return this.pullValueMap[String(id)];
     }
+  }
+
+  //link to new window
+  goToLink(url: string) {
+    window.open(url, "_blank");
+    // this.router.navigate([this.sanitizer.bypassSecurityTrustResourceUrl(url)]);
   }
 }

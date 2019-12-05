@@ -25,6 +25,7 @@
 }
 .topBar {
   display: flex;
+  /* border-bottom: 2px solid black; */
 }
 .player {
   height: 72px;
@@ -69,6 +70,7 @@
 }
 .playerText {
   display: inline-block;
+  /* background-color: white; */
   color: black;
   font-weight: bold;
   text-align: left;
@@ -80,13 +82,13 @@
   height: 110px;
   width: 110px;
   background-color: white;
-
   font-size: 20px;
   font-weight: bold;
   font-family: "DIN";
   text-align: left;
   background-color: #ebeced;
-
+  border: 2px solid var(--lighter-blue);
+  background-color: var(--lighter-blue);
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
 }
 .grid-itemGen_box {
@@ -101,8 +103,12 @@
   text-align: left;
   background-color: #ebeced;
   margin-top: 10px;
+  border-radius: 10px;
+  border: 2px solid var(--lighter-blue);
+  background-color: var(--lighter-blue);
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
 }
+
 .grid-itemGen:hover {
   border-top-right-radius: 10px;
   box-shadow: 2px 2px 2px black;
@@ -115,16 +121,23 @@
 .labelText {
   margin-top: 4px;
   font-size: 16px;
+  margin-right: 6px;
   font-family: "DIN";
   text-align: center;
 }
 .playerList {
+  /* background-color: #b5b8be;
+  border: 1px solid black;
+  position: absolute;
+  top: 124px;
+  z-index: 1000; */
   height: 341px;
   margin: 0;
   padding: 0;
   overflow-y: scroll;
   max-height: 500px;
   text-align: center;
+
   width: 665px;
 
   display: grid;
@@ -189,6 +202,7 @@
   border: 0px solid black;
   position: absolute;
   top: 87px;
+  /* left: 553px; */
   right: 6px;
   z-index: 1000;
   margin: 0;
@@ -199,11 +213,14 @@
   border-radius: 5px;
 }
 .yearDropDown {
+  /* height: 50px; */
   color: black;
+  /* width: 115px; */
   line-height: 15px;
   margin: 5px;
   padding: 7px;
   border-radius: 10px;
+  /* min-width: 115px; */
   font-size: 16px;
   font-family: "DIN", "DIN";
   color: black;

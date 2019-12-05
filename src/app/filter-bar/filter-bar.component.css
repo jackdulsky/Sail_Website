@@ -336,7 +336,7 @@
   padding-left: 5px;
   padding-right: 5px;
 }
-.gSearchBlock {
+/* .gSearchBlock {
   color: red;
 
   position: relative;
@@ -357,7 +357,7 @@
 }
 .searching {
   position: relative;
-}
+} */
 .titleFilter {
   height: 37px;
   width: auto;
@@ -445,4 +445,45 @@
   transform: translate3d(-50%, -50%, 0);
   width: 14px;
   will-change: transform;
+}
+.suggestionListG {
+  background-color: white;
+
+  width: 280px;
+  position: absolute;
+  top: -1px;
+  left: 429px;
+  z-index: 1000;
+  overflow-y: auto;
+  max-height: 300px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  border: 1px solid black;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.gSearchBlockG {
+  color: black;
+  /* border-bottom: 1px solid black;
+  border-left: 1px solid black; */
+  list-style-type: none;
+  position: relative;
+  display: flex;
+  width: 256px;
+  height: 25px;
+  line-height: 25px;
+  align-content: center;
+  text-align: right;
+  margin: 5px;
+  padding: 7px;
+  border-radius: 10px;
+}
+.gSearchBlockG:hover {
+  /* background-color: var(--lighter-blue);
+
+  color: var(--color-white); */
+  cursor: pointer;
+  color: white;
+  background-color: var(--lighter-blue);
 }

@@ -25,6 +25,7 @@ export class FilterPipe2 implements PipeTransform {
     if (!items) return [];
     if (!searchText)
       return items.filter(it => {
+        //for the position structure
         if (["0", "101", "102", "103"].indexOf(String(it.key)) != -1) {
           return false;
         } else {
