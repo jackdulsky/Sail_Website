@@ -20,7 +20,7 @@ body {
 }
 @font-face {
   font-family: "DIN";
-  src: url("/assets/font/@font-face/1daa609fdca8da38e5bcbb12c2a987db.ttf")
+  src: url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.ttf")
     format("opentype");
   src: url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.eot")
       format("embedded-opentype"),
@@ -35,6 +35,118 @@ body {
   font-family: "DIN_Rounded_Medium";
   src: url("/assets/Fonts/DIN_Next_Rounded/DINNextRoundedLTPro-Medium.otf")
     format("opentype");
+}
+@font-face {
+  font-family: "DIN-Condensed";
+  src: url("/assets/Fonts/DIN-Condensed.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-Heavy";
+  src: url("/assets/Fonts/DIN-Heavy.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-HeavyCondensed";
+  src: url("/assets/Fonts/DIN-HeavyCondensed.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-Italic";
+  src: url("/assets/Fonts/DIN-Italic.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-LightCondensed";
+  src: url("/assets/Fonts/DIN-LightCondensed.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-Medium";
+  src: url("/assets/Fonts/DIN-Medium.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-Regular";
+  src: url("/assets/Fonts/DIN-Regular.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-UltraLight";
+  src: url("/assets/Fonts/DIN-UltraLight.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-BlackCondita";
+  src: url("/assets/Fonts/DIN-BlackCondita.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-Bold";
+  src: url("/assets/Fonts/DIN-Bold.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-BoldCondensed";
+  src: url("/assets/Fonts/DIN-BoldCondensed.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-BoldCondita";
+  src: url("/assets/Fonts/DIN-BoldCondita.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-Condita";
+  src: url("/assets/Fonts/DIN-Condita.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-HeavyCondita";
+  src: url("/assets/Fonts/DIN-HeavyCondita.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-LightCondita";
+  src: url("/assets/Fonts/DIN-LightCondita.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-MediumCondita";
+  src: url("/assets/Fonts/DIN-MediumCondita.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-UltraLightCondita";
+  src: url("/assets/Fonts/DIN-UltraLightCondita.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-UltraLightIt";
+  src: url("/assets/Fonts/DIN-UltraLightIt.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-BlackCondensed";
+  src: url("/assets/Fonts/DIN-BlackCondensed.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-BlackItalic";
+  src: url("/assets/Fonts/DIN-BlackItalic.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-BoldItalic";
+  src: url("/assets/Fonts/DIN-BoldItalic.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-HeavyItalic";
+  src: url("/assets/Fonts/DIN-HeavyItalic.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-Light";
+  src: url("/assets/Fonts/DIN-Light.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-LightItalic";
+  src: url("/assets/Fonts/DIN-LightItalic.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-MediumCond";
+  src: url("/assets/Fonts/DIN-MediumCond.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-MediumItalic";
+  src: url("/assets/Fonts/DIN-MediumItalic.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-UltraLightCond";
+  src: url("/assets/Fonts/DIN-UltraLightCond.otf") format("opentype");
+}
+@font-face {
+  font-family: "DIN-Black";
+  src: url("/assets/Fonts/DIN-Black.otf") format("opentype");
 }
 .multiselect-dropdown,
 .dropdown-btn {

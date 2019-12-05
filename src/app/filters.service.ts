@@ -5,14 +5,7 @@ import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { NonNullAssert, ThrowStmt } from "@angular/compiler";
-import {
-  lor,
-  reportsNew,
-  views,
-  colours,
-  clubData,
-  playerData
-} from "./allReports";
+import { lor, reportsNew, views, colours } from "./allReports";
 import {
   DomSanitizer,
   SafeUrl,
@@ -86,8 +79,8 @@ export class FiltersService {
   reportsNew = reportsNew;
   views = views;
   colours = colours;
-  clubData = clubData;
-  playerData = playerData;
+  clubData;
+  playerData;
   Label = "Label";
   selected: string;
   portalSelected = "";
@@ -1047,18 +1040,34 @@ export class FiltersService {
 
   //SLIDER RETURN STARTING POSITION OF THE SLIDER
   checkType3ToggleChecked(id: string, Label: string) {
-    if (this.form.value[id] == null) {
-      if (Label == "na") {
-        return "checked";
-      } else {
+    var switchType3 = document.getElementById("type3Switch" + id);
+    if (switchType3 != null) {
+      try {
+        if (this.form.value[id] == null) {
+          if (Label == "na") {
+            switchType3.style.backgroundColor = "var(--raiders-gray)";
+            return "checked";
+          } else {
+            return "";
+          }
+        }
+        if (this.pullValueMap[id][this.form.value[id][0]]["Label"] == Label) {
+          if (Label == "True") {
+            switchType3.style.backgroundColor = "Green";
+          } else {
+            switchType3.style.backgroundColor = "Red";
+          }
+          return "checked";
+        } else {
+          return "";
+        }
+      } catch (e) {
         return "";
       }
-    }
-
-    if (this.pullValueMap[id][this.form.value[id][0]]["Label"] == Label) {
-      return "checked";
     } else {
-      return "";
+      setTimeout(() => {
+        return this.checkType3ToggleChecked(id, Label);
+      }, 50);
     }
   }
 
@@ -1920,7 +1929,17 @@ export class FiltersService {
 
   //link to new window
   goToLink(url: string) {
-    window.open(url, "_blank");
-    // this.router.navigate([this.sanitizer.bypassSecurityTrustResourceUrl(url)]);
+    this.globalSearchShowSuggestions = false;
+
+    //for new window
+    var newWindow = window.open(url);
+
+    //for same window
+    // var urlAltered = url.split(".raiders.com:88")[1];
+    // urlAltered = urlAltered.split("%5B").join("[");
+    // urlAltered = urlAltered.split("%5D").join("]");
+    // urlAltered = urlAltered.split("%22").join('"');
+    // urlAltered = urlAltered.split("%2C").join(",");
+    //this.router.navigate([urlAltered]);
   }
 }

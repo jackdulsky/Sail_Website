@@ -2,7 +2,31 @@
   <ul class="nav navbar-nav navheight">
     <div class="leftBG"></div>
     <div class="rightBG">
-      <div class="searchingTop" style="width:200px; float:left">
+      <div style="float:right; margin-top: 7px;">
+        <!-- <i
+          class="fa colo fa-envelope fa-sm mright"
+          style="line-height: 48px;"
+        ></i> -->
+
+        <div
+          style="width:auto;float: right; line-height: 55px;"
+          class="navheight"
+        >
+          <!-- <span class="usertext mright">
+            {{ allUsers[0].firstName }} {{ allUsers[0].lastName }}
+          </span> -->
+          <div style="display:contents">
+            <i
+              class="fa fa-bars fa-lg settingsMenuDropDown"
+              (click)="openSettingsMenu()"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="searchingTop"
+        style="width:200px; float:right;margin-right: 10px; "
+      >
         <div>
           <span>
             <i
@@ -19,48 +43,14 @@
             />
           </span>
         </div>
-        <!-- (click)="resultSelected(result)" -->
-        <!-- <div
-          class="suggestionList"
-          *ngIf="filterService.globalSearchShowSuggestions"
-        >
-          <div
-            *ngFor="let result of filterService.temp | keyvalue"
-            class="gSearchBlock"
-          >
-            {{ result.key }}
-          </div>
-        </div> -->
-      </div>
-      <div style="float:right; margin-top: 7px;">
-        <i
-          class="fa colo fa-envelope fa-sm mright"
-          style="line-height: 48px;"
-        ></i>
-
-        <div
-          style="width:auto;float: right; line-height: 51px;"
-          class="navheight"
-        >
-          <span class="usertext mright">
-            {{ allUsers[0].firstName }} {{ allUsers[0].lastName }}
-          </span>
-          <div style="display:contents">
-            <i
-              class="fa fa-bars fa-lg settingsMenuDropDown"
-              (click)="openSettingsMenu()"
-            ></i>
-          </div>
-
-          <!-- <div class="settingsOption">
-            Report Upload
-          </div> -->
-        </div>
       </div>
     </div>
   </ul>
 </nav>
 
+<!-- <div class="settingsOption">
+            Report Upload
+          </div> -->
 <!-- <div
       class="filterLabel topbuttonleft"
       *ngIf="filterService.getNamePresent()"

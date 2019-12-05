@@ -81,6 +81,7 @@ export class ClubComponent implements OnInit {
       this.clubTabSelected = Object.keys(
         this.filterService.getReportHeaders(2)
       )[0];
+
       try {
         if (this.router.url.includes("/report")) {
           document.getElementById("fullScreenButton").className = "fullScreen";
@@ -215,14 +216,15 @@ export class ClubComponent implements OnInit {
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
     } catch (e) {}
-
     this.clubTabSelected = name;
     //color new
-    try {
+    setTimeout(() => {
       var newTab = document.getElementById(name + "clubBarHighlightid");
-      newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid lightskyblue";
-    } catch (e) {}
+      try {
+        newTab.style.backgroundColor = "#f2f2f2";
+        newTab.style.borderBottom = "4px solid lightskyblue";
+      } catch (e) {}
+    }, 1);
 
     //Route Appropriately
     try {

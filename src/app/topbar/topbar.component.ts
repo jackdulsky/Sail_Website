@@ -52,19 +52,31 @@ export class TopbarComponent implements OnInit {
   searching(input: string) {
     if (input.length > 3) {
       this.timeSent = cloneDeep(Date.now());
+      var loopStartTime = cloneDeep(this.timeSent);
       setTimeout(() => {
-        if (Date.now() - this.timeSent > 499) {
+        if (loopStartTime - this.timeSent == 0) {
           this.pullData.pullSearchOptions(input).subscribe(data => {
-            this.filterService.temp = JSON.parse(
-              String(data)
-                .split("'")
-                .join('"')
-            )[0];
+            if (loopStartTime - this.timeSent == 0) {
+              this.filterService.temp = JSON.parse(
+                String(data)
+                  .split("'")
+                  .join('"')
+              )[0];
+              this.filterService.globalSearchShowSuggestions = true;
+              //code to automatically go to new url
+              var urlFirst = this.filterService.temp[
+                Object.keys(this.filterService.temp)[0]
+              ];
+              this.filterService.goToLink(
+                "http://oakcmsreports01.raiders.com:88" + urlFirst
+              );
+              // this.filterService.goToLink("localhost:4200" + urlFirst);
+            }
           });
         }
-      }, 500);
-      this.filterService.globalSearchShowSuggestions = true;
+      }, 100);
     } else {
+      this.filterService.temp = {};
       this.filterService.globalSearchShowSuggestions = false;
     }
   }
