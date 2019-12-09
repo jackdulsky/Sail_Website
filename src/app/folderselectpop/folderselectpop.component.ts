@@ -115,7 +115,7 @@ export class FolderselectpopComponent implements OnInit {
         }
         this.options[name] = nextLevel;
       } else {
-        console.log("NO SUB FOLDERS EXIST");
+        //console.log("NO SUB FOLDERS EXIST");
       }
     });
   }

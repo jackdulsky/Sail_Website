@@ -14,6 +14,7 @@ import {
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { ReplaceSource } from "webpack-sources";
 import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
+import { KeyValue } from "@angular/common";
 
 @Injectable({
   providedIn: "root"
@@ -121,6 +122,7 @@ export class FiltersService {
   playersToDisplay: any[] = [];
 
   globalSearchShowSuggestions = false;
+  playerImageURLs = {};
   temp: any = {};
   //   "OPTION 1":
   //     "http://oakcmsreports01.raiders.com:88/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
@@ -207,6 +209,22 @@ export class FiltersService {
       }
 
       insertDict[id] = data[b];
+    }
+  }
+
+  //extract key value to create mapping instead of array of dictionary
+  extractkeyValue(data, key: string, value: string, insertDict) {
+    for (let b in data) {
+      var id = String(data[b][key]);
+      var val = String(data[b][value]);
+      if (value == "PlayerImageUrl" && val == "null") {
+        val =
+          "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player4.png";
+      }
+      if (val == "null") {
+        val = null;
+      }
+      insertDict[id] = val;
     }
   }
 
@@ -302,7 +320,7 @@ export class FiltersService {
   }
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
   getBulkImport() {
-    //console.log("IMPORT BULK");
+    ////console.log("IMPORT BULK");
     //http://localhost:4200/loading/1A7C11F8-3CBB-95FE-27F5-5B70834093DB/%5B%5B%22-2%22,%222%22,%5B%221012%22,%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
     // if (!this.router.url.includes("load")) {
     //   this.newFIDBID = JSON.parse(localStorage.getItem("newFIDBID"));
@@ -327,7 +345,7 @@ export class FiltersService {
           this.recursiveExtractLevel(d[b], "BinID", 2)
         );
       }
-      console.log("PULLStructure", this.pullStructure);
+      //console.log("PULLStructure", this.pullStructure);
     });
     this.pullData.pullDataType().subscribe(data => {
       this.pullDataType = {};
@@ -336,7 +354,7 @@ export class FiltersService {
     this.pullData.pullPlayers().subscribe(data => {
       this.pullPlayers = {};
       this.extractID(data, "SailID", this.pullPlayers);
-      // console.log("PLAYERS", this.pullPlayers);
+      // //console.log("PLAYERS", this.pullPlayers);
     });
     this.pullData.pullBin().subscribe(data => {
       this.pullBin = {};
@@ -347,32 +365,40 @@ export class FiltersService {
         this.newWorkingFID[binKey] = "";
         this.newFIDOrder[binKey] = [];
       }
-      // console.log("BIN", this.pullBin);
+      // //console.log("BIN", this.pullBin);
     });
     this.pullData.pullNavigation().subscribe(data => {
       this.pullNavigation = {};
       this.extractID(data, "ItemID", this.pullNavigation);
-      console.log("NAV", this.pullNavigation);
+      //console.log("NAV", this.pullNavigation);
+    });
+    this.pullData.pullPlayerURL().subscribe(data => {
+      this.extractkeyValue(
+        data,
+        "SailID",
+        "PlayerImageUrl",
+        this.playerImageURLs
+      );
     });
     this.pullData.pullNavigationElement().subscribe(data => {
       this.pullNavigationElement = {};
       this.extractID(data, "ItemID", this.pullNavigationElement);
-      console.log("NAVELEM", this.pullNavigationElement);
+      //console.log("NAVELEM", this.pullNavigationElement);
     });
     this.pullData.pullAttributeType().subscribe(data => {
       this.pullAttributeType = {};
       this.extractID(data, "AttributeTypeID", this.pullAttributeType);
-      console.log("ATT TYPE", this.pullAttributeType);
+      //console.log("ATT TYPE", this.pullAttributeType);
     });
     this.pullData.pullAttribute().subscribe(data => {
       this.pullAttribute = {};
       this.extractID(data, "AttributeID", this.pullAttribute);
-      console.log("PULLATTRIBUTE", this.pullAttribute);
+      //console.log("PULLATTRIBUTE", this.pullAttribute);
     });
     this.pullData.pullUIType().subscribe(data => {
       this.pullUIType = {};
       this.extractID(data, "UITypeID", this.pullUIType);
-      console.log("PULL UI TYPE", this.pullUIType);
+      //console.log("PULL UI TYPE", this.pullUIType);
     });
 
     this.pullData.pullValue().subscribe(data => {
@@ -394,8 +420,8 @@ export class FiltersService {
 
         this.pullValue[valID] = data[b];
       }
-      console.log("PULLValueMap", this.pullValueMap);
-      //console.log("PULL ORDER MAP", this.pullOrderMap);
+      //console.log("PULLValueMap", this.pullValueMap);
+      ////console.log("PULL ORDER MAP", this.pullOrderMap);
     });
     this.pullData.getTeams().subscribe(data => {
       this.teams = cloneDeep(data);
@@ -405,12 +431,12 @@ export class FiltersService {
     this.pullData.pullReportTabs().subscribe(data => {
       this.reportTabs = {};
       this.extractID(data, "TabID", this.reportTabs);
-      //console.log("Pull Tabs", this.reportTabs);
+      ////console.log("Pull Tabs", this.reportTabs);
     });
     this.pullData.pullReportTabLocation().subscribe(data => {
       this.reportTabLocation = {};
       this.extractID(data, "LocationID", this.reportTabLocation);
-      //console.log("Pull TabLocations", this.reportTabLocation);
+      ////console.log("Pull TabLocations", this.reportTabLocation);
     });
     this.pullData.pullReports().subscribe(data => {
       var tempReports = {};
@@ -432,8 +458,8 @@ export class FiltersService {
           this.reportReportsStructure[base][report] = reportsNew[base][report];
         }
       }
-      //console.log("Pull ReportsOnly", this.reportReportsOnly);
-      //console.log("Pull Reports", this.reportReportsStructure);
+      ////console.log("Pull ReportsOnly", this.reportReportsOnly);
+      ////console.log("Pull Reports", this.reportReportsStructure);
     });
     this.pullData.pullReportURL().subscribe(data => {
       this.reportURL = {};
@@ -479,8 +505,8 @@ export class FiltersService {
       };
       this.positionHierarchy[0] = [101, 102, 103];
 
-      // console.log("POS ITEMS", this.positionHItem);
-      // console.log("POS HIERARCHY", this.positionHierarchy);
+      // //console.log("POS ITEMS", this.positionHItem);
+      // //console.log("POS HIERARCHY", this.positionHierarchy);
     });
   }
 
@@ -588,7 +614,7 @@ export class FiltersService {
           this.playCount = String(temp.length);
         }
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       }
     });
   }
@@ -946,7 +972,7 @@ export class FiltersService {
   //This function clears a single value from the newWorking query, if a
   //Working FID is set it pushes the updates
   clearSingleValuePop(bin: any, att: any, val: any, input: boolean = true) {
-    console.log();
+    //console.log();
     if (
       JSON.stringify(this.newWorkingQuery[bin][att]) ==
         JSON.stringify([String(val)]) ||
@@ -1022,24 +1048,18 @@ export class FiltersService {
   }
 
   //SELECT OR DESELECT ALL FROM THE TYPE 0 INPUT
-  changeToggleValue(id: string, toLabel: string, remove: boolean, bin: string) {
+  changeToggleValue(id: string, toLabel: any, remove: boolean, bin: string) {
     if (remove) {
       this.form.controls[id].setValue(null);
       this.type0change(id, [], bin);
     } else {
-      var toVal;
-      for (let choice in this.pullValueMap[id]) {
-        if (this.pullValueMap[id][choice]["Label"] == toLabel) {
-          toVal = choice;
-        }
-      }
-      this.form.controls[id].setValue([toVal]);
-      this.type0change(id, [toVal], bin);
+      this.form.controls[id].setValue([String(toLabel)]);
+      this.type0change(id, [String(toLabel)], bin);
     }
   }
 
   //SLIDER RETURN STARTING POSITION OF THE SLIDER
-  checkType3ToggleChecked(id: string, Label: string) {
+  checkType3ToggleChecked(id: string, Label: any) {
     var switchType3 = document.getElementById("type3Switch" + id);
     if (switchType3 != null) {
       try {
@@ -1051,8 +1071,8 @@ export class FiltersService {
             return "";
           }
         }
-        if (this.pullValueMap[id][this.form.value[id][0]]["Label"] == Label) {
-          if (Label == "True") {
+        if (this.form.value[id][0] == String(Label)) {
+          if (Number(Label) == 1) {
             switchType3.style.backgroundColor = "Green";
           } else {
             switchType3.style.backgroundColor = "Red";
@@ -1070,7 +1090,6 @@ export class FiltersService {
       }, 50);
     }
   }
-
   //RETURN SLIDER STARTING POS FOR THE TOGGEL OF CONFERENCE
   checkType2ConfChecked(id: string, Label: string) {
     if (this.conferenceSelections[id] == Label) {
@@ -1247,7 +1266,7 @@ export class FiltersService {
 
     //ADD TO PANEL OR SHOW THE SELECTION FORM
     if (this.pullNavigationElement[att]["IsAttribute"] == true) {
-      console.log("ATTRIBUTE IS IN THE PANELS THIS SHOULD NEVER OCCUR");
+      //console.log("ATTRIBUTE IS IN THE PANELS THIS SHOULD NEVER OCCUR");
     } else {
       var old = cloneDeep(newPanels);
       newPanels.push(att);
@@ -1326,7 +1345,7 @@ export class FiltersService {
       disp = disp[level];
     }
     disp = cloneDeep(disp[att]);
-    // console.log("DISP", disp);
+    // //console.log("DISP", disp);
     // for (let option in disp) {
     //   if (this.pullNavigationElement[option]["IsAttribute"]) {
     //     delete disp[option];
@@ -1889,25 +1908,6 @@ export class FiltersService {
     return styles;
   }
 
-  //RETURN THE PLAYER IMAGES
-  getActivePlayerImage(playerID: any) {
-    var baseURL =
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
-    try {
-      if (playerID == "") {
-        return "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/NFL_.png";
-      } else {
-        var gsisID = this.pullPlayers[playerID]["GSISPlayerID"];
-        var url = baseURL.replace("REPLACEME", gsisID);
-        return url;
-      }
-    } catch (e) {
-      setTimeout(() => {
-        return this.getActivePlayerImage(playerID);
-      }, 100);
-    }
-  }
-
   //Transform Name
   transformName(text: string) {
     if (text.includes(" ")) {
@@ -1942,4 +1942,12 @@ export class FiltersService {
     // urlAltered = urlAltered.split("%2C").join(",");
     //this.router.navigate([urlAltered]);
   }
+
+  labelOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
+    return a.value["Label"] < b.value["Label"]
+      ? -1
+      : b.value["Label"] < a.value["Label"]
+      ? 1
+      : 0;
+  };
 }

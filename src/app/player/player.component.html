@@ -6,9 +6,11 @@
           <div class="g-profile__photo_player_box">
             <img
               [src]="
-                getActivePlayerImage(filterService.playerPortalActivePlayerID)
+                filterService.playerImageURLs[
+                  filterService.playerPortalActivePlayerID
+                ]
               "
-              onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player3.jpg'"
+              onError="this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player4.png'"
               id="player"
               class="g-profile__photo_player"
               (click)="displayPlayers(showList)"
@@ -20,7 +22,7 @@
             <div id="player" class="nameBox">
               <h2
                 id="player"
-                class="g-profile__name"
+                class="g-profile__name playerPointer"
                 (click)="displayPlayers(showList)"
               >
                 {{
@@ -28,7 +30,17 @@
                     filterService.playerPortalSelected,
                     "Label"
                   )
-                }}<i id="player" class="fa fa-angle-down fa-lg"></i>
+                }}
+                <!-- <span id="player" style="font-size:19px"
+                  >&nbsp;{{ "\u25BD" }}</span
+                > -->
+
+                <i
+                  id="player"
+                  style="font-size: 25px;
+                margin-left: 2px;"
+                  class="fa fa-angle-down fa-lg"
+                ></i>
               </h2>
             </div>
             <div #teamAndRosterStaturs class="din teamRoster">
@@ -204,13 +216,16 @@
         id="playerList"
         class=""
         (click)="changePlayer(player.key, player.value)"
-        *ngFor="let player of filterService.playersToDisplay | keyvalue"
+        *ngFor="
+          let player of filterService.playersToDisplay
+            | keyvalue: filterService.labelOrder
+        "
       >
         <div class="" style="">
           <img
             class="grid-itemGen"
-            src="{{ getActivePlayerImage(player.key) }}"
-            onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player3.jpg'"
+            src="{{ filterService.playerImageURLs[player.key] }}"
+            onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player4.png'"
             alt=""
           />
         </div>

@@ -47,17 +47,7 @@
       Clear
     </div>
   </div>
-  <!-- <div
-    *ngFor="let query of filterService.newFIDs | keyvalue"
-    class="singleFilter insideGrid-container2"
-  >
-    <div class="words" (click)="singleOpen(query.key, query.value)">
-      {{ createFilterDisplayString(query.key, query.value) }}
-    </div>
-    <div class="btn" (click)="removeQuery(query.key)">
-      <i class="fa fa-times" style="margin-left: 4px;"></i>
-    </div>
-  </div> -->
+
   <ng-container *ngFor="let bin of filterService.newDBFormat | keyvalue">
     <ng-container *ngFor="let fid of bin.value | keyvalue: valueOrderFIDs">
       <ng-container *ngIf="checkKeys(bin)">
@@ -95,10 +85,7 @@
             [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
             (click)="filterService.removeExplicit(fid.key, bin.key)"
           >
-            <i
-              class="fa fa-times"
-              style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
-            ></i>
+            <i class="fa fa-times timesCenterClose"></i>
           </div>
         </div>
         <div
@@ -145,10 +132,7 @@
               filterService.removeAttributes(fid.key, bin.key, panel.value)
             "
           >
-            <i
-              class="fa fa-times"
-              style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
-            ></i>
+            <i class="fa fa-times timesCenterClose"></i>
           </div>
         </div>
       </ng-container>
@@ -185,57 +169,13 @@
             [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
             (click)="removeQuery(fid.key)"
           >
-            <i
-              class="fa fa-times"
-              style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
-            ></i>
+            <i class="fa fa-times timesCenterClose"></i>
           </div>
         </div>
       </ng-container>
     </ng-container>
   </ng-container>
-  <!-- <div
-    *ngFor="let query of filterService.newFIDs | keyvalue"
-    class="ovrSingleFilter insideGrid-container3"
-  >
-    <div
-      class="filterLeftBorder"
-      [ngStyle]="
-        filterService.setFilterStyle(filterService.newFIDBID[query.key], 0)
-      "
-    ></div>
-    <div
-      class="filterMiddleBorder"
-      [ngStyle]="
-        filterService.setFilterStyle(filterService.newFIDBID[query.key], 1)
-      "
-      (click)="singleOpen(query.key, query.value)"
-    >
-      <div style="position: relative; top: -10px; font-size: 12px;">
-        &nbsp; {{ createFilterTopDisplayString(query.key, query.value) }} &nbsp;
-      </div>
-      <div
-        style="top: -29px;
-position: relative;"
-      >
-        &nbsp;&nbsp;&nbsp;{{
-          createFilterDisplayString(query.key, query.value)
-        }}&nbsp;&nbsp;&nbsp;
-      </div>
-    </div>
-    <div
-      class="filterRightBorder"
-      [ngStyle]="
-        filterService.setFilterStyle(filterService.newFIDBID[query.key], 2)
-      "
-      (click)="removeQuery(query.key)"
-    >
-      <i
-        class="fa fa-times"
-        style="margin-left: 4px;margin-right: 4px;margin-top: 3px;"
-      ></i>
-    </div>
-  </div> -->
+
   <div>
     <div class="playCount">Plays</div>
     <div class="playCountNumber">{{ filterService.playCount }}</div>

@@ -41,14 +41,14 @@
 }
 input {
   caret-color: black;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .save {
   /* background-color: var(--medium-blue); */
   margin-top: 10px;
   margin-right: 5px;
   background-color: #3e4345;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   color: white;
   font-weight: bold;
   font-size: 18px;
@@ -121,7 +121,7 @@ input {
   /* border-top-left-radius: 10px;
   border-top-right-radius: 10px; */
   /* box-shadow: -2px -2px 2px black; */
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   border-bottom: 4px solid white;
 }
 .tier1Tab:hover {
@@ -167,7 +167,7 @@ input {
   text-align: center;
   font-size: 18px;
   border-left: 4px solid white;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   position: relative;
   height: 30px;
   align-items: center;
@@ -175,7 +175,7 @@ input {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .singlePanelOn {
   min-width: 85px;
@@ -186,7 +186,7 @@ input {
   text-align: center;
   font-size: 18px;
   border-left: 4px solid lightblue;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   position: relative;
   height: 30px;
   align-items: center;
@@ -194,7 +194,7 @@ input {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .tier2-arrowName-container {
   height: 20px;
@@ -213,7 +213,7 @@ input {
   overflow: hidden;
   text-overflow: ellipsis !important;
   width: max-content;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   padding-left: 5px;
 }
 .tier2-name:hover {
@@ -224,7 +224,7 @@ input {
 }
 .l2Title {
   color: black;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   width: 99%;
   border-bottom: 2px solid lightskyblue;
   margin-top: 5px;
@@ -253,7 +253,7 @@ input {
 .filterSearch::placeholder {
   color: white;
   font-size: 18px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .searching {
   position: relative;
@@ -669,7 +669,7 @@ input {
     font-weight: bold !important;
     text-align: center !important;
     text-shadow: 1px 1px 1px #191b1e !important;
-    font-family: "DIN";
+    font-family: "DIN-Regular";
   }
   .switch-light.switch-candy input ~ span span:first-child,
   .switch-light.switch-candy input:checked ~ span span:nth-child(2),
@@ -1033,6 +1033,7 @@ input {
   border-bottom: 3px solid lightskyblue;
 }
 .playerGUIContainer {
+  display: inline-block;
   margin-bottom: 10px;
   border: 1px solid var(--raiders-gray);
   border-radius: 10px;
@@ -1043,7 +1044,7 @@ input {
   margin-top: 4px;
   font-size: 16px;
   margin-right: 6px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   text-align: center;
   color: black;
 }
@@ -1078,7 +1079,7 @@ input {
   padding-right: 20px; */
   font-size: 20px;
   font-weight: bold;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   text-align: left;
   background-color: #ebeced;
   margin-top: 10px;
@@ -1141,7 +1142,7 @@ input {
   color: black;
   width: 100%;
   float: left;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   font-size: 18px;
 }
 .guiArea {
@@ -1165,7 +1166,7 @@ input {
   float: left;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .nfc {
   float: right;
@@ -1173,7 +1174,7 @@ input {
   opacity: 0.5;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .division {
   font-weight: bold;
@@ -1290,7 +1291,7 @@ input {
   user-select: none;
   -o-user-select: none;
   line-height: 30px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   text-align: center;
   top: 50%;
 }
@@ -1377,12 +1378,13 @@ input {
   font-weight: bold;
   height: 35px;
   line-height: 36px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .filterRightBorder {
   float: left;
   height: 35px;
   border-radius: 0px 5px 5px 0px;
+  width: 28px;
 }
 .filterLeftBorder:hover,
 .filterRightBorder:hover,
@@ -1403,4 +1405,9 @@ td {
 }
 .colorBlack {
   color: black;
+}
+.timesCenterClose {
+  margin-left: 5px;
+  margin-top: 8px;
+  font-size: 20px;
 }

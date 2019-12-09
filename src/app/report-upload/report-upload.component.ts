@@ -245,9 +245,10 @@ export class ReportUploadComponent implements OnInit {
     }
   }
   onSubmit() {
-    console.log(JSON.stringify(this.report));
-    this.pullData.pushNewReport(JSON.stringify(this.report)).subscribe(data => {
-    });
+    //console.log(JSON.stringify(this.report));
+    this.pullData
+      .pushNewReport(JSON.stringify(this.report))
+      .subscribe(data => {});
   }
   resetForm() {
     this.report = cloneDeep(this.template);

@@ -159,7 +159,7 @@ export class FilterspopComponent implements OnInit {
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
   ): number => {
-    // console.log("ORDER VALUE", a.key, b.key);
+    // //console.log("ORDER VALUE", a.key, b.key);
     return this.filterService.pullNavigation[a.key]["OrderID"] <
       this.filterService.pullNavigation[b.key]["OrderID"]
       ? -1
@@ -252,6 +252,15 @@ export class FilterspopComponent implements OnInit {
       return null;
     }
   }
+
+  getType3Display(val: any) {
+    if (String(val) == "0") {
+      return "OFF";
+    }
+    if (String(val) == "1") {
+      return "ON";
+    }
+  }
   openMyMenu() {
     this.trigger.toggleMenu();
   }
@@ -298,7 +307,7 @@ export class FilterspopComponent implements OnInit {
       }
       overallString += template30;
     }
-    console.log("OVR STRING", overallString);
+    //console.log("OVR STRING", overallString);
     //this.posHTML = overallString;
     //return this.sanitizer.bypassSecurityTrustHtml(overallString);
   }

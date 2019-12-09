@@ -19,7 +19,7 @@ body {
   overflow: hidden;
 }
 @font-face {
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   src: url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.ttf")
     format("opentype");
   src: url("/assets/Fonts/@font-face/1daa609fdca8da38e5bcbb12c2a987db.eot")
@@ -152,7 +152,7 @@ body {
 .dropdown-btn {
   border: none !important;
   height: 59px;
-  font-family: "DIN" !important;
+  font-family: "DIN-Regular" !important;
   font-weight: bold !important;
   font-size: 20px;
   text-align: center !important;
@@ -161,7 +161,7 @@ body {
 }
 
 .selected-item {
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   line-height: 1.3 !important;
 
   margin-bottom: 2px;

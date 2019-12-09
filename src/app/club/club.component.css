@@ -10,7 +10,7 @@
   font-weight: bold;
   text-align: center;
   font-size: 15px;
-  font-family: "DIN", "DIN";
+  font-family: "DIN-Regular", "DIN-Regular";
   border-bottom: 4px solid white;
   width: -webkit-fill-available;
   min-width: 120px;
@@ -61,7 +61,7 @@
   font-weight: bold;
   text-align: left;
   font-size: 20px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .teamList {
   /* background-color: white; */
@@ -103,7 +103,7 @@
 }
 .yearLabel {
   font-size: 20px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   color: black;
   font-weight: bold;
   padding: 15px 5px;
@@ -140,7 +140,7 @@
   border-radius: 10px;
   /* min-width: 115px; */
   font-size: 16px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   color: black;
   font-weight: bold;
   overflow-y: auto;
@@ -212,7 +212,7 @@ hr {
  * 2. Correct the odd `em` font sizing in all browsers.
  */
 pre {
-  font-family: "DIN", monospace, monospace;
+  font-family: "DIN-Regular", monospace, monospace;
   /* 1 */
   font-size: 1em;
   /* 2 */
@@ -255,7 +255,7 @@ strong {
 code,
 kbd,
 samp {
-  font-family: "DIN", monospace, monospace;
+  font-family: "DIN-Regular", monospace, monospace;
   /* 1 */
   font-size: 1em;
   /* 2 */
@@ -308,7 +308,7 @@ input,
 optgroup,
 select,
 textarea {
-  font-family: "DIN", inherit;
+  font-family: "DIN-Regular", inherit;
   /* 1 */
   font-size: 100%;
   /* 1 */
@@ -504,7 +504,7 @@ body {
   color: #16181a;
   display: block;
   margin-bottom: 2px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   font-weight: bold;
 }
 .g-data--inline {
@@ -517,7 +517,7 @@ body {
 .g-label {
   font-size: 0.75rem;
   line-height: 1.33333;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   letter-spacing: 0.5px;
   font-weight: 700;
   display: inline-block;
@@ -658,7 +658,7 @@ body {
 }
 .g-profile__name {
   color: #393c40;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 
   font-size: 1.25rem;
   font-weight: 400;
@@ -922,7 +922,8 @@ body {
 body,
 button,
 input {
-  font-family: "DIN", "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "DIN-Regular", "Roboto", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: antialiased;
@@ -935,7 +936,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   font-weight: 800;
   line-height: 1.2;
   margin: 0 0 0.5rem;
@@ -1009,7 +1010,7 @@ h6,
   padding-left: 5px;
   padding-right: 5px;
   border-radius: 5px;
-  line-height: 30px;
+  line-height: 33px;
   height: 30px;
   color: white;
 }
@@ -1085,11 +1086,14 @@ h6,
 .spinnerLabels {
   font-size: 0.75rem;
   line-height: 1.33333;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   letter-spacing: 0.5px;
   font-weight: 700;
 
   text-transform: uppercase;
   color: #585d63;
   vertical-align: middle;
+}
+.clubPointer:hover {
+  cursor: pointer;
 }

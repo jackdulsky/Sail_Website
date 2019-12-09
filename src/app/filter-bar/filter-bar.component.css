@@ -41,13 +41,14 @@
 }
 .filterRightBorder {
   border-radius: 0px 5px 5px 0px;
+  width: 28px;
 }
 .filterRightBorder,
 .filterLeftBorder,
 .filterMiddleBorder {
   height: 37px;
   float: left;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   font-weight: bold;
   line-height: 39px;
 }
@@ -81,7 +82,7 @@
 }
 .insideGrid-container3 {
   display: grid;
-  grid-template-columns: 3px 1fr 20px;
+  grid-template-columns: 3px 1fr 28px;
   align-items: center;
 }
 /* .full-width-dialog .mat-dialog-container {
@@ -153,7 +154,7 @@
   text-align: center;
   margin-right: 5px;
   font-weight: bold;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .titleFilter:hover {
   background-color: var(--raiders-gray);
@@ -171,7 +172,7 @@
   height: 37px;
   border-radius: 4px;
   align-content: center;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19); */
 }
 .apply {
@@ -234,7 +235,7 @@
   font-weight: bolder;
   margin-right: 8%;
   font-size: 16px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   margin-top: 1px;
 }
 .playCount {
@@ -251,7 +252,7 @@
   height: 37px;
   border-radius: 4px;
   align-content: center;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .playCountNumber {
   text-align: right;
@@ -266,7 +267,7 @@
   height: 37px;
   border-radius: 4px;
   align-content: center;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   width: 43px;
 }
 .words:hover {
@@ -278,7 +279,7 @@
   max-width: 110px;
   vertical-align: middle;
   font-size: 16px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   text-align: center;
   margin: 4px;
   /* overflow: hidden; */
@@ -314,7 +315,7 @@
   padding-right: 10px;
   text-overflow: clip;
   width: 100%;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   font-weight: bold;
   font-size: 16px;
   margin-bottom: 5px;
@@ -371,7 +372,7 @@
 .saveFilter {
   line-height: 0px;
   width: 100% !important;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   font-weight: bold;
   font-size: 16px;
   margin-bottom: 5px;
@@ -486,4 +487,9 @@
   cursor: pointer;
   color: white;
   background-color: var(--lighter-blue);
+}
+.timesCenterClose {
+  margin-left: 5px;
+  margin-top: 8px;
+  font-size: 20px;
 }

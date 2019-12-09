@@ -25,10 +25,13 @@
       </div>
       <div
         class="searchingTop"
-        style="width:200px; float:right;margin-right: 10px; "
+        style="width:275px; float:right;margin-right: 10px; "
       >
         <div>
-          <span>
+          <span
+            style="position: absolute;
+          top: -1px !important;"
+          >
             <i
               class="sicon fa fa-search fa-sm"
               style="color:black;margin-left:5%;"
@@ -37,11 +40,12 @@
               type="text"
               id="searchGlobalText"
               placeholder="  Search"
-              (input)="searching($event.target.value)"
               autocomplete="off"
+              (keyup.enter)="searching($event.target.value)"
               class="filterSearchG"
             />
           </span>
+          <!-- (input)="searching($event.target.value)" -->
         </div>
       </div>
     </div>

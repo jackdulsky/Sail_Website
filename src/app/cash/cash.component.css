@@ -9,7 +9,7 @@
   font-weight: bold;
   text-align: center;
   font-size: 15px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   border-bottom: 4px solid white;
   width: -webkit-fill-available;
   min-width: 120px;
@@ -54,14 +54,14 @@
   font-weight: bold;
   text-align: left;
   font-size: 20px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
 }
 .cashList {
   background-color: white;
   border: 1px solid black;
   position: absolute;
   top: 124px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   z-index: 1000;
   margin: 0;
   padding: 0;
@@ -94,7 +94,7 @@
 }
 .yearLabelCash {
   font-size: 20px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   color: black;
   font-weight: bold;
   height: 32px;
@@ -125,7 +125,7 @@
   line-height: 50px;
   min-width: 220px;
   font-size: 20px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   color: black;
   font-weight: bold;
   background-color: white;

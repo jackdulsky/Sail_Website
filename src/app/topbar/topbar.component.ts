@@ -46,7 +46,7 @@ export class TopbarComponent implements OnInit {
     this.router.navigate(["../../report-upload"]);
   }
   openSettingsMenu() {
-    console.log("OPENING SETTINGS MENU");
+    //console.log("OPENING SETTINGS MENU");
   }
 
   searching(input: string) {
@@ -64,13 +64,13 @@ export class TopbarComponent implements OnInit {
               )[0];
               this.filterService.globalSearchShowSuggestions = true;
               //code to automatically go to new url
+              //comment out to not route
               var urlFirst = this.filterService.temp[
                 Object.keys(this.filterService.temp)[0]
               ];
               this.filterService.goToLink(
                 "http://oakcmsreports01.raiders.com:88" + urlFirst
               );
-              // this.filterService.goToLink("localhost:4200" + urlFirst);
             }
           });
         }

@@ -12,6 +12,6 @@ export class MenuItemComponent implements OnInit {
   constructor(public filterService: FiltersService) {}
 
   ngOnInit() {
-    console.log("INIT MENU - ITEM", this.items);
+    //console.log("INIT MENU - ITEM", this.items);
   }
 }

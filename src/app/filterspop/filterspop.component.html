@@ -226,14 +226,23 @@
                       >
                         <ng-container
                           *ngIf="
-                            filterService.pullAttribute[att.key]['UITypeID'] !=
-                            4 && filterService.pullAttribute[att.key]['UITypeID'] != 5 && filterService.pullAttribute[att.key]['UITypeID'] != 7
+                          [3,4,5,7].indexOf(filterService.pullAttribute[att.key]['UITypeID']) == -1
                           "
                         >
+
                           &nbsp;&nbsp;&nbsp;{{
                             filterService.pullValueMap[att.key][val][Label]
                           }}&nbsp;&nbsp;&nbsp;
                         </ng-container>
+                        <ng-container
+                        *ngIf="
+                         filterService.pullAttribute[att.key]['UITypeID'] == 3
+                        "
+                      >
+                        &nbsp;&nbsp;&nbsp;{{
+                          getType3Display(val)
+                        }}&nbsp;&nbsp;&nbsp;
+                      </ng-container>
                         <ng-container
                           *ngIf="
                            filterService.pullAttribute[att.key]['UITypeID'] == 5
@@ -287,10 +296,8 @@
                         filterService.clearSingleValuePop(bin.key, att.key, val)
                       "
                     >
-                      <i
-                        class="fa fa-times"
-                        style="margin-left: 4px;margin-right: 4px;margin-top: 8px;"
-                      ></i>
+                    <i class="fa fa-times timesCenterClose"></i>
+
                     </div>
                   </div>
                 </ng-container>
@@ -558,14 +565,14 @@
                   id="off{{ id }}"
                   name="state-d{{ id }}"
                   type="radio"
-                  [checked]="filterService.checkType3ToggleChecked(id, 'False')"
+                  [checked]="filterService.checkType3ToggleChecked(id, 0)"
                 />
                 <label
                   for="off{{ id }}"
                   (click)="
                     filterService.changeToggleValue(
                       id,
-                      'False',
+                      0,
                       false,
                       filterService.level1Selected
                     )
@@ -594,14 +601,14 @@
                   id="on{{ id }}"
                   name="state-d{{ id }}"
                   type="radio"
-                  [checked]="filterService.checkType3ToggleChecked(id, 'True')"
+                  [checked]="filterService.checkType3ToggleChecked(id, 1)"
                 />
                 <label
                   for="on{{ id }}"
                   (click)="
                     filterService.changeToggleValue(
                       id,
-                      'True',
+                      1,
                       false,
                       filterService.level1Selected
                     )
@@ -809,14 +816,15 @@
                   class=""
                   (click)="toggleNestedSelect(id,player.key)"
                     *ngFor="
-                    let player of filterService.playersToDisplay | keyvalue
+                    let player of filterService.playersToDisplay | keyvalue: filterService.labelOrder
                     "
                     >
                     <div class="" style="">
                       <img
                       class="grid-itemGen"
-                      src="{{ filterService.getActivePlayerImage(player.key) }}"
-                      onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player3.jpg'"
+                      src="{{ filterService.playerImageURLs[player.key] }}"
+                      
+                      onError="this.onerror=null;this.src='https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/Blank_Player4.png'"
                       alt=""
                       />
                     </div>

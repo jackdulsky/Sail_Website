@@ -24,7 +24,7 @@
   padding: 20px;
   font-size: 20px;
   font-weight: bold;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   text-align: left;
   background-color: #ebeced;
   margin-top: 10px;
@@ -42,7 +42,7 @@
 .labelText {
   margin-top: 4px;
   font-size: 16px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   text-align: center;
 }
 

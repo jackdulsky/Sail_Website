@@ -4,7 +4,7 @@
       id="team"
       class="team teamGrid"
       (click)="changeTeam(team)"
-      *ngFor="let team of filterService.teams"
+      *ngFor="let team of filterService.teams | Sort: 'ClubCityName'"
     >
       <img id="team" class="imgLogo tableCenter" [src]="getActiveLogo(team)" />
       <div id="team" class="teamText">
@@ -39,11 +39,16 @@
             <div id="team" class="nameBox">
               <h2
                 id="team"
-                class="g-profile__name"
+                class="g-profile__name clubPointer"
                 (click)="displayTeams(showList)"
               >
-                &nbsp;{{ filterService.teamPortalSelected.ClubNickName
-                }}<i id="team" class="fa fa-angle-down fa-lg"></i>
+                &nbsp;{{ filterService.teamPortalSelected.ClubNickName }}
+                <i
+                  id="player"
+                  style="font-size: 25px;
+              margin-left: 2px;"
+                  class="fa fa-angle-down fa-lg"
+                ></i>
               </h2>
             </div>
             <div class="g-profile__bio w400FloatLeft">

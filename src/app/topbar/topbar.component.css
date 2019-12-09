@@ -12,7 +12,7 @@ ul {
   width: 100%;
 }
 .leftBG {
-  background-image: url(../../assets/Site_header_leftV3.png);
+  background-image: url(../../assets/Site_header_leftV4.png);
   width: 434px;
   min-width: 434px;
   height: 50px;
@@ -21,6 +21,7 @@ ul {
   background-size: contain;
   background-repeat: no-repeat;
   float: left;
+  border-top: 1px solid black;
 }
 .rightBG {
   background-image: url(../../assets/Site_header_rightV3.png);
@@ -33,6 +34,7 @@ ul {
   background-repeat: repeat;
   position: absolute;
   left: 428px;
+  border-top: 1px solid black;
 }
 .topbuttonleft {
   margin-left: 5px;
@@ -56,7 +58,7 @@ ul {
   /* border-left: 2px solid var(--raiders-gray); */
   padding-left: 10px;
   font-size: 25px;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   line-height: 55px !important;
 }
 .mright {
@@ -69,7 +71,7 @@ ul {
 }
 .filterLabel {
   color: white;
-  font-family: "DIN";
+  font-family: "DIN-Regular";
   font-weight: bold;
   font-size: 22px;
   margin-left: 160px;
@@ -181,10 +183,12 @@ ul {
   /* background: #3e4345; */
   margin-bottom: 8px;
   border-radius: 5px;
-  height: 28px;
+  height: 26px;
   border: 1px solid #3e4345;
-  top: 17px;
+  top: 19px;
   color: black;
+  line-height: 30px;
+  font-family: "DIN-Regular";
 }
 .searchingTop input {
   height: 28px;

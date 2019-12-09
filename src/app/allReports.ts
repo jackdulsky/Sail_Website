@@ -49,28 +49,6 @@ export const lor: any = {
   }
 };
 export const reportsNew: any = {
-  // 4: {
-  //   4: {
-  //     ColorBottom: "#3544cc",
-  //     ColorTop: "#4254f5",
-  //     IconUrl:
-  //       "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Cash2.png",
-  //     Label: "Club Cash Summary",
-  //     OrderID: -1,
-  //     TabID: 4
-  //   }
-  // },
-  7: {
-    7: {
-      ColorBottom: "#3544cc",
-      ColorTop: "#4254f5",
-      IconUrl:
-        "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Cash2.png",
-      Label: "Club Cash Summary",
-      OrderID: -1,
-      TabID: 7
-    }
-  },
   0: {
     1: {
       Label: "Quick cuts",

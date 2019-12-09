@@ -65,7 +65,7 @@ export class LoadingComponent implements OnInit {
 
           this.filterService.pushDBFormat(insertFilter);
         } catch (e) {
-          console.log("INVALID GUID");
+          //console.log("INVALID GUID");
         }
 
         this.injectFilters();

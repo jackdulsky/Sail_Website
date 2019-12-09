@@ -37,15 +37,27 @@ export class BodyComponent implements OnInit {
   //ON INIT SET THE SELECTED TAB ON THE LEFT TO GENERAL / CHANGE CSS
   ngOnInit() {
     this.filterService.selected = "0";
-    setTimeout(() => {
+    this.initCalled();
+  }
+
+  initCalled() {
+    if (
+      document.getElementById(this.filterService.selected + "reportHighlightid")
+    ) {
       if (this.filterService.portalSelected == "") {
         try {
           document.getElementById(
             this.filterService.selected + "reportHighlightid"
           ).className = "sidebutton sidebuttonclicked";
-        } catch (e) {}
+        } catch (e) {
+          console.log("ERROR", e);
+        }
       }
-    }, 1);
+    } else {
+      setTimeout(() => {
+        this.initCalled();
+      }, 100);
+    }
   }
 
   //THIS UPDATES THE REPORT TYPE TO VIEW FROM CLICK

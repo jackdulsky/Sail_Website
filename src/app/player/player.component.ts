@@ -189,23 +189,6 @@ export class PlayerComponent implements OnInit {
     }
   }
 
-  //RETURN THE PLAYER IMAGES
-  getActivePlayerImage(playerID: any) {
-    try {
-      if (playerID == "") {
-        return "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/NFL_.png";
-      } else {
-        var gsisID = this.filterService.pullPlayers[playerID]["GSISPlayerID"];
-        var url = this.baseURL.replace("REPLACEME", gsisID);
-        return url;
-      }
-    } catch (e) {
-      setTimeout(() => {
-        return this.getActivePlayerImage(playerID);
-      }, 100);
-    }
-  }
-
   //RETURN LIST OF PLAYERS
   getPlayers(players: any) {
     var returnPlayers = {};
@@ -285,11 +268,13 @@ export class PlayerComponent implements OnInit {
 
     this.playerTabSelected = name;
     //color new
-    try {
-      var newTab = document.getElementById(name + "playerBarHighlightid");
-      newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid lightskyblue";
-    } catch (e) {}
+    setTimeout(() => {
+      try {
+        var newTab = document.getElementById(name + "playerBarHighlightid");
+        newTab.style.backgroundColor = "#f2f2f2";
+        newTab.style.borderBottom = "4px solid lightskyblue";
+      } catch (e) {}
+    }, 1);
 
     //Route Appropriately
 

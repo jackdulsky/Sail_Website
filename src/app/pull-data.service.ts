@@ -30,15 +30,15 @@ export class PullDataService {
   //SEND UP THE XOS INFORMATION
   //NOT FUNCTIONAL
   XOSExport(folder: string, filterID: string, filters: any) {
-    console.log("Sending to folder: ", folder);
-    console.log("Sending filterID ", filterID);
-    console.log("Sending Filters: ", filters);
+    //console.log("Sending to folder: ", folder);
+    //console.log("Sending filterID ", filterID);
+    //console.log("Sending Filters: ", filters);
   }
 
   //RETURNS THE SAVED FILTERS FROM THE DATA BASE
   //NOT FUNCTIONAL
   getSavedFilters() {
-    console.log("returning filters");
+    //console.log("returning filters");
     //EVENTUALLY PASS IN USER
     return {
       "20200": { name: "a", filters: { "10904": ["68245"] } },
@@ -69,8 +69,8 @@ export class PullDataService {
   //SAVE THE FILTER SET IN THE DB
   //NOT FUNCTIONAL
   saveFilter(name: string, filters: any, filterID: string) {
-    console.log("Trying to send: ", name, filterID);
-    console.log(JSON.stringify(filters));
+    //console.log("Trying to send: ", name, filterID);
+    //console.log(JSON.stringify(filters));
     if (filterID != null) {
       return filterID;
     } else {
@@ -169,7 +169,7 @@ export class PullDataService {
   //SEND THE DATA BACK UP TO THE DB
   // INSERT THE GUI AND FILTERS SELECTED
   constructAndSendFilters(filter) {
-    console.log("PULL DATA CONSTRUCT AND SEND", JSON.stringify(filter));
+    console.log("PUSHING", JSON.stringify(filter));
 
     var query =
       "exec SailDB.filter.spSAIL_StoreUpdateFilter N'" +
@@ -266,7 +266,7 @@ export class PullDataService {
   //INSERT THE REPORT
   pushNewReport(reportJSON: string) {
     var query = "SailDB.Reports.spAddNewReport N'" + reportJSON + "'";
-    console.log("PUSHING NEW REPORT JSON: ", reportJSON);
+    //console.log("PUSHING NEW REPORT JSON: ", reportJSON);
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
@@ -283,38 +283,47 @@ export class PullDataService {
 
   //Pull position heirarchy
   pullSearchOptions(input: string) {
-    return this.http.post(
-      this.serverURL + "execute/file/bodyinput/search_tool",
-      {
-        input: String(input),
-        guid: String(this.GUID)
-      },
-      { responseType: "text" }
-    );
-
-    // console.log(
-    //   "BODY",
-    //   JSON.stringify({
+    // return this.http.post(
+    //   this.serverURL + "execute/file/bodyinput/search_tool",
+    //   {
     //     input: String(input),
     //     guid: String(this.GUID)
-    //   })
+    //   },
+    //   { responseType: "text" }
     // );
-    // console.log(
-    //   "URL",
-    //   this.serverURL +
-    //     "execute/file/bodyinput/search_tool" +
-    //     "?input=" +
-    //     String(input) +
-    //     "&guid=" +
-    //     String(this.GUID)
+    // return this.http.post(
+    //   this.serverURL + "execute/file/bodyinput/getSearchResults",
+    //   {
+    //     text: String(input),
+    //     guid: String(this.GUID)
+    //   },
+    //   { responseType: "text" }
     // );
-    // return this.http.get(
-    //   this.serverURL +
-    //     "execute/file/bodyinput/search_tool" +
-    //     "?input=" +
-    //     String(input) +
-    //     "&guid=" +
-    //     String(this.GUID)
-    // );
+    try {
+      return this.http.post(
+        this.serverURL + "search",
+        {
+          text: String(input),
+          guid: String(this.GUID)
+        },
+        { responseType: "text" }
+      );
+    } catch (e) {
+      return this.http.post(
+        this.serverURL + "execute/file/bodyinput/search_tool",
+        {
+          input: String(input),
+          guid: String(this.GUID)
+        },
+        { responseType: "text" }
+      );
+    }
+  }
+  pullPlayerURL() {
+    var query =
+      "Select p.SailID, PlayerImageUrl from ContractsDB..Player join saildb.org.Player p on player.PlayerId = p.GSISPlayerID where p.CurrentPlayerLevel = 'NFL'";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
   }
 }
