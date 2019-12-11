@@ -114,7 +114,9 @@ export class LoadingComponent implements OnInit {
         this.doneChecking ||
         this.doneloading != Object.keys(this.filterService.newFIDBID).length
       ) {
-        setInterval(this.rerouteAfterUpload, 100);
+        setTimeout(() => {
+          this.rerouteAfterUpload();
+        }, 100);
       } else {
         try {
           this.router.navigate([
@@ -129,7 +131,11 @@ export class LoadingComponent implements OnInit {
         }
       }
     } else {
-      this.router.navigate(["/base-report"]);
+      try {
+        this.router.navigate(["/base-report"]);
+      } catch (e) {
+        this.router.navigate([""]);
+      }
     }
   }
 }
@@ -141,3 +147,6 @@ export class LoadingComponent implements OnInit {
 //http://localhost:4200/loading/C18400E2-DE4E-A997-A09E-6D9B2F53E113/%5B%5B%22-2%22,%222%22,%5B%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5B%22-4%22,%224%22,%5B%222014%22%5D%5D%5D%5D/club,report,46
 //http://localhost:4200/loading/C18400E2-DE4E-A997-A09E-6D9B2F53E113/[["-2","2",["1024","1026"]],["-11","10092",["10000001"]],["-4","4",["2014"]]]/club,report,46
 //upload years guid testing 717FBBBF-DE7C-25AE-24D3-0004E04396B6
+
+//two filters:
+//http://localhost:4200/home/ab717eac-a5dc-3442-44c5-2d1771b46c95/loading/ab717eac-a5dc-3442-44c5-2d1771b46c95/%5b%5b%22-3%22,%223%22,%5b%221001058%22%5d%5d,%5b%22-1%22,%221%22,%5b%221%22%5d%5d%5d/home

@@ -1,4 +1,4 @@
-<div class="topBar">
+<div class="topBarClub">
   <div id="team" class="teamList shadow" *ngIf="showList">
     <div
       id="team"
@@ -7,9 +7,7 @@
       *ngFor="let team of filterService.teams | Sort: 'ClubCityName'"
     >
       <img id="team" class="imgLogo tableCenter" [src]="getActiveLogo(team)" />
-      <div id="team" class="teamText">
-        &nbsp;&nbsp;{{ filterService.getLabel(team, "ClubNickName") }}
-      </div>
+      <div id="team" class="teamText">&nbsp;&nbsp;{{ getCityName(team) }}</div>
     </div>
   </div>
 
@@ -28,23 +26,30 @@
     <div class="g-profile">
       <div class="g-profile__grid overflow-hidden">
         <div class="g-profile__profile">
-          <img
-            [src]="getActiveLogo(filterService.teamPortalSelected)"
-            class="g-profile__photo_club"
-            (click)="displayTeams(showList)"
-          />
+          <div
+            style="    width: 91px;
+          height: 91px;
+          position: relative;
+          top: 91px;"
+          >
+            <img
+              [src]="getActiveLogo(filterService.teamPortalSelected)"
+              class="g-profile__photo_club"
+              (click)="displayTeams(showList)"
+            />
+          </div>
         </div>
         <div class="g-profile__identity">
           <div style="display: flow-root;">
-            <div id="team" class="nameBox">
+            <div id="team" class="nameBoxClub">
               <h2
                 id="team"
                 class="g-profile__name clubPointer"
                 (click)="displayTeams(showList)"
               >
-                &nbsp;{{ filterService.teamPortalSelected.ClubNickName }}
+                &nbsp;{{ getCityName(filterService.teamPortalSelected) }}
                 <i
-                  id="player"
+                  id="team"
                   style="font-size: 25px;
               margin-left: 2px;"
                   class="fa fa-angle-down fa-lg"
@@ -99,9 +104,11 @@
                 [radius]="30"
                 [outerStrokeWidth]="4"
                 [innerStrokeWidth]="2"
-                [outerStrokeColor]="filterService.shadeColor(disp['Color'], 0)"
-                [titleColor]="filterService.shadeColor(disp['Color'], 0)"
-                [innerStrokeColor]="filterService.shadeColor(disp['Color'], 68)"
+                [outerStrokeColor]="disp['Color']"
+                [titleColor]="filterService.shadeColorHue(disp['Color'], -10)"
+                [innerStrokeColor]="
+                  filterService.shadeColorHue(disp['Color'], 20)
+                "
                 [animation]="true"
                 [animationDuration]="300"
                 [showSubtitle]="false"

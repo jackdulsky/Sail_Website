@@ -1,6 +1,6 @@
 <mat-dialog-content
   [formGroup]="filterService.form"
-  style="background-color:white"
+  style="background-color:white; max-height: 80vh !important;"
 >
   <Div class="ovr-container2">
     <div class="top">
@@ -67,7 +67,8 @@
             (click)="filterService.attributeSelected(first.key)"
             id="buttonContainer{{ first.key }}"
             [ngStyle]="filterService.buttonContainerColor(first.key)"
-          >
+            >
+            <!-- [style.borderLeft]="filterService.buttonContainerBool(first.key) ? '4px solid lightskyblue' : '4px solid white'" -->
             <div class="tier2-name" id="firstname{{ first.key }}">
               {{ returnlabel(filterService.pullNavigationElement[first.key]) }}
             </div>

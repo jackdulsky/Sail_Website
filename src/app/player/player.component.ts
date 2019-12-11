@@ -135,7 +135,7 @@ export class PlayerComponent implements OnInit {
       newTab.style.borderBottom = "4px solid lightskyblue";
     } else {
       setTimeout(() => {
-        this.justHighlight(name);
+        this.justHighlight(this.playerTabSelected);
       }, 100);
     }
   }

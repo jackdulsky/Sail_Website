@@ -125,6 +125,7 @@
   /* background-color: #ebeced; */
   background-color: RGB(38, 38, 38);
   text-transform: uppercase;
+  font-family: "DIN-Medium";
 }
 .sidebutton:hover {
   cursor: pointer;
@@ -153,7 +154,7 @@
     rgb(190, 190, 190) 46%,
     rgb(217, 217, 217) 90%
   );
-
+  font-family: "DIN-Medium";
   color: black;
 }
 

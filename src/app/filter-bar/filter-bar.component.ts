@@ -39,7 +39,7 @@ export class FilterBarComponent implements OnInit {
 
   ngOnInit() {}
   ngAfterInit() {
-    this.cdref.detectChanges;
+    // this.cdref.detectChanges;
   }
   //OPENS ENTIRE FILTER PAGE CLEAN
   openFilterPage(selected: string) {

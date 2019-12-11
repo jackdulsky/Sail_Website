@@ -1214,7 +1214,8 @@ export class FiltersService {
     this.level1Selected = id;
 
     // SET PANELS
-    this.panels = [id];
+
+    this.panels = [cloneDeep(id)];
     this.show = "";
     this.selectingAttributes = [null];
 
@@ -1230,6 +1231,7 @@ export class FiltersService {
   //THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
   attributeSelected(att: string) {
     var newPanels = [];
+
     var first = cloneDeep(this.panels[0]);
     var level = cloneDeep(this.pullStructure[first]);
     var toTurnOff = [];
@@ -1242,6 +1244,7 @@ export class FiltersService {
     //AS WELL.
     //IF THE PANEL EXISTS IN THE KEYS AT A LEVEL, CLOSE THE REST OF THE
     //OPEN PANELS
+
     for (let panel of this.panels.slice(1).concat([this.show])) {
       if (level.hasOwnProperty(att) || addtoOff) {
         addtoOff = true;
@@ -1259,9 +1262,6 @@ export class FiltersService {
     for (let turnoff of toTurnOff) {
       document.getElementById("buttonContainer" + turnoff).style.borderLeft =
         "4px solid white";
-      document.getElementById(
-        "buttonContainer" + turnoff
-      ).style.backgroundColor = "white";
     }
 
     //ADD TO PANEL OR SHOW THE SELECTION FORM
@@ -1286,7 +1286,7 @@ export class FiltersService {
     if (
       JSON.stringify([first].concat(newPanels)) != JSON.stringify(this.panels)
     ) {
-      this.panels = [first].concat(newPanels);
+      this.panels = [cloneDeep(first)].concat(cloneDeep(newPanels));
     }
 
     this.reversePaths[this.level1Selected][att] = cloneDeep(this.panels);
@@ -1319,19 +1319,17 @@ export class FiltersService {
     ) {
       newPanels = newPanels.slice(1);
     }
-    this.panels = newPanels.reverse();
+    this.panels = cloneDeep(newPanels.reverse());
   }
 
   //GET COLOR FOR PANELS
   buttonContainerColor(id: any) {
     if (this.panels.concat([String(this.show)]).indexOf(String(id)) != -1) {
       return {
-        //#f2f2f2
-        backgroundColor: "white",
         borderLeft: "4px solid lightskyblue"
       };
     } else {
-      return { backgroundColor: "white", borderLeft: "4px solid white" };
+      return { borderLeft: "4px solid white" };
     }
   }
 
@@ -1339,10 +1337,11 @@ export class FiltersService {
   getPanelOptions(att: string, p: any = this.panels) {
     var disp = this.pullStructure;
     for (let level of p.slice(0, -1)) {
+      level = cloneDeep(level);
       if (level == att) {
         break;
       }
-      disp = disp[level];
+      disp = cloneDeep(disp[level]);
     }
     disp = cloneDeep(disp[att]);
     // //console.log("DISP", disp);
@@ -1773,26 +1772,55 @@ export class FiltersService {
 
   //Takes a hex color and percent change and returns new hex color
   shadeColor(color, percentInput) {
-    var percent = Number(percentInput);
     if (!color.includes("#")) {
-      color = this.colorNameToHex(color);
+      try {
+        color = this.colorNameToHex(color);
+      } catch (e) {}
     }
-    var R = parseInt(color.substring(1, 3), 16);
-    var G = parseInt(color.substring(3, 5), 16);
-    var B = parseInt(color.substring(5, 7), 16);
 
-    R = parseInt(String((Number(R) * (100 + percent)) / 100));
-    G = parseInt(String((Number(G) * (100 + percent)) / 100));
-    B = parseInt(String((Number(B) * (100 + percent)) / 100));
-    R = R < 255 ? R : 255;
-    G = G < 255 ? G : 255;
-    B = B < 255 ? B : 255;
+    var usePound = false;
+    if (color[0] == "#") {
+      color = color.slice(1);
+      usePound = true;
+    }
 
-    var RR = R.toString(16).length == 1 ? "0" + R.toString(16) : R.toString(16);
-    var GG = G.toString(16).length == 1 ? "0" + G.toString(16) : G.toString(16);
-    var BB = B.toString(16).length == 1 ? "0" + B.toString(16) : B.toString(16);
+    var num = parseInt(color, 16);
 
-    return "#" + RR + GG + BB;
+    var r = (num >> 16) + percentInput;
+
+    if (r > 255) r = 255;
+    else if (r < 0) r = 0;
+
+    var b = ((num >> 8) & 0x00ff) + percentInput;
+
+    if (b > 255) b = 255;
+    else if (b < 0) b = 0;
+
+    var g = (num & 0x0000ff) + percentInput;
+
+    if (g > 255) g = 255;
+    else if (g < 0) g = 0;
+
+    return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
+  }
+
+  //changes the hue value shading
+  //form hsl(222,22%,50%)
+  shadeColorHue(color, valuechange) {
+    var split = color.split(",");
+    var color1 = Number(split[0].split("(")[1]);
+    var color2 = Number(split[1].split("%")[0]);
+
+    var color3 = Number(split[2].split("%")[0]);
+    return (
+      "hsl(" +
+      String(color1) +
+      "," +
+      String(color2) +
+      "%," +
+      String(color3 + valuechange) +
+      "%)"
+    );
   }
 
   //Convert color name to hex

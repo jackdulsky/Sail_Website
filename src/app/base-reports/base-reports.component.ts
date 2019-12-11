@@ -41,7 +41,7 @@ export class BaseReportsComponent implements OnInit {
       } else {
         setTimeout(() => {}, 800);
       }
-      this.cdref.detectChanges();
+      //this.cdref.detectChanges();
       // In a real app: dispatch action to load the details here.
     });
   }

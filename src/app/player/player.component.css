@@ -23,7 +23,7 @@
   border-bottom: 4px solid lightskyblue !important;
   cursor: pointer;
 }
-.topBar {
+.topBarPlayer {
   display: flex;
   /* border-bottom: 2px solid black; */
 }
@@ -1086,9 +1086,10 @@ h6,
 .g-profile__name {
   text-transform: inherit;
 }
-.nameBox {
+.nameBoxPlayer {
   float: left;
   width: 400px;
+  margin-top: 8px;
 }
 .teamRoster {
   float: left;

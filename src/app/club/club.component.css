@@ -20,8 +20,10 @@
   border-bottom: 4px solid lightskyblue !important;
   cursor: pointer;
 }
-.topBar {
+.topBarClub {
   display: flex;
+  background-color: #f0f2f5;
+  height: 92px;
 }
 .team {
   height: 72px;
@@ -500,6 +502,7 @@ body {
 
 .g-data {
   font-size: 1rem;
+  font-size: 15px;
   line-height: 1.125;
   color: #16181a;
   display: block;
@@ -596,6 +599,7 @@ body {
   max-width: 91px;
   top: 0px;
   z-index: 2;
+  margin: auto;
 }
 .g-profile__team-color {
   border-right-width: 1rem;
@@ -979,8 +983,9 @@ h6,
 .g-profile__name {
   text-transform: inherit;
 }
-.nameBox {
+.nameBoxClub {
   float: left;
+  margin-top: 11px;
   width: 230px;
 }
 .coachAndGM {

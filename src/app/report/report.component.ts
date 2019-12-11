@@ -43,7 +43,7 @@ export class ReportComponent implements OnInit {
           this.changeReport(this.viewing);
         }, 800);
       }
-      this.cdref.detectChanges();
+      // this.cdref.detectChanges();
       // In a real app: dispatch action to load the details here.
     });
   }

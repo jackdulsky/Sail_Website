@@ -18,6 +18,7 @@ import { TEMPORARY_NAME } from "@angular/compiler/src/render3/view/util";
 import { KeyValue } from "@angular/common";
 import * as cloneDeep from "lodash/cloneDeep";
 import { MatMenuTrigger } from "@angular/material";
+import { ChangeDetectorRef, ChangeDetectionStrategy } from "@angular/core";
 
 // import { AdalService } from 'adal-angular4';
 import { MsAdalAngular6Module } from "microsoft-adal-angular6";
@@ -77,10 +78,13 @@ export class FilterspopComponent implements OnInit {
     public filterService: FiltersService,
     public dialog: MatDialog,
     public sanitizer: DomSanitizer,
+    public cdref: ChangeDetectorRef,
+
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.title = data.title;
     this.filterService.level1Selected = data.selected;
+    // this.cdref.detach();
   }
 
   ngOnInit() {
@@ -88,11 +92,15 @@ export class FilterspopComponent implements OnInit {
     this.formG = this.fb.group({});
     this.filterService.setPlayers();
     //this.createPosMenus();
+    this.cdref.detectChanges();
     this.filterService.conferenceSelections["2"] = "AFC";
     setTimeout(() => {
       this.filterService.changelevel2(this.filterService.level1Selected);
     }, 1);
-    this.filterService.panels = [this.filterService.level1Selected];
+    console.log("HERE 7");
+
+    this.filterService.panels = [cloneDeep(this.filterService.level1Selected)];
+    // this.cdref.detectChanges();
   }
   //RETURN LABEL OF OBJECT
   returnlabel(obj: any) {
@@ -233,7 +241,8 @@ export class FilterspopComponent implements OnInit {
     ) {
       newPanels = newPanels.slice(1);
     }
-    this.filterService.panels = newPanels.reverse();
+
+    this.filterService.panels = cloneDeep(newPanels.reverse());
   }
 
   //GET INIT VALUES MIN MAX
