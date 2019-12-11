@@ -36,6 +36,12 @@
 ::ng-deep.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
   color: gray;
 }
+::ng-deep.mat-datepicker-toggle {
+  color: black !important;
+}
+::ng-deep.mat-calendar-body-selected {
+  background-color: var(--raiders-gray);
+}
 .mat-seudo-checkbox::after {
   color: white !important;
 }

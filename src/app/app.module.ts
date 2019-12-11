@@ -64,6 +64,7 @@ import { ClickOutsideModule } from "ng-click-outside";
 import { NgCircleProgressModule } from "ng-circle-progress";
 import { MenuItemComponent } from "./menu-item/menu-item.component";
 import { OrderAttributePipe } from "./order-attribute.pipe";
+import { MatDatepickerModule } from "@angular/material/datepicker";
 
 @NgModule({
   declarations: [
@@ -104,6 +105,7 @@ import { OrderAttributePipe } from "./order-attribute.pipe";
       innerStrokeColor: "#C7E596",
       animationDuration: 300
     }),
+    MatDatepickerModule,
     ClickOutsideModule,
     ColorPickerModule,
     AngularMultiSelectModule,
@@ -159,6 +161,7 @@ import { OrderAttributePipe } from "./order-attribute.pipe";
   ],
   bootstrap: [AppComponent],
   exports: [
+    MatDatepickerModule,
     MatDialogModule,
     Material.MatToolbarModule,
     Material.MatGridListModule,

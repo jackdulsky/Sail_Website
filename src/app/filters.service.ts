@@ -345,7 +345,7 @@ export class FiltersService {
           this.recursiveExtractLevel(d[b], "BinID", 2)
         );
       }
-      //console.log("PULLStructure", this.pullStructure);
+      console.log("PULLStructure", this.pullStructure);
     });
     this.pullData.pullDataType().subscribe(data => {
       this.pullDataType = {};
@@ -354,7 +354,7 @@ export class FiltersService {
     this.pullData.pullPlayers().subscribe(data => {
       this.pullPlayers = {};
       this.extractID(data, "SailID", this.pullPlayers);
-      // //console.log("PLAYERS", this.pullPlayers);
+      //console.log("PLAYERS", this.pullPlayers);
     });
     this.pullData.pullBin().subscribe(data => {
       this.pullBin = {};
@@ -365,12 +365,12 @@ export class FiltersService {
         this.newWorkingFID[binKey] = "";
         this.newFIDOrder[binKey] = [];
       }
-      // //console.log("BIN", this.pullBin);
+      //console.log("BIN", this.pullBin);
     });
     this.pullData.pullNavigation().subscribe(data => {
       this.pullNavigation = {};
       this.extractID(data, "ItemID", this.pullNavigation);
-      //console.log("NAV", this.pullNavigation);
+      console.log("NAV", this.pullNavigation);
     });
     this.pullData.pullPlayerURL().subscribe(data => {
       this.extractkeyValue(
@@ -383,7 +383,7 @@ export class FiltersService {
     this.pullData.pullNavigationElement().subscribe(data => {
       this.pullNavigationElement = {};
       this.extractID(data, "ItemID", this.pullNavigationElement);
-      //console.log("NAVELEM", this.pullNavigationElement);
+      console.log("NAVELEM", this.pullNavigationElement);
     });
     this.pullData.pullAttributeType().subscribe(data => {
       this.pullAttributeType = {};
@@ -393,7 +393,7 @@ export class FiltersService {
     this.pullData.pullAttribute().subscribe(data => {
       this.pullAttribute = {};
       this.extractID(data, "AttributeID", this.pullAttribute);
-      //console.log("PULLATTRIBUTE", this.pullAttribute);
+      console.log("PULLATTRIBUTE", this.pullAttribute);
     });
     this.pullData.pullUIType().subscribe(data => {
       this.pullUIType = {};
@@ -979,7 +979,8 @@ export class FiltersService {
       JSON.stringify(this.newWorkingQuery[bin][att]) ==
         JSON.stringify([val, null]) ||
       JSON.stringify(this.newWorkingQuery[bin][att]) ==
-        JSON.stringify([null, val])
+        JSON.stringify([null, val]) ||
+      Number(this.pullAttribute[att]["UITypeID"]) == 8
     ) {
       this.clearSingleIDWorking(att, bin, false);
     } else {
@@ -1767,6 +1768,18 @@ export class FiltersService {
     } else {
       this.form.controls[attribute].setValue([value]);
       this.type0change(attribute, [value], bin);
+    }
+  }
+
+  //change type8 date input
+  changeType8Input(attribute: any, value: any) {
+    var bin = this.pullAttribute[attribute]["BinID"];
+    var d = (value.getTime() - value.getMilliseconds()) / 1000;
+    if (value == "") {
+      this.clearSingleIDWorking(attribute, bin);
+    } else {
+      // this.form.controls[attribute].setValue([value]);
+      this.type0change(attribute, [String(d)], bin);
     }
   }
 

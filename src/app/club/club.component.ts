@@ -207,8 +207,6 @@ export class ClubComponent implements OnInit {
 
   //This function will route to reports page or display the report
   subRoute(name: any) {
-    console.log("CLICK 6");
-
     //Get rid of old
     try {
       var old = document.getElementById(
@@ -217,10 +215,8 @@ export class ClubComponent implements OnInit {
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
     } catch (e) {}
-    console.log("SEL 5", this.clubTabSelected);
 
     this.clubTabSelected = name;
-    console.log("SEL 6", this.clubTabSelected);
 
     //color new
     setTimeout(() => {

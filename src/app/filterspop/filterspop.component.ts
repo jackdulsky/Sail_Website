@@ -97,7 +97,6 @@ export class FilterspopComponent implements OnInit {
     setTimeout(() => {
       this.filterService.changelevel2(this.filterService.level1Selected);
     }, 1);
-    console.log("HERE 7");
 
     this.filterService.panels = [cloneDeep(this.filterService.level1Selected)];
     // this.cdref.detectChanges();
@@ -345,6 +344,19 @@ export class FilterspopComponent implements OnInit {
       this.filterService.form.value[id],
       this.filterService.level1Selected
     );
+  }
+
+  //InsertDate
+  //time in utc seconds
+  displayType8(time: any) {
+    var date = new Date(time * 1000);
+    var f =
+      String(Number(date.getMonth()) + 1) +
+      "/" +
+      date.getDate() +
+      "/" +
+      date.getFullYear();
+    return f;
   }
 
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
