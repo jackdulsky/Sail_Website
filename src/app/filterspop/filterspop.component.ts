@@ -22,6 +22,7 @@ import { ChangeDetectorRef, ChangeDetectionStrategy } from "@angular/core";
 
 // import { AdalService } from 'adal-angular4';
 import { MsAdalAngular6Module } from "microsoft-adal-angular6";
+import { stringify } from "querystring";
 
 @Component({
   selector: "app-filterspop",
@@ -260,6 +261,18 @@ export class FilterspopComponent implements OnInit {
       return null;
     }
   }
+  getInitValuesType8StartEnd(id: any, startEnd: any) {
+    if (
+      this.filterService.form.value[id] != null &&
+      this.filterService.form.value[id][startEnd] != null
+    ) {
+      return this.displayType8(
+        cloneDeep(this.filterService.form.value[id][startEnd])
+      );
+    } else {
+      return "";
+    }
+  }
 
   getType3Display(val: any) {
     if (String(val) == "0") {
@@ -357,6 +370,12 @@ export class FilterspopComponent implements OnInit {
       "/" +
       date.getFullYear();
     return f;
+  }
+
+  //getminmax type8
+  getminmaxString(id: any, minmax: string) {
+    console.log("FOR", String(id) + minmax);
+    return String(id) + minmax;
   }
 
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********

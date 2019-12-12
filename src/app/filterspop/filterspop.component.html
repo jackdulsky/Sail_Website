@@ -257,15 +257,38 @@
                           getType3Display(val)
                         }}&nbsp;&nbsp;&nbsp;
                       </ng-container>
+
                       <ng-container
                       *ngIf="
-                       filterService.pullAttribute[att.key]['UITypeID'] == 8
+                        filterService.pullAttribute[att.key]['UITypeID'] ==
+                        8
                       "
                     >
+                      <ng-container
+                        *ngIf="
+                          filterService.newWorkingQuery[bin.key][
+                            att.key
+                          ][0] == val
+                        "
+                      >
+                        Start:
+                      </ng-container>
+                      <ng-container
+                        *ngIf="
+                          filterService.newWorkingQuery[bin.key][
+                            att.key
+                          ][0] != val
+                        "
+                      >
+                        End:
+                      </ng-container>
                       &nbsp;&nbsp;&nbsp;{{
                         displayType8(val)
                       }}&nbsp;&nbsp;&nbsp;
                     </ng-container>
+
+
+
                         <ng-container
                           *ngIf="
                            filterService.pullAttribute[att.key]['UITypeID'] == 5
@@ -891,25 +914,131 @@
               </div>
             </div>
       </ng-template>
-      <ng-template #type8Selection let-id2="id" let-values="values" let-i="i">
+      <ng-template #type8Selection let-id2="id" let-values="values" let-i="i" let-min="id+'min'"let-max="id+'max'">
         <div class="toggleContainerSelection">
           <div class="togglelabel" style="    line-height: 62px !important;">
             {{ filterService.pullAttribute[id2][Label] }}:
           </div>
 
-          <mat-form-field
-            id="tier3Tab{{ id2 }}"
-            style="width:100%; padding-right:5%; color:black;font-size: 14px;
+
+          <!-- <div class="form-group">
+            <table class="fullWidth" cellspacing="0">
+              <tr>
+                  <div style="width: 70px ;margin-right:20px; float: right;font-size: 14px;">
+                    <mat-form-field class="minMaxWidth">
+                      <input
+                        class="colorBlack"
+                        id="type4InputMax{{ id }}"
+                        name="type4InputMax{{ id }}"
+                        [value]="getInitValuesMinMax(id, 1)"
+                        matInput
+                        type="number"
+                        maxlength="5"
+                        placeholder="Max"
+                        (input)="
+                          filterService.changeType4Input(
+                            id,
+                            $event.target.value,
+                            false
+                          )
+                        "
+                      />
+                    </mat-form-field>
+                  </div>
+                <div style="width: 70px ;margin-right:20px; float: right;font-size: 14px;">
+                  <mat-form-field class="minMaxWidth">
+                    <input
+                      class="colorBlack"
+                      id="type4InputMin{{ id }}"
+                      name="type4InputMin{{ id }}"
+                      [value]="getInitValuesMinMax(id, 0)"
+                      matInput
+                      type="number"
+                      maxlength="5"
+                      placeholder="Min"
+                      (input)="
+                        filterService.changeType4Input(
+                          id,
+                          $event.target.value,
+                          true
+                        )
+                      "
+                    />
+                  </mat-form-field>
+                </div>
+              </tr>
+            </table>
+          </div> -->
+
+          <div>
+
+            <mat-form-field
+            id="tier3TabMin{{ id2 }}"
+            style="width:45%; padding-right:5%; color:black;font-size: 14px;
             margin-top: 12px;"
           >
-            <input matInput [matDatepicker]="i" placeholder="select date"   [formControl]="filterService.form.controls[id2]"
-         (dateChange)="filterService.changeType8Input(id2,this.filterService.form.value[id2])"
-                 >
-                 <!-- (dateInput)="type8Change('input', $event,id2)"  -->
-            <mat-datepicker-toggle matSuffix [for]="i"></mat-datepicker-toggle>
-            <mat-datepicker #i></mat-datepicker>
+          
+          
+          <input matInput style="color:black" placeholder="Start"  
+          [value]="getInitValuesType8StartEnd(id2, 0)"
+          (input)="filterService.changeType8InputStartEndText(id2,$event.target.value,true)"
+          >
+          <input matInput [matDatepicker]="min" style="display: none;"
+          (dateChange)="filterService.changeType8InputStartEnd(id2,$event.target.value,true)"
+          >
+          
+          <mat-datepicker-toggle matSuffix [for]="min"></mat-datepicker-toggle>
+          
+          <mat-datepicker #min></mat-datepicker>
+          
+            
+        </mat-form-field>
 
-          </mat-form-field>
+        <mat-form-field
+        id="tier3TabMin{{ id2 }}"
+        style="width:45%; padding-right:5%; color:black;font-size: 14px;
+        margin-top: 12px;"
+      >
+      
+      
+      <input matInput style="color:black"placeholder="End"  
+      [value]="getInitValuesType8StartEnd(id2, 1)"
+      (input)="filterService.changeType8InputStartEndText(id2,$event.target.value,false)"
+      >
+      <input matInput [matDatepicker]="max" style="display: none;"
+      (dateChange)="filterService.changeType8InputStartEnd(id2,$event.target.value,false)"
+      >
+      
+      <mat-datepicker-toggle matSuffix [for]="max"></mat-datepicker-toggle>
+      
+      <mat-datepicker #max></mat-datepicker>
+      
+        
+    </mat-form-field>
+
+        <!-- <mat-form-field
+        id="tier3TabMax{{ id2 }}"
+        style="width:45%; padding-right:5%; color:black;font-size: 14px;
+          margin-top: 12px;"
+        >
+        
+        
+        <input matInput [matDatepicker]="max" placeholder="End"  
+        (dateChange)="filterService.changeType8Input(id2,this.filterService.form.value[id2])"
+        >
+        <mat-datepicker-toggle matSuffix [for]="max"></mat-datepicker-toggle>
+        <mat-datepicker #max></mat-datepicker> 
+        
+        
+      </mat-form-field> -->
+    </div>
+      <!-- <input matInput [matDatepicker]="getminmaxString(i,'mina')" placeholder="Choose Date" [formControl]="filterService.form.controls[id2]"  
+        (dateChange)="filterService.changeType8Input(id2,this.filterService.form.value[id2])"
+        >
+        <mat-datepicker-toggle matSuffix [for]="getminmaxString(i,'minb')"></mat-datepicker-toggle>
+        <mat-datepicker [id]="getminmaxString(i,'minc')"></mat-datepicker>
+-->
+          <!-- [formControl]="filterService.form.controls[id2]" -->
         </div>
       </ng-template>
     </div>

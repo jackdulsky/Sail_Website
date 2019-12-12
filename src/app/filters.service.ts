@@ -21,6 +21,7 @@ import { KeyValue } from "@angular/common";
 })
 export class FiltersService {
   tryingToSendDBFormat;
+  tryingToSetPlayersTime;
   newFilter: { [bid: string]: {} } = {};
   newFIDBID: { [FID: string]: string } = {};
   newFIDs: { [FID: string]: {} } = {};
@@ -287,9 +288,9 @@ export class FiltersService {
   }
   setPlayers(sendString: string = JSON.stringify(this.newDBFormat)) {
     var curTime = cloneDeep(Date.now());
-    this.tryingToSendDBFormat = curTime;
+    this.tryingToSetPlayersTime = curTime;
     setTimeout(() => {
-      if (Date.now() - this.tryingToSendDBFormat > 349) {
+      if (Date.now() - this.tryingToSetPlayersTime > 349) {
         this.pullData.pullPlayersToDisplay(sendString).subscribe(data => {
           var players = this.pullValueMap["3"];
           var arrPlayers = {};
@@ -673,6 +674,7 @@ export class FiltersService {
       this.newWorkingQuery[bid][formKey] = formVals;
     }
     if (Number(formKey) > 14 || Number(formKey) == 2) {
+      console.log("SET PLAYERS");
       this.setPlayers(this.combinedJSONstring());
     }
   }
@@ -767,7 +769,6 @@ export class FiltersService {
         newFIDNumber = String(Math.floor(Math.random() * 1000));
         this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([newFIDNumber]);
       }
-
       //PUT THE WORKING QUERY IN NEW FIDs
       var pkID = [];
       this.newFIDs[newFIDNumber] = Object.assign(
@@ -804,6 +805,7 @@ export class FiltersService {
     }
 
     //SEND UP TO THE DB
+
     if (!this.checkDBFormats(oldDB, cloneDeep(this.newDBFormat))) {
       this.saveAndSend();
       this.updateRDURL();
@@ -867,7 +869,6 @@ export class FiltersService {
   //SAVE LOCAL STORAGE FOR REFRESH AND THEN SEND THE FILTERS TO THE DB
   saveAndSend() {
     var dbFormatWithAddedHiddenYears = cloneDeep(this.newDBFormat);
-
     //set the Order of FIDs by double checking against what is sent to DB
     for (let bin in dbFormatWithAddedHiddenYears) {
       var activeFIDs = [];
@@ -888,14 +889,15 @@ export class FiltersService {
       }
       this.newFIDOrder[bin] = activeFIDs;
     }
+
     //Add in the years
     if (this.portalYearsOnly.length > 0) {
       dbFormatWithAddedHiddenYears["-4"] = {
         "4": [this.portalYearsOnly, {}, []]
       };
     }
-
     this.tryingToSendDBFormat = JSON.stringify(dbFormatWithAddedHiddenYears);
+
     setTimeout(() => {
       if (
         this.tryingToSendDBFormat ==
@@ -979,9 +981,10 @@ export class FiltersService {
       JSON.stringify(this.newWorkingQuery[bin][att]) ==
         JSON.stringify([val, null]) ||
       JSON.stringify(this.newWorkingQuery[bin][att]) ==
-        JSON.stringify([null, val]) ||
-      Number(this.pullAttribute[att]["UITypeID"]) == 8
+        JSON.stringify([null, val])
     ) {
+      // ||
+      // Number(this.pullAttribute[att]["UITypeID"]) == 8
       this.clearSingleIDWorking(att, bin, false);
     } else {
       this.newWorkingQuery[bin][att] = this.newWorkingQuery[bin][att].filter(
@@ -1757,6 +1760,61 @@ export class FiltersService {
     } else {
       this.form.controls[attribute].setValue(returnArr);
       this.type0change(attribute, returnArr, bin);
+    }
+  }
+
+  //CHANGE THE TYPE 8 (Start End) Date INPUT
+  //minMax True = min, false = max
+  //value is date input
+  //for calendar select
+  changeType8InputStartEnd(attribute: any, value: any, minMax: boolean) {
+    var bin = this.pullAttribute[attribute]["BinID"];
+    var previous = [null, null];
+    var tempValue = null;
+    var returnArr;
+    value = String((value.getTime() - value.getMilliseconds()) / 1000);
+    if (JSON.stringify(value) != "") {
+      tempValue = cloneDeep(value);
+    }
+    if (this.newWorkingQuery[bin][attribute]) {
+      var previous = cloneDeep(this.newWorkingQuery[bin][attribute]);
+    }
+    if (minMax) {
+      returnArr = [tempValue, previous[1]];
+    } else {
+      returnArr = [previous[0], tempValue];
+    }
+    if (JSON.stringify(returnArr[0]) == JSON.stringify("")) {
+      returnArr[0] = null;
+    }
+    if (JSON.stringify(returnArr[1]) == JSON.stringify("")) {
+      returnArr[1] = null;
+    }
+
+    if (JSON.stringify(returnArr) == JSON.stringify([null, null])) {
+      this.clearSingleIDWorking(attribute, bin);
+    } else {
+      this.form.controls[attribute].setValue(returnArr);
+      this.type0change(attribute, returnArr, bin);
+    }
+  }
+
+  //handel text input
+  changeType8InputStartEndText(attribute: any, value: any, minMax: boolean) {
+    var bin = this.pullAttribute[attribute]["BinID"];
+
+    if (value == "") {
+      this.clearSingleIDWorking(attribute, bin);
+    } else {
+      var split = value.split("/");
+      if (split.length > 2 && split[2].length == 4) {
+        var mon = split[0] - 1;
+        var day = split[1];
+        var year = split[2];
+
+        var date = new Date(year, mon, day);
+        this.changeType8InputStartEnd(attribute, date, minMax);
+      }
     }
   }
 

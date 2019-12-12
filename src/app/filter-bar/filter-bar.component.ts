@@ -112,15 +112,15 @@ export class FilterBarComponent implements OnInit {
 
     //SET THE FORM CONTROL
     for (let id in this.filterService.newWorkingQuery[bin]) {
-      if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
-        this.filterService.form.controls[id].setValue(
-          new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
-        );
-      } else {
-        this.filterService.form.controls[id].setValue(
-          this.filterService.newWorkingQuery[bin][id]
-        );
-      }
+      // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
+      //   this.filterService.form.controls[id].setValue(
+      //     new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
+      //   );
+      // } else {
+      this.filterService.form.controls[id].setValue(
+        this.filterService.newWorkingQuery[bin][id]
+      );
+      //}
     }
 
     //IF FILTER PAGE IS OPEN ALREADY SWITCH THE DISPLAY
@@ -152,15 +152,15 @@ export class FilterBarComponent implements OnInit {
 
       //SET THE FORM CONTROL
       for (let id in this.filterService.newWorkingQuery[bin]) {
-        if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
-          this.filterService.form.controls[id].setValue(
-            new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
-          );
-        } else {
-          this.filterService.form.controls[id].setValue(
-            this.filterService.newWorkingQuery[bin][id]
-          );
-        }
+        // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
+        //   this.filterService.form.controls[id].setValue(
+        //     new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
+        //   );
+        // } else {
+        this.filterService.form.controls[id].setValue(
+          this.filterService.newWorkingQuery[bin][id]
+        );
+        // }
       }
     } else {
       this.singleOpen(fid, query);
@@ -178,15 +178,15 @@ export class FilterBarComponent implements OnInit {
 
       //SET THE FORM CONTROL
       for (let id in this.filterService.newWorkingQuery[bin]) {
-        if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
-          this.filterService.form.controls[id].setValue(
-            new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
-          );
-        } else {
-          this.filterService.form.controls[id].setValue(
-            this.filterService.newWorkingQuery[bin][id]
-          );
-        }
+        // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
+        //   this.filterService.form.controls[id].setValue(
+        //     new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
+        //   );
+        // } else {
+        this.filterService.form.controls[id].setValue(
+          this.filterService.newWorkingQuery[bin][id]
+        );
+        //  }
       }
     } else {
       this.singleOpen(fid, query);
