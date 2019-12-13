@@ -46,6 +46,8 @@ export class CashComponent implements OnInit {
       })[0];
       try {
         if (this.router.url.includes("/report")) {
+          document.getElementById("fullScreenButton").className = "fullScreen";
+
           this.cashTabSelected = this.filterService.reportReportsOnly[
             this.router.url.split("/report/")[1]
           ]["TabID"];

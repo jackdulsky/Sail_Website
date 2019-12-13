@@ -37,7 +37,11 @@ export class FilterBarComponent implements OnInit {
   folderSelected = false;
   filterOpen = false;
 
-  ngOnInit() {}
+  ngOnInit() {
+    setTimeout(() => {
+      this.openFilterPage("-3");
+    }, 2000);
+  }
   ngAfterInit() {}
   //OPENS ENTIRE FILTER PAGE CLEAN
   openFilterPage(selected: string) {

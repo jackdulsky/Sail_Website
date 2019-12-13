@@ -9,7 +9,23 @@
   >
     {{ cat.value.Label }}
   </div>
-  <div class="yearContainerCash" (click)="showYearList()">
+  <div style="float: right;min-width: 125px;">
+    <div id="year" class="yearBox" (click)="showYearList()">
+      <div id="year" class="" *ngIf="filterService.portalYearsOnly.length > 0">
+        {{ filterService.getYearDisplay() }} &nbsp;
+      </div>
+      <div id="year" class="" *ngIf="filterService.portalYearsOnly.length == 0">
+        Year &nbsp;
+      </div>
+
+      <i
+        id="year"
+        style="line-height: inherit;"
+        class="fa fa-angle-down fa-lg"
+      ></i>
+    </div>
+  </div>
+  <!-- <div class="yearContainerCash" (click)="showYearList()">
     <div class="yearLabelCash" *ngIf="filterService.portalYearsOnly.length > 0">
       {{ filterService.getYearDisplay() }}
     </div>
@@ -19,14 +35,14 @@
     >
       Year
     </div>
-  </div>
-  <div
+  </div> -->
+  <!-- <div
     class="tableCenter yearArrowCash"
     id="yearSelectArrow"
     (click)="showYearList()"
   >
     <i class="fa fa-angle-down fa-lg"></i>
-  </div>
+  </div> -->
   <div class="yearListAllCash shadow" *ngIf="showYear">
     <div
       class="yearDropDownCash"
@@ -38,6 +54,7 @@
       {{ year }}
     </div>
   </div>
+
   <div
     class="fullScreenInactive"
     id="fullScreenButton"

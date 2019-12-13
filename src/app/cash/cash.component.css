@@ -21,8 +21,8 @@
 }
 .topBarCash {
   display: flex;
-  border-bottom: 2px solid black;
-  height: 32px;
+  border-bottom: 1px solid black;
+  height: 33px;
 }
 .cash {
   height: 72px;
@@ -107,36 +107,44 @@
 }
 .yearListAllCash {
   background-color: white;
-  border: 1px solid black;
+  border: 0px solid black;
   position: absolute;
-  top: 84px;
-  right: 0px;
+  top: 87px;
+  /* left: 553px; */
+  right: 6px;
   z-index: 1000;
   margin: 0;
   padding: 0;
   overflow-y: auto;
   max-height: 385px;
   text-align: center;
+  border-radius: 5px;
 }
 .yearDropDownCash {
-  height: 50px;
+  /* height: 50px; */
   color: black;
-  width: 220px;
-  line-height: 50px;
-  min-width: 220px;
-  font-size: 20px;
-  font-family: "DIN-Regular";
+  /* width: 115px; */
+  line-height: 15px;
+  margin: 5px;
+  padding: 7px;
+  border-radius: 10px;
+  /* min-width: 115px; */
+  font-size: 16px;
+  font-family: "DIN-Regular", "DIN-Regular";
   color: black;
   font-weight: bold;
   background-color: white;
   overflow-y: auto;
+}
+.yearDropDownCash:hover {
+  background-color: #c8c8c8;
 }
 .shadow {
   box-shadow: 2px 4px 10px black;
 }
 
 .fullScreen {
-  width: 50px;
+  width: 100px;
   text-align: center;
   float: right;
   line-height: 29px;
@@ -147,10 +155,24 @@
   cursor: pointer;
 }
 .fullScreenInactive {
-  width: 50px;
+  width: 100px;
   text-align: center;
   float: right;
   line-height: 29px;
   color: lightgray;
   border-left: 1px solid lightblue;
+}
+.yearBox {
+  float: right;
+  font-family: "DIN-Regular";
+  display: flex;
+  margin-top: 1px;
+  margin-right: 5px;
+  background-color: var(--lighter-blue);
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 5px;
+  line-height: 33px;
+  height: 30px;
+  color: white;
 }

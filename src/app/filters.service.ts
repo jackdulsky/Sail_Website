@@ -465,6 +465,7 @@ export class FiltersService {
     this.pullData.pullReportURL().subscribe(data => {
       this.reportURL = {};
       this.extractID(data, "ViewID", this.reportURL);
+      console.log("REPORT URL", this.reportURL);
     });
 
     this.pullData.pullPositionHierarchy().subscribe(data => {
@@ -1454,12 +1455,14 @@ export class FiltersService {
     );
 
     if (Number(id) > 100) {
-      try {
-        var baseURL = this.reportURL[id]["ViewURL"];
-        this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-          baseURL.replace("[GUID]", this.pullData.GUID.toUpperCase())
-        );
-      } catch (e) {
+      if (this.reportURL) {
+        try {
+          var baseURL = this.reportURL[id]["ViewURL"];
+          this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+            baseURL.replace("[GUID]", this.pullData.GUID.toUpperCase())
+          );
+        } catch (e) {}
+      } else {
         setTimeout(() => {
           return this.createRDURL(id);
         }, 100);
