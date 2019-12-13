@@ -411,7 +411,7 @@
               <mat-option
                 *ngFor="
                   let cat of filterService.type0Options(id)
-                    | keyvalue
+                    | keyvalue: valueOrder
                     | filter2: filterService.form.value[id + 'search']:id
                 "
                 [value]="cat.key"
@@ -845,7 +845,7 @@
             <mat-option
             *ngFor="
             let cat of  filterService.type0Options(id)
-            | keyvalue
+            | keyvalue: valueOrder
             | filter2: filterService.form.value[id + 'search']:id
             "
             [value]="cat.key"

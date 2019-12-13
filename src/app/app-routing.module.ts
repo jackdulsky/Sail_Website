@@ -107,7 +107,7 @@ const routes: Routes = [
           },
           {
             path: "",
-            redirectTo: "base-reports/10",
+            redirectTo: "base-reports/11",
             pathMatch: "full"
           }
         ]

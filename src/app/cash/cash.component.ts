@@ -5,6 +5,7 @@ import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
+import { KeyValue } from "@angular/common";
 
 @Component({
   selector: "app-cash",
@@ -32,27 +33,74 @@ export class CashComponent implements OnInit {
     this.body.portalHighlight("cash");
     if (
       this.filterService.reportTabs &&
+      this.filterService.reportReportsOnly &&
       this.filterService.getReportHeaders(4)
     ) {
-      this.cashTabSelected = Object.keys(
-        this.filterService.getReportHeaders(4)
-      )[0];
-      if (this.router.url.includes("/report")) {
-        this.cashTabSelected = this.router.url.split("/report/")[1];
-      }
-      if (this.router.url.includes("/base-reports")) {
-        this.cashTabSelected = this.router.url.split("/base-reports/")[1];
-      }
-      setTimeout(() => {
-        this.subRoute(this.cashTabSelected);
-      }, 1);
+      var tabs = this.filterService.getReportHeaders(4);
+      this.cashTabSelected = Object.keys(tabs).sort(function(a, b) {
+        return tabs[a]["OrderID"] < tabs[b]["OrderID"]
+          ? -1
+          : tabs[b]["OrderID"] < tabs[a]["OrderID"]
+          ? 1
+          : 0;
+      })[0];
+      try {
+        if (this.router.url.includes("/report")) {
+          this.cashTabSelected = this.filterService.reportReportsOnly[
+            this.router.url.split("/report/")[1]
+          ]["TabID"];
+        }
+        if (this.router.url.includes("/base-reports")) {
+          this.cashTabSelected = this.router.url.split("/base-reports/")[1];
+        }
+      } catch (e) {}
     } else {
       setTimeout(() => {
         this.initFunction();
       }, 200);
     }
+    this.performHighlightOrSubRoute();
   }
 
+  //get first order value
+  getFirstTab() {
+    var tabs = this.filterService.getReportHeaders(4);
+  }
+
+  //timeout Recursive method
+  performHighlightOrSubRoute() {
+    if (this.filterService.getReportHeaders(4)) {
+      if (
+        Object.keys(this.filterService.getReportHeaders(4)).indexOf(
+          String(this.cashTabSelected)
+        ) != -1 &&
+        this.router.url.includes("base")
+      ) {
+        this.subRoute(this.cashTabSelected);
+      } else {
+        this.justHighlight(this.cashTabSelected);
+      }
+    } else {
+      setTimeout(() => {
+        this.performHighlightOrSubRoute();
+      }, 200);
+    }
+  }
+
+  //HIGHLIGHT A TAB, USED FOR INIT ON REPORT
+  justHighlight(name: any) {
+    if (document.getElementById(name + "cashBarHighlightid")) {
+      var newTab = document.getElementById(name + "cashBarHighlightid");
+      newTab.style.backgroundColor = "#f2f2f2";
+      newTab.style.borderBottom = "4px solid lightskyblue";
+    } else {
+      setTimeout(() => {
+        this.justHighlight(this.cashTabSelected);
+      }, 100);
+    }
+  }
+
+  //This function will route to reports page or display the report
   //This function will route to reports page or display the report
   subRoute(name: any) {
     //Get rid of old
@@ -66,13 +114,16 @@ export class CashComponent implements OnInit {
 
     this.cashTabSelected = name;
     //color new
-    try {
-      var newTab = document.getElementById(name + "cashBarHighlightid");
-      newTab.style.backgroundColor = "#f2f2f2";
-      newTab.style.borderBottom = "4px solid lightskyblue";
-    } catch (e) {}
+    setTimeout(() => {
+      try {
+        var newTab = document.getElementById(name + "cashBarHighlightid");
+        newTab.style.backgroundColor = "#f2f2f2";
+        newTab.style.borderBottom = "4px solid lightskyblue";
+      } catch (e) {}
+    }, 1);
 
     //Route Appropriately
+
     try {
       if (this.filterService.reportTabs[name]["IsList"] == 0) {
         var newRoute = this.router.url.split("/base-report")[0];
@@ -94,6 +145,7 @@ export class CashComponent implements OnInit {
         });
         document.getElementById("fullScreenButton").className =
           "fullScreenInactive";
+        // this.router.navigate([newRoute + "../base-reports/" + String(name)]);
       }
     } catch (e) {}
   }

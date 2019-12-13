@@ -78,9 +78,14 @@ export class ClubComponent implements OnInit {
       this.filterService.reportReportsOnly &&
       this.filterService.getReportHeaders(2)
     ) {
-      this.clubTabSelected = Object.keys(
-        this.filterService.getReportHeaders(2)
-      )[0];
+      var tabs = this.filterService.getReportHeaders(2);
+      this.clubTabSelected = Object.keys(tabs).sort(function(a, b) {
+        return tabs[a]["OrderID"] < tabs[b]["OrderID"]
+          ? -1
+          : tabs[b]["OrderID"] < tabs[a]["OrderID"]
+          ? 1
+          : 0;
+      })[0];
       try {
         if (this.router.url.includes("/report")) {
           document.getElementById("fullScreenButton").className = "fullScreen";
@@ -91,9 +96,7 @@ export class ClubComponent implements OnInit {
         if (this.router.url.includes("/base-reports")) {
           this.clubTabSelected = this.router.url.split("/base-reports/")[1];
         }
-      } catch (e) {
-        // this.clubTabSelected = -1;
-      }
+      } catch (e) {}
     } else {
       setTimeout(() => {
         this.initFunction();

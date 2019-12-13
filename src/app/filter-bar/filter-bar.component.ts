@@ -138,6 +138,7 @@ export class FilterBarComponent implements OnInit {
     }
     this.openFilterPage(bin);
     this.filterService.show = "";
+    this.filterService.setPlayers(this.filterService.combinedJSONstring());
   }
 
   singleOpenExp(fid: any, query: any, bin: any) {
@@ -162,6 +163,7 @@ export class FilterBarComponent implements OnInit {
         );
         // }
       }
+      this.filterService.setPlayers(this.filterService.combinedJSONstring());
     } else {
       this.singleOpen(fid, query);
     }
@@ -188,6 +190,7 @@ export class FilterBarComponent implements OnInit {
         );
         //  }
       }
+      this.filterService.setPlayers(this.filterService.combinedJSONstring());
     } else {
       this.singleOpen(fid, query);
     }

@@ -346,7 +346,7 @@ export class FiltersService {
           this.recursiveExtractLevel(d[b], "BinID", 2)
         );
       }
-      console.log("PULLStructure", this.pullStructure);
+      //console.log("PULLStructure", this.pullStructure);
     });
     this.pullData.pullDataType().subscribe(data => {
       this.pullDataType = {};
@@ -371,7 +371,7 @@ export class FiltersService {
     this.pullData.pullNavigation().subscribe(data => {
       this.pullNavigation = {};
       this.extractID(data, "ItemID", this.pullNavigation);
-      console.log("NAV", this.pullNavigation);
+      // console.log("NAV", this.pullNavigation);
     });
     this.pullData.pullPlayerURL().subscribe(data => {
       this.extractkeyValue(
@@ -384,7 +384,7 @@ export class FiltersService {
     this.pullData.pullNavigationElement().subscribe(data => {
       this.pullNavigationElement = {};
       this.extractID(data, "ItemID", this.pullNavigationElement);
-      console.log("NAVELEM", this.pullNavigationElement);
+      // console.log("NAVELEM", this.pullNavigationElement);
     });
     this.pullData.pullAttributeType().subscribe(data => {
       this.pullAttributeType = {};
@@ -394,7 +394,7 @@ export class FiltersService {
     this.pullData.pullAttribute().subscribe(data => {
       this.pullAttribute = {};
       this.extractID(data, "AttributeID", this.pullAttribute);
-      console.log("PULLATTRIBUTE", this.pullAttribute);
+      // console.log("PULLATTRIBUTE", this.pullAttribute);
     });
     this.pullData.pullUIType().subscribe(data => {
       this.pullUIType = {};
@@ -432,12 +432,12 @@ export class FiltersService {
     this.pullData.pullReportTabs().subscribe(data => {
       this.reportTabs = {};
       this.extractID(data, "TabID", this.reportTabs);
-      ////console.log("Pull Tabs", this.reportTabs);
+      //  console.log("Pull Tabs", this.reportTabs);
     });
     this.pullData.pullReportTabLocation().subscribe(data => {
       this.reportTabLocation = {};
       this.extractID(data, "LocationID", this.reportTabLocation);
-      ////console.log("Pull TabLocations", this.reportTabLocation);
+      // console.log("Pull TabLocations", this.reportTabLocation);
     });
     this.pullData.pullReports().subscribe(data => {
       var tempReports = {};
@@ -459,8 +459,8 @@ export class FiltersService {
           this.reportReportsStructure[base][report] = reportsNew[base][report];
         }
       }
-      ////console.log("Pull ReportsOnly", this.reportReportsOnly);
-      ////console.log("Pull Reports", this.reportReportsStructure);
+      // console.log("Pull ReportsOnly", this.reportReportsOnly);
+      //  console.log("Pull Reports", this.reportReportsStructure);
     });
     this.pullData.pullReportURL().subscribe(data => {
       this.reportURL = {};
@@ -657,12 +657,13 @@ export class FiltersService {
     if (values != null && values.length == 0) {
       delete this.newWorkingQuery[bid][formKey];
       this.form.controls[formKey].setValue(null);
-      if (Object.keys(this.newWorkingQuery).length == 0) {
+      if (this.newWorkingFID[bid] != "") {
+        this.pushBIDActiveFIDToActiveFilter(bid, false);
+      }
+      if (Object.keys(this.newWorkingQuery[bid]).length == 0) {
         delete this.newFIDs[this.newWorkingFID[bid]];
         this.newWorkingFID[bid] = "";
       }
-
-      this.saveAndSend();
     } else {
       if (String(formKey) == "3" && String(bid) == "-3") {
         this.playerPortalActivePlayerIDOLD = this.playerPortalActivePlayerID;
@@ -674,7 +675,6 @@ export class FiltersService {
       this.newWorkingQuery[bid][formKey] = formVals;
     }
     if (Number(formKey) > 14 || Number(formKey) == 2) {
-      console.log("SET PLAYERS");
       this.setPlayers(this.combinedJSONstring());
     }
   }
@@ -811,6 +811,93 @@ export class FiltersService {
       this.updateRDURL();
     }
   }
+
+  pushBIDActiveFIDToActiveFilter(BID: string, clearWorking: boolean = true) {
+    var oldDB = cloneDeep(this.newDBFormat);
+    if (this.router.url.includes("club/")) {
+      this.reduceFiltersSingleClub();
+    }
+
+    if (
+      this.router.url.includes("player/") &&
+      this.playerPortalActivePlayerID != ""
+    ) {
+      this.reduceFiltersSinglePlayer();
+    }
+    var bin = BID;
+    //PUSH EMPTY PERFORM DELETES
+    if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
+      if (this.newWorkingFID[bin] != "") {
+        delete this.newFIDs[this.newWorkingFID[bin]];
+        delete this.newFIDBID[this.newWorkingFID[bin]];
+        delete this.newDBFormat[bin][this.newWorkingFID[bin]];
+        this.newWorkingFID[bin] = "";
+      }
+    }
+
+    //DO NOT DOUBLE PUT IN ITEMS
+
+    for (let key in this.newFIDs) {
+      if (
+        this.isEqualObjectsContents(
+          this.newFIDs[key],
+          this.newWorkingQuery[bin]
+        )
+      ) {
+        continue;
+      }
+    }
+
+    //SET FID TO CURRENT OR GENERATE NEW ONE
+    var newFIDNumber;
+    if (this.newWorkingFID[bin] != "") {
+      newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
+    } else {
+      newFIDNumber = String(Math.floor(Math.random() * 1000));
+      this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([newFIDNumber]);
+    }
+    //PUT THE WORKING QUERY IN NEW FIDs
+    var pkID = [];
+    this.newFIDs[newFIDNumber] = Object.assign(
+      {},
+      cloneDeep(this.newWorkingQuery[bin])
+    );
+    var att = cloneDeep(this.newWorkingQuery[bin]);
+    //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
+    if (att[String(Number(bin) * -1)]) {
+      pkID = cloneDeep(att[String(Number(bin) * -1)]);
+      delete att[String(Number(bin) * -1)];
+    }
+
+    var FID = [];
+
+    //INIT THE NEW DB FORMAT BEFORE ADDING
+
+    this.newFIDBID[newFIDNumber] = bin;
+    if (!this.newDBFormat[bin]) {
+      this.newDBFormat[bin] = {};
+    }
+    this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
+
+    //RESET
+    if (clearWorking) {
+      this.newWorkingQuery[bin] = {};
+      this.newWorkingFID[bin] = "";
+    }
+
+    //RESET
+    if (clearWorking) {
+      this.form.reset();
+    }
+
+    //SEND UP TO THE DB
+
+    if (!this.checkDBFormats(oldDB, cloneDeep(this.newDBFormat))) {
+      this.saveAndSend();
+      this.updateRDURL();
+    }
+  }
+
   //CREATE THE FAKE JSON DB FORMAT AS IS PUSH QUERY
   //HAS OCCURED TO SEND TO DATABASE WITH STAGED CHANGES
   combinedJSONstring() {

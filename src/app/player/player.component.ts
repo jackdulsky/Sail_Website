@@ -82,9 +82,14 @@ export class PlayerComponent implements OnInit {
       this.filterService.reportReportsOnly &&
       this.filterService.getReportHeaders(3)
     ) {
-      this.playerTabSelected = Object.keys(
-        this.filterService.getReportHeaders(3)
-      )[0];
+      var tabs = this.filterService.getReportHeaders(3);
+      this.playerTabSelected = Object.keys(tabs).sort(function(a, b) {
+        return tabs[a]["OrderID"] < tabs[b]["OrderID"]
+          ? -1
+          : tabs[b]["OrderID"] < tabs[a]["OrderID"]
+          ? 1
+          : 0;
+      })[0];
       try {
         if (this.router.url.includes("/report")) {
           document.getElementById("fullScreenButton").className = "fullScreen";
@@ -210,9 +215,11 @@ export class PlayerComponent implements OnInit {
     //get player name att ID
     var playerNameInput;
     for (let att in this.filterService.pullStructure["-3"]["300"]) {
-      if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
-        playerNameInput = att;
-      }
+      try {
+        if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
+          playerNameInput = att;
+        }
+      } catch (e) {}
     }
     var oldWorking = cloneDeep(this.filterService.newWorkingQuery);
     if (input.length > 3) {

@@ -19,7 +19,6 @@ import { KeyValue } from "@angular/common";
 import * as cloneDeep from "lodash/cloneDeep";
 import { MatMenuTrigger } from "@angular/material";
 import { ChangeDetectorRef, ChangeDetectionStrategy } from "@angular/core";
-
 // import { AdalService } from 'adal-angular4';
 import { MsAdalAngular6Module } from "microsoft-adal-angular6";
 import { stringify } from "querystring";
@@ -177,6 +176,15 @@ export class FilterspopComponent implements OnInit {
       : 0;
   };
 
+  //RETURN THE ITEMS IN THE ORDER SPECIFIED
+  //FOR LABEL OF VALUES
+  valueOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
+    return a.value["OrderID"] < b.value["OrderID"]
+      ? -1
+      : b.value["OrderID"] < a.value["OrderID"]
+      ? 1
+      : 0;
+  };
   //CLOSE THE DIALOG
   close() {
     this.dialogRef.close();
