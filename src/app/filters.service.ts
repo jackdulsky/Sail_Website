@@ -38,7 +38,7 @@ export class FiltersService {
   workingBin = "";
   workingFID = "";
   level1Selected;
-  form;
+  // form;
   pullDataType;
   pullBin;
   pullNavigation;
@@ -125,6 +125,11 @@ export class FiltersService {
   globalSearchShowSuggestions = false;
   playerImageURLs = {};
   temp: any = {};
+  form = this.fb.group({});
+  formCash = this.fb.group({});
+  fidCashMap = {};
+  fidCashMapFIDtoID = {};
+
   //   "OPTION 1":
   //     "http://oakcmsreports01.raiders.com:88/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
   //   "OPTION 2":
@@ -290,6 +295,7 @@ export class FiltersService {
     var curTime = cloneDeep(Date.now());
     this.tryingToSetPlayersTime = curTime;
     setTimeout(() => {
+      console.log("LOOP 16");
       if (Date.now() - this.tryingToSetPlayersTime > 349) {
         this.pullData.pullPlayersToDisplay(sendString).subscribe(data => {
           var players = this.pullValueMap["3"];
@@ -334,7 +340,6 @@ export class FiltersService {
     //   this.reversePaths = JSON.parse(localStorage.getItem("reversePaths"));
     // }
 
-    this.form = this.fb.group({});
     this.pullData.setGUID();
     this.pullData.pullStructure("1").subscribe(data => {
       var d = JSON.parse(data[0][""]);
@@ -465,7 +470,7 @@ export class FiltersService {
     this.pullData.pullReportURL().subscribe(data => {
       this.reportURL = {};
       this.extractID(data, "ViewID", this.reportURL);
-      console.log("REPORT URL", this.reportURL);
+      //console.log("REPORT URL", this.reportURL);
     });
 
     this.pullData.pullPositionHierarchy().subscribe(data => {
@@ -629,6 +634,17 @@ export class FiltersService {
   //DELETE A QUERY BASED ON FID
   removeQuery(fid: string) {
     var oldBID = this.newFIDBID[fid];
+    console.log(
+      "REMOVINGQuery",
+      fid,
+      this.fidCashMap,
+      Object.keys(this.fidCashMap).indexOf(fid)
+    );
+
+    if (Object.keys(this.fidCashMapFIDtoID).indexOf(fid) != -1) {
+      var id = this.fidCashMapFIDtoID[fid];
+      this.formCash.controls[id].setValue(null);
+    }
 
     for (let id in this.newFIDs[fid]) {
       this.clearSingleIDWorking(id, this.newFIDBID[fid]);
@@ -958,54 +974,84 @@ export class FiltersService {
   saveAndSend() {
     var dbFormatWithAddedHiddenYears = cloneDeep(this.newDBFormat);
     //set the Order of FIDs by double checking against what is sent to DB
-    for (let bin in dbFormatWithAddedHiddenYears) {
-      var activeFIDs = [];
-      for (let fid in this.newFIDOrder[bin]) {
+
+    if (
+      this.pullStructure &&
+      this.pullAttribute &&
+      this.pullValueMap &&
+      this.form
+    ) {
+      for (let bin in dbFormatWithAddedHiddenYears) {
+        var activeFIDs = [];
+        for (let fid in this.newFIDOrder[bin]) {
+          if (
+            Object.keys(dbFormatWithAddedHiddenYears[bin]).indexOf(
+              this.newFIDOrder[bin][fid]
+            ) != -1
+          ) {
+            activeFIDs = activeFIDs.concat([this.newFIDOrder[bin][fid]]);
+          }
+        }
+        for (let fid in Object.keys(dbFormatWithAddedHiddenYears[bin])) {
+          var activeFID = Object.keys(dbFormatWithAddedHiddenYears[bin])[fid];
+          if (activeFIDs.indexOf(activeFID) == -1) {
+            activeFIDs = activeFIDs.concat([activeFID]);
+          }
+        }
+        this.newFIDOrder[bin] = activeFIDs;
+      }
+
+      //Add in the years
+      if (this.portalYearsOnly.length > 0) {
+        dbFormatWithAddedHiddenYears["-4"] = {
+          "4": [this.portalYearsOnly, {}, []]
+        };
+      }
+      this.tryingToSendDBFormat = JSON.stringify(dbFormatWithAddedHiddenYears);
+
+      setTimeout(() => {
+        console.log("LOOP 17");
         if (
-          Object.keys(dbFormatWithAddedHiddenYears[bin]).indexOf(
-            this.newFIDOrder[bin][fid]
-          ) != -1
+          this.tryingToSendDBFormat ==
+          JSON.stringify(dbFormatWithAddedHiddenYears)
         ) {
-          activeFIDs = activeFIDs.concat([this.newFIDOrder[bin][fid]]);
+          this.pullData
+            .constructAndSendFilters(dbFormatWithAddedHiddenYears)
+            .subscribe(data => {
+              this.updatePlayerData();
+              this.updateClubData();
+              this.updateCashFilters();
+            });
+          this.testSendFilters2();
+          this.setActiveClub();
+          this.setActivePlayer();
+          this.updateRDURL();
+          setTimeout(() => {
+            console.log("LOOP 12");
+            this.setPlayers();
+          }, 200);
+        }
+      }, 250);
+    } else {
+      setTimeout(() => {
+        this.saveAndSend();
+      }, 100);
+    }
+  }
+
+  //Set parameters for the cash tab filers
+  updateCashFilters() {
+    for (let fid in this.newDBFormat["-3"]) {
+      for (let att in this.newDBFormat["-3"][fid][1]) {
+        if (Object.keys(this.fidCashMap).indexOf(att) != -1) {
+          this.formCash.controls[att].setValue(
+            cloneDeep(this.newDBFormat["-3"][fid][1][att])
+          );
+          this.fidCashMapFIDtoID[cloneDeep(fid)] = cloneDeep(att);
+          this.fidCashMap[cloneDeep(att)] = cloneDeep(fid);
         }
       }
-      for (let fid in Object.keys(dbFormatWithAddedHiddenYears[bin])) {
-        var activeFID = Object.keys(dbFormatWithAddedHiddenYears[bin])[fid];
-        if (activeFIDs.indexOf(activeFID) == -1) {
-          activeFIDs = activeFIDs.concat([activeFID]);
-        }
-      }
-      this.newFIDOrder[bin] = activeFIDs;
     }
-
-    //Add in the years
-    if (this.portalYearsOnly.length > 0) {
-      dbFormatWithAddedHiddenYears["-4"] = {
-        "4": [this.portalYearsOnly, {}, []]
-      };
-    }
-    this.tryingToSendDBFormat = JSON.stringify(dbFormatWithAddedHiddenYears);
-
-    setTimeout(() => {
-      if (
-        this.tryingToSendDBFormat ==
-        JSON.stringify(dbFormatWithAddedHiddenYears)
-      ) {
-        this.pullData
-          .constructAndSendFilters(dbFormatWithAddedHiddenYears)
-          .subscribe(data => {
-            this.updatePlayerData();
-            this.updateClubData();
-          });
-        this.testSendFilters2();
-        this.setActiveClub();
-        this.setActivePlayer();
-        this.updateRDURL();
-        setTimeout(() => {
-          this.setPlayers();
-        }, 200);
-      }
-    }, 250);
   }
 
   //CHECK IF TWO DB FORMAT's ARE THE SAME
@@ -1056,6 +1102,7 @@ export class FiltersService {
     this.newFIDBID = {};
 
     this.form.reset();
+    this.formCash.reset();
     this.saveAndSend();
   }
 
@@ -1178,6 +1225,7 @@ export class FiltersService {
       }
     } else {
       setTimeout(() => {
+        console.log("LOOP 18");
         return this.checkType3ToggleChecked(id, Label);
       }, 50);
     }
@@ -1464,6 +1512,7 @@ export class FiltersService {
         } catch (e) {}
       } else {
         setTimeout(() => {
+          console.log("LOOP 13");
           return this.createRDURL(id);
         }, 100);
       }
@@ -1492,6 +1541,7 @@ export class FiltersService {
     }
     if (!this.teamsMap || !this.pullValueMap || !this.pullAttribute) {
       setTimeout(() => {
+        console.log("LOOP 14");
         this.pushDBFormat(DBFormat);
       }, 200);
     } else {
@@ -1539,6 +1589,7 @@ export class FiltersService {
             this.updateRDURL();
           } else {
             setTimeout(() => {
+              console.log("LOOP 15");
               this.updateRDURL();
             }, 500);
           }
@@ -1660,6 +1711,17 @@ export class FiltersService {
   }
 
   removeAttributes(fid: any, bin: any, atts: any[]) {
+    console.log(
+      "REMOVING ATT",
+      fid,
+      this.fidCashMap,
+      Object.keys(this.fidCashMap).indexOf(fid)
+    );
+    if (Object.keys(this.fidCashMapFIDtoID).indexOf(fid) != -1) {
+      var id = this.fidCashMapFIDtoID[fid];
+      this.formCash.controls[id].setValue(null);
+    }
+
     var alteredDBFormat = cloneDeep(this.newDBFormat);
     var removed = cloneDeep(alteredDBFormat[bin][fid][1]);
     for (let att of atts) {

@@ -54,6 +54,7 @@ export class TopbarComponent implements OnInit {
       this.timeSent = cloneDeep(Date.now());
       var loopStartTime = cloneDeep(this.timeSent);
       setTimeout(() => {
+        console.log("LOOP 35");
         if (loopStartTime - this.timeSent == 0) {
           this.pullData.pullSearchOptions(input).subscribe(data => {
             if (loopStartTime - this.timeSent == 0) {

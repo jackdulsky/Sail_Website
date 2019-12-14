@@ -40,6 +40,7 @@ export class ReportComponent implements OnInit {
         this.changeReport(this.viewing);
       } else {
         setTimeout(() => {
+          console.log("LOOP 36");
           this.changeReport(this.viewing);
         }, 800);
       }

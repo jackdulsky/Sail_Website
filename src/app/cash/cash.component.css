@@ -176,3 +176,104 @@
   height: 30px;
   color: white;
 }
+
+.cashFilters {
+  height: 49px;
+  background-color: #f2f2f2;
+  border-bottom: 1px solid black;
+}
+.toggleContainerSelection {
+  /* padding-bottom: 10px; */
+  width: 435px;
+
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  line-height: 60px;
+  max-width: 435px;
+  float: left;
+  /* border: 1px solid var(--raiders-gray); */
+  border-radius: 10px;
+  padding-top: 0px;
+
+  margin-left: 20px;
+  height: 49px;
+  padding-bottom: 0px;
+  /* align-items: center; */
+}
+.toggleContainerSelectionPlayerSel {
+  /* padding-bottom: 10px; */
+  width: 250px;
+
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  line-height: 60px;
+  max-width: 250px;
+  float: left;
+  /* border: 1px solid var(--raiders-gray); */
+  border-radius: 10px;
+  padding-top: 0px;
+
+  margin-left: 20px;
+  height: 49px;
+  padding-bottom: 0px;
+  /* align-items: center; */
+}
+.togglelabel {
+  color: black;
+  width: 100%;
+  float: left;
+  font-family: "DIN-Italic";
+  font-size: 18px;
+  line-height: 52px;
+  padding-left: 3px;
+}
+.clickedWhite::after {
+  color: white !important;
+}
+::ng-deep .mat-focused .mat-form-field-label {
+  /*change color of label*/
+  color: black !important;
+}
+::ng-deep .mat-form-field-infix {
+  padding: 0px;
+}
+::ng-deep.mat-dialog-container {
+  padding-top: 1px !important;
+}
+#FilterPopUp {
+  padding-top: 1px !important;
+  padding-bottom: 0px !important;
+}
+::ng-deep.mat-dialog-title {
+  margin-bottom: 10px !important;
+}
+::ng-deep.mat-dialog-actions {
+  padding: 0px !important;
+}
+::ng-deep.mat-dialog-content {
+  padding: 12px 12px 12px 12px;
+}
+::ng-deep.mat-form-field-underline {
+  /*change color of underline*/
+  background-color: black !important;
+}
+::ng-deep.mat-dialog-title {
+  /* margin: 0px; */
+  font-size: 32px;
+}
+::ng-deep.mat-form-field-ripple {
+  /*change color of underline when focused*/
+  background-color: black !important;
+}
+::ng-deep.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  color: gray;
+}
+::ng-deep.mat-datepicker-toggle {
+  color: black !important;
+}
+::ng-deep.mat-calendar-body-selected {
+  background-color: var(--raiders-gray);
+}
+::ng-deep.mat-form-field-appearance-legacy .mat-form-field-underline {
+  background-color: black !important;
+}

@@ -39,7 +39,9 @@ export class BaseReportsComponent implements OnInit {
       this.reportList = String(params["base-reportsid"]); // (+) converts string 'id' to a number
       if (this.filterService.reportReportsStructure) {
       } else {
-        setTimeout(() => {}, 800);
+        setTimeout(() => {
+          console.log("LOOP 6");
+        }, 800);
       }
       //this.cdref.detectChanges();
       // In a real app: dispatch action to load the details here.

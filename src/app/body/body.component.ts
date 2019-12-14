@@ -8,6 +8,7 @@ import { PullDataService } from "../pull-data.service";
 import { KeyValue } from "@angular/common";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { style } from "@angular/animations";
+
 // import { url } from "inspector";
 
 @Component({
@@ -55,6 +56,7 @@ export class BodyComponent implements OnInit {
       }
     } else {
       setTimeout(() => {
+        console.log("LOOP 5");
         this.initCalled();
       }, 100);
     }
@@ -78,6 +80,9 @@ export class BodyComponent implements OnInit {
   //ALTER CSS APPROPRIATELY
   toggleContents(name: any) {
     //HAVE ALL TURN OFF
+    if (document.getElementById("exitFiltersPop")) {
+      document.getElementById("exitFiltersPop").click();
+    }
     for (let category in this.filterService.getReportHeaders(1)) {
       document.getElementById(
         category.toString() + "reportHighlightid"
@@ -118,6 +123,9 @@ export class BodyComponent implements OnInit {
 
   //THis function re high lights the previously highlighted report tab
   reportsRehighlight() {
+    if (document.getElementById("exitFiltersPop")) {
+      document.getElementById("exitFiltersPop").click();
+    }
     if (
       String(this.filterService.reportTabs[this.filterService.selected]) != "0"
     ) {
@@ -134,6 +142,9 @@ export class BodyComponent implements OnInit {
 
   //Highlight the portals and unhighlight the reports
   portalHighlight(name: any) {
+    if (document.getElementById("exitFiltersPop")) {
+      document.getElementById("exitFiltersPop").click();
+    }
     for (let category in this.filterService.getReportHeaders(1)) {
       document.getElementById(
         category.toString() + "reportHighlightid"
@@ -206,6 +217,7 @@ export class BodyComponent implements OnInit {
     if (!this.folderSelected) {
       this.noFolderAlert = true;
       setTimeout(() => {
+        console.log("LOOP 4");
         this.noFolderAlert = false;
       }, 2000);
     } else {

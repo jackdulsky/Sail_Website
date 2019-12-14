@@ -38,9 +38,10 @@ export class FilterBarComponent implements OnInit {
   filterOpen = false;
 
   ngOnInit() {
-    setTimeout(() => {
-      this.openFilterPage("-3");
-    }, 2000);
+    // setTimeout(() => {
+    //   console.log("LOOP 2");
+    //   this.openFilterPage("-3");
+    // }, 2000);
   }
   ngAfterInit() {}
   //OPENS ENTIRE FILTER PAGE CLEAN
@@ -252,6 +253,7 @@ export class FilterBarComponent implements OnInit {
     if (!this.folderSelected) {
       this.noFolderAlert = true;
       setTimeout(() => {
+        console.log("LOOP 1");
         this.noFolderAlert = false;
       }, 2000);
     } else {
@@ -290,6 +292,7 @@ export class FilterBarComponent implements OnInit {
   createFilterDisplayString(fid: string, value: any) {
     if (!this.filterService.newFIDBID[fid]) {
       setTimeout(() => {
+        console.log("LOOP 3");
         this.createFilterDisplayString(fid, value);
       }, 100);
     } else {

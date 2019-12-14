@@ -66,6 +66,7 @@ export class ClubComponent implements OnInit {
       this.initTeam(this.filterService.teamPortalSelected);
     } else {
       setTimeout(() => {
+        console.log("LOOP 19");
         this.afterInitFunction();
       }, 200);
     }
@@ -99,6 +100,7 @@ export class ClubComponent implements OnInit {
       } catch (e) {}
     } else {
       setTimeout(() => {
+        console.log("LOOP 20");
         this.initFunction();
       }, 200);
     }
@@ -120,6 +122,7 @@ export class ClubComponent implements OnInit {
       }
     } else {
       setTimeout(() => {
+        console.log("LOOP 21");
         this.performHighlightOrSubRoute();
       }, 200);
     }
@@ -133,6 +136,7 @@ export class ClubComponent implements OnInit {
       newTab.style.borderBottom = "4px solid lightskyblue";
     } else {
       setTimeout(() => {
+        console.log("LOOP 22");
         this.justHighlight(this.clubTabSelected);
       }, 100);
     }
@@ -223,6 +227,7 @@ export class ClubComponent implements OnInit {
 
     //color new
     setTimeout(() => {
+      console.log("LOOP 23");
       var newTab = document.getElementById(name + "clubBarHighlightid");
       try {
         newTab.style.backgroundColor = "#f2f2f2";

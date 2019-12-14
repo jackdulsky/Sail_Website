@@ -95,6 +95,7 @@ export class FilterspopComponent implements OnInit {
     this.cdref.detectChanges();
     this.filterService.conferenceSelections["2"] = "AFC";
     setTimeout(() => {
+      console.log("LOOP 24");
       this.filterService.changelevel2(this.filterService.level1Selected);
     }, 1);
 

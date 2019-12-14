@@ -59,6 +59,7 @@ export class HomeComponent implements OnInit {
     var insertFilter;
     this.sub2 = this.pullData.loadFilterFromGUID(guid).subscribe(filter => {
       setTimeout(() => {
+        console.log("LOOP 25");
         var routeBool = true;
         try {
           insertFilter = JSON.parse(filter[0]["JSON"]);

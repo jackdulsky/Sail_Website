@@ -60,6 +60,7 @@ export class LoadingComponent implements OnInit {
     var insertFilter;
     this.sub2 = this.pullData.loadFilterFromGUID(guid).subscribe(filter => {
       setTimeout(() => {
+        console.log("LOOP 26");
         try {
           insertFilter = JSON.parse(filter[0]["JSON"]);
 
@@ -77,6 +78,7 @@ export class LoadingComponent implements OnInit {
   //CALL ROUTE AFTER
   injectFilters() {
     setTimeout(() => {
+      console.log("LOOP 28");
       if (this.jsonExists) {
         var filters = this.loadJSON;
         this.filterService.loadJSON(JSON.parse(decodeURIComponent(filters)));
@@ -115,6 +117,7 @@ export class LoadingComponent implements OnInit {
         this.doneloading != Object.keys(this.filterService.newFIDBID).length
       ) {
         setTimeout(() => {
+          console.log("LOOP 27");
           this.rerouteAfterUpload();
         }, 100);
       } else {

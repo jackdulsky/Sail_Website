@@ -52,7 +52,15 @@ export class PlayerComponent implements OnInit {
   //baseURL ="https://nfl-fisa-assets.s3.amazonaws.com/images/headshots/REPLACEME_headshot.jpg";
   baseURL =
     "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
+  playerNameInput;
   ngOnInit() {
+    for (let att in this.filterService.pullStructure["-3"]["300"]) {
+      try {
+        if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
+          this.playerNameInput = att;
+        }
+      } catch (e) {}
+    }
     this.initFunction();
   }
   ngOnDestroy() {}
@@ -70,6 +78,7 @@ export class PlayerComponent implements OnInit {
       }
     } else {
       setTimeout(() => {
+        console.log("LOOP 29");
         this.afterInitFunction();
       }, 200);
     }
@@ -104,6 +113,7 @@ export class PlayerComponent implements OnInit {
       } catch (e) {}
     } else {
       setTimeout(() => {
+        console.log("LOOP 30");
         this.initFunction();
       }, 200);
     }
@@ -126,6 +136,7 @@ export class PlayerComponent implements OnInit {
       }
     } else {
       setTimeout(() => {
+        console.log("LOOP 32");
         this.performHighlightOrSubRoute();
       }, 200);
     }
@@ -140,6 +151,7 @@ export class PlayerComponent implements OnInit {
       newTab.style.borderBottom = "4px solid lightskyblue";
     } else {
       setTimeout(() => {
+        console.log("LOOP 31");
         this.justHighlight(this.playerTabSelected);
       }, 100);
     }
@@ -189,6 +201,7 @@ export class PlayerComponent implements OnInit {
       }
     } catch (e) {
       setTimeout(() => {
+        console.log("LOOP 33");
         // return this.getTeamID(disp);
       }, 300);
     }
@@ -213,23 +226,16 @@ export class PlayerComponent implements OnInit {
     var otherNameForm = this.filterService.transformName(input);
 
     //get player name att ID
-    var playerNameInput;
-    for (let att in this.filterService.pullStructure["-3"]["300"]) {
-      try {
-        if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
-          playerNameInput = att;
-        }
-      } catch (e) {}
-    }
+
     var oldWorking = cloneDeep(this.filterService.newWorkingQuery);
     if (input.length > 3) {
-      this.filterService.newWorkingQuery["-3"][playerNameInput] = [
+      this.filterService.newWorkingQuery["-3"][this.playerNameInput] = [
         String(input)
       ];
       this.filterService.setPlayers(this.filterService.combinedJSONstring());
       this.filterService.newWorkingQuery = oldWorking;
     } else {
-      delete this.filterService.newWorkingQuery["-3"][playerNameInput];
+      delete this.filterService.newWorkingQuery["-3"][this.playerNameInput];
       this.filterService.setPlayers(this.filterService.combinedJSONstring());
     }
   }
@@ -276,6 +282,7 @@ export class PlayerComponent implements OnInit {
     this.playerTabSelected = name;
     //color new
     setTimeout(() => {
+      console.log("LOOP 34");
       try {
         var newTab = document.getElementById(name + "playerBarHighlightid");
         newTab.style.backgroundColor = "#f2f2f2";
