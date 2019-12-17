@@ -815,7 +815,6 @@ export class FiltersService {
         this.newWorkingFID[bin] = "";
       }
     }
-
     //RESET
     if (clearWorking) {
       this.form.reset();
@@ -1225,8 +1224,8 @@ export class FiltersService {
       }
     } else {
       setTimeout(() => {
-        console.log("LOOP 18");
-        return this.checkType3ToggleChecked(id, Label);
+        console.log("LOOP 18", id, Label);
+        return "";
       }, 50);
     }
   }
@@ -1604,22 +1603,37 @@ export class FiltersService {
   //removes content of a bin if a filter is being added
   loadJSON(filters: any) {
     //[["-2","2",["1024","1026"]],["-11","10092",["10000001"]]]
+    var tempDict = {};
+
     for (let add of filters) {
       //check against current bins
+      if (!tempDict[add[0]]) {
+        tempDict[add[0]] = {};
+      }
       for (let active in this.newFIDBID) {
+        //check if the bin is the same
         if (String(this.newFIDBID[active]) == String(add[0])) {
-          this.removeQuery(active);
+          if (this.newFIDs[active][add[1]]) {
+            if (Number(add[1]) * -1 == Number(add[0])) {
+              this.removeExplicit(active, add[0]);
+            } else {
+              this.removeAttributes(active, add[0], [add[1]]);
+            }
+          }
+
+          // check if attribute
+          // this.removeQuery(active);
         }
       }
       if (Number(add[0]) == -4) {
         this.portalYearsSelected = cloneDeep(add[2]);
         this.portalYearsOnly = cloneDeep(add[2]);
       } else {
-        var tempDict = {};
-        tempDict[add[1]] = add[2];
-        this.newWorkingQuery[add[0]] = tempDict;
+        tempDict[add[0]][add[1]] = add[2];
+        this.newWorkingQuery[add[0]] = tempDict[add[0]];
       }
     }
+
     this.pushQueryToActiveFilter("0");
     return true;
   }
@@ -1711,16 +1725,12 @@ export class FiltersService {
   }
 
   removeAttributes(fid: any, bin: any, atts: any[]) {
-    console.log(
-      "REMOVING ATT",
-      fid,
-      this.fidCashMap,
-      Object.keys(this.fidCashMap).indexOf(fid)
-    );
     if (Object.keys(this.fidCashMapFIDtoID).indexOf(fid) != -1) {
       var id = this.fidCashMapFIDtoID[fid];
       this.formCash.controls[id].setValue(null);
     }
+
+    console.log("REMOVE ATTRIBUTE", fid, bin, atts);
 
     var alteredDBFormat = cloneDeep(this.newDBFormat);
     var removed = cloneDeep(alteredDBFormat[bin][fid][1]);
@@ -1739,6 +1749,8 @@ export class FiltersService {
     var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
     var oldWorkingFID = cloneDeep(this.newWorkingFID);
     var oldForm = cloneDeep(this.form);
+
+    console.log("ALTERED DB FORMAT", alteredDBFormat);
     this.pushDBFormat(alteredDBFormat);
     this.newWorkingQuery = oldWorkingQuery;
     this.newWorkingFID = oldWorkingFID;

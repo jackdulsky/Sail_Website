@@ -277,3 +277,13 @@
 ::ng-deep.mat-form-field-appearance-legacy .mat-form-field-underline {
   background-color: black !important;
 }
+::ng-deep.mat-form-field-ripple {
+  /*change color of underline when focused*/
+  background-color: black !important;
+}
+::ng-deep .mat-form-field .mat-focused .mat-form-field-ripple {
+  background-color: black;
+}
+
+/* 
+.mat-form-field.mat-focused .mat-form-field-ripple */

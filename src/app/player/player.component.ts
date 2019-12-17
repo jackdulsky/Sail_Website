@@ -54,13 +54,6 @@ export class PlayerComponent implements OnInit {
     "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
   playerNameInput;
   ngOnInit() {
-    for (let att in this.filterService.pullStructure["-3"]["300"]) {
-      try {
-        if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
-          this.playerNameInput = att;
-        }
-      } catch (e) {}
-    }
     this.initFunction();
   }
   ngOnDestroy() {}
@@ -89,8 +82,17 @@ export class PlayerComponent implements OnInit {
     if (
       this.filterService.reportTabs &&
       this.filterService.reportReportsOnly &&
-      this.filterService.getReportHeaders(3)
+      this.filterService.getReportHeaders(3) &&
+      this.filterService.pullStructure &&
+      this.filterService.pullAttribute
     ) {
+      for (let att in this.filterService.pullStructure["-3"]["300"]) {
+        try {
+          if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
+            this.playerNameInput = att;
+          }
+        } catch (e) {}
+      }
       var tabs = this.filterService.getReportHeaders(3);
       this.playerTabSelected = Object.keys(tabs).sort(function(a, b) {
         return tabs[a]["OrderID"] < tabs[b]["OrderID"]

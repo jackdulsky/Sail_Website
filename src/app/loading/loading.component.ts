@@ -83,32 +83,20 @@ export class LoadingComponent implements OnInit {
         var filters = this.loadJSON;
         this.filterService.loadJSON(JSON.parse(decodeURIComponent(filters)));
         for (let query in this.filterService.newFIDBID) {
-          if (Number(this.filterService.newFIDBID[query]) == -2) {
-            try {
-              this.filterService.teamPortalActiveClubID = cloneDeep(
-                this.filterService.newFIDs[query]["2"][0]
-              );
-
-              this.filterService.teamPortalSelected = this.filterService.teamsMap[
-                this.filterService.teamPortalActiveClubID
-              ];
-            } catch (e) {}
-          }
-          if (Number(this.filterService.newFIDBID[query]) == -3) {
-            try {
-              this.filterService.playerPortalActivePlayerID = cloneDeep(
-                this.filterService.newFIDs[query]["3"][0]
-              );
-            } catch (e) {}
-          }
           this.doneloading += 1;
           this.doneChecking = false;
         }
       }
+      this.filterService.setActiveClub();
+      this.filterService.setActivePlayer();
       this.rerouteAfterUpload();
     }, 200);
   }
+  //http://localhost:4200/loading/bcaaad3d-3395-389a-81a1-17dff1ada31b/[[%22-3%22,%223%22,[%221009876%22]],[%E2%80%9C-3%E2%80%9D,%221000%22,[%22192226%22]]]/Player,report,2676
+  //http://localhost:4200/loading/bcaaad3d-3395-389a-81a1-17dff1ada31b/[[%22-3%22,%223%22,[%221009876%22]],[%E2%80%9C-3%E2%80%9D,%221000%22,[%22192226%22]]]/Player,report,2676
+  //http://localhost:4200/loading/bcaaad3d-3395-389a-81a1-17dff1ada31b/[[%22-3%22,%223%22,[%221009876%22]],[%22-3%22,%221000%22,[%22192226%22]]]/Player,report,2676
 
+  //http://localhost:4200/loading/fe554fcb-1ef9-1cc7-483d-456e3ac348c9/[[%22-3%22,%223%22,[%221009876%22]],[%22-3%22,%221000%22,[%22192226%22]]]/Player,report,2676
   //ROUTE TO APPROPRIATE PLACE
   rerouteAfterUpload() {
     if (this.reroutExists) {

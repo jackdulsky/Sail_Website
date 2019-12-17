@@ -23,6 +23,9 @@ ul {
   float: left;
   border-top: 1px solid black;
 }
+.leftBG:hover {
+  cursor: pointer;
+}
 .rightBG {
   background-image: url(../../assets/Site_header_rightV3.png);
   width: calc(100% - 428px);

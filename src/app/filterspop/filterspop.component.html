@@ -204,6 +204,20 @@
           style="width:100%"
         ></ng-container>
       </ng-container>
+      <ng-container
+      *ngIf="
+        filterService.pullAttribute[att] &&
+        9 == filterService.pullAttribute[att]['UITypeID']
+      "
+    >
+      <ng-container
+        *ngTemplateOutlet="
+          type9Selection;
+          context: { id: att, values: null }
+        "
+        style="width:100%"
+      ></ng-container>
+    </ng-container>
           </ng-container>
         </div>
         <div class="rightside">
@@ -240,7 +254,7 @@
                       >
                         <ng-container
                           *ngIf="
-                          [3,4,5,7,8].indexOf(filterService.pullAttribute[att.key]['UITypeID']) == -1
+                          [3,4,5,7,8,9].indexOf(filterService.pullAttribute[att.key]['UITypeID']) == -1
                           "
                         >
 
@@ -326,7 +340,7 @@
                         </ng-container>
                         <ng-container
                         *ngIf="
-                         filterService.pullAttribute[att.key]['UITypeID'] == 7
+                         filterService.pullAttribute[att.key]['UITypeID'] == 7 || filterService.pullAttribute[att.key]['UITypeID'] == 9
                         "
                       >
                         &nbsp;&nbsp;&nbsp;{{
@@ -889,7 +903,6 @@
                     <tr>
                       <div style="width: 110px ; float: left;font-size: 14px;">
                         <mat-form-field style="width: 239px; top: -9px">
-                          <!-- [value]="getInitValuesType7(id, 0)" -->
                           <input
                           class="colorBlack"
                           id="type7Input{{ id }}"
@@ -1041,6 +1054,41 @@
           <!-- [formControl]="filterService.form.controls[id2]" -->
         </div>
       </ng-template>
+      <ng-template #type9Selection let-id="id" let-values="values">
+          <div class="toggleContainerSelection">
+            <div class="togglelabel">
+              {{ filterService.pullAttribute[id][Label] }}:
+            </div>
+            <div>
+              <div class="form-group">
+                <table class="fullWidth" cellspacing="0">
+                  <tr>
+                    <div style="width: 110px ; float: left;font-size: 14px;">
+                      <mat-form-field style="width: 239px; top: -9px">
+                        <input
+                        class="colorBlack"
+                        id="type9Input{{ id }}"
+                        name="type9Input{{ id }}"
+                        [value]="getInitValuesType7(id)"
+                        matInput
+                        type="number"
+                        maxlength="20"
+                        placeholder=""
+                        (input)="
+                          filterService.changeType7Input(
+                            id,
+                            $event.target.value
+                          )
+                        "
+                        />
+                      </mat-form-field>
+                    </div>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+    </ng-template>
     </div>
 
     <!--     
