@@ -18,11 +18,12 @@
           <!-- <span class="usertext mright">
             {{ allUsers[0].firstName }} {{ allUsers[0].lastName }}
           </span> -->
-          <div style="display:contents">
+          <div class="menuButton" style="display:contents">
             <i
               class="fa fa-bars fa-lg settingsMenuDropDown"
-              (click)="openSettingsMenu()"
+              (click)="filterService.toggleTopMenuDropDown()"
             ></i>
+            <!-- (mouseenter)="filterService.toggleTopMenuDropDown()" -->
           </div>
         </div>
       </div>

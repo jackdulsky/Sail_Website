@@ -30,7 +30,7 @@ export class BodyComponent implements OnInit {
   portalSelected = "";
   location = "XOS Folder";
   reports;
-  portals = ["club", "player", "cash"];
+  portals = ["club", "player", "cash"]; //, "excel"];
 
   noFolderAlert = false;
   folderSelected = false;
@@ -38,12 +38,16 @@ export class BodyComponent implements OnInit {
   //ON INIT SET THE SELECTED TAB ON THE LEFT TO GENERAL / CHANGE CSS
   ngOnInit() {
     this.filterService.selected = "0";
+
     this.initCalled();
   }
 
   initCalled() {
     if (
-      document.getElementById(this.filterService.selected + "reportHighlightid")
+      document.getElementById(
+        this.filterService.selected + "reportHighlightid"
+      ) ||
+      this.filterService.portalSelected != ""
     ) {
       if (this.filterService.portalSelected == "") {
         try {
@@ -56,7 +60,7 @@ export class BodyComponent implements OnInit {
       }
     } else {
       setTimeout(() => {
-        console.log("LOOP 5");
+        console.log("LOOP 5", this.filterService.selected);
         this.initCalled();
       }, 100);
     }
@@ -74,6 +78,7 @@ export class BodyComponent implements OnInit {
         relativeTo: this.route
       });
     }
+    this.filterService.menuOpen = false;
   }
 
   //CHANGE DISPLAY REPORTS BASED ON CLICKED REPORT
@@ -119,6 +124,7 @@ export class BodyComponent implements OnInit {
         relativeTo: this.route
       });
     }
+    this.filterService.menuOpen = false;
   }
 
   //THis function re high lights the previously highlighted report tab
@@ -138,6 +144,7 @@ export class BodyComponent implements OnInit {
       document.getElementById(this.portals[port] + "id").className =
         "sidebutton";
     }
+    this.filterService.menuOpen = false;
   }
 
   //Highlight the portals and unhighlight the reports
@@ -163,6 +170,7 @@ export class BodyComponent implements OnInit {
         relativeTo: this.route
       });
     }
+    this.filterService.menuOpen = false;
   }
 
   //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT

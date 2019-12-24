@@ -13,6 +13,7 @@ import { CashComponent } from "./cash/cash.component";
 import { HomeComponent } from "./home/home.component";
 import { NewpageComponent } from "./newpage/newpage.component";
 import { ExtraOptions } from "@angular/router";
+import { ExcelComponent } from "./excel/excel.component";
 
 export const routingConfiguration: ExtraOptions = {
   paramsInheritanceStrategy: "always"
@@ -31,7 +32,7 @@ const routes: Routes = [
     children: [
       {
         path: "",
-        redirectTo: "base-reports/0",
+        redirectTo: "club",
         pathMatch: "full"
       },
 
@@ -75,7 +76,7 @@ const routes: Routes = [
           },
           {
             path: "",
-            redirectTo: "base-reports/4",
+            redirectTo: "report/2679",
             pathMatch: "full"
           }
         ]
@@ -95,6 +96,10 @@ const routes: Routes = [
             pathMatch: "full"
           }
         ]
+      },
+      {
+        path: "excel",
+        component: ExcelComponent
       },
       {
         path: "cash",
@@ -130,7 +135,7 @@ const routes: Routes = [
       },
       {
         path: "**",
-        redirectTo: "base-reports/0"
+        redirectTo: "club"
       }
     ]
   },
@@ -146,112 +151,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule {}
-// {
-//   path: "",
-//   redirectTo: "base-reports/0",
-//   pathMatch: "full"
-// },
-
-// {
-//   path: "setting",
-//   component: SettingComponent
-// },
-// {
-//   path: "report/:reportid",
-//   component: ReportComponent,
-//   pathMatch: "full"
-// },
-// {
-//   path: "report",
-//   redirectTo: "base-reports/0"
-// },
-// {
-//   path: "filters",
-//   component: FilterBarComponent
-// },
-// {
-//   path: "",
-//   component: FilterBarComponent,
-//   outlet: "filterSection"
-// },
-
-// {
-//   path: "base-reports/:base-reportsid",
-//   component: BaseReportsComponent,
-//   pathMatch: "full"
-// },
-// {
-//   path: "base-reports",
-//   redirectTo: "base-reports/0",
-//   pathMatch: "full"
-// },
-// {
-//   path: "club",
-//   component: ClubComponent,
-//   children: [
-//     { path: "report/:reportid", component: ReportComponent },
-//     {
-//       path: "base-reports/:base-reportsid",
-//       component: BaseReportsComponent
-//     },
-//     {
-//       path: "",
-//       redirectTo: "base-reports/4",
-//       pathMatch: "full"
-//     }
-//   ]
-// },
-// {
-//   path: "player",
-//   component: PlayerComponent,
-//   children: [
-//     { path: "report/:reportid", component: ReportComponent },
-//     {
-//       path: "base-reports/:base-reportsid",
-//       component: BaseReportsComponent
-//     },
-//     {
-//       path: "",
-//       redirectTo: "base-reports/7",
-//       pathMatch: "full"
-//     }
-//   ]
-// },
-// {
-//   path: "cash",
-//   component: CashComponent,
-//   children: [
-//     { path: "report/:reportid", component: ReportComponent },
-//     {
-//       path: "base-reports/:base-reportsid",
-//       component: BaseReportsComponent
-//     },
-//     {
-//       path: "",
-//       redirectTo: "base-reports/10",
-//       pathMatch: "full"
-//     }
-//   ]
-// },
-// {
-//   path: "loading/:guid/:filterjson/:destination",
-//   component: LoadingComponent
-// },
-// {
-//   path: "loading/:guid/:filterjson",
-//   component: LoadingComponent
-// },
-// {
-//   path: "loading/:guid",
-//   component: LoadingComponent
-// },
-// {
-//   path: "report-upload",
-//   component: ReportUploadComponent
-// },
-// {
-//   path: "**",
-//   redirectTo: "base-reports/0"
-// }
-// ]
-// }

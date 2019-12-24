@@ -29,7 +29,11 @@ export class BaseReportsComponent implements OnInit {
   private sub: any;
   reportList = null;
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.router.url.includes("/base-reports/")) {
+      this.filterService.selected = this.router.url.split("/base-reports/")[1];
+    }
+  }
 
   ngOnDestroy() {
     this.sub.unsubscribe();

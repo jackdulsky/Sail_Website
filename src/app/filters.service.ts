@@ -5,7 +5,7 @@ import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { NonNullAssert, ThrowStmt } from "@angular/compiler";
-import { lor, reportsNew, views, colours } from "./allReports";
+import { colours } from "./allReports";
 import {
   DomSanitizer,
   SafeUrl,
@@ -77,9 +77,6 @@ export class FiltersService {
   };
   playerPortalActivePlayerID = "";
   playerPortalActivePlayerIDOLD = "";
-  lor = lor;
-  reportsNew = reportsNew;
-  views = views;
   colours = colours;
   clubData;
   playerData;
@@ -129,6 +126,7 @@ export class FiltersService {
   formCash = this.fb.group({});
   fidCashMap = {};
   fidCashMapFIDtoID = {};
+  menuOpen = false;
 
   //   "OPTION 1":
   //     "http://oakcmsreports01.raiders.com:88/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
@@ -158,12 +156,6 @@ export class FiltersService {
       );
     } catch (e) {}
     return tabs;
-    return Object.assign(
-      {},
-      ...Object.entries(this.lor)
-        .filter(([k, v]) => v["Location"] == location)
-        .map(([k, v]) => ({ [k]: v }))
-    );
   }
 
   //RETURN TEAMS INFORMATION (NOT A LIST OF NAMES)
@@ -456,14 +448,7 @@ export class FiltersService {
           tempReports[report];
       }
       this.reportReportsOnly = cloneDeep(tempReports);
-      for (let base in reportsNew) {
-        for (let report in reportsNew[base]) {
-          if (!this.reportReportsStructure[base]) {
-            this.reportReportsStructure[base] = {};
-          }
-          this.reportReportsStructure[base][report] = reportsNew[base][report];
-        }
-      }
+
       // console.log("Pull ReportsOnly", this.reportReportsOnly);
       //  console.log("Pull Reports", this.reportReportsStructure);
     });
@@ -1495,28 +1480,28 @@ export class FiltersService {
 
   //Thisfunction creates and stores the RD URL
   createRDURL(id: any) {
-    var newURL = this.views[id];
     // var baseURL = "https://sail.raiders.com/view/REPLACEME///true/true/true";
     this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       "https://sail.raiders.com/"
     );
 
-    if (Number(id) > 100) {
-      if (this.reportURL) {
-        try {
-          var baseURL = this.reportURL[id]["ViewURL"];
-          this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-            baseURL.replace("[GUID]", this.pullData.GUID.toUpperCase())
-          );
-        } catch (e) {}
-      } else {
-        setTimeout(() => {
-          console.log("LOOP 13");
-          return this.createRDURL(id);
-        }, 100);
-      }
+    if (this.reportURL) {
+      //If Report is an excel file:
+      //add this to the end of it
+      var excelEnding =
+        "&action=embedview&wdAllowInteractivity=True&wdbipreview=True&wdDownloadButton=True";
+      try {
+        var baseURL = this.reportURL[id]["ViewURL"];
+        this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+          baseURL.replace("[GUID]", this.pullData.GUID.toUpperCase())
+        );
+        return cloneDeep(this.viewingURL);
+      } catch (e) {}
     } else {
-      this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(newURL);
+      setTimeout(() => {
+        console.log("LOOP 13");
+        return this.createRDURL(id);
+      }, 100);
     }
   }
 
@@ -1855,7 +1840,8 @@ export class FiltersService {
     let styles =
       this.portalYearsOnly.indexOf(year) != -1
         ? {
-            backgroundColor: "#92A2AC",
+            // backgroundColor: "#92A2AC",
+            backgroundColor: "rgb(80, 80, 80)",
             color: "white"
           }
         : {
@@ -2213,4 +2199,25 @@ export class FiltersService {
       ? 1
       : 0;
   };
+
+  //Open/Close Settings menu in top bar
+  toggleTopMenuDropDown() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  //route to report uploader
+  routeReportUploader() {
+    this.router.navigate(["report-upload"]);
+    for (let category in this.getReportHeaders(1)) {
+      document.getElementById(
+        category.toString() + "reportHighlightid"
+      ).className = "sidebutton";
+    }
+    var portals = ["club", "player", "cash"];
+
+    for (let port in portals) {
+      document.getElementById(portals[port] + "id").className = "sidebutton";
+    }
+    this.toggleTopMenuDropDown();
+  }
 }

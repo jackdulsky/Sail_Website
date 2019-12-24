@@ -113,14 +113,13 @@ export class PlayerComponent implements OnInit {
           this.playerTabSelected = this.router.url.split("/base-reports/")[1];
         }
       } catch (e) {}
+      this.performHighlightOrSubRoute();
     } else {
       setTimeout(() => {
         console.log("LOOP 30");
         this.initFunction();
       }, 200);
     }
-
-    this.performHighlightOrSubRoute();
   }
 
   //timeout Recursive method

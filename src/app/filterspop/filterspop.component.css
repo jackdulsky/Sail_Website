@@ -1089,8 +1089,8 @@ input {
   text-align: left;
   background-color: #ebeced;
   margin-top: 10px;
-  border: 2px solid var(--lighter-blue);
-  background-color: var(--lighter-blue);
+  border: 2px solid rgb(80, 80, 80);
+  background-color: rgb(80, 80, 80);
   box-shadow: 0px 1px 0 rgba(0, 0, 0, 0.5);
   /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19); */
 }
@@ -1329,6 +1329,7 @@ input {
 .bottom {
   margin-top: 3px;
   min-height: 300px;
+  padding-bottom: 15px;
 }
 .attributesValues {
   color: black;

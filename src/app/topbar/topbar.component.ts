@@ -18,6 +18,7 @@ import * as cloneDeep from "lodash/cloneDeep";
 export class TopbarComponent implements OnInit {
   allUsers: User[];
   timeSent;
+  menuOpen = false;
   constructor(
     public filterService: FiltersService,
     private userService: UserService,

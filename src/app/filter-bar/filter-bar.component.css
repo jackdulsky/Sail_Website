@@ -493,3 +493,44 @@
   margin-top: 8px;
   font-size: 20px;
 }
+.menuSettings {
+  width: 200px;
+  border: 1px solid black;
+  position: absolute;
+  left: calc(100% - 202px);
+  top: -1px;
+  background-color: white;
+  border-radius: 5px;
+  z-index: 1;
+}
+.menuSettingsOption {
+  color: black;
+  line-height: 15px;
+  margin: 5px;
+  padding: 7px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: "DIN-Regular", "DIN-Regular";
+  color: black;
+  font-weight: bold;
+  background-color: white;
+}
+.menuSettingsOption:hover {
+  background-color: #c8c8c8;
+  cursor: pointer;
+}
+.shadow {
+  box-shadow: 2px 4px 10px black;
+}
+
+.menuSettings::after {
+  position: absolute;
+  left: 85%;
+  top: -8px;
+  width: 0;
+  height: 0;
+  content: "";
+  border-left: 13px solid transparent;
+  border-right: 13px solid transparent;
+  border-bottom: 13px solid #ffffff;
+}

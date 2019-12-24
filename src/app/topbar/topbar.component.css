@@ -234,3 +234,12 @@ ul {
   overflow-y: auto;
   text-align: center;
 }
+.menuSettings {
+  width: 200px;
+  border: 1px solid black;
+  position: absolute;
+}
+.menuButton:hover {
+  background-color: #c8c8c8;
+  cursor: pointer;
+}

@@ -144,7 +144,7 @@
 }
 
 .fullScreen {
-  width: 100px;
+  min-width: 50px;
   text-align: center;
   float: right;
   line-height: 29px;
@@ -184,12 +184,12 @@
 }
 .toggleContainerSelection {
   /* padding-bottom: 10px; */
-  width: 435px;
+  width: 415px;
 
   display: grid;
   grid-template-columns: 100px 1fr;
   line-height: 60px;
-  max-width: 435px;
+  max-width: 415px;
   float: left;
   /* border: 1px solid var(--raiders-gray); */
   border-radius: 10px;

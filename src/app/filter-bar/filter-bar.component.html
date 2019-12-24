@@ -16,7 +16,17 @@
       Save
     </div>
   </div>
-
+  <div class="shadow menuSettings" *ngIf="filterService.menuOpen">
+    <div
+      class="menuSettingsOption"
+      (click)="filterService.routeReportUploader()"
+    >
+      📲 Report Upload
+    </div>
+    <div class="menuSettingsOption">
+      🎬 XOS Export
+    </div>
+  </div>
   <div
     class="suggestionListG"
     *ngIf="filterService.globalSearchShowSuggestions"

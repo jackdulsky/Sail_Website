@@ -36,27 +36,13 @@ export class ReportComponent implements OnInit {
   ngAfterViewInit() {
     this.sub = this.route.params.subscribe(params => {
       this.viewing = String(params["reportid"]); // (+) converts string 'id' to a number
-      if (this.filterService.lor) {
-        this.changeReport(this.viewing);
-      } else {
-        setTimeout(() => {
-          console.log("LOOP 36");
-          this.changeReport(this.viewing);
-        }, 800);
-      }
+      this.filterService.createRDURL(this.viewing);
+      this.cdref.detectChanges();
+
       // this.cdref.detectChanges();
-      // In a real app: dispatch action to load the details here.
     });
   }
 
-  createRDURL() {
-    this.filterService.createRDURL(this.viewing);
-  }
-
-  //Changes the report based on report ID
-  changeReport(input: any) {
-    this.createRDURL();
-  }
   //SETTING CSS OF THE iframe
   setIFrameStyle() {
     var h;

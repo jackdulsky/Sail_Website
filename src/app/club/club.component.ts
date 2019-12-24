@@ -98,13 +98,13 @@ export class ClubComponent implements OnInit {
           this.clubTabSelected = this.router.url.split("/base-reports/")[1];
         }
       } catch (e) {}
+      this.performHighlightOrSubRoute();
     } else {
       setTimeout(() => {
         console.log("LOOP 20");
         this.initFunction();
       }, 200);
     }
-    this.performHighlightOrSubRoute();
   }
 
   //timeout Recursive method

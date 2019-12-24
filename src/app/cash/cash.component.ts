@@ -41,6 +41,7 @@ export class CashComponent implements OnInit {
   positonFilterID;
   agentFilterID;
   companyFilterID;
+  FAStatusFilterID;
   showFilters;
 
   ngOnInit() {
@@ -68,6 +69,9 @@ export class CashComponent implements OnInit {
           if (this.filterService.pullAttribute[att]["Label"] == "Company") {
             this.companyFilterID = att;
           }
+          if (this.filterService.pullAttribute[att]["Label"] == "FA Status") {
+            this.FAStatusFilterID = att;
+          }
         } catch (e) {}
         this.filterService.formCash.addControl(att, new FormControl());
         this.filterService.formCash.addControl(
@@ -78,7 +82,8 @@ export class CashComponent implements OnInit {
       this.showFilters = [
         this.positonFilterID,
         this.agentFilterID,
-        this.companyFilterID
+        this.companyFilterID,
+        this.FAStatusFilterID
       ];
       if (!this.filterService.fidCashMap[this.positonFilterID]) {
         this.filterService.fidCashMap[this.positonFilterID] = "-301";
@@ -91,6 +96,10 @@ export class CashComponent implements OnInit {
       if (!this.filterService.fidCashMap[this.companyFilterID]) {
         this.filterService.fidCashMapFIDtoID["-303"] = this.companyFilterID;
         this.filterService.fidCashMap[this.companyFilterID] = "-303";
+      }
+      if (!this.filterService.fidCashMap[this.FAStatusFilterID]) {
+        this.filterService.fidCashMapFIDtoID["-304"] = this.FAStatusFilterID;
+        this.filterService.fidCashMap[this.FAStatusFilterID] = "-304";
       }
 
       var tabs = this.filterService.getReportHeaders(4);
@@ -113,18 +122,13 @@ export class CashComponent implements OnInit {
           this.cashTabSelected = this.router.url.split("/base-reports/")[1];
         }
       } catch (e) {}
+      this.performHighlightOrSubRoute();
     } else {
       setTimeout(() => {
         console.log("LOOP 8");
         this.initFunction();
       }, 200);
     }
-    this.performHighlightOrSubRoute();
-  }
-
-  //get first order value
-  getFirstTab() {
-    var tabs = this.filterService.getReportHeaders(4);
   }
 
   //timeout Recursive method
@@ -156,7 +160,7 @@ export class CashComponent implements OnInit {
       newTab.style.borderBottom = "4px solid lightskyblue";
     } else {
       setTimeout(() => {
-        console.log("LOOP 10");
+        console.log("LOOP 10", name);
         this.justHighlight(this.cashTabSelected);
       }, 100);
     }
