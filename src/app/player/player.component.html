@@ -62,6 +62,11 @@
                 class="clubLogoText"
               >
                 {{ filterService.getLabel(disp, "Value") }}
+
+                <span
+                  [ngStyle]="filterService.setGradeColor(disp)"
+                  [innerHTML]="filterService.getLabel(disp, 'SubValue')"
+                ></span>
               </span>
             </div>
             <div #draftInfo class="din draftInfo">

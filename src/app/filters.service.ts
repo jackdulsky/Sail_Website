@@ -2157,6 +2157,37 @@ export class FiltersService {
     return styles;
   }
 
+  //Set the color style
+  setGradeColor(obj: any) {
+    var styles = {};
+    try {
+      if (obj["SubValue"] != null) {
+        styles = {
+          color: "White",
+          background: obj["Color"],
+          display: "inline-block",
+          borderRadius: "10px",
+          width: "50px",
+          height: "24px",
+          marginLeft: "3px",
+          textAlign: "center",
+          lineHeight: "28px",
+          fontSize: "18px",
+          fontWeight: "bold",
+          border: "2px solid " + obj["Color"]
+        };
+      } else {
+        return {};
+      }
+    } catch (e) {
+      styles = {
+        color: "Black",
+        background: "white"
+      };
+    }
+    return styles;
+  }
+
   //Transform Name
   transformName(text: string) {
     if (text.includes(" ")) {
