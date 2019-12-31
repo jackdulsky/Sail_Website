@@ -34,9 +34,7 @@ export class FiltersService {
   show: string = "";
   panels: string[] = [];
   selectingAttributes: string[] = [];
-  combined = {};
-  workingBin = "";
-  workingFID = "";
+
   level1Selected;
   // form;
   pullDataType;
@@ -654,14 +652,17 @@ export class FiltersService {
   //RESET VARIABLES APPROPRIATELY
   type0change(formKey, formVals, bid) {
     var values = cloneDeep(formVals);
+
     //CHECK IF A DELETE NEEDS TO OCCUR CAUSE VALUE IS EMPTY
 
     if (values != null && values.length == 0) {
       delete this.newWorkingQuery[bid][formKey];
       this.form.controls[formKey].setValue(null);
+
       if (this.newWorkingFID[bid] != "") {
         this.pushBIDActiveFIDToActiveFilter(bid, false);
       }
+
       if (Object.keys(this.newWorkingQuery[bid]).length == 0) {
         delete this.newFIDs[this.newWorkingFID[bid]];
         this.newWorkingFID[bid] = "";
@@ -683,7 +684,7 @@ export class FiltersService {
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
   //REMOVE FROM THE WORKING QUERY AND
   clearSingleIDWorking(id: string, BID: string, input: boolean = true) {
-    delete this.newWorkingQuery[BID][id]; //this.workingQuery[id];
+    delete this.newWorkingQuery[BID][id];
 
     if (this.newWorkingFID[BID] != "") {
       this.pushQueryToActiveFilter(BID, input);
@@ -834,52 +835,51 @@ export class FiltersService {
         delete this.newDBFormat[bin][this.newWorkingFID[bin]];
         this.newWorkingFID[bin] = "";
       }
-    }
-
-    //DO NOT DOUBLE PUT IN ITEMS
-
-    for (let key in this.newFIDs) {
-      if (
-        this.isEqualObjectsContents(
-          this.newFIDs[key],
-          this.newWorkingQuery[bin]
-        )
-      ) {
-        continue;
-      }
-    }
-
-    //SET FID TO CURRENT OR GENERATE NEW ONE
-    var newFIDNumber;
-    if (this.newWorkingFID[bin] != "") {
-      newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
     } else {
-      newFIDNumber = String(Math.floor(Math.random() * 1000));
-      this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([newFIDNumber]);
+      //DO NOT DOUBLE PUT IN ITEMS
+
+      for (let key in this.newFIDs) {
+        if (
+          this.isEqualObjectsContents(
+            this.newFIDs[key],
+            this.newWorkingQuery[bin]
+          )
+        ) {
+          continue;
+        }
+      }
+
+      //SET FID TO CURRENT OR GENERATE NEW ONE
+      var newFIDNumber;
+      if (this.newWorkingFID[bin] != "") {
+        newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
+      } else {
+        newFIDNumber = String(Math.floor(Math.random() * 1000));
+        this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([newFIDNumber]);
+      }
+      //PUT THE WORKING QUERY IN NEW FIDs
+      var pkID = [];
+      this.newFIDs[newFIDNumber] = Object.assign(
+        {},
+        cloneDeep(this.newWorkingQuery[bin])
+      );
+      var att = cloneDeep(this.newWorkingQuery[bin]);
+      //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
+      if (att[String(Number(bin) * -1)]) {
+        pkID = cloneDeep(att[String(Number(bin) * -1)]);
+        delete att[String(Number(bin) * -1)];
+      }
+
+      var FID = [];
+
+      //INIT THE NEW DB FORMAT BEFORE ADDING
+
+      this.newFIDBID[newFIDNumber] = bin;
+      if (!this.newDBFormat[bin]) {
+        this.newDBFormat[bin] = {};
+      }
+      this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
     }
-    //PUT THE WORKING QUERY IN NEW FIDs
-    var pkID = [];
-    this.newFIDs[newFIDNumber] = Object.assign(
-      {},
-      cloneDeep(this.newWorkingQuery[bin])
-    );
-    var att = cloneDeep(this.newWorkingQuery[bin]);
-    //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
-    if (att[String(Number(bin) * -1)]) {
-      pkID = cloneDeep(att[String(Number(bin) * -1)]);
-      delete att[String(Number(bin) * -1)];
-    }
-
-    var FID = [];
-
-    //INIT THE NEW DB FORMAT BEFORE ADDING
-
-    this.newFIDBID[newFIDNumber] = bin;
-    if (!this.newDBFormat[bin]) {
-      this.newDBFormat[bin] = {};
-    }
-    this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
-
     //RESET
     if (clearWorking) {
       this.newWorkingQuery[bin] = {};
@@ -1276,6 +1276,8 @@ export class FiltersService {
             var oldClub = document.getElementById("teamGUI" + String(club));
             oldClub.className = "singleTeamGUI ng-star-inserted";
           } catch (e) {}
+          console.log("HERE 5");
+
           oldValue = oldValue.filter(x => x != club);
           this.form.controls[attID].setValue(oldValue);
         }
@@ -1287,15 +1289,22 @@ export class FiltersService {
       this.form.controls[attID].setValue(
         oldValue.concat([String(teamI["SailTeamID"])])
       );
+      console.log("HERE 6");
 
       this.teamPortalActiveClubID = String(teamI["SailTeamID"]);
       this.teamPortalSelected = teamI;
     } else {
+      console.log("HERE 7");
+
       team.className = "singleTeamGUI ng-star-inserted";
       this.form.controls[attID].setValue(
         oldValue.filter(x => x != String(teamI["SailTeamID"]))
       );
     }
+    // if (this.form.value[attID].length == 0){
+    //   this.removeExplicit(this.newWorkingFID["-2"],"2");
+
+    // }
     this.type0change(attID, this.form.value[attID], bin);
   }
 
@@ -1691,6 +1700,9 @@ export class FiltersService {
   removeExplicit(fid: any, bin: any) {
     var alteredDBFormat = cloneDeep(this.newDBFormat);
     alteredDBFormat[bin][fid][0] = [];
+    var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
+    var oldWorkingFID = cloneDeep(this.newWorkingFID);
+    var oldForm = cloneDeep(this.form);
     if (
       JSON.stringify(alteredDBFormat[bin][fid]) == JSON.stringify([[], {}, []])
     ) {
@@ -1700,9 +1712,11 @@ export class FiltersService {
         delete alteredDBFormat[bin];
       }
     }
-    var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
-    var oldWorkingFID = cloneDeep(this.newWorkingFID);
-    var oldForm = cloneDeep(this.form);
+    if (String(this.newWorkingFID[bin]) == String(fid)) {
+      oldWorkingFID[bin] = "";
+      delete oldWorkingQuery[bin][String(Number(bin) * -1)];
+      this.form.controls[String(Number(bin) * -1)].setValue(null);
+    }
     this.pushDBFormat(alteredDBFormat);
     this.newWorkingQuery = oldWorkingQuery;
     this.newWorkingFID = oldWorkingFID;
@@ -2161,7 +2175,7 @@ export class FiltersService {
   setGradeColor(obj: any) {
     var styles = {};
     try {
-      if (obj["SubValue"] != null) {
+      if (obj["SubValue"] != null && obj["SubValue"] != "") {
         styles = {
           color: "White",
           background: obj["Color"],

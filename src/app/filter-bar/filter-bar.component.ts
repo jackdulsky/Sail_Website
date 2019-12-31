@@ -81,8 +81,6 @@ export class FilterBarComponent implements OnInit {
       });
     } else {
       this.filterService.changelevel2(selected);
-      // this.filterService.attributeSelected(String(Number(selected) * -100));
-      // this.filterService.level1Selected = selected;
     }
   }
 
@@ -112,7 +110,6 @@ export class FilterBarComponent implements OnInit {
       this.filterService.form.controls[id].setValue(null);
     }
     this.filterService.newWorkingQuery[bin] = cloneDeep(query);
-    this.filterService.workingBin = cloneDeep(bin);
     this.filterService.newWorkingFID[bin] = cloneDeep(fid);
 
     //SET THE FORM CONTROL
@@ -153,7 +150,7 @@ export class FilterBarComponent implements OnInit {
         this.filterService.form.controls[id].setValue(null);
       }
       this.filterService.newWorkingQuery[bin] = cloneDeep(query);
-      this.filterService.workingBin = cloneDeep(bin);
+
       this.filterService.newWorkingFID[bin] = cloneDeep(fid);
 
       //SET THE FORM CONTROL
@@ -180,7 +177,7 @@ export class FilterBarComponent implements OnInit {
         this.filterService.form.controls[id].setValue(null);
       }
       this.filterService.newWorkingQuery[bin] = cloneDeep(query);
-      this.filterService.workingBin = cloneDeep(bin);
+
       this.filterService.newWorkingFID[bin] = cloneDeep(fid);
 
       //SET THE FORM CONTROL

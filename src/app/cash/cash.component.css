@@ -137,7 +137,7 @@
   overflow-y: auto;
 }
 .yearDropDownCash:hover {
-  background-color: #c8c8c8;
+  background-color: #c8c8c8 !important;
 }
 .shadow {
   box-shadow: 2px 4px 10px black;
@@ -168,7 +168,7 @@
   display: flex;
   margin-top: 1px;
   margin-right: 5px;
-  background-color: var(--lighter-blue);
+  background-color: rgb(80, 80, 80);
   padding-left: 5px;
   padding-right: 5px;
   border-radius: 5px;
