@@ -30,6 +30,8 @@ export class LoadingComponent implements OnInit {
   reroutExists = true;
 
   ngOnInit() {
+    // this.filterService.getBulkImport();
+
     this.sub = this.route.params.subscribe(params => {
       this.loadGUID = String(params["guid"]);
       if (String(this.loadGUID) == "undefined") {
@@ -82,7 +84,7 @@ export class LoadingComponent implements OnInit {
       if (this.jsonExists) {
         var filters = this.loadJSON;
         this.filterService.loadJSON(JSON.parse(decodeURIComponent(filters)));
-        for (let query in this.filterService.newFIDBID) {
+        for (let query in this.filterService.FIDBID) {
           this.doneloading += 1;
           this.doneChecking = false;
         }
@@ -102,7 +104,7 @@ export class LoadingComponent implements OnInit {
     if (this.reroutExists) {
       if (
         this.doneChecking ||
-        this.doneloading != Object.keys(this.filterService.newFIDBID).length
+        this.doneloading != Object.keys(this.filterService.FIDBID).length
       ) {
         setTimeout(() => {
           console.log("LOOP 27");

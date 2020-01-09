@@ -10,7 +10,9 @@
         class="grid-itemGen"
         (click)="changeReportType(repo.key)"
         [ngStyle]="body.setIconStyle(repo.value)"
-      ></div>
+      >
+        <div [ngStyle]="body.setIconImageStyle(repo.value)"></div>
+      </div>
       <div class="labelText">
         {{ repo.value.Label }}
       </div>

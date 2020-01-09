@@ -51,11 +51,15 @@ export class ClubComponent implements OnInit {
     }
   }
   ngOnInit() {
+    // this.filterService.getBulkImport();
+    this.cdref.detectChanges();
+
     this.initFunction();
   }
   ngOnDestroy() {}
   ngAfterViewInit() {
     this.afterInitFunction();
+    this.cdref.detectChanges();
   }
   afterInitFunction() {
     if (this.filterService.teamsMap) {
@@ -73,7 +77,9 @@ export class ClubComponent implements OnInit {
   }
 
   initFunction() {
-    this.body.portalHighlight("club");
+    try {
+      this.body.portalHighlight("club");
+    } catch (e) {}
     if (
       this.filterService.reportTabs &&
       this.filterService.reportReportsOnly &&
@@ -136,7 +142,7 @@ export class ClubComponent implements OnInit {
       newTab.style.borderBottom = "4px solid lightskyblue";
     } else {
       setTimeout(() => {
-        console.log("LOOP 22");
+        console.log("LOOP 22", this.clubTabSelected, this.router.url);
         this.justHighlight(this.clubTabSelected);
       }, 100);
     }

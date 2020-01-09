@@ -22,6 +22,8 @@ export class NameenterpopComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.filterService.getBulkImport();
+
     this.form = this.fb.group({});
     this.form.addControl("enter", new FormControl());
     //SET EXISTING NAME IF EXISTS

@@ -19,7 +19,7 @@ export const routingConfiguration: ExtraOptions = {
   paramsInheritanceStrategy: "always"
 };
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: "",
     component: NewpageComponent,

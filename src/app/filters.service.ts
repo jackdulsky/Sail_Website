@@ -15,28 +15,29 @@ import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { ReplaceSource } from "webpack-sources";
 import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 import { KeyValue } from "@angular/common";
+import { jsonpFactory } from "@angular/http/src/http_module";
 
 @Injectable({
   providedIn: "root"
 })
 export class FiltersService {
+  bulkImported = false;
+
   tryingToSendDBFormat;
   tryingToSetPlayersTime;
-  newFilter: { [bid: string]: {} } = {};
-  newFIDBID: { [FID: string]: string } = {};
-  newFIDs: { [FID: string]: {} } = {};
-  newDBFormat: { [bid: string]: {} } = {};
+
+  FIDBID: { [FID: string]: string } = {};
+  FIDs: { [FID: string]: {} } = {};
+  DBFormat: { [bid: string]: {} } = {};
+
   workingQuery = {};
-  newWorkingQuery = {};
-  newWorkingFID = {};
-  newFIDOrder = {};
-  reversePaths = {};
+  workingFID = {};
+  FIDCreationOrder = {};
+
   show: string = "";
   panels: string[] = [];
   selectingAttributes: string[] = [];
-
-  level1Selected;
-  // form;
+  filterBinSelected;
   pullDataType;
   pullBin;
   pullNavigation;
@@ -49,14 +50,26 @@ export class FiltersService {
   pullStructure;
   pullOrderMap;
   pullPlayers;
+  teams;
+  teamsMap;
+  playLock;
+  clubData;
+  playerData;
+  reportTabs;
+  reportTabLocation;
+  reportReportsStructure;
+  reportReportsOnly;
+  reportURL;
+  sub: any;
+  positionHierarchy;
+  positionHItem;
+  clubSpecifics;
+  playerSpecifics;
   OrderID = "OrderID";
   conferenceSelected = "AFC";
   conferenceSelectedDEF = "AFC";
   conferenceSelections = { "2": "AFC", "400": "AFC" };
-  teams;
-  teamsMap;
   playCount = "0";
-  playLock;
   filterID: string = null;
   filterName: string = "";
   namePresent: boolean = false;
@@ -76,8 +89,7 @@ export class FiltersService {
   playerPortalActivePlayerID = "";
   playerPortalActivePlayerIDOLD = "";
   colours = colours;
-  clubData;
-  playerData;
+
   Label = "Label";
   selected: string;
   portalSelected = "";
@@ -86,11 +98,6 @@ export class FiltersService {
     "https://sail.raiders.com/"
   );
 
-  reportTabs;
-  reportTabLocation;
-  reportReportsStructure;
-  reportReportsOnly;
-  reportURL;
   portalYearsSelected: String[] = [];
   portalYearsList = [
     "2021",
@@ -107,14 +114,9 @@ export class FiltersService {
   ];
   portalYearsOnly: String[] = ["2019"];
   portalYearUpdated = false;
-  sub: any;
   fullScreenMode = false;
-  clubSpecifics;
-  playerSpecifics;
   clickedReport = false;
   displayPlayers = {};
-  positionHierarchy;
-  positionHItem;
   playersToDisplay: any[] = [];
 
   globalSearchShowSuggestions = false;
@@ -281,7 +283,7 @@ export class FiltersService {
 
     return cloneDeep(this.playersToDisplay);
   }
-  setPlayers(sendString: string = JSON.stringify(this.newDBFormat)) {
+  setPlayers(sendString: string = JSON.stringify(this.DBFormat)) {
     var curTime = cloneDeep(Date.now());
     this.tryingToSetPlayersTime = curTime;
     setTimeout(() => {
@@ -300,12 +302,12 @@ export class FiltersService {
               arrPlayers[item] = players[item];
             }
           }
-          for (let fid in this.newDBFormat["-3"]) {
-            if (this.newDBFormat["-3"][fid][0].length != 0) {
-              for (let explicit in this.newDBFormat["-3"][fid][0]) {
-                if (players[Number(this.newDBFormat["-3"][fid][0][explicit])]) {
-                  arrPlayers[Number(this.newDBFormat["-3"][fid][0][explicit])] =
-                    players[Number(this.newDBFormat["-3"][fid][0][explicit])];
+          for (let fid in this.DBFormat["-3"]) {
+            if (this.DBFormat["-3"][fid][0].length != 0) {
+              for (let explicit in this.DBFormat["-3"][fid][0]) {
+                if (players[Number(this.DBFormat["-3"][fid][0][explicit])]) {
+                  arrPlayers[Number(this.DBFormat["-3"][fid][0][explicit])] =
+                    players[Number(this.DBFormat["-3"][fid][0][explicit])];
                 }
               }
             }
@@ -317,187 +319,281 @@ export class FiltersService {
   }
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
   getBulkImport() {
-    ////console.log("IMPORT BULK");
-    //http://localhost:4200/loading/1A7C11F8-3CBB-95FE-27F5-5B70834093DB/%5B%5B%22-2%22,%222%22,%5B%221012%22,%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
-    // if (!this.router.url.includes("load")) {
-    //   this.newFIDBID = JSON.parse(localStorage.getItem("newFIDBID"));
-    //   this.newFIDs = JSON.parse(localStorage.getItem("newFIDs"));
-    //   this.newDBFormat = JSON.parse(localStorage.getItem("newDBFormat"));
-    //   this.newWorkingQuery = JSON.parse(
-    //     localStorage.getItem("newWorkingQuery")
-    //   );
-    //   this.newWorkingFID = JSON.parse(localStorage.getItem("newWorkingFID"));
-    //   this.reversePaths = JSON.parse(localStorage.getItem("reversePaths"));
-    // }
+    if (!this.bulkImported) {
+      ////console.log("IMPORT BULK");
 
-    this.pullData.setGUID();
-    this.pullData.pullStructure("1").subscribe(data => {
-      var d = JSON.parse(data[0][""]);
-      this.pullStructure = {};
-      for (let b in d) {
-        this.pullStructure = Object.assign(
-          {},
-          this.pullStructure,
-          this.recursiveExtractLevel(d[b], "BinID", 2)
+      this.pullData.setGUID();
+      this.pullData.pullStructure("1").subscribe(data => {
+        var d = JSON.parse(data[0][""]);
+        this.pullStructure = {};
+        for (let b in d) {
+          this.pullStructure = Object.assign(
+            {},
+            this.pullStructure,
+            this.recursiveExtractLevel(d[b], "BinID", 2)
+          );
+        }
+        // console.log("PULLStructure", this.pullStructure);
+        // console.log(
+
+        //component.filterService.pullStructure = " +
+        //     JSON.stringify(this.pullStructure) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullDataType().subscribe(data => {
+        this.pullDataType = {};
+        this.extractID(data, "DataTypeID", this.pullDataType);
+        // console.log(
+        //   "component.filterService.pullDataType = " +
+        //     JSON.stringify(this.pullDataType) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullPlayers().subscribe(data => {
+        this.pullPlayers = {};
+        this.extractID(data, "SailID", this.pullPlayers);
+        //console.log("PLAYERS", this.pullPlayers);
+        // console.log(
+        //   "component.filterService.pullPlayers = " +
+        //     JSON.stringify(this.pullPlayers) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullBin().subscribe(data => {
+        this.pullBin = {};
+        this.extractID(data, "BinID", this.pullBin);
+        for (let binKey in this.pullBin) {
+          this.workingQuery[binKey] = {};
+
+          this.workingFID[binKey] = "";
+          this.FIDCreationOrder[binKey] = [];
+        }
+        //console.log("BIN", this.pullBin);
+        // console.log(
+        //   "component.filterService.pullBin = " +
+        //     JSON.stringify(this.pullBin) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullNavigation().subscribe(data => {
+        this.pullNavigation = {};
+        this.extractID(data, "ItemID", this.pullNavigation);
+        // console.log("NAV", this.pullNavigation);
+        // console.log(
+        //   "component.filterService.pullNavigation = " +
+        //     JSON.stringify(this.pullNavigation) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullPlayerURL().subscribe(data => {
+        this.extractkeyValue(
+          data,
+          "SailID",
+          "PlayerImageUrl",
+          this.playerImageURLs
         );
-      }
-      //console.log("PULLStructure", this.pullStructure);
-    });
-    this.pullData.pullDataType().subscribe(data => {
-      this.pullDataType = {};
-      this.extractID(data, "DataTypeID", this.pullDataType);
-    });
-    this.pullData.pullPlayers().subscribe(data => {
-      this.pullPlayers = {};
-      this.extractID(data, "SailID", this.pullPlayers);
-      //console.log("PLAYERS", this.pullPlayers);
-    });
-    this.pullData.pullBin().subscribe(data => {
-      this.pullBin = {};
-      this.extractID(data, "BinID", this.pullBin);
-      for (let binKey in this.pullBin) {
-        this.newWorkingQuery[binKey] = {};
-        this.reversePaths[binKey] = {};
-        this.newWorkingFID[binKey] = "";
-        this.newFIDOrder[binKey] = [];
-      }
-      //console.log("BIN", this.pullBin);
-    });
-    this.pullData.pullNavigation().subscribe(data => {
-      this.pullNavigation = {};
-      this.extractID(data, "ItemID", this.pullNavigation);
-      // console.log("NAV", this.pullNavigation);
-    });
-    this.pullData.pullPlayerURL().subscribe(data => {
-      this.extractkeyValue(
-        data,
-        "SailID",
-        "PlayerImageUrl",
-        this.playerImageURLs
-      );
-    });
-    this.pullData.pullNavigationElement().subscribe(data => {
-      this.pullNavigationElement = {};
-      this.extractID(data, "ItemID", this.pullNavigationElement);
-      // console.log("NAVELEM", this.pullNavigationElement);
-    });
-    this.pullData.pullAttributeType().subscribe(data => {
-      this.pullAttributeType = {};
-      this.extractID(data, "AttributeTypeID", this.pullAttributeType);
-      //console.log("ATT TYPE", this.pullAttributeType);
-    });
-    this.pullData.pullAttribute().subscribe(data => {
-      this.pullAttribute = {};
-      this.extractID(data, "AttributeID", this.pullAttribute);
-      // console.log("PULLATTRIBUTE", this.pullAttribute);
-    });
-    this.pullData.pullUIType().subscribe(data => {
-      this.pullUIType = {};
-      this.extractID(data, "UITypeID", this.pullUIType);
-      //console.log("PULL UI TYPE", this.pullUIType);
-    });
+        // console.log(
+        //   "component.filterService.playerImageURLs = " +
+        //     JSON.stringify(this.playerImageURLs) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullNavigationElement().subscribe(data => {
+        this.pullNavigationElement = {};
+        this.extractID(data, "ItemID", this.pullNavigationElement);
+        // console.log(
+        //   "component.filterService.pullNavigationElement = " +
+        //     JSON.stringify(this.pullNavigationElement) +
+        //     ";"
+        // );
+        // console.log("NAVELEM", this.pullNavigationElement);
+      });
+      this.pullData.pullAttributeType().subscribe(data => {
+        this.pullAttributeType = {};
+        this.extractID(data, "AttributeTypeID", this.pullAttributeType);
+        //console.log("ATT TYPE", this.pullAttributeType);
+        // console.log(
+        //   "component.filterService.pullAttributeType = " +
+        //     JSON.stringify(this.pullAttributeType) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullAttribute().subscribe(data => {
+        this.pullAttribute = {};
+        this.extractID(data, "AttributeID", this.pullAttribute);
+        // console.log("PULLATTRIBUTE", this.pullAttribute);
+        // console.log(
+        //   "component.filterService.pullAttribute = " +
+        //     JSON.stringify(this.pullAttribute) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullUIType().subscribe(data => {
+        this.pullUIType = {};
+        this.extractID(data, "UITypeID", this.pullUIType);
+        //console.log("PULL UI TYPE", this.pullUIType);
+        // console.log(
+        //   "component.filterService.pullUIType = " +
+        //     JSON.stringify(this.pullUIType) +
+        //     ";"
+        // );
+      });
 
-    this.pullData.pullValue().subscribe(data => {
-      this.pullOrderMap = {};
-      this.extractID(cloneDeep(data), "OrderID", this.pullOrderMap);
+      this.pullData.pullValue().subscribe(data => {
+        this.pullOrderMap = {};
+        this.extractID(cloneDeep(data), "OrderID", this.pullOrderMap);
 
-      this.pullValue = {};
-      this.pullValueMap = {};
-      for (let b in data) {
-        var valID = cloneDeep(String(data[b]["ValueID"]));
-        var att = String(data[b]["AttributeID"]);
-        delete data[b]["ValueID"];
-        if (this.pullValueMap[att]) {
-          this.pullValueMap[att][valID] = data[b];
-        } else {
-          this.pullValueMap[att] = {};
-          this.pullValueMap[att][valID] = data[b];
+        this.pullValue = {};
+        this.pullValueMap = {};
+        for (let b in data) {
+          var valID = cloneDeep(String(data[b]["ValueID"]));
+          var att = String(data[b]["AttributeID"]);
+          delete data[b]["ValueID"];
+          if (this.pullValueMap[att]) {
+            this.pullValueMap[att][valID] = data[b];
+          } else {
+            this.pullValueMap[att] = {};
+            this.pullValueMap[att][valID] = data[b];
+          }
+
+          this.pullValue[valID] = data[b];
         }
-
-        this.pullValue[valID] = data[b];
-      }
-      //console.log("PULLValueMap", this.pullValueMap);
-      ////console.log("PULL ORDER MAP", this.pullOrderMap);
-    });
-    this.pullData.getTeams().subscribe(data => {
-      this.teams = cloneDeep(data);
-      this.teamsMap = {};
-      this.extractID(data, "SailTeamID", this.teamsMap, 1);
-    });
-    this.pullData.pullReportTabs().subscribe(data => {
-      this.reportTabs = {};
-      this.extractID(data, "TabID", this.reportTabs);
-      //  console.log("Pull Tabs", this.reportTabs);
-    });
-    this.pullData.pullReportTabLocation().subscribe(data => {
-      this.reportTabLocation = {};
-      this.extractID(data, "LocationID", this.reportTabLocation);
-      // console.log("Pull TabLocations", this.reportTabLocation);
-    });
-    this.pullData.pullReports().subscribe(data => {
-      var tempReports = {};
-      this.reportReportsStructure = {};
-      this.extractID(data, "ViewID", tempReports);
-      for (let report in tempReports) {
-        if (!this.reportReportsStructure[tempReports[report]["TabID"]]) {
-          this.reportReportsStructure[tempReports[report]["TabID"]] = {};
+        //console.log("PULLValueMap", this.pullValueMap);
+        ////console.log("PULL ORDER MAP", this.pullOrderMap);
+        // console.log(
+        //   "component.filterService.pullValueMap = " +
+        //     JSON.stringify(this.pullValueMap) +
+        //     ";"
+        // );
+        // console.log(
+        //   "component.filterService.pullOrderMap = " +
+        //     JSON.stringify(this.pullOrderMap) +
+        //     ";"
+        // );
+      });
+      this.pullData.getTeams().subscribe(data => {
+        this.teams = cloneDeep(data);
+        this.teamsMap = {};
+        this.extractID(data, "SailTeamID", this.teamsMap, 1);
+        // console.log(
+        //   "component.filterService.teamsMap = " +
+        //     JSON.stringify(this.teamsMap) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullReportTabs().subscribe(data => {
+        this.reportTabs = {};
+        this.extractID(data, "TabID", this.reportTabs);
+        //  console.log("Pull Tabs", this.reportTabs);
+        // console.log(
+        //   "component.filterService.reportTabs = " +
+        //     JSON.stringify(this.reportTabs) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullReportTabLocation().subscribe(data => {
+        this.reportTabLocation = {};
+        this.extractID(data, "LocationID", this.reportTabLocation);
+        // console.log("Pull TabLocations", this.reportTabLocation);
+        // console.log(
+        //   "component.filterService.reportTabLocation = " +
+        //     JSON.stringify(this.reportTabLocation) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullReports().subscribe(data => {
+        var tempReports = {};
+        this.reportReportsStructure = {};
+        this.extractID(data, "ViewID", tempReports);
+        for (let report in tempReports) {
+          if (!this.reportReportsStructure[tempReports[report]["TabID"]]) {
+            this.reportReportsStructure[tempReports[report]["TabID"]] = {};
+          }
+          this.reportReportsStructure[tempReports[report]["TabID"]][report] =
+            tempReports[report];
         }
-        this.reportReportsStructure[tempReports[report]["TabID"]][report] =
-          tempReports[report];
-      }
-      this.reportReportsOnly = cloneDeep(tempReports);
+        this.reportReportsOnly = cloneDeep(tempReports);
 
-      // console.log("Pull ReportsOnly", this.reportReportsOnly);
-      //  console.log("Pull Reports", this.reportReportsStructure);
-    });
-    this.pullData.pullReportURL().subscribe(data => {
-      this.reportURL = {};
-      this.extractID(data, "ViewID", this.reportURL);
-      //console.log("REPORT URL", this.reportURL);
-    });
+        // console.log("Pull ReportsOnly", this.reportReportsOnly);
+        //  console.log("Pull Reports", this.reportReportsStructure);
+        // console.log(
+        //   "component.filterService.reportReportsOnly = " +
+        //     JSON.stringify(this.reportReportsOnly) +
+        //     ";"
+        // );
+        // console.log(
+        //   "component.filterService.reportReportsStructure = " +
+        //     JSON.stringify(this.reportReportsStructure) +
+        //     ";"
+        // );
+      });
+      this.pullData.pullReportURL().subscribe(data => {
+        this.reportURL = {};
+        this.extractID(data, "ViewID", this.reportURL);
+        //console.log("REPORT URL", this.reportURL);
+        // console.log(
+        //   "component.filterService.reportURL = " +
+        //     JSON.stringify(this.reportURL) +
+        //     ";"
+        // );
+      });
 
-    this.pullData.pullPositionHierarchy().subscribe(data => {
-      this.positionHierarchy = {};
-      this.positionHItem = {};
-      this.positionHierarchy = this.hierarchyTableToMap(
-        cloneDeep(data),
-        "FilterPosID",
-        "ParentPosID"
-      );
-      this.extractID(data, "FilterPosID", this.positionHItem);
-      this.positionHItem[102] = {
-        PosName: "Offense",
-        PosAbbr: "OFF",
-        OrderID: -3,
-        FilterPosID: 102,
-        ParentPosID: 0
-      };
-      this.positionHItem[101] = {
-        PosName: "Defense",
-        PosAbbr: "DEF",
-        OrderID: -2,
-        FilterPosID: 101,
-        ParentPosID: 0
-      };
-      this.positionHItem[103] = {
-        PosName: "Specials",
-        PosAbbr: "ST",
-        OrderID: -1,
-        FilterPosID: 103,
-        ParentPosID: 0
-      };
-      this.positionHItem[0] = {
-        PosName: "Position",
-        PosAbbr: "Pos",
-        OrderID: 0,
-        FilterPosID: 0,
-        ParentPosID: null
-      };
-      this.positionHierarchy[0] = [101, 102, 103];
+      this.pullData.pullPositionHierarchy().subscribe(data => {
+        this.positionHierarchy = {};
+        this.positionHItem = {};
+        this.positionHierarchy = this.hierarchyTableToMap(
+          cloneDeep(data),
+          "FilterPosID",
+          "ParentPosID"
+        );
+        this.extractID(data, "FilterPosID", this.positionHItem);
+        this.positionHItem[102] = {
+          PosName: "Offense",
+          PosAbbr: "OFF",
+          OrderID: -3,
+          FilterPosID: 102,
+          ParentPosID: 0
+        };
+        this.positionHItem[101] = {
+          PosName: "Defense",
+          PosAbbr: "DEF",
+          OrderID: -2,
+          FilterPosID: 101,
+          ParentPosID: 0
+        };
+        this.positionHItem[103] = {
+          PosName: "Specials",
+          PosAbbr: "ST",
+          OrderID: -1,
+          FilterPosID: 103,
+          ParentPosID: 0
+        };
+        this.positionHItem[0] = {
+          PosName: "Position",
+          PosAbbr: "Pos",
+          OrderID: 0,
+          FilterPosID: 0,
+          ParentPosID: null
+        };
+        this.positionHierarchy[0] = [101, 102, 103];
 
-      // //console.log("POS ITEMS", this.positionHItem);
-      // //console.log("POS HIERARCHY", this.positionHierarchy);
-    });
+        // //console.log("POS ITEMS", this.positionHItem);
+        // //console.log("POS HIERARCHY", this.positionHierarchy);
+        // console.log(
+        //   "component.filterService.positionHItem = " +
+        //     JSON.stringify(this.positionHItem) +
+        //     ";"
+        // );
+        // console.log(
+        //   "component.filterService.positionHierarchy = " +
+        //     JSON.stringify(this.positionHierarchy) +
+        //     ";"
+        // );
+      });
+    }
+    this.bulkImported = true;
+    return true;
   }
 
   //IMPORT A SAVED FILTER
@@ -616,7 +712,7 @@ export class FiltersService {
 
   //DELETE A QUERY BASED ON FID
   removeQuery(fid: string) {
-    var oldBID = this.newFIDBID[fid];
+    var oldBID = this.FIDBID[fid];
     console.log(
       "REMOVINGQuery",
       fid,
@@ -629,18 +725,18 @@ export class FiltersService {
       this.formCash.controls[id].setValue(null);
     }
 
-    for (let id in this.newFIDs[fid]) {
-      this.clearSingleIDWorking(id, this.newFIDBID[fid]);
+    for (let id in this.FIDs[fid]) {
+      this.clearSingleIDWorking(id, this.FIDBID[fid]);
     }
-    delete this.newDBFormat[oldBID][fid];
+    delete this.DBFormat[oldBID][fid];
 
-    delete this.newFIDBID[fid];
-    delete this.newFIDs[fid];
-    if (JSON.stringify(this.newDBFormat[oldBID]) == "{}") {
-      delete this.newDBFormat[oldBID];
+    delete this.FIDBID[fid];
+    delete this.FIDs[fid];
+    if (JSON.stringify(this.DBFormat[oldBID]) == "{}") {
+      delete this.DBFormat[oldBID];
     }
-    if (this.newWorkingFID[oldBID]) {
-      this.newWorkingFID[oldBID] = {};
+    if (this.workingFID[oldBID]) {
+      this.workingFID[oldBID] = {};
     }
     this.saveAndSend();
   }
@@ -656,16 +752,16 @@ export class FiltersService {
     //CHECK IF A DELETE NEEDS TO OCCUR CAUSE VALUE IS EMPTY
 
     if (values != null && values.length == 0) {
-      delete this.newWorkingQuery[bid][formKey];
+      delete this.workingQuery[bid][formKey];
       this.form.controls[formKey].setValue(null);
 
-      if (this.newWorkingFID[bid] != "") {
+      if (this.workingFID[bid] != "") {
         this.pushBIDActiveFIDToActiveFilter(bid, false);
       }
 
-      if (Object.keys(this.newWorkingQuery[bid]).length == 0) {
-        delete this.newFIDs[this.newWorkingFID[bid]];
-        this.newWorkingFID[bid] = "";
+      if (Object.keys(this.workingQuery[bid]).length == 0) {
+        delete this.FIDs[this.workingFID[bid]];
+        this.workingFID[bid] = "";
       }
     } else {
       if (String(formKey) == "3" && String(bid) == "-3") {
@@ -675,7 +771,7 @@ export class FiltersService {
           this.playerPortalActivePlayerID
         ];
       }
-      this.newWorkingQuery[bid][formKey] = formVals;
+      this.workingQuery[bid][formKey] = formVals;
     }
     if (Number(formKey) > 14 || Number(formKey) == 2) {
       this.setPlayers(this.combinedJSONstring());
@@ -684,9 +780,9 @@ export class FiltersService {
   //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
   //REMOVE FROM THE WORKING QUERY AND
   clearSingleIDWorking(id: string, BID: string, input: boolean = true) {
-    delete this.newWorkingQuery[BID][id];
+    delete this.workingQuery[BID][id];
 
-    if (this.newWorkingFID[BID] != "") {
+    if (this.workingFID[BID] != "") {
       this.pushQueryToActiveFilter(BID, input);
     }
     if (this.form.value[String(id) + "search"] != null) {
@@ -728,7 +824,7 @@ export class FiltersService {
 
   //PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
   pushQueryToActiveFilter(BID: string, clearWorking: boolean = true) {
-    var oldDB = cloneDeep(this.newDBFormat);
+    var oldDB = cloneDeep(this.DBFormat);
     if (this.router.url.includes("club/")) {
       this.reduceFiltersSingleClub();
     }
@@ -739,26 +835,23 @@ export class FiltersService {
     ) {
       this.reduceFiltersSinglePlayer();
     }
-    for (let bin in this.newWorkingQuery) {
+    for (let bin in this.workingQuery) {
       //PUSH EMPTY PERFORM DELETES
-      if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
-        if (this.newWorkingFID[bin] != "") {
-          delete this.newFIDs[this.newWorkingFID[bin]];
-          delete this.newFIDBID[this.newWorkingFID[bin]];
-          delete this.newDBFormat[bin][this.newWorkingFID[bin]];
-          this.newWorkingFID[bin] = "";
+      if (Object.keys(this.workingQuery[bin]).length == 0) {
+        if (this.workingFID[bin] != "") {
+          delete this.FIDs[this.workingFID[bin]];
+          delete this.FIDBID[this.workingFID[bin]];
+          delete this.DBFormat[bin][this.workingFID[bin]];
+          this.workingFID[bin] = "";
         }
         continue;
       }
 
       //DO NOT DOUBLE PUT IN ITEMS
 
-      for (let key in this.newFIDs) {
+      for (let key in this.FIDs) {
         if (
-          this.isEqualObjectsContents(
-            this.newFIDs[key],
-            this.newWorkingQuery[bin]
-          )
+          this.isEqualObjectsContents(this.FIDs[key], this.workingQuery[bin])
         ) {
           continue;
         }
@@ -766,19 +859,21 @@ export class FiltersService {
 
       //SET FID TO CURRENT OR GENERATE NEW ONE
       var newFIDNumber;
-      if (this.newWorkingFID[bin] != "") {
-        newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
+      if (this.workingFID[bin] != "") {
+        newFIDNumber = cloneDeep(this.workingFID[bin]);
       } else {
         newFIDNumber = String(Math.floor(Math.random() * 1000));
-        this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([newFIDNumber]);
+        this.FIDCreationOrder[bin] = this.FIDCreationOrder[bin].concat([
+          newFIDNumber
+        ]);
       }
       //PUT THE WORKING QUERY IN NEW FIDs
       var pkID = [];
-      this.newFIDs[newFIDNumber] = Object.assign(
+      this.FIDs[newFIDNumber] = Object.assign(
         {},
-        cloneDeep(this.newWorkingQuery[bin])
+        cloneDeep(this.workingQuery[bin])
       );
-      var att = cloneDeep(this.newWorkingQuery[bin]);
+      var att = cloneDeep(this.workingQuery[bin]);
       //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
       if (att[String(Number(bin) * -1)]) {
         pkID = cloneDeep(att[String(Number(bin) * -1)]);
@@ -789,16 +884,16 @@ export class FiltersService {
 
       //INIT THE NEW DB FORMAT BEFORE ADDING
 
-      this.newFIDBID[newFIDNumber] = bin;
-      if (!this.newDBFormat[bin]) {
-        this.newDBFormat[bin] = {};
+      this.FIDBID[newFIDNumber] = bin;
+      if (!this.DBFormat[bin]) {
+        this.DBFormat[bin] = {};
       }
-      this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
+      this.DBFormat[bin][newFIDNumber] = [pkID, att, FID];
 
       //RESET
       if (clearWorking) {
-        this.newWorkingQuery[bin] = {};
-        this.newWorkingFID[bin] = "";
+        this.workingQuery[bin] = {};
+        this.workingFID[bin] = "";
       }
     }
     //RESET
@@ -808,14 +903,14 @@ export class FiltersService {
 
     //SEND UP TO THE DB
 
-    if (!this.checkDBFormats(oldDB, cloneDeep(this.newDBFormat))) {
+    if (!this.checkDBFormats(oldDB, cloneDeep(this.DBFormat))) {
       this.saveAndSend();
       this.updateRDURL();
     }
   }
 
   pushBIDActiveFIDToActiveFilter(BID: string, clearWorking: boolean = true) {
-    var oldDB = cloneDeep(this.newDBFormat);
+    var oldDB = cloneDeep(this.DBFormat);
     if (this.router.url.includes("club/")) {
       this.reduceFiltersSingleClub();
     }
@@ -828,22 +923,19 @@ export class FiltersService {
     }
     var bin = BID;
     //PUSH EMPTY PERFORM DELETES
-    if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
-      if (this.newWorkingFID[bin] != "") {
-        delete this.newFIDs[this.newWorkingFID[bin]];
-        delete this.newFIDBID[this.newWorkingFID[bin]];
-        delete this.newDBFormat[bin][this.newWorkingFID[bin]];
-        this.newWorkingFID[bin] = "";
+    if (Object.keys(this.workingQuery[bin]).length == 0) {
+      if (this.workingFID[bin] != "") {
+        delete this.FIDs[this.workingFID[bin]];
+        delete this.FIDBID[this.workingFID[bin]];
+        delete this.DBFormat[bin][this.workingFID[bin]];
+        this.workingFID[bin] = "";
       }
     } else {
       //DO NOT DOUBLE PUT IN ITEMS
 
-      for (let key in this.newFIDs) {
+      for (let key in this.FIDs) {
         if (
-          this.isEqualObjectsContents(
-            this.newFIDs[key],
-            this.newWorkingQuery[bin]
-          )
+          this.isEqualObjectsContents(this.FIDs[key], this.workingQuery[bin])
         ) {
           continue;
         }
@@ -851,19 +943,21 @@ export class FiltersService {
 
       //SET FID TO CURRENT OR GENERATE NEW ONE
       var newFIDNumber;
-      if (this.newWorkingFID[bin] != "") {
-        newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
+      if (this.workingFID[bin] != "") {
+        newFIDNumber = cloneDeep(this.workingFID[bin]);
       } else {
         newFIDNumber = String(Math.floor(Math.random() * 1000));
-        this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([newFIDNumber]);
+        this.FIDCreationOrder[bin] = this.FIDCreationOrder[bin].concat([
+          newFIDNumber
+        ]);
       }
       //PUT THE WORKING QUERY IN NEW FIDs
       var pkID = [];
-      this.newFIDs[newFIDNumber] = Object.assign(
+      this.FIDs[newFIDNumber] = Object.assign(
         {},
-        cloneDeep(this.newWorkingQuery[bin])
+        cloneDeep(this.workingQuery[bin])
       );
-      var att = cloneDeep(this.newWorkingQuery[bin]);
+      var att = cloneDeep(this.workingQuery[bin]);
       //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
       if (att[String(Number(bin) * -1)]) {
         pkID = cloneDeep(att[String(Number(bin) * -1)]);
@@ -874,16 +968,16 @@ export class FiltersService {
 
       //INIT THE NEW DB FORMAT BEFORE ADDING
 
-      this.newFIDBID[newFIDNumber] = bin;
-      if (!this.newDBFormat[bin]) {
-        this.newDBFormat[bin] = {};
+      this.FIDBID[newFIDNumber] = bin;
+      if (!this.DBFormat[bin]) {
+        this.DBFormat[bin] = {};
       }
-      this.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
+      this.DBFormat[bin][newFIDNumber] = [pkID, att, FID];
     }
     //RESET
     if (clearWorking) {
-      this.newWorkingQuery[bin] = {};
-      this.newWorkingFID[bin] = "";
+      this.workingQuery[bin] = {};
+      this.workingFID[bin] = "";
     }
 
     //RESET
@@ -893,7 +987,7 @@ export class FiltersService {
 
     //SEND UP TO THE DB
 
-    if (!this.checkDBFormats(oldDB, cloneDeep(this.newDBFormat))) {
+    if (!this.checkDBFormats(oldDB, cloneDeep(this.DBFormat))) {
       this.saveAndSend();
       this.updateRDURL();
     }
@@ -902,21 +996,18 @@ export class FiltersService {
   //CREATE THE FAKE JSON DB FORMAT AS IS PUSH QUERY
   //HAS OCCURED TO SEND TO DATABASE WITH STAGED CHANGES
   combinedJSONstring() {
-    var combinedDB = cloneDeep(this.newDBFormat);
-    for (let bin in this.newWorkingQuery) {
+    var combinedDB = cloneDeep(this.DBFormat);
+    for (let bin in this.workingQuery) {
       //PUSH EMPTY PERFORM DELETES
-      if (Object.keys(this.newWorkingQuery[bin]).length == 0) {
+      if (Object.keys(this.workingQuery[bin]).length == 0) {
         continue;
       }
 
       //DO NOT DOUBLE PUT IN ITEMS
 
-      for (let key in this.newFIDs) {
+      for (let key in this.FIDs) {
         if (
-          this.isEqualObjectsContents(
-            this.newFIDs[key],
-            this.newWorkingQuery[bin]
-          )
+          this.isEqualObjectsContents(this.FIDs[key], this.workingQuery[bin])
         ) {
           continue;
         }
@@ -924,15 +1015,15 @@ export class FiltersService {
 
       //SET FID TO CURRENT OR GENERATE NEW ONE
       var newFIDNumber;
-      if (this.newWorkingFID[bin] != "") {
-        newFIDNumber = cloneDeep(this.newWorkingFID[bin]);
+      if (this.workingFID[bin] != "") {
+        newFIDNumber = cloneDeep(this.workingFID[bin]);
       } else {
         newFIDNumber = String(Math.floor(Math.random() * 1000));
       }
 
       //PUT THE WORKING QUERY IN NEW FIDs
       var pkID = [];
-      var att = cloneDeep(this.newWorkingQuery[bin]);
+      var att = cloneDeep(this.workingQuery[bin]);
       //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
       if (att[String(Number(bin) * -1)]) {
         pkID = cloneDeep(att[String(Number(bin) * -1)]);
@@ -942,7 +1033,7 @@ export class FiltersService {
       var FID = [];
 
       //INIT THE NEW DB FORMAT BEFORE ADDING
-      if (!this.newDBFormat[bin]) {
+      if (!this.DBFormat[bin]) {
         combinedDB[bin] = {};
       }
 
@@ -956,7 +1047,7 @@ export class FiltersService {
 
   //SAVE LOCAL STORAGE FOR REFRESH AND THEN SEND THE FILTERS TO THE DB
   saveAndSend() {
-    var dbFormatWithAddedHiddenYears = cloneDeep(this.newDBFormat);
+    var dbFormatWithAddedHiddenYears = cloneDeep(this.DBFormat);
     //set the Order of FIDs by double checking against what is sent to DB
 
     if (
@@ -967,13 +1058,13 @@ export class FiltersService {
     ) {
       for (let bin in dbFormatWithAddedHiddenYears) {
         var activeFIDs = [];
-        for (let fid in this.newFIDOrder[bin]) {
+        for (let fid in this.FIDCreationOrder[bin]) {
           if (
             Object.keys(dbFormatWithAddedHiddenYears[bin]).indexOf(
-              this.newFIDOrder[bin][fid]
+              this.FIDCreationOrder[bin][fid]
             ) != -1
           ) {
-            activeFIDs = activeFIDs.concat([this.newFIDOrder[bin][fid]]);
+            activeFIDs = activeFIDs.concat([this.FIDCreationOrder[bin][fid]]);
           }
         }
         for (let fid in Object.keys(dbFormatWithAddedHiddenYears[bin])) {
@@ -982,7 +1073,7 @@ export class FiltersService {
             activeFIDs = activeFIDs.concat([activeFID]);
           }
         }
-        this.newFIDOrder[bin] = activeFIDs;
+        this.FIDCreationOrder[bin] = activeFIDs;
       }
 
       //Add in the years
@@ -1025,11 +1116,11 @@ export class FiltersService {
 
   //Set parameters for the cash tab filers
   updateCashFilters() {
-    for (let fid in this.newDBFormat["-3"]) {
-      for (let att in this.newDBFormat["-3"][fid][1]) {
+    for (let fid in this.DBFormat["-3"]) {
+      for (let att in this.DBFormat["-3"][fid][1]) {
         if (Object.keys(this.fidCashMap).indexOf(att) != -1) {
           this.formCash.controls[att].setValue(
-            cloneDeep(this.newDBFormat["-3"][fid][1][att])
+            cloneDeep(this.DBFormat["-3"][fid][1][att])
           );
           this.fidCashMapFIDtoID[cloneDeep(fid)] = cloneDeep(att);
           this.fidCashMap[cloneDeep(att)] = cloneDeep(fid);
@@ -1063,27 +1154,27 @@ export class FiltersService {
 
   //EMPTY THE WORKING QUERY
   clearWorking() {
-    for (let bin in this.newWorkingQuery) {
-      for (let id in this.newWorkingQuery[bin]) {
+    for (let bin in this.workingQuery) {
+      for (let id in this.workingQuery[bin]) {
         this.clearSingleIDWorking(id, bin);
       }
 
-      if (this.newWorkingFID[bin] != "") {
-        this.removeQuery(this.newWorkingFID[bin]);
-        this.newWorkingFID[bin] = "";
+      if (this.workingFID[bin] != "") {
+        this.removeQuery(this.workingFID[bin]);
+        this.workingFID[bin] = "";
       }
     }
   }
   //HARD RESET OF ALL VARIABLES CALLED FROM THE FILTER BAR
   clearAll() {
-    for (let bin in this.newWorkingQuery) {
-      this.newWorkingFID[bin] = "";
-      this.newWorkingQuery[bin] = {};
-      this.newFIDOrder[bin] = [];
+    for (let bin in this.workingQuery) {
+      this.workingFID[bin] = "";
+      this.workingQuery[bin] = {};
+      this.FIDCreationOrder[bin] = [];
     }
-    this.newDBFormat = {};
-    this.newFIDs = {};
-    this.newFIDBID = {};
+    this.DBFormat = {};
+    this.FIDs = {};
+    this.FIDBID = {};
 
     this.form.reset();
     this.formCash.reset();
@@ -1095,24 +1186,23 @@ export class FiltersService {
   clearSingleValuePop(bin: any, att: any, val: any, input: boolean = true) {
     //console.log();
     if (
-      JSON.stringify(this.newWorkingQuery[bin][att]) ==
+      JSON.stringify(this.workingQuery[bin][att]) ==
         JSON.stringify([String(val)]) ||
-      JSON.stringify(this.newWorkingQuery[bin][att]) ==
+      JSON.stringify(this.workingQuery[bin][att]) ==
         JSON.stringify([val, null]) ||
-      JSON.stringify(this.newWorkingQuery[bin][att]) ==
-        JSON.stringify([null, val])
+      JSON.stringify(this.workingQuery[bin][att]) == JSON.stringify([null, val])
     ) {
       // ||
       // Number(this.pullAttribute[att]["UITypeID"]) == 8
       this.clearSingleIDWorking(att, bin, false);
     } else {
-      this.newWorkingQuery[bin][att] = this.newWorkingQuery[bin][att].filter(
+      this.workingQuery[bin][att] = this.workingQuery[bin][att].filter(
         x => x != String(val)
       );
       var oldValue = this.form.value[att];
 
       this.form.controls[att].setValue(oldValue.filter(x => x != String(val)));
-      if (this.newWorkingFID[bin] != "") {
+      if (this.workingFID[bin] != "") {
         this.pushQueryToActiveFilter(bin, false);
       }
     }
@@ -1302,7 +1392,7 @@ export class FiltersService {
       );
     }
     // if (this.form.value[attID].length == 0){
-    //   this.removeExplicit(this.newWorkingFID["-2"],"2");
+    //   this.removeExplicit(this.workingFID["-2"],"2");
 
     // }
     this.type0change(attID, this.form.value[attID], bin);
@@ -1338,13 +1428,13 @@ export class FiltersService {
   changelevel2(id: string) {
     //CHANGE OLD CSS
     try {
-      var old = document.getElementById("tier1Tab" + this.level1Selected);
+      var old = document.getElementById("tier1Tab" + this.filterBinSelected);
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
     } catch (e) {}
 
     //SET THE LEVEL SELECTED
-    this.level1Selected = id;
+    this.filterBinSelected = id;
 
     // SET PANELS
 
@@ -1355,9 +1445,11 @@ export class FiltersService {
     // this.selectingAttributes = [];
 
     //CHANGE NEW CSS
-    var newTab = document.getElementById("tier1Tab" + id);
-    // newTab.style.backgroundColor = "#f2f2f2";
-    newTab.style.borderBottom = "4px solid lightskyblue";
+    try {
+      var newTab = document.getElementById("tier1Tab" + id);
+      // newTab.style.backgroundColor = "#f2f2f2";
+      newTab.style.borderBottom = "4px solid lightskyblue";
+    } catch (e) {}
     this.attributeSelected(String(Number(id) * -100));
   }
 
@@ -1421,8 +1513,6 @@ export class FiltersService {
     ) {
       this.panels = [cloneDeep(first)].concat(cloneDeep(newPanels));
     }
-
-    this.reversePaths[this.level1Selected][att] = cloneDeep(this.panels);
   }
 
   //This function navigates the panels and displays where the
@@ -1527,7 +1617,7 @@ export class FiltersService {
   //SET THE ACTIVE PORTAL VARIABLES AND EXTRACT OUT THE HIDDEN YEARS
   pushDBFormat(DBFormat: any) {
     this.clearAll();
-    this.newDBFormat = cloneDeep(DBFormat);
+    this.DBFormat = cloneDeep(DBFormat);
     if (JSON.stringify(DBFormat) == JSON.stringify({})) {
       this.saveAndSend();
       return;
@@ -1538,23 +1628,23 @@ export class FiltersService {
         this.pushDBFormat(DBFormat);
       }, 200);
     } else {
-      for (let bin in this.newDBFormat) {
-        for (let fid in this.newDBFormat[bin]) {
+      for (let bin in this.DBFormat) {
+        for (let fid in this.DBFormat[bin]) {
           if (Number(bin) == -4) {
-            this.portalYearsSelected = cloneDeep(this.newDBFormat[bin][fid][0]);
-            this.portalYearsOnly = cloneDeep(this.newDBFormat[bin][fid][0]);
-            delete this.newDBFormat[bin];
+            this.portalYearsSelected = cloneDeep(this.DBFormat[bin][fid][0]);
+            this.portalYearsOnly = cloneDeep(this.DBFormat[bin][fid][0]);
+            delete this.DBFormat[bin];
           } else {
-            var currentFid = cloneDeep(this.newDBFormat[bin][fid][1]);
-            this.newFIDBID[fid] = bin;
-            this.newFIDOrder[bin] = this.newFIDOrder[bin].concat([fid]);
-            if (this.newDBFormat[bin][fid][0].length > 0) {
-              currentFid[String(-1 * Number(bin))] = this.newDBFormat[bin][
-                fid
-              ][0];
+            var currentFid = cloneDeep(this.DBFormat[bin][fid][1]);
+            this.FIDBID[fid] = bin;
+            this.FIDCreationOrder[bin] = this.FIDCreationOrder[bin].concat([
+              fid
+            ]);
+            if (this.DBFormat[bin][fid][0].length > 0) {
+              currentFid[String(-1 * Number(bin))] = this.DBFormat[bin][fid][0];
               if (String(bin) == "-2") {
                 this.teamPortalActiveClubID = cloneDeep(
-                  this.newDBFormat[bin][fid][0][0]
+                  this.DBFormat[bin][fid][0][0]
                 );
 
                 this.teamPortalSelected = this.teamsMap[
@@ -1563,7 +1653,7 @@ export class FiltersService {
               }
               if (String(bin) == "-3") {
                 this.playerPortalActivePlayerID = cloneDeep(
-                  this.newDBFormat[bin][fid][0][0]
+                  this.DBFormat[bin][fid][0][0]
                 );
                 this.playerPortalSelected = this.pullValueMap["3"][
                   this.playerPortalActivePlayerID
@@ -1571,7 +1661,7 @@ export class FiltersService {
               }
             }
 
-            this.newFIDs[fid] = currentFid;
+            this.FIDs[fid] = currentFid;
           }
         }
       }
@@ -1604,10 +1694,10 @@ export class FiltersService {
       if (!tempDict[add[0]]) {
         tempDict[add[0]] = {};
       }
-      for (let active in this.newFIDBID) {
+      for (let active in this.FIDBID) {
         //check if the bin is the same
-        if (String(this.newFIDBID[active]) == String(add[0])) {
-          if (this.newFIDs[active][add[1]]) {
+        if (String(this.FIDBID[active]) == String(add[0])) {
+          if (this.FIDs[active][add[1]]) {
             if (Number(add[1]) * -1 == Number(add[0])) {
               this.removeExplicit(active, add[0]);
             } else {
@@ -1624,7 +1714,7 @@ export class FiltersService {
         this.portalYearsOnly = cloneDeep(add[2]);
       } else {
         tempDict[add[0]][add[1]] = add[2];
-        this.newWorkingQuery[add[0]] = tempDict[add[0]];
+        this.workingQuery[add[0]] = tempDict[add[0]];
       }
     }
 
@@ -1636,37 +1726,37 @@ export class FiltersService {
   //go through active filters and delete if in club bin and replace with last selected club
   reduceFiltersSingleClub() {
     var tempDict = {};
-    if (this.newWorkingQuery["-2"]) {
-      tempDict = cloneDeep(this.newWorkingQuery["-2"]);
+    if (this.workingQuery["-2"]) {
+      tempDict = cloneDeep(this.workingQuery["-2"]);
     }
     tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
 
     var add = this.removeExplicitFilters("-2", this.teamPortalActiveClubID);
     if (add) {
-      this.newWorkingQuery["-2"] = tempDict;
+      this.workingQuery["-2"] = tempDict;
     }
   }
 
   //WHEN CLICKING ON PLAYER PAGE TAKE OUT ALL OTHER PLAYERS
   reduceFiltersSinglePlayer() {
     var tempDict = {};
-    if (this.newWorkingQuery["-3"]) {
-      tempDict = cloneDeep(this.newWorkingQuery["-3"]);
+    if (this.workingQuery["-3"]) {
+      tempDict = cloneDeep(this.workingQuery["-3"]);
     }
     tempDict["3"] = [cloneDeep(this.playerPortalActivePlayerID)];
     var add = this.removeExplicitFilters("-3", this.playerPortalActivePlayerID);
     if (add) {
-      this.newWorkingQuery["-3"] = tempDict;
+      this.workingQuery["-3"] = tempDict;
     }
   }
 
   //REMOVE AN EXPLICIT BASED ON THE INPUT BIN
   removeExplicitFilters(bin: any, keepExplicit: any) {
-    if (!this.newDBFormat[bin]) {
+    if (!this.DBFormat[bin]) {
       return true;
     }
     var returnBool = true;
-    var alteredDBFormat = cloneDeep(this.newDBFormat);
+    var alteredDBFormat = cloneDeep(this.DBFormat);
     for (let fid in alteredDBFormat[bin]) {
       var explicits = cloneDeep(alteredDBFormat[bin][fid][0]);
       if (explicits.indexOf(keepExplicit) != -1) {
@@ -1686,22 +1776,22 @@ export class FiltersService {
         }
       }
     }
-    var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
-    var oldWorkingFID = cloneDeep(this.newWorkingFID);
+    var oldWorkingQuery = cloneDeep(this.workingQuery);
+    var oldWorkingFID = cloneDeep(this.workingFID);
     var oldForm = cloneDeep(this.form);
     this.pushDBFormat(alteredDBFormat);
-    this.newWorkingQuery = oldWorkingQuery;
-    this.newWorkingFID = oldWorkingFID;
+    this.workingQuery = oldWorkingQuery;
+    this.workingFID = oldWorkingFID;
     this.form = oldForm;
     return returnBool;
   }
 
   //REMOVE AN EXPLICIT FROM THE FILTER TOP
   removeExplicit(fid: any, bin: any) {
-    var alteredDBFormat = cloneDeep(this.newDBFormat);
+    var alteredDBFormat = cloneDeep(this.DBFormat);
     alteredDBFormat[bin][fid][0] = [];
-    var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
-    var oldWorkingFID = cloneDeep(this.newWorkingFID);
+    var oldWorkingQuery = cloneDeep(this.workingQuery);
+    var oldWorkingFID = cloneDeep(this.workingFID);
     var oldForm = cloneDeep(this.form);
     if (
       JSON.stringify(alteredDBFormat[bin][fid]) == JSON.stringify([[], {}, []])
@@ -1712,14 +1802,14 @@ export class FiltersService {
         delete alteredDBFormat[bin];
       }
     }
-    if (String(this.newWorkingFID[bin]) == String(fid)) {
+    if (String(this.workingFID[bin]) == String(fid)) {
       oldWorkingFID[bin] = "";
       delete oldWorkingQuery[bin][String(Number(bin) * -1)];
       this.form.controls[String(Number(bin) * -1)].setValue(null);
     }
     this.pushDBFormat(alteredDBFormat);
-    this.newWorkingQuery = oldWorkingQuery;
-    this.newWorkingFID = oldWorkingFID;
+    this.workingQuery = oldWorkingQuery;
+    this.workingFID = oldWorkingFID;
     this.form = oldForm;
   }
 
@@ -1731,7 +1821,7 @@ export class FiltersService {
 
     console.log("REMOVE ATTRIBUTE", fid, bin, atts);
 
-    var alteredDBFormat = cloneDeep(this.newDBFormat);
+    var alteredDBFormat = cloneDeep(this.DBFormat);
     var removed = cloneDeep(alteredDBFormat[bin][fid][1]);
     for (let att of atts) {
       delete removed[att];
@@ -1745,17 +1835,17 @@ export class FiltersService {
         delete alteredDBFormat[bin];
       }
     }
-    var oldWorkingQuery = cloneDeep(this.newWorkingQuery);
-    var oldWorkingFID = cloneDeep(this.newWorkingFID);
+    var oldWorkingQuery = cloneDeep(this.workingQuery);
+    var oldWorkingFID = cloneDeep(this.workingFID);
     var oldForm = cloneDeep(this.form);
 
     console.log("ALTERED DB FORMAT", alteredDBFormat);
     this.pushDBFormat(alteredDBFormat);
-    this.newWorkingQuery = oldWorkingQuery;
-    this.newWorkingFID = oldWorkingFID;
+    this.workingQuery = oldWorkingQuery;
+    this.workingFID = oldWorkingFID;
     this.form = oldForm;
     for (let att of atts) {
-      delete this.newWorkingQuery[bin][att];
+      delete this.workingQuery[bin][att];
       if (this.form.value[String(att) + "search"] != null) {
         this.form.controls[String(att) + "search"].setValue(null);
       }
@@ -1768,13 +1858,13 @@ export class FiltersService {
   setActiveClub() {
     var notFound = true;
 
-    for (let activeFID in this.newFIDBID) {
-      if (String(this.newFIDBID[activeFID]) == "-2") {
-        if ("2" in this.newFIDs[activeFID] || 2 in this.newFIDs[activeFID]) {
+    for (let activeFID in this.FIDBID) {
+      if (String(this.FIDBID[activeFID]) == "-2") {
+        if ("2" in this.FIDs[activeFID] || 2 in this.FIDs[activeFID]) {
           try {
-            this.teamPortalActiveClubID = this.newFIDs[activeFID]["2"][0];
+            this.teamPortalActiveClubID = this.FIDs[activeFID]["2"][0];
           } catch (e) {
-            this.teamPortalActiveClubID = this.newFIDs[activeFID][2][0];
+            this.teamPortalActiveClubID = this.FIDs[activeFID][2][0];
           }
           this.teamPortalSelected = this.teamsMap[this.teamPortalActiveClubID];
           notFound = false;
@@ -1797,13 +1887,13 @@ export class FiltersService {
   //SET THE ACTIVE PLAYER BY GOING THROUGH THE DB OR SET DEFAULT
   setActivePlayer() {
     var notFound = true;
-    for (let activeFID in this.newFIDBID) {
-      if (String(this.newFIDBID[activeFID]) == "-3") {
-        if ("3" in this.newFIDs[activeFID] || 3 in this.newFIDs[activeFID]) {
+    for (let activeFID in this.FIDBID) {
+      if (String(this.FIDBID[activeFID]) == "-3") {
+        if ("3" in this.FIDs[activeFID] || 3 in this.FIDs[activeFID]) {
           try {
-            this.playerPortalActivePlayerID = this.newFIDs[activeFID]["3"][0];
+            this.playerPortalActivePlayerID = this.FIDs[activeFID]["3"][0];
           } catch (e) {
-            this.playerPortalActivePlayerID = this.newFIDs[activeFID][3][0];
+            this.playerPortalActivePlayerID = this.FIDs[activeFID][3][0];
           }
           this.playerPortalSelected = this.pullValueMap["3"][
             this.playerPortalActivePlayerID
@@ -1904,8 +1994,8 @@ export class FiltersService {
     if (JSON.stringify(value) != "") {
       tempValue = cloneDeep(value);
     }
-    if (this.newWorkingQuery[bin][attribute]) {
-      var previous = cloneDeep(this.newWorkingQuery[bin][attribute]);
+    if (this.workingQuery[bin][attribute]) {
+      var previous = cloneDeep(this.workingQuery[bin][attribute]);
     }
     if (minMax) {
       returnArr = [tempValue, previous[1]];
@@ -1940,8 +2030,8 @@ export class FiltersService {
     if (JSON.stringify(value) != "") {
       tempValue = cloneDeep(value);
     }
-    if (this.newWorkingQuery[bin][attribute]) {
-      var previous = cloneDeep(this.newWorkingQuery[bin][attribute]);
+    if (this.workingQuery[bin][attribute]) {
+      var previous = cloneDeep(this.workingQuery[bin][attribute]);
     }
     if (minMax) {
       returnArr = [tempValue, previous[1]];

@@ -65,7 +65,7 @@ import { NgCircleProgressModule } from "ng-circle-progress";
 import { MenuItemComponent } from "./menu-item/menu-item.component";
 import { OrderAttributePipe } from "./order-attribute.pipe";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { ExcelComponent } from './excel/excel.component';
+import { ExcelComponent } from "./excel/excel.component";
 
 @NgModule({
   declarations: [

@@ -28,7 +28,9 @@ export class ReportComponent implements OnInit {
   viewing;
   test;
 
-  ngOnInit() {}
+  ngOnInit() {
+    // this.filterService.getBulkImport();
+  }
 
   ngOnDestroy() {
     this.sub.unsubscribe();

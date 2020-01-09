@@ -138,7 +138,9 @@
       />
     </div>
 
-    <div class="grid-itemGen" [ngStyle]="setSampleStyle()"></div>
+    <div class="grid-itemGen" [ngStyle]="setSampleBackgroundStyle()">
+      <div [ngStyle]="setSampleImageStyle()"></div>
+    </div>
 
     <button
       type="submit"

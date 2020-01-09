@@ -58,7 +58,7 @@
     </div>
   </div>
 
-  <ng-container *ngFor="let bin of filterService.newDBFormat | keyvalue">
+  <ng-container *ngFor="let bin of filterService.DBFormat | keyvalue">
     <ng-container *ngFor="let fid of bin.value | keyvalue: valueOrderFIDs">
       <ng-container *ngIf="checkKeys(bin)">
         <div
@@ -73,7 +73,7 @@
             class="filterMiddleBorder"
             [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
             (click)="
-              singleOpenExp(fid.key, filterService.newFIDs[fid.key], bin.key)
+              singleOpenExp(fid.key, filterService.FIDs[fid.key], bin.key)
             "
           >
             <div style="position: relative; top: -10px; font-size: 12px;">
@@ -115,7 +115,7 @@
             (click)="
               singleOpenAtt(
                 fid.key,
-                filterService.newFIDs[fid.key],
+                filterService.FIDs[fid.key],
                 panel.value[0],
                 bin.key
               )
@@ -156,13 +156,13 @@
             class="filterMiddleBorder"
             [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
             (click)="
-              singleOpenExp(fid.key, filterService.newFIDs[fid.key], bin.key)
+              singleOpenExp(fid.key, filterService.FIDs[fid.key], bin.key)
             "
           >
             <div style="position: relative; top: -10px; font-size: 12px;">
               &nbsp;
               {{ getNavElLabel(bin.key) }}
-              {{ filterService.newFIDOrder[bin.key].indexOf(fid.key) + 1 }}
+              {{ filterService.FIDCreationOrder[bin.key].indexOf(fid.key) + 1 }}
               &nbsp;
             </div>
             <div

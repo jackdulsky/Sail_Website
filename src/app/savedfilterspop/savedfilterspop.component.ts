@@ -28,6 +28,8 @@ export class SavedfilterspopComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // this.filterService.getBulkImport();
+
     this.form = this.fb.group({});
     this.savedOptions = this.pullData.getSavedFilters();
     this.my_menu = Object.keys(this.savedOptions);

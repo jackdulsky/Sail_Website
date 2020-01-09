@@ -21,6 +21,8 @@ export class HomeComponent implements OnInit {
   sub2: any;
   guid: any;
   ngOnInit() {
+    // this.filterService.getBulkImport();
+
     this.sub = this.route.params.subscribe(params => {
       this.guid = String(params["user"]);
       if (localStorage.getItem(this.guid)) {
@@ -35,21 +37,6 @@ export class HomeComponent implements OnInit {
       } else {
         this.injectGUID(this.guid);
       }
-      // localStorage.clear();
-      //code for getting stuff based on guid
-      // if (localStorage.getItem(this.guid)) {
-      //   var uploading = JSON.parse(localStorage.getItem(String(this.guid)));
-      //   this.filterService.newFIDBID = JSON.parse(uploading["newFIDBID"]);
-      //   this.filterService.newFIDs = JSON.parse(uploading["newFIDs"]);
-      //   this.filterService.newDBFormat = JSON.parse(uploading["newDBFormat"]);
-      //   this.filterService.newWorkingQuery = JSON.parse(
-      //     uploading["newWorkingQuery"]
-      //   );
-      //   this.filterService.newWorkingFID = JSON.parse(
-      //     uploading["newWorkingFID"]
-      //   );
-      //   this.filterService.reversePaths = JSON.parse(uploading["reversePaths"]);
-      // }
     });
   }
 
@@ -74,7 +61,6 @@ export class HomeComponent implements OnInit {
           } else {
             routeBool = false;
           }
-          // this.filterService.pushDBFormat(insertFilter);
         } catch (e) {
           routeBool = false;
         }

@@ -83,7 +83,7 @@ export class FilterspopComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.title = data.title;
-    this.filterService.level1Selected = data.selected;
+    this.filterService.filterBinSelected = data.selected;
     // this.cdref.detach();
   }
 
@@ -96,18 +96,20 @@ export class FilterspopComponent implements OnInit {
     this.filterService.conferenceSelections["2"] = "AFC";
     setTimeout(() => {
       console.log("LOOP 24");
-      this.filterService.changelevel2(this.filterService.level1Selected);
+      this.filterService.changelevel2(this.filterService.filterBinSelected);
     }, 1);
 
-    this.filterService.panels = [cloneDeep(this.filterService.level1Selected)];
-    // this.cdref.detectChanges();
+    this.filterService.panels = [
+      cloneDeep(this.filterService.filterBinSelected)
+    ];
+    this.cdref.detectChanges();
   }
   //RETURN LABEL OF OBJECT
   returnlabel(obj: any) {
     return obj["Label"];
   }
 
-  //SEND TYPE0CHANGE TO FILTER SERVICE WITH VALUES OF SET AND LEVEL1SELECTED
+  //SEND TYPE0CHANGE TO FILTER SERVICE WITH VALUES OF SET AND filterBinSelected
   type0change(formKey, bin) {
     this.filterService.type0change(
       formKey,
@@ -129,7 +131,7 @@ export class FilterspopComponent implements OnInit {
   //SEND THE WORKING QUERY TO THE FILTER TOP BAR
   pushWorkingQuery() {
     this.filterService.pushQueryToActiveFilter(
-      this.filterService.level1Selected
+      this.filterService.filterBinSelected
     );
   }
 
@@ -364,7 +366,7 @@ export class FilterspopComponent implements OnInit {
     this.filterService.type0change(
       id,
       this.filterService.form.value[id],
-      this.filterService.level1Selected
+      this.filterService.filterBinSelected
     );
   }
 

@@ -221,8 +221,16 @@
           </ng-container>
         </div>
         <div class="rightside">
+            <div class="bottomQueryButtons">
+                <button class="save" (click)="pushWorkingQuery()">
+                  SUBMIT
+                </button>
+                <button class="save" (click)="clearWorkingQuery()">
+                  CLEAR
+                </button>
+              </div>
           <ng-container
-            *ngFor="let bin of filterService.newWorkingQuery | keyvalue"
+            *ngFor="let bin of filterService.workingQuery | keyvalue"
           >
             <div class="tier3Grid2" *ngIf="(bin.value | json) != '{}'">
               <ng-container *ngFor="let att of bin.value | keyvalue">
@@ -280,7 +288,7 @@
                     >
                       <ng-container
                         *ngIf="
-                          filterService.newWorkingQuery[bin.key][
+                          filterService.workingQuery[bin.key][
                             att.key
                           ][0] == val
                         "
@@ -289,7 +297,7 @@
                       </ng-container>
                       <ng-container
                         *ngIf="
-                          filterService.newWorkingQuery[bin.key][
+                          filterService.workingQuery[bin.key][
                             att.key
                           ][0] != val
                         "
@@ -320,7 +328,7 @@
                         >
                           <ng-container
                             *ngIf="
-                              filterService.newWorkingQuery[bin.key][
+                              filterService.workingQuery[bin.key][
                                 att.key
                               ][0] == val
                             "
@@ -329,7 +337,7 @@
                           </ng-container>
                           <ng-container
                             *ngIf="
-                              filterService.newWorkingQuery[bin.key][
+                              filterService.workingQuery[bin.key][
                                 att.key
                               ][0] != val
                             "
@@ -364,14 +372,7 @@
               </ng-container>
             </div>
           </ng-container>
-          <div class="bottomQueryButtons">
-            <button class="save" (click)="pushWorkingQuery()">
-              SUBMIT
-            </button>
-            <button class="save" (click)="clearWorkingQuery()">
-              CLEAR
-            </button>
-          </div>
+
         </div>
       </div>
 
@@ -388,7 +389,7 @@
             <mat-select
               [formControl]="filterService.form.controls[id]"
               multiple
-              (selectionChange)="type0change(id, filterService.level1Selected)"
+              (selectionChange)="type0change(id, filterService.filterBinSelected)"
               style="color:black;"
             >
               <mat-option>
@@ -406,7 +407,7 @@
                   id="{{ id }}all"
                   mat-button
                   (click)="
-                    toggleAllSelections(id, true, filterService.level1Selected)
+                    toggleAllSelections(id, true, filterService.filterBinSelected)
                   "
                 >
                   Select All
@@ -414,7 +415,7 @@
                 <button
                   id="{{ id }}none"
                   (click)="
-                    toggleAllSelections(id, false, filterService.level1Selected)
+                    toggleAllSelections(id, false, filterService.filterBinSelected)
                   "
                   mat-button
                 >
@@ -446,7 +447,7 @@
               filterService.toggleLeague(
                 id,
                 option.key,
-                filterService.level1Selected
+                filterService.filterBinSelected
               )
             "
             *ngIf="
@@ -474,7 +475,7 @@
               filterService.toggleLeague(
                 id,
                 option.key,
-                filterService.level1Selected
+                filterService.filterBinSelected
               )
             "
           >
@@ -568,7 +569,7 @@
                         filterService.toggleTeam(
                           team,
                           id,
-                          filterService.level1Selected
+                          filterService.filterBinSelected
                         )
                       "
                     >
@@ -590,7 +591,7 @@
                         filterService.toggleTeam(
                           team,
                           id,
-                          filterService.level1Selected
+                          filterService.filterBinSelected
                         )
                       "
                     >
@@ -634,7 +635,7 @@
                       id,
                       0,
                       false,
-                      filterService.level1Selected
+                      filterService.filterBinSelected
                     )
                   "
                   >{{"\u2717"}}</label
@@ -652,7 +653,7 @@
                       id,
                       '0',
                       true,
-                      filterService.level1Selected
+                      filterService.filterBinSelected
                     )
                   "
                   >&nbsp;</label
@@ -670,7 +671,7 @@
                       id,
                       1,
                       false,
-                      filterService.level1Selected
+                      filterService.filterBinSelected
                     )
                   "
                   >{{"\u2713"}}</label
@@ -758,7 +759,7 @@
             <mat-select
               [formControl]="filterService.form.controls[id]"
               multiple
-              (selectionChange)="type0change(id, filterService.level1Selected)"
+              (selectionChange)="type0change(id, filterService.filterBinSelected)"
               style="color:black;"
             >
               <mat-option>
@@ -776,7 +777,7 @@
                   id="{{ id }}all"
                   mat-button
                   (click)="
-                    toggleAllSelections(id, true, filterService.level1Selected)
+                    toggleAllSelections(id, true, filterService.filterBinSelected)
                   "
                 >
                   Select All
@@ -784,7 +785,7 @@
                 <button
                   id="{{ id }}none"
                   (click)="
-                    toggleAllSelections(id, false, filterService.level1Selected)
+                    toggleAllSelections(id, false, filterService.filterBinSelected)
                   "
                   mat-button
                 >
@@ -822,7 +823,7 @@
               <mat-select
               [formControl]="filterService.form.controls[id]"
               multiple
-              (selectionChange)="type0change(id, filterService.level1Selected)"
+              (selectionChange)="type0change(id, filterService.filterBinSelected)"
               style="color:black;"
               >
                 <mat-option>
@@ -840,7 +841,7 @@
                     id="{{ id }}all"
                     mat-button
                     (click)="
-                      toggleAllSelections(id, true, filterService.level1Selected)
+                      toggleAllSelections(id, true, filterService.filterBinSelected)
                       "
                   >
                   Select All
@@ -848,7 +849,7 @@
                 <button
                 id="{{ id }}none"
                 (click)="
-                toggleAllSelections(id, false, filterService.level1Selected)
+                toggleAllSelections(id, false, filterService.filterBinSelected)
                 "
                 mat-button
                 >

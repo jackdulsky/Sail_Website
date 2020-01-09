@@ -9,7 +9,7 @@ import { OAuthService } from "angular-oauth2-oidc";
 })
 export class AppComponent implements OnInit {
   cookieValue = "UNKOWN";
-  title = "WEBSITE";
+  title = "SAIL";
   private async ConfigureAuth(): Promise<void> {
     this.oauthService.loginUrl = "";
     this.oauthService.clientId = "";

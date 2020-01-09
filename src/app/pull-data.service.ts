@@ -160,6 +160,7 @@ export class PullDataService {
 
   //PULL THE STRUCTURE OF THE TABS FROM THE DB
   pullStructure(leagueType: string) {
+    // console.log("PULL STRUCTURE");
     var query = "exec SailDB.filter.spSAIL_GetFilterStructure " + leagueType;
     return this.http.post(this.serverURL + "db/query", {
       query: query

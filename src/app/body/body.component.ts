@@ -8,6 +8,7 @@ import { PullDataService } from "../pull-data.service";
 import { KeyValue } from "@angular/common";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { style } from "@angular/animations";
+import { ChangeDetectorRef } from "@angular/core";
 
 // import { url } from "inspector";
 
@@ -23,7 +24,8 @@ export class BodyComponent implements OnInit {
     public filterService: FiltersService,
     public pullData: PullDataService,
     public route: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    public cdref: ChangeDetectorRef
   ) {}
   selected: string;
 
@@ -37,9 +39,14 @@ export class BodyComponent implements OnInit {
 
   //ON INIT SET THE SELECTED TAB ON THE LEFT TO GENERAL / CHANGE CSS
   ngOnInit() {
+    // this.filterService.getBulkImport();
+
     this.filterService.selected = "0";
 
     this.initCalled();
+  }
+  ngAfterViewInit() {
+    this.cdref.detectChanges();
   }
 
   initCalled() {
@@ -157,12 +164,14 @@ export class BodyComponent implements OnInit {
         category.toString() + "reportHighlightid"
       ).className = "sidebutton";
     }
-    for (let port in this.portals) {
-      document.getElementById(this.portals[port] + "id").className =
-        "sidebutton";
-    }
-    document.getElementById(name + "id").className =
-      "sidebutton sidebuttonclicked";
+    try {
+      for (let port in this.portals) {
+        document.getElementById(this.portals[port] + "id").className =
+          "sidebutton";
+      }
+      document.getElementById(name + "id").className =
+        "sidebutton sidebuttonclicked";
+    } catch (e) {}
     this.filterService.portalSelected = name;
     if (!this.router.url.includes(name)) {
       // this.router.navigate(["../" + name]);
@@ -233,37 +242,42 @@ export class BodyComponent implements OnInit {
     }
   }
   setIconStyle(repo: any) {
-    // let styles = {
-    //   "background-repeat": "no-repeat,no-repeat",
-    //   "background-position": "center",
-    //   "background-size": "145px,cover",
-    //   "background-image":
-    //     "url(" +
-    //     this.report.IconUrl +
-    //     "), linear-gradient(" +
-    //     this.report.Color +
-    //     "," +
-    //     this.filterService.shadeColor(this.report.Color, 75) +
-    //     ")"
-    // };
-
+    var color = this.getColorErrorHandeling(repo);
+    let styles = {
+      "background-repeat": "no-repeat",
+      "background-position": "center",
+      "background-size": "cover",
+      "background-image":
+        "linear-gradient(" +
+        this.filterService.shadeColor(color, 75) +
+        "," +
+        color +
+        ")"
+    };
+    return styles;
+  }
+  getColorErrorHandeling(obj) {
     var color;
+    if (obj["Color"]) {
+      color = obj["Color"];
+    }
+    if (obj["colorBottom"]) {
+      color = obj["colorBottom"];
+    }
+    if (obj["ColorBottom"]) {
+      color = obj["ColorBottom"];
+    }
+    if (obj["colorTop"]) {
+      color = obj["colorTop"];
+    }
+    if (obj["ColorTop"]) {
+      color = obj["ColorTop"];
+    }
+    return color;
+  }
+  setIconImageStyle(repo: any) {
+    var color = this.getColorErrorHandeling(repo);
     var icon;
-    if (repo["Color"]) {
-      color = repo["Color"];
-    }
-    if (repo["colorBottom"]) {
-      color = repo["colorBottom"];
-    }
-    if (repo["ColorBottom"]) {
-      color = repo["ColorBottom"];
-    }
-    if (repo["colorTop"]) {
-      color = repo["colorTop"];
-    }
-    if (repo["ColorTop"]) {
-      color = repo["ColorTop"];
-    }
     if (repo["IconUrl"]) {
       icon = repo["IconUrl"];
     } else {
@@ -271,30 +285,27 @@ export class BodyComponent implements OnInit {
         "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Chart1.png";
     }
     let styles = {
-      "background-repeat": "no-repeat,no-repeat",
+      "background-repeat": "no-repeat",
       "background-position": "center",
-      "background-size": "130px 130px,cover",
-      "background-image":
-        "url(" +
-        icon +
-        "), linear-gradient(" +
-        this.filterService.shadeColor(color, 75) +
-        "," +
-        color +
-        ")"
-
-      // "background-color": repo.value % 2 == 0 ? "skyblue" : "gray",
-      // "background-image":
-      //   repo.value["id"] % 2 == 0
-      //     ? "url('https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/OAK_logo.png')"
-      //     : "url('https://sail-bucket.s3-us-west-2.amazonaws.com/Button_Team_Logos/NYG_logo.png')",
-      // "background-image":
-      //   "linear-gradient(" +
-      //   color +
-      //   "," +
-      //   this.filterService.shadeColor(color, 75) +
-      //   ")"
+      "background-size": "contain",
+      "background-image": "url(" + icon + ")",
+      width: "100%",
+      height: "100%",
+      "max-width": "130px",
+      "max-height": "130px"
     };
+    var c = color.substring(1); // strip #
+    var rgb = parseInt(c, 16); // convert rrggbb to decimal
+    var r = (rgb >> 16) & 0xff; // extract red
+    var g = (rgb >> 8) & 0xff; // extract green
+    var b = (rgb >> 0) & 0xff; // extract blue
+
+    var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+    if (luma < 65) {
+      // pick a different colour
+      styles["filter"] = "invert(1)";
+    }
+
     return styles;
   }
 

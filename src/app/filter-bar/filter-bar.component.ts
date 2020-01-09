@@ -38,6 +38,8 @@ export class FilterBarComponent implements OnInit {
   filterOpen = false;
 
   ngOnInit() {
+    this.filterService.getBulkImport();
+
     // setTimeout(() => {
     //   console.log("LOOP 2");
     //   this.openFilterPage("-3");
@@ -101,26 +103,26 @@ export class FilterBarComponent implements OnInit {
   //  QUERY- the dictionary of Atributes to selected values (all strings)
   singleOpen(fid: string, query: any) {
     //SET WORKING DICTIONARY, WORKINGBIN, AND WORKINGFID
-    var bin = cloneDeep(this.filterService.newFIDBID[fid]);
+    var bin = cloneDeep(this.filterService.FIDBID[fid]);
     var old = document.getElementById(
-      "tier1Tab" + cloneDeep(this.filterService.level1Selected)
+      "tier1Tab" + cloneDeep(this.filterService.filterBinSelected)
     );
-    this.filterService.level1Selected = bin;
-    for (let id in this.filterService.newWorkingQuery[bin]) {
+    this.filterService.filterBinSelected = bin;
+    for (let id in this.filterService.workingQuery[bin]) {
       this.filterService.form.controls[id].setValue(null);
     }
-    this.filterService.newWorkingQuery[bin] = cloneDeep(query);
-    this.filterService.newWorkingFID[bin] = cloneDeep(fid);
+    this.filterService.workingQuery[bin] = cloneDeep(query);
+    this.filterService.workingFID[bin] = cloneDeep(fid);
 
     //SET THE FORM CONTROL
-    for (let id in this.filterService.newWorkingQuery[bin]) {
+    for (let id in this.filterService.workingQuery[bin]) {
       // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
       //   this.filterService.form.controls[id].setValue(
-      //     new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
+      //     new Date(this.filterService.workingQuery[bin][id][0] * 1000)
       //   );
       // } else {
       this.filterService.form.controls[id].setValue(
-        this.filterService.newWorkingQuery[bin][id]
+        this.filterService.workingQuery[bin][id]
       );
       //}
     }
@@ -132,7 +134,7 @@ export class FilterBarComponent implements OnInit {
         "background-color: white;border-bottom: 4px solid white"
       );
 
-      this.filterService.level1Selected = bin;
+      this.filterService.filterBinSelected = bin;
       var newTab = document.getElementById("tier1Tab" + bin);
 
       newTab.style.backgroundColor = "#f2f2f2";
@@ -146,22 +148,22 @@ export class FilterBarComponent implements OnInit {
   singleOpenExp(fid: any, query: any, bin: any) {
     if (this.filterOpen) {
       this.filterService.changelevel2(String(bin));
-      for (let id in this.filterService.newWorkingQuery[bin]) {
+      for (let id in this.filterService.workingQuery[bin]) {
         this.filterService.form.controls[id].setValue(null);
       }
-      this.filterService.newWorkingQuery[bin] = cloneDeep(query);
+      this.filterService.workingQuery[bin] = cloneDeep(query);
 
-      this.filterService.newWorkingFID[bin] = cloneDeep(fid);
+      this.filterService.workingFID[bin] = cloneDeep(fid);
 
       //SET THE FORM CONTROL
-      for (let id in this.filterService.newWorkingQuery[bin]) {
+      for (let id in this.filterService.workingQuery[bin]) {
         // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
         //   this.filterService.form.controls[id].setValue(
-        //     new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
+        //     new Date(this.filterService.workingQuery[bin][id][0] * 1000)
         //   );
         // } else {
         this.filterService.form.controls[id].setValue(
-          this.filterService.newWorkingQuery[bin][id]
+          this.filterService.workingQuery[bin][id]
         );
         // }
       }
@@ -173,22 +175,22 @@ export class FilterBarComponent implements OnInit {
   //OPEN SINGLE PANEL
   singleOpenAtt(fid: any, query: any, att: any, bin: any) {
     if (this.filterOpen) {
-      for (let id in this.filterService.newWorkingQuery[bin]) {
+      for (let id in this.filterService.workingQuery[bin]) {
         this.filterService.form.controls[id].setValue(null);
       }
-      this.filterService.newWorkingQuery[bin] = cloneDeep(query);
+      this.filterService.workingQuery[bin] = cloneDeep(query);
 
-      this.filterService.newWorkingFID[bin] = cloneDeep(fid);
+      this.filterService.workingFID[bin] = cloneDeep(fid);
 
       //SET THE FORM CONTROL
-      for (let id in this.filterService.newWorkingQuery[bin]) {
+      for (let id in this.filterService.workingQuery[bin]) {
         // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
         //   this.filterService.form.controls[id].setValue(
-        //     new Date(this.filterService.newWorkingQuery[bin][id][0] * 1000)
+        //     new Date(this.filterService.workingQuery[bin][id][0] * 1000)
         //   );
         // } else {
         this.filterService.form.controls[id].setValue(
-          this.filterService.newWorkingQuery[bin][id]
+          this.filterService.workingQuery[bin][id]
         );
         //  }
       }
@@ -287,13 +289,13 @@ export class FilterBarComponent implements OnInit {
   //MAY HAVE TO TAILER THIS FOR EACH PKID
   //RIGHT NOW IT SHOWS PKID's AND ATTRIBUTES OF NON PKID's
   createFilterDisplayString(fid: string, value: any) {
-    if (!this.filterService.newFIDBID[fid]) {
+    if (!this.filterService.FIDBID[fid]) {
       setTimeout(() => {
         console.log("LOOP 3");
         this.createFilterDisplayString(fid, value);
       }, 100);
     } else {
-      var BID = this.filterService.newFIDBID[fid];
+      var BID = this.filterService.FIDBID[fid];
       var dispName = "";
       var tempFilter = { ...value };
       try {
@@ -335,7 +337,7 @@ export class FilterBarComponent implements OnInit {
 
   createFilterTopDisplayString(fid: string, value: any) {
     //MULTIPLE CASE
-    var BID = this.filterService.newFIDBID[fid];
+    var BID = this.filterService.FIDBID[fid];
     return (
       String(this.filterService.pullNavigationElement[BID]["Label"]) +
       " : " +
@@ -402,7 +404,7 @@ export class FilterBarComponent implements OnInit {
       if (contents[0].length != 0) {
         dispName = this.getExplicitValues(
           contents[0],
-          this.filterService.newFIDBID[fid]
+          this.filterService.FIDBID[fid]
         );
       }
       var potentialAdd = this.getAttOrPanelStringsValues(
@@ -433,12 +435,12 @@ export class FilterBarComponent implements OnInit {
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
   ): number => {
-    var bin = this.filterService.newFIDBID[a.key];
-    return this.filterService.newFIDOrder[bin].indexOf(a.key) <
-      this.filterService.newFIDOrder[bin].indexOf(b.key)
+    var bin = this.filterService.FIDBID[a.key];
+    return this.filterService.FIDCreationOrder[bin].indexOf(a.key) <
+      this.filterService.FIDCreationOrder[bin].indexOf(b.key)
       ? -1
-      : this.filterService.newFIDOrder[bin].indexOf(b.key) <
-        this.filterService.newFIDOrder[bin].indexOf(a.key)
+      : this.filterService.FIDCreationOrder[bin].indexOf(b.key) <
+        this.filterService.FIDCreationOrder[bin].indexOf(a.key)
       ? 1
       : 0;
   };

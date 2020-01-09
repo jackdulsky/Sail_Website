@@ -163,8 +163,6 @@ export class ReportUploadComponent implements OnInit {
     "grid.svg",
     "grid_system.svg",
     "home.svg",
-    "IconList.csv",
-    "IconList.xlsx",
     "image_picture.svg",
     "inbox_up_round.svg",
     "key.svg",
@@ -238,6 +236,8 @@ export class ReportUploadComponent implements OnInit {
   ) {}
   report;
   ngOnInit() {
+    // this.filterService.getBulkImport();
+
     this.report = cloneDeep(this.template);
     for (let icon of this.icons2) {
       this.icons[icon.slice(0, icon.length - 4)] =
@@ -255,20 +255,61 @@ export class ReportUploadComponent implements OnInit {
   }
 
   //Set the view sample icon images and background color
-  setSampleStyle() {
+  setSampleBackgroundStyle() {
     let styles = {
-      "background-repeat": "no-repeat,no-repeat",
+      "background-repeat": "no-repeat",
       "background-position": "center",
-      "background-size": "140px 140px,cover",
+      "background-size": "cover",
       "background-image":
-        "url(" +
-        this.report.IconUrl +
-        "), linear-gradient(" +
+        "linear-gradient(" +
         this.filterService.shadeColor(this.report.Color, 75) +
         "," +
         this.report.Color +
         ")"
     };
+
     return styles;
   }
+  setSampleImageStyle() {
+    let styles = {
+      "background-repeat": "no-repeat",
+      "background-position": "center",
+      "background-size": "contain",
+      "background-image": "url(" + this.report.IconUrl + ")",
+      width: "100%",
+      height: "100%",
+      "max-width": "140px",
+      "max-height": "140px",
+      margin: "10px auto auto"
+    };
+    var c = this.report.Color.substring(1); // strip #
+    var rgb = parseInt(c, 16); // convert rrggbb to decimal
+    var r = (rgb >> 16) & 0xff; // extract red
+    var g = (rgb >> 8) & 0xff; // extract green
+    var b = (rgb >> 0) & 0xff; // extract blue
+
+    var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+    if (luma < 65) {
+      // pick a different colour
+      styles["filter"] = "invert(1)";
+    }
+
+    return styles;
+  }
+  // setSampleBackgroundStyle() {
+  //   let styles = {
+  //     "background-repeat": "no-repeat,no-repeat",
+  //     "background-position": "center",
+  //     "background-size": "140px 140px,cover",
+  //     "background-image":
+  //       "url(" +
+  //       this.report.IconUrl +
+  //       "), linear-gradient(" +
+  //       this.filterService.shadeColor(this.report.Color, 75) +
+  //       "," +
+  //       this.report.Color +
+  //       ")"
+  //   };
+  //   return styles;
+  // }
 }

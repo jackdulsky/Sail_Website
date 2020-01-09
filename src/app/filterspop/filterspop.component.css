@@ -157,8 +157,8 @@ input {
   padding-bottom: 35px;
 }
 .bottomQueryButtons {
-  position: absolute;
-  bottom: 0;
+  /* position: absolute; */
+  /* bottom: 0; */
   color: black;
   width: 100%;
 }

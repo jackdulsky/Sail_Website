@@ -45,10 +45,15 @@ export class CashComponent implements OnInit {
   showFilters;
 
   ngOnInit() {
+    // this.filterService.getBulkImport();
+    this.cdref.detectChanges();
+
     this.initFunction();
   }
   initFunction() {
-    this.body.portalHighlight("cash");
+    try {
+      this.body.portalHighlight("cash");
+    } catch (e) {}
     if (
       this.filterService.reportTabs &&
       this.filterService.reportReportsOnly &&
@@ -66,7 +71,7 @@ export class CashComponent implements OnInit {
           if (this.filterService.pullAttribute[att]["Label"] == "Agent") {
             this.agentFilterID = att;
           }
-          if (this.filterService.pullAttribute[att]["Label"] == "Company") {
+          if (this.filterService.pullAttribute[att]["Label"] == "Agent Comp.") {
             this.companyFilterID = att;
           }
           if (this.filterService.pullAttribute[att]["Label"] == "FA Status") {
@@ -247,12 +252,6 @@ export class CashComponent implements OnInit {
   //Company is -303
 
   type0change(formKey, bin) {
-    // var oldWorking = cloneDeep(this.filterService.newWorkingQuery);
-    // this.filterService.newWorkingQuery["-3"][formKey] = [
-    //   this.filterService.formCash.value[formKey]
-    // ];
-    // this.filterService.setPlayers(this.filterService.combinedJSONstring());
-    // this.filterService.newWorkingQuery = oldWorking;
     var newFIDNumber = this.filterService.fidCashMap[formKey];
     if (
       this.filterService.formCash.value[formKey] == null ||
@@ -262,28 +261,25 @@ export class CashComponent implements OnInit {
     } else {
       var map = {};
       map[formKey] = this.filterService.formCash.value[formKey];
-      var oldDB = cloneDeep(this.filterService.newDBFormat);
+      var oldDB = cloneDeep(this.filterService.DBFormat);
 
-      this.filterService.newFIDOrder[bin] = this.filterService.newFIDOrder[
+      this.filterService.FIDCreationOrder[
         bin
-      ].concat([newFIDNumber]);
+      ] = this.filterService.FIDCreationOrder[bin].concat([newFIDNumber]);
 
       var pkID = [];
-      this.filterService.newFIDs[newFIDNumber] = Object.assign(
-        {},
-        cloneDeep(map)
-      );
-      this.filterService.newFIDBID[newFIDNumber] = bin;
-      if (!this.filterService.newDBFormat[bin]) {
-        this.filterService.newDBFormat[bin] = {};
+      this.filterService.FIDs[newFIDNumber] = Object.assign({}, cloneDeep(map));
+      this.filterService.FIDBID[newFIDNumber] = bin;
+      if (!this.filterService.DBFormat[bin]) {
+        this.filterService.DBFormat[bin] = {};
       }
       var att = cloneDeep(map);
       var FID = [];
-      this.filterService.newDBFormat[bin][newFIDNumber] = [pkID, att, FID];
+      this.filterService.DBFormat[bin][newFIDNumber] = [pkID, att, FID];
       if (
         !this.filterService.checkDBFormats(
           oldDB,
-          cloneDeep(this.filterService.newDBFormat)
+          cloneDeep(this.filterService.DBFormat)
         )
       ) {
         this.filterService.saveAndSend();
@@ -313,15 +309,15 @@ export class CashComponent implements OnInit {
     this.type0change(id, "-3");
   }
 
-  //   var oldWorking = cloneDeep(this.filterService.newWorkingQuery);
+  //   var oldWorking = cloneDeep(this.filterService.workingQuery);
   //   if (input.length > 3) {
-  //     this.filterService.newWorkingQuery["-3"][this.playerNameInput] = [
+  //     this.filterService.workingQuery["-3"][this.playerNameInput] = [
   //       String(input)
   //     ];
   //     this.filterService.setPlayers(this.filterService.combinedJSONstring());
-  //     this.filterService.newWorkingQuery = oldWorking;
+  //     this.filterService.workingQuery = oldWorking;
   //   } else {
-  //     delete this.filterService.newWorkingQuery["-3"][this.playerNameInput];
+  //     delete this.filterService.workingQuery["-3"][this.playerNameInput];
   //     this.filterService.setPlayers(this.filterService.combinedJSONstring());
   //   }
   // }

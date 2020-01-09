@@ -30,6 +30,8 @@ export class BaseReportsComponent implements OnInit {
   reportList = null;
 
   ngOnInit() {
+    // this.filterService.getBulkImport();
+
     if (this.router.url.includes("/base-reports/")) {
       this.filterService.selected = this.router.url.split("/base-reports/")[1];
     }

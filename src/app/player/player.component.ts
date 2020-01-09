@@ -54,11 +54,15 @@ export class PlayerComponent implements OnInit {
     "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
   playerNameInput;
   ngOnInit() {
+    // this.filterService.getBulkImport();
+    this.cdref.detectChanges();
+
     this.initFunction();
   }
   ngOnDestroy() {}
   ngAfterViewInit() {
     this.afterInitFunction();
+    this.cdref.detectChanges();
   }
 
   afterInitFunction() {
@@ -77,7 +81,9 @@ export class PlayerComponent implements OnInit {
     }
   }
   initFunction() {
-    this.body.portalHighlight("player");
+    try {
+      this.body.portalHighlight("player");
+    } catch (e) {}
 
     if (
       this.filterService.reportTabs &&
@@ -228,15 +234,15 @@ export class PlayerComponent implements OnInit {
 
     //get player name att ID
 
-    var oldWorking = cloneDeep(this.filterService.newWorkingQuery);
+    var oldWorking = cloneDeep(this.filterService.workingQuery);
     if (input.length > 3) {
-      this.filterService.newWorkingQuery["-3"][this.playerNameInput] = [
+      this.filterService.workingQuery["-3"][this.playerNameInput] = [
         String(input)
       ];
       this.filterService.setPlayers(this.filterService.combinedJSONstring());
-      this.filterService.newWorkingQuery = oldWorking;
+      this.filterService.workingQuery = oldWorking;
     } else {
-      delete this.filterService.newWorkingQuery["-3"][this.playerNameInput];
+      delete this.filterService.workingQuery["-3"][this.playerNameInput];
       this.filterService.setPlayers(this.filterService.combinedJSONstring());
     }
   }
@@ -312,8 +318,10 @@ export class PlayerComponent implements OnInit {
         this.router.navigate(["./base-reports", String(name)], {
           relativeTo: this.route
         });
-        document.getElementById("fullScreenButton").className =
-          "fullScreenInactive";
+        try {
+          document.getElementById("fullScreenButton").className =
+            "fullScreenInactive";
+        } catch (e) {}
         // this.router.navigate([newRoute + "../base-reports/" + String(name)]);
       }
     } catch (e) {}
