@@ -45,7 +45,8 @@ import {
   reportReportsStructure,
   positionHItem,
   positionHierarchy,
-  pullPlayers
+  pullPlayers,
+  teams
 } from "../testVariables";
 import { ChangeDetectorRef } from "@angular/core";
 import { fromEventPattern } from "rxjs";
@@ -141,6 +142,7 @@ describe("ClubComponent", () => {
     component.filterService.positionHItem = positionHItem;
     component.filterService.positionHierarchy = positionHierarchy;
     component.filterService.pullPlayers = pullPlayers;
+    component.filterService.teams = teams;
 
     fixture.detectChanges();
   });

@@ -1,11 +1,141 @@
 export const pullStructure = {
-    "-14": { "1400": {} },
-    "-11": { "1100": {}, "1101": {} },
-    "-8": { "800": {} },
-    "-3": { "300": {}, "301": {}, "302": {}, "303": {}, "304": {} },
-    "-2": { "200": {} },
-    "-1": { "100": {} }   
+    "-14":{
+        "1400":{
+            "14":null
+        }
+    },
+    "-11":{
+        "1100":{
+            "11":null
+        },
+        "1101":{
+            "10092":null
+        }
+    },
+    "-8":{
+        "800":{
+            "8":null
+        }
+    },
+    "-3":{
+        "300":{
+            "3":null,
+            "100018":null,
+            "100026":null,
+            "100027":null,
+            "100028":null,
+            "100030":null,
+            "100040":null,
+            "100054":null,
+            "100055":null,
+            "100061":null
+        },
+        "301":{
+            "100023":null,
+            "100034":null,
+            "100036":null,
+            "100038":null,
+            "100039":null,
+            "100058":null
+        },
+        "302":{
+            "100019":null,
+            "100020":null,
+            "100022":null,
+            "100025":null,
+            "100044":null,
+            "100045":null,
+            "100059":null,
+            "100060":null,
+            "100062":null,
+            "100065":null,
+            "100066":null,
+            "100067":null,
+            "100068":null
+        },
+        "303":{
+            "100016":null,
+            "100017":null,
+            "100046":null,
+            "100049":null,
+            "100051":null,
+            "100056":null,
+            "100057":null,
+            "100063":null,
+            "100064":null
+        },
+        "304":{
+            "1000":null,
+            "1001":null,
+            "1002":null,
+            "1003":null,
+            "1004":null,
+            "1005":null,
+            "1006":null,
+            "1007":null,
+            "1008":null,
+            "1009":null,
+            "1010":null,
+            "1011":null,
+            "1012":null,
+            "1013":null,
+            "1014":null,
+            "1015":null,
+            "1016":null,
+            "1017":null,
+            "1018":null,
+            "1019":null,
+            "1020":null,
+            "2001":null,
+            "2002":null
+        }
+    },
+    "-2":{
+        "200":{
+            "2":null
+        }
+    },
+    "-1":{
+        "100":{
+            "1":null
+        }
+    }
 };
+export const teams = [
+    {"SailTeamID":1000,"TeamCode":"ATL","Conference":"NFC","Division":"South","ClubCityName":"Atlanta","ClubNickName":"Falcons"},
+    {"SailTeamID":1001,"TeamCode":"BUF","Conference":"AFC","Division":"East","ClubCityName":"Buffalo","ClubNickName":"Bills"},
+    {"SailTeamID":1002,"TeamCode":"CHI","Conference":"NFC","Division":"North","ClubCityName":"Chicago","ClubNickName":"Bears"},
+    {"SailTeamID":1003,"TeamCode":"CIN","Conference":"AFC","Division":"North","ClubCityName":"Cincinnati","ClubNickName":"Bengals"},
+    {"SailTeamID":1004,"TeamCode":"BLT","Conference":"AFC","Division":"North","ClubCityName":"Baltimore","ClubNickName":"Ravens"},
+    {"SailTeamID":1005,"TeamCode":"DAL","Conference":"NFC","Division":"East","ClubCityName":"Dallas","ClubNickName":"Cowboys"},
+    {"SailTeamID":1006,"TeamCode":"DEN","Conference":"AFC","Division":"West","ClubCityName":"Denver","ClubNickName":"Broncos"},
+    {"SailTeamID":1007,"TeamCode":"DET","Conference":"NFC","Division":"North","ClubCityName":"Detroit","ClubNickName":"Lions"},
+    {"SailTeamID":1008,"TeamCode":"GB","Conference":"NFC","Division":"North","ClubCityName":"Green Bay","ClubNickName":"Packers"},
+    {"SailTeamID":1009,"TeamCode":"TEN","Conference":"AFC","Division":"South","ClubCityName":"Tennessee","ClubNickName":"Titans"},
+    {"SailTeamID":1010,"TeamCode":"IND","Conference":"AFC","Division":"South","ClubCityName":"Indianapolis","ClubNickName":"Colts"},
+    {"SailTeamID":1011,"TeamCode":"KC","Conference":"AFC","Division":"West","ClubCityName":"Kansas City","ClubNickName":"Chiefs"},
+    {"SailTeamID":1012,"TeamCode":"OAK","Conference":"AFC","Division":"West","ClubCityName":"Oakland","ClubNickName":"Raiders"},
+    {"SailTeamID":1013,"TeamCode":"LA","Conference":"NFC","Division":"West","ClubCityName":"Los Angeles Rams","ClubNickName":"Rams"},
+    {"SailTeamID":1014,"TeamCode":"MIA","Conference":"AFC","Division":"East","ClubCityName":"Miami","ClubNickName":"Dolphins"},
+    {"SailTeamID":1015,"TeamCode":"MIN","Conference":"NFC","Division":"North","ClubCityName":"Minnesota","ClubNickName":"Vikings"},
+    {"SailTeamID":1016,"TeamCode":"NE","Conference":"AFC","Division":"East","ClubCityName":"New England","ClubNickName":"Patriots"},
+    {"SailTeamID":1017,"TeamCode":"NO","Conference":"NFC","Division":"South","ClubCityName":"New Orleans","ClubNickName":"Saints"},
+    {"SailTeamID":1018,"TeamCode":"NYG","Conference":"NFC","Division":"East","ClubCityName":"New York Giants","ClubNickName":"Giants"},
+    {"SailTeamID":1019,"TeamCode":"NYJ","Conference":"AFC","Division":"East","ClubCityName":"New York Jets","ClubNickName":"Jets"},
+    {"SailTeamID":1020,"TeamCode":"PHI","Conference":"NFC","Division":"East","ClubCityName":"Philadelphia","ClubNickName":"Eagles"},
+    {"SailTeamID":1021,"TeamCode":"ARZ","Conference":"NFC","Division":"West","ClubCityName":"Arizona","ClubNickName":"Cardinals"},
+    {"SailTeamID":1022,"TeamCode":"PIT","Conference":"AFC","Division":"North","ClubCityName":"Pittsburgh","ClubNickName":"Steelers"},
+    {"SailTeamID":1023,"TeamCode":"LAC","Conference":"AFC","Division":"West","ClubCityName":"Los Angeles Chargers","ClubNickName":"Chargers"},
+    {"SailTeamID":1024,"TeamCode":"SF","Conference":"NFC","Division":"West","ClubCityName":"San Francisco","ClubNickName":"49ers"},
+    {"SailTeamID":1025,"TeamCode":"SEA","Conference":"NFC","Division":"West","ClubCityName":"Seattle","ClubNickName":"Seahawks"},
+    {"SailTeamID":1026,"TeamCode":"TB","Conference":"NFC","Division":"South","ClubCityName":"Tampa Bay","ClubNickName":"Buccaneers"},
+    {"SailTeamID":1027,"TeamCode":"WAS","Conference":"NFC","Division":"East","ClubCityName":"Washington","ClubNickName":"Redskins"},
+    {"SailTeamID":1028,"TeamCode":"CAR","Conference":"NFC","Division":"South","ClubCityName":"Carolina","ClubNickName":"Panthers"},
+    {"SailTeamID":1029,"TeamCode":"JAX","Conference":"AFC","Division":"South","ClubCityName":"Jacksonville","ClubNickName":"Jaguars"},
+    {"SailTeamID":1030,"TeamCode":"CLV","Conference":"AFC","Division":"North","ClubCityName":"Cleveland","ClubNickName":"Browns"},
+    {"SailTeamID":1031,"TeamCode":"HST","Conference":"AFC","Division":"South","ClubCityName":"Houston","ClubNickName":"Texans"}
+];
+
 export const pullDataType = {
     "1":{"Label":"Bit"},
     "2":{"Label":"Int"},
@@ -123,6 +253,7 @@ export const pullNavigationElement = {
     "303":{"Label":"Experience","IsBin":false,"IsAttribute":false},
     "304":{"Label":"Contract","IsBin":false,"IsAttribute":false},
     "800":{"Label":"Game","IsBin":false,"IsAttribute":false},
+    "1400":{"Label":"Event","IsBin":false,"IsAttribute":false},
     "1000":{"Label":"ContractID","IsBin":false,"IsAttribute":true},
     "1001":{"Label":"Company","IsBin":false,"IsAttribute":true},
     "1002":{"Label":"APY","IsBin":false,"IsAttribute":true},

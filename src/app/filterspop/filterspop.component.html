@@ -11,7 +11,7 @@
             let t1 of filterService.pullStructure | keyvalue: valueOrderT1
           "
           class="tier1Tab"
-          (click)="filterService.changelevel2(t1.key)"
+          (click)="changeLevel2(t1.key)"
         >
           <div class="tableCenter">
             {{ returnlabel(filterService.pullBin[t1.key]) }}

@@ -1418,3 +1418,11 @@ td {
   margin-top: 8px;
   font-size: 20px;
 }
+.formFieldTagSubstitute{
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: 1.125;
+}

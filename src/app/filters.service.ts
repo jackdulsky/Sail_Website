@@ -317,6 +317,14 @@ export class FiltersService {
       }
     }, 350);
   }
+  //addd keys to From
+  initForm(structure: any) {
+    structure.forEach(element => {
+      this.form.addControl(element, new FormControl());
+      this.form.addControl(element + "search", new FormControl());
+    });
+  }
+
   //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
   getBulkImport() {
     if (!this.bulkImported) {
@@ -335,11 +343,16 @@ export class FiltersService {
         }
         // console.log("PULLStructure", this.pullStructure);
         // console.log(
-
-        //component.filterService.pullStructure = " +
-        //     JSON.stringify(this.pullStructure) +
+        //   "component.filterService.pullStructure = " +
+        //     JSON.stringify(this.pullStructure, function(k, v) {
+        //       return v === undefined ? null : v;
+        //     }) +
         //     ";"
         // );
+        console.log("FORM", this.form);
+        console.log(
+          "component.filterService.form = " + JSON.stringify(this.form) + ";"
+        );
       });
       this.pullData.pullDataType().subscribe(data => {
         this.pullDataType = {};
@@ -480,6 +493,9 @@ export class FiltersService {
         //   "component.filterService.teamsMap = " +
         //     JSON.stringify(this.teamsMap) +
         //     ";"
+        // );
+        // console.log(
+        //   "component.filterService.teams = " + JSON.stringify(this.teams) + ";"
         // );
       });
       this.pullData.pullReportTabs().subscribe(data => {
@@ -713,12 +729,6 @@ export class FiltersService {
   //DELETE A QUERY BASED ON FID
   removeQuery(fid: string) {
     var oldBID = this.FIDBID[fid];
-    console.log(
-      "REMOVINGQuery",
-      fid,
-      this.fidCashMap,
-      Object.keys(this.fidCashMap).indexOf(fid)
-    );
 
     if (Object.keys(this.fidCashMapFIDtoID).indexOf(fid) != -1) {
       var id = this.fidCashMapFIDtoID[fid];
@@ -1184,7 +1194,6 @@ export class FiltersService {
   //This function clears a single value from the newWorking query, if a
   //Working FID is set it pushes the updates
   clearSingleValuePop(bin: any, att: any, val: any, input: boolean = true) {
-    //console.log();
     if (
       JSON.stringify(this.workingQuery[bin][att]) ==
         JSON.stringify([String(val)]) ||
@@ -1366,7 +1375,6 @@ export class FiltersService {
             var oldClub = document.getElementById("teamGUI" + String(club));
             oldClub.className = "singleTeamGUI ng-star-inserted";
           } catch (e) {}
-          console.log("HERE 5");
 
           oldValue = oldValue.filter(x => x != club);
           this.form.controls[attID].setValue(oldValue);
@@ -1379,13 +1387,10 @@ export class FiltersService {
       this.form.controls[attID].setValue(
         oldValue.concat([String(teamI["SailTeamID"])])
       );
-      console.log("HERE 6");
 
       this.teamPortalActiveClubID = String(teamI["SailTeamID"]);
       this.teamPortalSelected = teamI;
     } else {
-      console.log("HERE 7");
-
       team.className = "singleTeamGUI ng-star-inserted";
       this.form.controls[attID].setValue(
         oldValue.filter(x => x != String(teamI["SailTeamID"]))
@@ -1490,15 +1495,18 @@ export class FiltersService {
     }
 
     //ADD TO PANEL OR SHOW THE SELECTION FORM
+
     if (this.pullNavigationElement[att]["IsAttribute"] == true) {
       //console.log("ATTRIBUTE IS IN THE PANELS THIS SHOULD NEVER OCCUR");
     } else {
       var old = cloneDeep(newPanels);
       newPanels.push(att);
       this.show = att;
+
       this.selectingAttributes = Object.keys(
         this.getPanelOptions(att, [first].concat(newPanels))
       ).filter(x => this.pullNavigationElement[x]["IsAttribute"]);
+
       if (
         JSON.stringify(this.getPanelOptions(att, [first].concat(newPanels))) ==
         "{}"
@@ -1535,6 +1543,7 @@ export class FiltersService {
     this.selectingAttributes = Object.keys(
       this.getPanelOptions(newPanels[0], cloneDeep(newPanels).reverse())
     ).filter(x => this.pullNavigationElement[x]["IsAttribute"]);
+
     if (
       JSON.stringify(
         this.getPanelOptions(newPanels[0], cloneDeep(newPanels).reverse())
@@ -1567,13 +1576,6 @@ export class FiltersService {
       disp = cloneDeep(disp[level]);
     }
     disp = cloneDeep(disp[att]);
-    // //console.log("DISP", disp);
-    // for (let option in disp) {
-    //   if (this.pullNavigationElement[option]["IsAttribute"]) {
-    //     delete disp[option];
-    //   }
-    // }
-
     return disp;
   }
 
@@ -1819,8 +1821,6 @@ export class FiltersService {
       this.formCash.controls[id].setValue(null);
     }
 
-    console.log("REMOVE ATTRIBUTE", fid, bin, atts);
-
     var alteredDBFormat = cloneDeep(this.DBFormat);
     var removed = cloneDeep(alteredDBFormat[bin][fid][1]);
     for (let att of atts) {
@@ -1839,7 +1839,6 @@ export class FiltersService {
     var oldWorkingFID = cloneDeep(this.workingFID);
     var oldForm = cloneDeep(this.form);
 
-    console.log("ALTERED DB FORMAT", alteredDBFormat);
     this.pushDBFormat(alteredDBFormat);
     this.workingQuery = oldWorkingQuery;
     this.workingFID = oldWorkingFID;

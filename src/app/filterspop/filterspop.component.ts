@@ -96,7 +96,7 @@ export class FilterspopComponent implements OnInit {
     this.filterService.conferenceSelections["2"] = "AFC";
     setTimeout(() => {
       console.log("LOOP 24");
-      this.filterService.changelevel2(this.filterService.filterBinSelected);
+      this.changeLevel2(this.filterService.filterBinSelected);
     }, 1);
 
     this.filterService.panels = [
@@ -223,7 +223,7 @@ export class FilterspopComponent implements OnInit {
   //This function navigates the panels and displays where the
   //Attribute was selected from if its clicked on the right area
   navigateToAttribute(bin: any, att: any) {
-    this.filterService.changelevel2(bin);
+    this.changeLevel2(bin);
     var newPanels = [];
     var atRoot = false;
     var startAtt = att;
@@ -385,8 +385,12 @@ export class FilterspopComponent implements OnInit {
 
   //getminmax type8
   getminmaxString(id: any, minmax: string) {
-    console.log("FOR", String(id) + minmax);
+    // console.log("FOR", String(id) + minmax);
     return String(id) + minmax;
+  }
+
+  changeLevel2(att: string) {
+    this.filterService.changelevel2(att);
   }
 
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
@@ -580,7 +584,7 @@ export class FilterspopComponent implements OnInit {
   //UPON SELECTING AN ITEM FROM THE GLOBAL SEARCH LIST PULL IT UP
   resultSelected(id: any) {
     // var path = this.reverse[Number(id.key)];
-    // this.changelevel2(String(path[0]));
+    // this.changeLevel2(String(path[0]));
     // if (path.length >= 2) {
     //   this.changelevel3(String(path[1]));
     //   if (path.length >= 3) {
