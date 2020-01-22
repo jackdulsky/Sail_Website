@@ -131,6 +131,7 @@
   max-height: 385px;
   text-align: center;
   border-radius: 5px;
+  overflow-y: "hidden";
 }
 .yearDropDown {
   /* height: 50px; */

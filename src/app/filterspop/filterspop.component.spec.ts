@@ -186,10 +186,7 @@ describe("FilterspopComponent", () => {
         );
         component.cdref.detectChanges();
         console.log("ATTS", component.filterService.selectingAttributes.length);
-        console.log(
-          "elemtn",
-          cloneDeep(document.getElementsByClassName("guiArea")[0])
-        );
+        console.log("elemtn", document.getElementsByClassName("guiArea")[0]);
         expect(
           document.getElementsByClassName("guiArea")[0].children.length
         ).toEqual(component.filterService.selectingAttributes.length);

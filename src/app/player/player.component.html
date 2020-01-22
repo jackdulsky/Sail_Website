@@ -197,7 +197,11 @@
       </div>
     </div>
   </div>
-  <div class="playerListContainer shadow" *ngIf="showList" id="playerSelect">
+  <div
+    class="playerListContainer shadow"
+    [@slideInOutYearPortal]="playerListAnimationState"
+    id="playerSelect"
+  >
     <div class="searching" id="playerSearch">
       <div>
         <span>
@@ -239,7 +243,11 @@
     </div>
   </div>
 
-  <div class="yearListAll shadow" id="yearList" *ngIf="showYear">
+  <div
+    class="yearListAll shadow"
+    id="yearList"
+    [@slideInOutYearPortal]="yearListAnimationState"
+  >
     <div
       class="yearDropDown"
       *ngFor="let year of filterService.portalYearsList"

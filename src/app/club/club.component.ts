@@ -5,10 +5,13 @@ import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
+import { SlideInOutAnimation } from "../animations";
+
 @Component({
   selector: "app-club",
   templateUrl: "./club.component.html",
   styleUrls: ["./club.component.css"],
+  animations: [SlideInOutAnimation],
   encapsulation: ViewEncapsulation.None
 })
 export class ClubComponent implements OnInit {
@@ -32,6 +35,9 @@ export class ClubComponent implements OnInit {
   teamsDict = {};
   clubTabSelected;
   showYear = false;
+  yearListAnimationState = "out";
+
+  teamListAnimationState = "out";
 
   //Turn Off the year panel on click outside, runs every click on the component
   onClick(event) {
@@ -194,6 +200,7 @@ export class ClubComponent implements OnInit {
   }
   //Toggle Display of Teams Selection
   displayTeams(onOff: any) {
+    this.toggleShowDiv("teamList");
     if (!onOff) {
       this.showList = true;
     } else {
@@ -275,8 +282,23 @@ export class ClubComponent implements OnInit {
 
   showYearList() {
     this.showYear = !this.showYear;
+    this.toggleShowDiv("yearList");
     if (!this.showYear) {
       this.filterService.portalYearDisplayClose();
+    }
+  }
+  toggleShowDiv(divName: string) {
+    if (divName === "yearList") {
+      console.log(this.yearListAnimationState);
+      this.yearListAnimationState =
+        this.yearListAnimationState === "out" ? "in" : "out";
+      console.log(this.yearListAnimationState);
+    }
+    if (divName === "teamList") {
+      console.log(this.teamListAnimationState);
+      this.teamListAnimationState =
+        this.teamListAnimationState === "out" ? "in" : "out";
+      console.log(this.teamListAnimationState);
     }
   }
 }

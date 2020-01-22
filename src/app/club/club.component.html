@@ -1,5 +1,9 @@
 <div class="topBarClub">
-  <div id="team" class="teamList shadow" *ngIf="showList">
+  <div
+    id="team"
+    class="teamList shadow"
+    [@slideInOutTeamListPortal]="teamListAnimationState"
+  >
     <div
       id="team"
       class="team teamGrid"
@@ -11,7 +15,10 @@
     </div>
   </div>
 
-  <div class="yearListAll shadow" *ngIf="showYear">
+  <div
+    class="yearListAll shadow"
+    [@slideInOutYearPortal]="yearListAnimationState"
+  >
     <div
       class="yearDropDown"
       *ngFor="let year of filterService.portalYearsList"

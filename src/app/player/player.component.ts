@@ -6,10 +6,11 @@ import { ChangeDetectorRef } from "@angular/core";
 import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
 import * as cloneDeep from "lodash/cloneDeep";
-
+import { SlideInOutAnimation } from "../animations";
 @Component({
   selector: "app-player",
   templateUrl: "./player.component.html",
+  animations: [SlideInOutAnimation],
   styleUrls: ["./player.component.css"]
 })
 export class PlayerComponent implements OnInit {
@@ -31,6 +32,8 @@ export class PlayerComponent implements OnInit {
   id;
   teamsDict = {};
   playerTabSelected;
+  yearListAnimationState = "out";
+  playerListAnimationState = "out";
 
   //Turn Off the year panel on click outside, runs every click on the component
   onClick(event) {
@@ -249,6 +252,8 @@ export class PlayerComponent implements OnInit {
 
   //Toggle Display of Player Selection
   displayPlayers(onOff: any) {
+    this.toggleShowDiv("playerList");
+
     if (!onOff) {
       this.showList = true;
     } else {
@@ -330,8 +335,23 @@ export class PlayerComponent implements OnInit {
 
   showYearList() {
     this.showYear = !this.showYear;
+    this.toggleShowDiv("yearList");
     if (!this.showYear) {
       this.filterService.portalYearDisplayClose();
+    }
+  }
+  toggleShowDiv(divName: string) {
+    if (divName === "yearList") {
+      console.log(this.yearListAnimationState);
+      this.yearListAnimationState =
+        this.yearListAnimationState === "out" ? "in" : "out";
+      console.log(this.yearListAnimationState);
+    }
+    if (divName === "playerList") {
+      console.log(this.playerListAnimationState);
+      this.playerListAnimationState =
+        this.playerListAnimationState === "out" ? "in" : "out";
+      console.log(this.playerListAnimationState);
     }
   }
 }

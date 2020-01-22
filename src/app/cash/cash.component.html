@@ -449,7 +449,10 @@
     {{ cat.value.Label }}
   </div>
 
-  <div class="yearListAllCash shadow" *ngIf="showYear">
+  <div
+    class="yearListAllCash shadow"
+    [@slideInOutYearPortal]="yearListAnimationState"
+  >
     <div
       class="yearDropDownCash"
       *ngFor="let year of filterService.portalYearsList"

@@ -15,11 +15,13 @@ import { KeyValue } from "@angular/common";
 import { MatMenuTrigger } from "@angular/material";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
+import { SlideInOutAnimation } from "../animations";
 
 @Component({
   selector: "app-cash",
   templateUrl: "./cash.component.html",
   styleUrls: ["./cash.component.css"],
+  animations: [SlideInOutAnimation],
   encapsulation: ViewEncapsulation.None
 })
 export class CashComponent implements OnInit {
@@ -43,6 +45,7 @@ export class CashComponent implements OnInit {
   companyFilterID;
   FAStatusFilterID;
   showFilters;
+  yearListAnimationState = "out";
 
   ngOnInit() {
     // this.filterService.getBulkImport();
@@ -225,8 +228,17 @@ export class CashComponent implements OnInit {
   //Show The list of years to select
   showYearList() {
     this.showYear = !this.showYear;
+    this.toggleShowDiv("yearList");
     if (!this.showYear) {
       this.filterService.portalYearDisplayClose();
+    }
+  }
+  toggleShowDiv(divName: string) {
+    if (divName === "yearList") {
+      console.log(this.yearListAnimationState);
+      this.yearListAnimationState =
+        this.yearListAnimationState === "out" ? "in" : "out";
+      console.log(this.yearListAnimationState);
     }
   }
 
