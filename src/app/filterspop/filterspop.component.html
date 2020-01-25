@@ -1,6 +1,6 @@
 <mat-dialog-content
   [formGroup]="filterService.form"
-  style="background-color:white; max-height: calc(100vh - 102px) !important;"
+  style="background-color:white; max-height: calc(100vh - 104px) !important;"
 >
   <Div class="ovr-container2">
     <div class="top">
@@ -16,6 +16,9 @@
           <div class="tableCenter">
             {{ returnlabel(filterService.pullBin[t1.key]) }}
           </div>
+        </div>
+        <div class="savedFiltersButton" (click)="selectSavedFilter()">
+          <i class="fa fa-folder" style="margin:auto"></i>
         </div>
         <div class="searching">
           <div>
@@ -1173,4 +1176,4 @@
     </div> -->
   </Div>
 </mat-dialog-content>
-<mat-dialog-actions style="min-height: 0px !important;"> </mat-dialog-actions>
+<mat-dialog-actions style="min-height: 0px !important; padding:0px !important;"> </mat-dialog-actions>

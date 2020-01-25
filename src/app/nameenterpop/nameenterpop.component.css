@@ -7,7 +7,7 @@
   padding: 0px;
 }
 ::ng-deep.mat-dialog-container {
-  padding: 32px;
+  padding-top: 0px;
 }
 ::ng-deep.mat-dialog-content {
   padding: 24px;
@@ -44,8 +44,22 @@
   padding-top: 2px;
 }
 .save {
-  background-color: var(--medium-blue);
+  /* background-color: var(--medium-blue);
+  font-family: "DIN-Regular"; */
+  margin-top: 10px;
+  margin-right: 5px;
+  background-color: #3e4345;
   font-family: "DIN-Regular";
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  padding-top: 3px;
+
+  width: 100px;
+  min-width: 75px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 5px;
 }
 .example-form {
   min-width: 150px;
@@ -55,4 +69,8 @@
 
 .example-full-width {
   width: 100%;
+}
+.save:hover {
+  cursor: pointer;
+  background-color: var(--raiders-gray);
 }

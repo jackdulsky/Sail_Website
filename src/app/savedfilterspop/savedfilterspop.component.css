@@ -1,4 +1,48 @@
 /* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
+::ng-deep .mat-focused .mat-form-field-label {
+  /*change color of label*/
+  color: black !important;
+}
+::ng-deep .mat-form-field-infix {
+  padding: 0px;
+}
+::ng-deep.mat-dialog-container {
+  padding-top: 0px !important;
+}
+#FilterPopUp {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+::ng-deep.mat-dialog-title {
+  margin-bottom: 10px !important;
+}
+::ng-deep.mat-dialog-actions {
+  padding: 0px !important;
+}
+::ng-deep.mat-dialog-content {
+  padding: 12px 12px 12px 12px;
+}
+::ng-deep.mat-form-field-underline {
+  /*change color of underline*/
+  background-color: black !important;
+}
+::ng-deep.mat-dialog-title {
+  /* margin: 0px; */
+  font-size: 32px;
+}
+::ng-deep.mat-form-field-ripple {
+  /*change color of underline when focused*/
+  background-color: black !important;
+}
+::ng-deep.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  color: gray;
+}
+::ng-deep.mat-datepicker-toggle {
+  color: black !important;
+}
+::ng-deep.mat-calendar-body-selected {
+  background-color: var(--raiders-gray);
+}
 
 .indent {
   margin-left: 25px;
@@ -17,9 +61,50 @@
   background-color: var(--light-blue);
 }
 .padTop {
-  padding-top: 2px;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 5px;
+  color: black;
+  /* background-color: lightgrey;
+  border-bottom: 1px solid lightgrey; */
+  background-color: white;
+  display: grid;
+  grid-template-columns: 35px 356px 1fr 200px 20px;
+  font-family: "DIN-Regular";
+}
+.header {
+  padding: 0px 15px;
+  margin: 0px 10px;
+  color: #397193;
+  font-weight: bold;
+
+  display: grid;
+  grid-template-columns: 35px 356px 1fr 180px 40px;
+  font-family: "DIN-Regular";
+}
+.padTop:hover {
+  cursor: pointer;
+  /* background-color: whitesmoke; */
+  background-color: #c3c3c3;
 }
 .save {
-  background-color: var(--medium-blue);
+  /* background-color: var(--medium-blue);
+  font-family: "DIN-Regular"; */
+  margin-top: 10px;
+  margin-right: 5px;
+  background-color: #3e4345;
   font-family: "DIN-Regular";
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  padding-top: 3px;
+
+  width: 100px;
+  min-width: 75px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 5px;
+}
+.exit:hover {
+  cursor: pointer;
 }

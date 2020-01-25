@@ -6,10 +6,10 @@
   padding: 0px;
 }
 ::ng-deep.mat-dialog-container {
-  padding-top: 1px !important;
+  padding-top: 0px !important;
 }
 #FilterPopUp {
-  padding-top: 1px !important;
+  padding-top: 0px !important;
   padding-bottom: 0px !important;
 }
 ::ng-deep.mat-dialog-title {
@@ -83,7 +83,7 @@ input {
   color: black;
   display: flex;
   height: 50px;
-  width: 5%;
+  width: 3%;
   justify-content: center;
 
   padding-top: 9px;
@@ -96,11 +96,11 @@ input {
 .tier1-container {
   display: grid;
   /* grid-template-columns: repeat(auto-fit, minmax(100px, 125px)); */
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr) 50px 1fr;
   column-gap: 5px;
   align-items: center;
   float: left;
-  width: 95%;
+  width: 97%;
 }
 .bottom-container {
   display: grid;
@@ -1418,11 +1418,24 @@ td {
   margin-top: 8px;
   font-size: 20px;
 }
-.formFieldTagSubstitute{
+.formFieldTagSubstitute {
   display: inline-block;
   position: relative;
   text-align: left;
   font-size: inherit;
   font-weight: 400;
   line-height: 1.125;
+}
+.savedFiltersButton {
+  color: white;
+  background-color: #3e4345;
+  height: 34px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  display: inherit;
+  width: 50px;
+}
+.savedFiltersButton:hover {
+  cursor: pointer;
+  background-color: var(--raiders-gray);
 }

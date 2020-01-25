@@ -55,7 +55,7 @@ export class FilterBarComponent implements OnInit {
       dialogConfig.width = "100vw";
       dialogConfig.maxWidth = "100vw";
       dialogConfig.autoFocus = true;
-      dialogConfig.position = { top: "102px", left: "200px" };
+      dialogConfig.position = { top: "104px", left: "200px" };
       dialogConfig.id = "FilterPopUp";
       dialogConfig.data = {
         title: "Filters:",
@@ -232,7 +232,7 @@ export class FilterBarComponent implements OnInit {
     dialogConfig.width = "80%";
     dialogConfig.height = "calc(80%-150px)";
     dialogConfig.autoFocus = true;
-    dialogConfig.position = { top: "150px" };
+    dialogConfig.position = { top: "152px" };
     dialogConfig.data = {};
 
     //OPEN WINDOW
@@ -271,15 +271,16 @@ export class FilterBarComponent implements OnInit {
     dialogConfig.width = "80%";
     dialogConfig.height = "auto";
     dialogConfig.autoFocus = true;
-    dialogConfig.position = { top: "175px" };
+    dialogConfig.position = { top: "175px", left: "15%" };
     dialogConfig.data = { previousName: this.filterService.getName() };
 
     const dialogRef = this.dialog.open(NameenterpopComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data => {
-      // if (data != undefined) {
-      //   this.filterService.saveFilter(data.name);
-      //   this.filterService.setName(data.name);
-      // }
+      if (data != undefined) {
+        console.log("Saving", data.name, data.description);
+        this.filterService.saveFilter(data.name, data.description);
+        //this.filterService.setName(data.name);
+      }
     });
   }
 

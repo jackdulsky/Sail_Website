@@ -1,9 +1,59 @@
-<h6 mat-dialog-title>
-  Select a Saved Filter<span style="float:right" class="exit"
-    ><i class="fa fa-close fa-lg" (click)="close()"></i
-  ></span>
-</h6>
-<mat-dialog-content [formGroup]="form" style="background-color:white">
+<mat-dialog-content
+  style="background-color:#efefef; max-height: 500px; font-family: 'DIN-Regular';"
+>
+  <div
+    style="height: 40px;     font-family: 'DIN-Medium'; color:#7e7e7e; margin-left:10px;font-size: 32px;"
+  >
+    Filters<span style="float:right; margin-right:13px" class="exit"
+      ><i class="fa fa-close" (click)="close()"></i
+    ></span>
+  </div>
+
+  <div class="header">
+    <span style="display:flex;"> </span>
+    <span>
+      Name
+    </span>
+
+    <span> Description </span>
+    <span>
+      Date
+    </span>
+    <span> Delete </span>
+  </div>
+  <div
+    *ngFor="let item of savedOptions"
+    class="padTop"
+    (click)="pushDBFormat(item.Filter)"
+  >
+    <span style="display:flex;">
+      <i style="margin: auto 0px;" class="fa fa-ellipsis-v"></i>
+    </span>
+    <span style="margin:auto 0px;font-size: 20px;">
+      {{ item.Name }}
+    </span>
+
+    <span style="margin:auto 0px;font-size: 14px;">
+      {{ item.Description }}
+    </span>
+    <span style="margin:auto 0px;font-size: 14px;">
+      {{ convertSQLDateStringtoDisplayFormat(item.DateAdded) }}
+    </span>
+    <span>
+      <i class="fa fa-close"></i>
+    </span>
+  </div>
+  <!-- <div>
+    <button class="mat-raised-button mat-primary save" (click)="save()">
+      Upload
+    </button>
+  </div> -->
+  <div style="height: 10px;"></div>
+</mat-dialog-content>
+<mat-dialog-actions style="min-height: 0px !important; padding:0px !important;"> </mat-dialog-actions>
+
+<!-- <button mat-raised-button matDialogClose>Close</button> -->
+<!-- <mat-dialog-content [formGroup]="form" style="background-color:white">
   <ng-template #recursiveList let-list>
     <div *ngFor="let item of list" class="padTop">
       <button
@@ -16,14 +66,14 @@
         <i id="{{ item }}ico" class="space fa fa-folder-o"></i>
       </button>
 
-      <!-- <div class="indent" *ngIf="visible[item]">
+      <div class="indent" *ngIf="visible[item]">
         <ng-container
           *ngTemplateOutlet="
             recursiveList;
             context: { $implicit: options[item] }
           "
         ></ng-container>
-      </div> -->
+      </div>
     </div>
   </ng-template>
   <div style="height: 10px;"></div>
@@ -31,13 +81,4 @@
     *ngTemplateOutlet="recursiveList; context: { $implicit: my_menu }"
   ></ng-container>
   <div style="height: 10px;"></div>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button class="mat-raised-button mat-primary save" (click)="save()">
-    Upload
-  </button>
-  <!-- <button class="mat-raised-button mat-primary save" (click)="clearAll()">
-          Clear All
-        </button> -->
-</mat-dialog-actions>
-<!-- <button mat-raised-button matDialogClose>Close</button> -->
+</mat-dialog-content> -->

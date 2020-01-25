@@ -220,9 +220,6 @@ export class BodyComponent implements OnInit {
     const dialogRef = this.dialog.open(SavedfilterspopComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data => {
       if (data != undefined) {
-        // this.location = data.folderID;
-        // this.folderSelected = true;
-        // document.getElementById("xosIco").className = "fa fa-close space";
       }
     });
   }

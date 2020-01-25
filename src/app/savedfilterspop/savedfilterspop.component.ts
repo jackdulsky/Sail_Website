@@ -14,8 +14,8 @@ import { FiltersService } from "../filters.service";
 export class SavedfilterspopComponent implements OnInit {
   public form: FormGroup;
   my_menu: string[] = ["USERS"];
-  savedOptions: { [name: string]: {} };
-  options: { [name: string]: string[] } = {};
+  savedOptions;
+  options: { [name: string]: string } = {};
   visible: { [name: string]: boolean } = { USERS: true };
   justSelected: string;
   constructor(
@@ -31,8 +31,14 @@ export class SavedfilterspopComponent implements OnInit {
     // this.filterService.getBulkImport();
 
     this.form = this.fb.group({});
-    this.savedOptions = this.pullData.getSavedFilters();
-    this.my_menu = Object.keys(this.savedOptions);
+    this.pullSavedList();
+    // this.my_menu = Object.keys(this.savedOptions);
+  }
+  pullSavedList() {
+    this.pullData.getSavedFilters().subscribe(data => {
+      console.log("SAVED IMPORT", data);
+      this.savedOptions = data;
+    });
   }
 
   //CLOSE WITH SELECTED PASSED BACK
@@ -43,13 +49,13 @@ export class SavedfilterspopComponent implements OnInit {
   //CLOSE THE DIALOG BUT UPLOAD THE SAVED FILTERS SELECTED
   //uploadSavedFilter IS NOT FUNCTIONAL
   save() {
-    this.filterService.uploadSavedFilter(
-      this.justSelected,
-      this.savedOptions[this.justSelected]["name"],
-      this.savedOptions[this.justSelected]["filters"]
-    );
+    // this.filterService.uploadSavedFilter(
+    //   this.justSelected,
+    //   this.savedOptions[this.justSelected]["name"],
+    //   this.savedOptions[this.justSelected]["filters"]
+    // );
 
-    this.dialogRef.close({ folderID: this.justSelected });
+    this.dialogRef.close();
   }
 
   //NO RECURSIVE DATA STRUCTURE
@@ -57,5 +63,20 @@ export class SavedfilterspopComponent implements OnInit {
     this.justSelected = name;
     document.getElementById(name).className = "itemSelected but mat-button";
     document.getElementById(name + "ico").className = "space fa fa-folder-open";
+  }
+
+  pushDBFormat(filter: string) {
+    this.filterService.pushDBFormat(JSON.parse(filter));
+    this.dialogRef.close();
+  }
+  convertSQLDateStringtoDisplayFormat(date: string) {
+    if (date == null) {
+      return "";
+    }
+    var year = date.substring(0, 4);
+    var month = date.substring(5, 7);
+    var day = date.substring(8, 10);
+    var dispalyed = month + "/" + day + "/" + year;
+    return dispalyed;
   }
 }

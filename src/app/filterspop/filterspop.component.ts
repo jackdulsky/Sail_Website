@@ -22,6 +22,7 @@ import { ChangeDetectorRef, ChangeDetectionStrategy } from "@angular/core";
 // import { AdalService } from 'adal-angular4';
 import { MsAdalAngular6Module } from "microsoft-adal-angular6";
 import { stringify } from "querystring";
+import { SavedfilterspopComponent } from "../savedfilterspop/savedfilterspop.component";
 
 @Component({
   selector: "app-filterspop",
@@ -391,6 +392,27 @@ export class FilterspopComponent implements OnInit {
 
   changeLevel2(att: string) {
     this.filterService.changelevel2(att);
+  }
+
+  //IMPORT A FILTER POP UP MODAL
+  selectSavedFilter() {
+    //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "80%";
+    dialogConfig.height = "calc(80%-150px)";
+    dialogConfig.autoFocus = true;
+    dialogConfig.position = { top: "160px", left: "15%" };
+    dialogConfig.data = {};
+    // dialogConfig.marginTop = "158px";
+    // dialogConfig.marginLeft = "10%";
+
+    //OPEN WINDOW
+    const dialogRef = this.dialog.open(SavedfilterspopComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(data => {
+      if (data != undefined) {
+      }
+    });
   }
 
   //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********

@@ -674,15 +674,16 @@ export class FiltersService {
   }
 
   //NOT FUNCTIONAL
-  saveFilter(name: string) {
-    // if (Object.keys(this.testFilters).length > 0) {
-    //   var newID = this.pullData.saveFilter(
-    //     name,
-    //     this.testFilters,
-    //     this.filterID
-    //   );
-    //   this.setID(newID);
-    // }
+  saveFilter(name: string, description: string) {
+    if (Object.keys(this.DBFormat).length > 0) {
+      this.pullData
+        .saveFilter(name, this.DBFormat, this.filterID, description)
+        .subscribe(data => {
+          console.log("SAVED!");
+        });
+      // this.setID(newID);
+      // console.log("OUTPUT", newID);
+    }
     // this.modified = false;
   }
 

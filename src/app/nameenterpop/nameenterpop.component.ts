@@ -25,10 +25,14 @@ export class NameenterpopComponent implements OnInit {
     this.filterService.getBulkImport();
 
     this.form = this.fb.group({});
-    this.form.addControl("enter", new FormControl());
+    this.form.addControl("name", new FormControl());
+
+    this.form.addControl("description", new FormControl());
     //SET EXISTING NAME IF EXISTS
     if (this.data.previousName != "") {
-      this.form.controls["enter"].setValue(this.data.previousName);
+      this.form.controls["name"].setValue(this.data.previousName);
+
+      this.form.controls["description"].setValue(this.data.previousName);
     }
   }
   //CLOSE MODULE
@@ -37,6 +41,9 @@ export class NameenterpopComponent implements OnInit {
   }
   //RETURN NAME ON CLOSE
   save() {
-    this.dialogRef.close({ name: this.form.value.enter });
+    this.dialogRef.close({
+      name: this.form.value.name,
+      description: this.form.value.description
+    });
   }
 }

@@ -38,15 +38,10 @@ export class PullDataService {
   //RETURNS THE SAVED FILTERS FROM THE DATA BASE
   //NOT FUNCTIONAL
   getSavedFilters() {
-    //console.log("returning filters");
-    //EVENTUALLY PASS IN USER
-    return {
-      "20200": { name: "a", filters: { "10904": ["68245"] } },
-      "01050": {
-        name: "b",
-        filters: { "10904": ["68245"], "94600": ["89188", "84936"] }
-      }
-    };
+    var query = "Select * from SailDB.filter.Saved Order by DateAdded desc";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
   }
 
   //Return the filter DB format from the database from the guid passed in
@@ -68,14 +63,33 @@ export class PullDataService {
 
   //SAVE THE FILTER SET IN THE DB
   //NOT FUNCTIONAL
-  saveFilter(name: string, filters: any, filterID: string) {
+  saveFilter(
+    name: string,
+    filters: any,
+    filterID: string,
+    description: string
+  ) {
     //console.log("Trying to send: ", name, filterID);
     //console.log(JSON.stringify(filters));
-    if (filterID != null) {
-      return filterID;
-    } else {
-      return String(Math.floor(Math.random() * 1000));
-    }
+    // if (filterID != null) {
+    //   return filterID;
+    // } else {
+    //   return String(Math.floor(Math.random() * 1000));
+    // }
+
+    var query =
+      "exec SailDB.filter.spSAIL_SaveFilter N'" +
+      name +
+      "', N'" +
+      JSON.stringify(filters) +
+      "', N'" +
+      description +
+      "'";
+    console.log("QUERY");
+    console.log(query);
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
   }
 
   //A SLOW QUERY TO TEST THE PLAY COUNT PART
