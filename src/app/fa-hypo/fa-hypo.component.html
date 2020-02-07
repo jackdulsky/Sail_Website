@@ -20,7 +20,22 @@
     </div>
   </div>
   <div class="rightSide">
-    <div>
+    <div class="capInfo">
+      <div>
+        Sum of Sail ID's &nbsp; - &nbsp;{{ calcTest }} &nbsp;{{
+          calcTestDifference
+        }}
+      </div>
+      <div>
+        <div *ngFor="let operation of logOfMoves | keyvalue">
+          <span *ngIf="operation.value.type == 0"> Cut </span>
+          <span *ngIf="operation.value.type == 1"> Sign </span>
+          &nbsp;-&nbsp;
+          {{ operation.value.item.PlayerName }}
+        </div>
+      </div>
+    </div>
+    <div class="UFASelectionArea">
       <div class="posSelect">
         <div
           class="posButtons"

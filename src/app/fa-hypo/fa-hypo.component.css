@@ -1,6 +1,15 @@
 ::-webkit-scrollbar {
   width: 3px;
 }
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-family: "DIN-Regular";
+}
 a,
 ::ng-deep a:-webkit-any-link {
   text-decoration: none;
@@ -15,6 +24,9 @@ a,
   float: left;
   margin-left: 0.5%;
 }
+.capInfo {
+  height: calc(0.5 * (100vh - 190px));
+}
 .posSelect {
   width: 100%;
   /* display: flex; */
@@ -26,15 +38,22 @@ a,
   text-align: center;
   min-width: 80px;
   /* width: -webkit-fill-available; */
-  border: 1px solid black;
+  border-bottom: 3px solid white;
 }
 .posButtons:hover {
-  background-color: cornflowerblue;
+  background-color: var(--raiders-gray);
+  color: black !important;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: 3px solid rgb(66, 197, 245);
   cursor: pointer;
 }
 .depthchartContainer {
   display: grid;
-  grid-template-columns: repeat(11, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  grid-template-columns: repeat(6, 1fr);
   grid-column-gap: 10px;
   margin: 10px;
   margin-left: 0px;
@@ -45,7 +64,7 @@ a,
   display: grid;
   grid-template-columns: 1fr;
   grid-column-gap: 10px;
-  margin: 10px;
+  margin: 0px;
 }
 .posHeader {
   background-color: #f0f2f5;
@@ -63,6 +82,7 @@ a,
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  margin-bottom: 3px;
 }
 .posHeaderUFA {
   background-color: #474747;
@@ -95,9 +115,11 @@ a,
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
   height: 400px;
+  width: 150px;
 }
 .UFAContainer {
   /* height: 350px !important; */
+  width: 100% !important;
 }
 .heightLimit {
   height: 370px;

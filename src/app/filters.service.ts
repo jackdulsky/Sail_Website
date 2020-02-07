@@ -622,6 +622,7 @@ export class FiltersService {
         this.faHypo = data;
         for (let player of this.faHypo) {
           player["OrderID"] = order;
+          player["PlayerHTML"] = player["PlayerName"];
           order += 1;
         }
         //call sort and distribute function
@@ -641,6 +642,7 @@ export class FiltersService {
         player["OrderID"] = order;
         order += 1;
       }
+      console.log("DAT", this.ufaBorad);
 
       this.timeLastUFAPull.next(String(Date.now()));
     });

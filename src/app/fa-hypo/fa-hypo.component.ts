@@ -13,6 +13,7 @@ import {
   ɵELEMENT_PROBE_PROVIDERS__POST_R3__
 } from "@angular/platform-browser";
 import { catchError } from "rxjs/operators";
+import { type } from "os";
 
 @Component({
   selector: "app-fa-hypo",
@@ -38,6 +39,9 @@ export class FaHypoComponent implements OnInit {
   ufaPositionGroups = [];
   connectedPositionLists = [];
   ufaViewing = "UFAQB";
+  calcTest = 0;
+  calcTestDifference;
+  logOfMoves = {};
 
   constructor(
     public filterService: FiltersService,
@@ -54,6 +58,9 @@ export class FaHypoComponent implements OnInit {
 
   initArraysRaiders() {
     if (this.filterService.faHypo) {
+      for (let player of this.filterService.faHypo) {
+        this.calcTest += player["SailID"];
+      }
       for (let group in this.groups) {
         this.positionGroups.push({
           id: "Depth" + group,
@@ -63,6 +70,7 @@ export class FaHypoComponent implements OnInit {
             "Pos"
           )
         });
+
         this.connectedPositionLists.push("Depth" + group);
       }
     } else {
@@ -76,14 +84,14 @@ export class FaHypoComponent implements OnInit {
       this.ufaGroups = {};
       this.ufaPositionGroups = [];
       for (let player of this.filterService.ufaBorad) {
-        if (-1 == ["ST", "P", "K", "LS", "FB"].indexOf(player["PosBucket"])) {
+        if (-1 == ["P", "K", "LS", "FB"].indexOf(player["PosBucket"])) {
           if (!("UFA" + player["PosBucket"] in this.ufaGroups)) {
             this.ufaGroups[player["PosBucket"]] = [String(player["PosBucket"])];
           }
         }
       }
       for (let group in this.ufaGroups) {
-        if (-1 == ["ST", "P", "K", "LS", "FB"].indexOf(group)) {
+        if (-1 == ["P", "K", "LS", "FB"].indexOf(group)) {
           this.ufaPositionGroups.push({
             id: "UFA" + group,
             players: this.filterPlayers(
@@ -101,11 +109,11 @@ export class FaHypoComponent implements OnInit {
       }, 100);
     }
   }
-  reducedUFAPosition(groups: any) {
-    var toDisplay = [];
-    for (let group of groups) {
-      if (group.id == this.ufaViewing) {
-        toDisplay.push(group);
+
+  updateOrders(lists: any[]) {
+    for (let pos of lists) {
+      for (let i = 0; i < pos.length; i++) {
+        pos[i]["OrderID"] = i;
       }
     }
   }
@@ -131,7 +139,15 @@ export class FaHypoComponent implements OnInit {
 
   highlightOrNot(name: string) {
     if ("UFA" + name == this.ufaViewing) {
-      return { backgroundColor: "cornflowerblue" };
+      return {
+        //backgroundColor: "cornflowerblue" ,
+        backgroundColor: "white",
+        color: "black",
+        borderLeft: "0px",
+        borderTop: "0px",
+        borderRight: "0px",
+        borderBottom: "3px solid rgb(66, 197, 245)"
+      };
     } else {
       return {};
     }
@@ -159,15 +175,8 @@ export class FaHypoComponent implements OnInit {
       : 0;
   };
 
-  updateOrders(lists: any[]) {
-    for (let pos of lists) {
-      for (let i = 0; i < pos.length; i++) {
-        pos[i]["OrderID"] = i;
-      }
-    }
-  }
-
   drop(event: CdkDragDrop<string[]>) {
+    console.log("event", event);
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -177,13 +186,41 @@ export class FaHypoComponent implements OnInit {
 
       this.updateOrders([event.container.data]);
     } else {
+      console.log("event", event);
+      var previousID = event.previousContainer.id;
+      var newID = event.container.id;
+      var dataItem = event.previousContainer.data[event.previousIndex];
+      console.log(dataItem);
+      if (previousID[0] == "U" && newID[0] == "D") {
+        this.calcTest += dataItem["SailID"];
+        this.calcTestDifference = "(+" + String(dataItem["SailID"]) + ")";
+        if (
+          this.logOfMoves[dataItem["SailID"]] &&
+          this.logOfMoves[dataItem["SailID"]].type == 0
+        ) {
+          delete this.logOfMoves[dataItem["SailID"]];
+        } else {
+          this.logOfMoves[dataItem["SailID"]] = { item: dataItem, type: 1 };
+        }
+      }
+      if (previousID[0] == "D" && newID[0] == "U") {
+        this.calcTest -= dataItem["SailID"];
+        this.calcTestDifference = "(-" + String(dataItem["SailID"]) + ")";
+        if (
+          this.logOfMoves[dataItem["SailID"]] &&
+          this.logOfMoves[dataItem["SailID"]].type == 1
+        ) {
+          delete this.logOfMoves[dataItem["SailID"]];
+        } else {
+          this.logOfMoves[dataItem["SailID"]] = { item: dataItem, type: 0 };
+        }
+      }
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
-
       this.updateOrders([event.previousContainer.data, event.container.data]);
     }
   }

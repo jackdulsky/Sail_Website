@@ -16,7 +16,7 @@ import { dependenciesFromGlobalMetadata } from "@angular/compiler/src/render3/r3
 })
 export class PullDataService {
   //UTILITY SERVER URL
-  serverURL = "https://oaksvr06.raiders.com/";
+  serverURL = "http://oaksvr06.raiders.com/";
   GUID;
   constructor(private http: HttpClient) {}
   //RETURN ALL THE INFOR RELATED TO TEAMS FROM THE DATA BASE
@@ -56,7 +56,9 @@ export class PullDataService {
 
   //GET NEXT LEVEL OF SUBFOLDERS FROM DATABASE
   getSubFolders(name: string) {
-    return this.http.get("oaksvr06.raiders.com/api/xos/subfolders/" + name);
+    return this.http.get(
+      "http://oaksvr06.raiders.com/api/xos/subfolders/" + name
+    );
   }
 
   //SAVE THE FILTER SET IN THE DB
@@ -347,7 +349,7 @@ export class PullDataService {
   }
   pullUFABoard() {
     var query =
-      "EXEC	[SaildB].[Reports].[spRD_Market_FreeAgentBoard] N'fa4ca790-f36e-5554-1f14-1fb67bbddd4c'";
+      "EXEC	[SaildB].[Reports].[spRD_Market_FreeAgentBoard] N'972c1675-43af-5ec6-1658-c1260d0976ab'";
     //'" +
     //      this.GUID +
     //    "'";
