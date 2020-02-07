@@ -8,12 +8,15 @@
   ></iframe>
   style="width:calc(100vw - 209px);height:calc(100vh - 304px);"
 </div> -->
+<!-- style="height:700px; width:1000px" -->
+<!-- (load)="checkUpload()" -->
 <div>
   <iframe
     id="iframe"
     [src]="filterService.viewingURL"
-    [ngStyle]="setIFrameStyle()"
     crossorigin="anonymous"
+    crossorigin="use-credentials"
+    [ngStyle]="setIFrameStyle()"
   ></iframe>
 </div>
 <div

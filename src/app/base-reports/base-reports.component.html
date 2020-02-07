@@ -8,7 +8,7 @@
     >
       <div
         class="grid-itemGen"
-        (click)="changeReportType(repo.key)"
+        (click)="reportClicked($event, repo.key)"
         [ngStyle]="body.setIconStyle(repo.value)"
       >
         <div [ngStyle]="body.setIconImageStyle(repo.value)"></div>

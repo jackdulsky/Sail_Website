@@ -4,6 +4,8 @@ import { FiltersService } from "../filters.service";
 import { PullDataService } from "../pull-data.service";
 import * as cloneDeep from "lodash/cloneDeep";
 import { filter } from "minimatch";
+import { TypeScriptEmitter } from "@angular/compiler";
+import { catchError } from "rxjs/operators";
 
 @Component({
   selector: "app-loading",
@@ -80,10 +82,13 @@ export class LoadingComponent implements OnInit {
   //CALL ROUTE AFTER
   injectFilters() {
     setTimeout(() => {
-      console.log("LOOP 28");
       if (this.jsonExists) {
         var filters = this.loadJSON;
-        this.filterService.loadJSON(JSON.parse(decodeURIComponent(filters)));
+        try {
+          this.filterService.loadJSON(JSON.parse(decodeURIComponent(filters)));
+        } catch (e) {
+          console.log("COULD NOT ADD FILTERS");
+        }
         for (let query in this.filterService.FIDBID) {
           this.doneloading += 1;
           this.doneChecking = false;
@@ -92,13 +97,9 @@ export class LoadingComponent implements OnInit {
       this.filterService.setActiveClub();
       this.filterService.setActivePlayer();
       this.rerouteAfterUpload();
-    }, 200);
+    }, 50);
   }
-  //http://localhost:4200/loading/bcaaad3d-3395-389a-81a1-17dff1ada31b/[[%22-3%22,%223%22,[%221009876%22]],[%E2%80%9C-3%E2%80%9D,%221000%22,[%22192226%22]]]/Player,report,2676
-  //http://localhost:4200/loading/bcaaad3d-3395-389a-81a1-17dff1ada31b/[[%22-3%22,%223%22,[%221009876%22]],[%E2%80%9C-3%E2%80%9D,%221000%22,[%22192226%22]]]/Player,report,2676
-  //http://localhost:4200/loading/bcaaad3d-3395-389a-81a1-17dff1ada31b/[[%22-3%22,%223%22,[%221009876%22]],[%22-3%22,%221000%22,[%22192226%22]]]/Player,report,2676
 
-  //http://localhost:4200/loading/fe554fcb-1ef9-1cc7-483d-456e3ac348c9/[[%22-3%22,%223%22,[%221009876%22]],[%22-3%22,%221000%22,[%22192226%22]]]/Player,report,2676
   //ROUTE TO APPROPRIATE PLACE
   rerouteAfterUpload() {
     if (this.reroutExists) {
@@ -119,6 +120,9 @@ export class LoadingComponent implements OnInit {
                 .join("/")
                 .toLowerCase()
           ]);
+          setTimeout(() => {
+            this.filterService.updateRDURL();
+          }, 1500);
         } catch (e) {
           this.router.navigate([""]);
         }
@@ -143,3 +147,5 @@ export class LoadingComponent implements OnInit {
 
 //two filters:
 //http://localhost:4200/home/ab717eac-a5dc-3442-44c5-2d1771b46c95/loading/ab717eac-a5dc-3442-44c5-2d1771b46c95/%5b%5b%22-3%22,%223%22,%5b%221001058%22%5d%5d,%5b%22-1%22,%221%22,%5b%221%22%5d%5d%5d/home
+//http://localhost:4200/loading/ab717eac-a5dc-3442-44c5-2d1771b46c95/%5b%5b%22-3%22,%223%22,%5b%221001058%22%5d%5d,%5b%22-1%22,%221%22,%5b%221%22%5d%5d%5d/home
+//http://localhost:4200/loading/ab717eac-a5dc-3442-44c5-2d1771b46c95/%5b%5b%22-3%22,%22100055%22,%5b%5d%5d%5d/home

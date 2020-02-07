@@ -92,7 +92,7 @@ export class FilterspopComponent implements OnInit {
     this.form = this.fb.group({});
     this.formG = this.fb.group({});
     this.filterService.setPlayers();
-    //this.createPosMenus();
+    // this.createPosMenus();
     this.cdref.detectChanges();
     this.filterService.conferenceSelections["2"] = "AFC";
     setTimeout(() => {
@@ -340,7 +340,7 @@ export class FilterspopComponent implements OnInit {
       }
       overallString += template30;
     }
-    //console.log("OVR STRING", overallString);
+    console.log("OVR STRING", overallString);
     //this.posHTML = overallString;
     //return this.sanitizer.bypassSecurityTrustHtml(overallString);
   }

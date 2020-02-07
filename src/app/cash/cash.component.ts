@@ -36,7 +36,10 @@ export class CashComponent implements OnInit {
     public body: BodyComponent,
     public cdref: ChangeDetectorRef,
     public fb: FormBuilder
-  ) {}
+  ) {
+    document.addEventListener("click", e => this.onClick(e));
+  }
+
   cashTabSelected;
   showYear = false;
   Label = "Label";
@@ -46,6 +49,20 @@ export class CashComponent implements OnInit {
   FAStatusFilterID;
   showFilters;
   yearListAnimationState = "out";
+
+  onClick(event) {
+    var target = event.target || event.srcElement || event.currentTarget;
+    var idAttr = target.attributes.id;
+    var value;
+    if (idAttr) {
+      value = idAttr.nodeValue;
+    } else {
+      value = "";
+    }
+    if (this.showYear && !value.toLowerCase().includes("year")) {
+      this.showYearList();
+    }
+  }
 
   ngOnInit() {
     // this.filterService.getBulkImport();
@@ -201,8 +218,6 @@ export class CashComponent implements OnInit {
 
     try {
       if (this.filterService.reportTabs[name]["IsList"] == 0) {
-        var newRoute = this.router.url.split("/base-report")[0];
-        newRoute = newRoute.split("/report")[0];
         var reportID = Object.keys(
           this.filterService.reportReportsStructure[name]
         )[0];
@@ -212,17 +227,44 @@ export class CashComponent implements OnInit {
         document.getElementById("fullScreenButton").className = "fullScreen";
       } else {
         this.filterService.selected = name;
-        var newRoute = this.router.url.split("/report")[0];
-        newRoute = newRoute.split("/base-report")[0];
 
         this.router.navigate(["./base-reports", String(name)], {
           relativeTo: this.route
         });
         document.getElementById("fullScreenButton").className =
           "fullScreenInactive";
-        // this.router.navigate([newRoute + "../base-reports/" + String(name)]);
       }
     } catch (e) {}
+  }
+  tabClicked(e: any, name: any) {
+    if (e.ctrlKey) {
+      var url = this.router.url.split("/");
+      var number = name;
+      var base = "";
+      if (this.filterService.reportTabs[name]["IsList"] == 0) {
+        number = Object.keys(
+          this.filterService.reportReportsStructure[name]
+        )[0];
+        base = "report";
+      } else {
+        base = "base-reports";
+      }
+      this.filterService.goToLink(
+        "http://oakcmsreports01.raiders.com:88" +
+          "/" +
+          url[1] +
+          "/" +
+          url[2] +
+          "/" +
+          url[3] +
+          "/" +
+          base +
+          "/" +
+          number
+      );
+    } else {
+      this.subRoute(name);
+    }
   }
 
   //Show The list of years to select
@@ -235,10 +277,8 @@ export class CashComponent implements OnInit {
   }
   toggleShowDiv(divName: string) {
     if (divName === "yearList") {
-      console.log(this.yearListAnimationState);
       this.yearListAnimationState =
         this.yearListAnimationState === "out" ? "in" : "out";
-      console.log(this.yearListAnimationState);
     }
   }
 

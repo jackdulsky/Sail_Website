@@ -251,9 +251,6 @@ export class ClubComponent implements OnInit {
     //Route Appropriately
     try {
       if (this.filterService.reportTabs[name]["IsList"] == 0) {
-        var newRoute = this.router.url.split("/base-report")[0];
-        newRoute = newRoute.split("/report")[0];
-
         var reportID = Object.keys(
           this.filterService.reportReportsStructure[name]
         )[0];
@@ -265,8 +262,6 @@ export class ClubComponent implements OnInit {
         // this.router.navigate([newRoute + "/report/" + String(reportID)]);
       } else {
         this.filterService.selected = name;
-        var newRoute = this.router.url.split("/report")[0];
-        newRoute = newRoute.split("/base-report")[0];
 
         this.router.navigate(["./base-reports", String(name)], {
           relativeTo: this.route
@@ -276,6 +271,36 @@ export class ClubComponent implements OnInit {
         // this.router.navigate([newRoute + "/base-reports/" + String(name)]);
       }
     } catch (e) {}
+  }
+  tabClicked(e: any, name: any) {
+    if (e.ctrlKey) {
+      var url = this.router.url.split("/");
+      var number = name;
+      var base = "";
+      if (this.filterService.reportTabs[name]["IsList"] == 0) {
+        number = Object.keys(
+          this.filterService.reportReportsStructure[name]
+        )[0];
+        base = "report";
+      } else {
+        base = "base-reports";
+      }
+      this.filterService.goToLink(
+        "http://oakcmsreports01.raiders.com:88" +
+          "/" +
+          url[1] +
+          "/" +
+          url[2] +
+          "/" +
+          url[3] +
+          "/" +
+          base +
+          "/" +
+          number
+      );
+    } else {
+      this.subRoute(name);
+    }
   }
 
   //Show The list of years to select
@@ -289,16 +314,12 @@ export class ClubComponent implements OnInit {
   }
   toggleShowDiv(divName: string) {
     if (divName === "yearList") {
-      console.log(this.yearListAnimationState);
       this.yearListAnimationState =
         this.yearListAnimationState === "out" ? "in" : "out";
-      console.log(this.yearListAnimationState);
     }
     if (divName === "teamList") {
-      console.log(this.teamListAnimationState);
       this.teamListAnimationState =
         this.teamListAnimationState === "out" ? "in" : "out";
-      console.log(this.teamListAnimationState);
     }
   }
 }

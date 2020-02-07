@@ -24,7 +24,7 @@ import { FilterspopComponent } from "./filterspop/filterspop.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ReportComponent } from "./report/report.component";
 import { PullDataService } from "./pull-data.service";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { SelectDropDownModule } from "ngx-select-dropdown";
 import { MatFormFieldModule, MatSelectModule } from "@angular/material";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
@@ -66,6 +66,8 @@ import { MenuItemComponent } from "./menu-item/menu-item.component";
 import { OrderAttributePipe } from "./order-attribute.pipe";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { ExcelComponent } from "./excel/excel.component";
+import { FaHypoComponent } from "./fa-hypo/fa-hypo.component";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 
 @NgModule({
   declarations: [
@@ -95,7 +97,8 @@ import { ExcelComponent } from "./excel/excel.component";
     NewpageComponent,
     MenuItemComponent,
     OrderAttributePipe,
-    ExcelComponent
+    ExcelComponent,
+    FaHypoComponent
   ],
   imports: [
     NgCircleProgressModule.forRoot({
@@ -153,7 +156,8 @@ import { ExcelComponent } from "./excel/excel.component";
     Material.MatDialogModule,
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    DragDropModule
   ],
   providers: [
     { provide: MatDialogRef },

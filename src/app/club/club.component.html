@@ -259,7 +259,7 @@
         let cat of filterService.getReportHeaders(2) | keyvalue: body.valueOrder
       "
       id="{{ cat.key }}clubBarHighlightid"
-      (click)="subRoute(cat.key)"
+      (click)="tabClicked($event, cat.key)"
     >
       {{ cat.value.Label }}
     </div>

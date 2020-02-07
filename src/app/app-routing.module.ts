@@ -14,7 +14,7 @@ import { HomeComponent } from "./home/home.component";
 import { NewpageComponent } from "./newpage/newpage.component";
 import { ExtraOptions } from "@angular/router";
 import { ExcelComponent } from "./excel/excel.component";
-
+import { FaHypoComponent } from "./fa-hypo/fa-hypo.component";
 export const routingConfiguration: ExtraOptions = {
   paramsInheritanceStrategy: "always"
 };
@@ -100,6 +100,10 @@ export const routes: Routes = [
       {
         path: "excel",
         component: ExcelComponent
+      },
+      {
+        path: "fa-hypo",
+        component: FaHypoComponent
       },
       {
         path: "cash",

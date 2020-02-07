@@ -13,7 +13,7 @@ import { ChangeDetectorRef } from "@angular/core";
 export class ReportComponent implements OnInit {
   typeID: number;
   temp: string;
-  sourceURL: string = "https://sail.raiders.com/view/";
+  sourceURL: string = "http://oakcmsreports01.raiders.com/view/";
   constructor(
     private ReportListServices: ReportListService,
     public sanitizer: DomSanitizer,
@@ -40,6 +40,7 @@ export class ReportComponent implements OnInit {
       this.viewing = String(params["reportid"]); // (+) converts string 'id' to a number
       this.filterService.createRDURL(this.viewing);
       this.cdref.detectChanges();
+      this.filterService.updateRDURL();
 
       // this.cdref.detectChanges();
     });
@@ -60,11 +61,18 @@ export class ReportComponent implements OnInit {
         h = 104;
       }
     }
+
     let styles = {
       width: "calc(100vw - 209px)",
       height: "calc(100vh - " + String(h) + "px)"
     };
 
     return styles;
+  }
+
+  checkUpload() {
+    let iframe = document.getElementById("iframe") as HTMLIFrameElement;
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    console.log("DOC", innerDoc);
   }
 }

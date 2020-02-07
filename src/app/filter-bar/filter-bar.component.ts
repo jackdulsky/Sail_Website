@@ -78,7 +78,8 @@ export class FilterBarComponent implements OnInit {
         ) {
           this.filterService.pushQueryToActiveFilter("0");
         } else {
-          this.filterService.pushQueryToActiveFilter("0", false);
+          // this.filterService.pushQueryToActiveFilter("0", false);
+          this.filterService.pushQueryToActiveFilter("0");
         }
       });
     } else {
@@ -92,7 +93,16 @@ export class FilterBarComponent implements OnInit {
   }
 
   getNavElLabel(element: any) {
-    return this.filterService.pullNavigationElement[element]["Label"];
+    if (this.filterService.pullNavigationElement) {
+      try {
+        return this.filterService.pullNavigationElement[element]["Label"];
+      } catch (e) {}
+    } else {
+      setTimeout(() => {
+        console.log("LOOP 50");
+        return this.getNavElLabel(element);
+      }, 200);
+    }
   }
 
   //Check if the explicits are empty

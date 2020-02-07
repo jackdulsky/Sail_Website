@@ -32,7 +32,7 @@ export class BodyComponent implements OnInit {
   portalSelected = "";
   location = "XOS Folder";
   reports;
-  portals = ["club", "player", "cash"]; //, "excel"];
+  portals = ["club", "player", "cash", "fa-hypo"]; //, "excel"];
 
   noFolderAlert = false;
   folderSelected = false;

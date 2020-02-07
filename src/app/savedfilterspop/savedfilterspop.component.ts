@@ -36,7 +36,6 @@ export class SavedfilterspopComponent implements OnInit {
   }
   pullSavedList() {
     this.pullData.getSavedFilters().subscribe(data => {
-      console.log("SAVED IMPORT", data);
       this.savedOptions = data;
     });
   }

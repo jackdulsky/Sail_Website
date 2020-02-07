@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Observable, of, BehaviorSubject } from "rxjs";
 import { PullDataService } from "./pull-data.service";
 import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
@@ -65,6 +65,8 @@ export class FiltersService {
   positionHItem;
   clubSpecifics;
   playerSpecifics;
+  faHypo;
+  ufaBorad;
   OrderID = "OrderID";
   conferenceSelected = "AFC";
   conferenceSelectedDEF = "AFC";
@@ -95,7 +97,7 @@ export class FiltersService {
   portalSelected = "";
 
   viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-    "https://sail.raiders.com/"
+    "http://oakcmsreports01.raiders.com/"
   );
 
   portalYearsSelected: String[] = [];
@@ -127,7 +129,8 @@ export class FiltersService {
   fidCashMap = {};
   fidCashMapFIDtoID = {};
   menuOpen = false;
-
+  timeLastSent = new BehaviorSubject<string>("");
+  timeLastUFAPull = new BehaviorSubject<string>("");
   //   "OPTION 1":
   //     "http://oakcmsreports01.raiders.com:88/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
   //   "OPTION 2":
@@ -349,10 +352,10 @@ export class FiltersService {
         //     }) +
         //     ";"
         // );
-        console.log("FORM", this.form);
-        console.log(
-          "component.filterService.form = " + JSON.stringify(this.form) + ";"
-        );
+        // console.log("FORM", this.form);
+        // console.log(
+        //   "component.filterService.form = " + JSON.stringify(this.form) + ";"
+        // );
       });
       this.pullData.pullDataType().subscribe(data => {
         this.pullDataType = {};
@@ -472,7 +475,7 @@ export class FiltersService {
 
           this.pullValue[valID] = data[b];
         }
-        //console.log("PULLValueMap", this.pullValueMap);
+        // console.log("PULLValueMap", this.pullValueMap);
         ////console.log("PULL ORDER MAP", this.pullOrderMap);
         // console.log(
         //   "component.filterService.pullValueMap = " +
@@ -594,8 +597,8 @@ export class FiltersService {
         };
         this.positionHierarchy[0] = [101, 102, 103];
 
-        // //console.log("POS ITEMS", this.positionHItem);
-        // //console.log("POS HIERARCHY", this.positionHierarchy);
+        // console.log("POS ITEMS", this.positionHItem);
+        // console.log("POS HIERARCHY", this.positionHierarchy);
         // console.log(
         //   "component.filterService.positionHItem = " +
         //     JSON.stringify(this.positionHItem) +
@@ -607,9 +610,40 @@ export class FiltersService {
         //     ";"
         // );
       });
+      this.pullData.pullfahypo().subscribe(data => {
+        // this.faHypo = {};
+        // this.extractID(data, "SailID", this.faHypo);
+        // var order = 1;
+        // for (let player in this.faHypo) {
+        //   this.faHypo[player]["OrderID"] = order;
+        //   order += 1;
+        // }
+        var order = 0;
+        this.faHypo = data;
+        for (let player of this.faHypo) {
+          player["OrderID"] = order;
+          order += 1;
+        }
+        //call sort and distribute function
+
+        // console.log(this.faHypo);
+      });
     }
     this.bulkImported = true;
     return true;
+  }
+
+  pullInfoFAHypo() {
+    this.pullData.pullUFABoard().subscribe(data => {
+      var order = 0;
+      this.ufaBorad = data;
+      for (let player of this.ufaBorad) {
+        player["OrderID"] = order;
+        order += 1;
+      }
+
+      this.timeLastUFAPull.next(String(Date.now()));
+    });
   }
 
   //IMPORT A SAVED FILTER
@@ -835,88 +869,95 @@ export class FiltersService {
 
   //PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
   pushQueryToActiveFilter(BID: string, clearWorking: boolean = true) {
-    var oldDB = cloneDeep(this.DBFormat);
-    if (this.router.url.includes("club/")) {
-      this.reduceFiltersSingleClub();
-    }
-
-    if (
-      this.router.url.includes("player/") &&
-      this.playerPortalActivePlayerID != ""
-    ) {
-      this.reduceFiltersSinglePlayer();
-    }
-    for (let bin in this.workingQuery) {
-      //PUSH EMPTY PERFORM DELETES
-      if (Object.keys(this.workingQuery[bin]).length == 0) {
-        if (this.workingFID[bin] != "") {
-          delete this.FIDs[this.workingFID[bin]];
-          delete this.FIDBID[this.workingFID[bin]];
-          delete this.DBFormat[bin][this.workingFID[bin]];
-          this.workingFID[bin] = "";
-        }
-        continue;
+    if (JSON.stringify(this.workingFID) == "{}") {
+      setTimeout(() => {
+        this.pushQueryToActiveFilter(BID, clearWorking);
+      }, 100);
+    } else {
+      var oldDB = cloneDeep(this.DBFormat);
+      if (this.router.url.includes("club/")) {
+        this.reduceFiltersSingleClub();
+      }
+      if (
+        this.router.url.includes("player/") &&
+        this.playerPortalActivePlayerID != ""
+      ) {
+        this.reduceFiltersSinglePlayer();
       }
 
-      //DO NOT DOUBLE PUT IN ITEMS
-
-      for (let key in this.FIDs) {
-        if (
-          this.isEqualObjectsContents(this.FIDs[key], this.workingQuery[bin])
-        ) {
+      for (let bin in this.workingQuery) {
+        //PUSH EMPTY PERFORM DELETES
+        if (Object.keys(this.workingQuery[bin]).length == 0) {
+          if (this.workingFID[bin] != "") {
+            delete this.FIDs[this.workingFID[bin]];
+            delete this.FIDBID[this.workingFID[bin]];
+            delete this.DBFormat[bin][this.workingFID[bin]];
+            this.workingFID[bin] = "";
+          }
           continue;
         }
+
+        //DO NOT DOUBLE PUT IN ITEMS
+
+        for (let key in this.FIDs) {
+          if (
+            this.isEqualObjectsContents(this.FIDs[key], this.workingQuery[bin])
+          ) {
+            continue;
+          }
+        }
+
+        //SET FID TO CURRENT OR GENERATE NEW ONE
+        var newFIDNumber;
+
+        if (this.workingFID[bin].length >= 1) {
+          newFIDNumber = cloneDeep(this.workingFID[bin]);
+        } else {
+          newFIDNumber = String(Math.floor(Math.random() * 1000));
+          this.FIDCreationOrder[bin] = this.FIDCreationOrder[bin].concat([
+            newFIDNumber
+          ]);
+        }
+        //PUT THE WORKING QUERY IN NEW FIDs
+        var pkID = [];
+        this.FIDs[newFIDNumber] = Object.assign(
+          {},
+          cloneDeep(this.workingQuery[bin])
+        );
+
+        var att = cloneDeep(this.workingQuery[bin]);
+        //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
+        if (att[String(Number(bin) * -1)]) {
+          pkID = cloneDeep(att[String(Number(bin) * -1)]);
+          delete att[String(Number(bin) * -1)];
+        }
+
+        var FID = [];
+
+        //INIT THE NEW DB FORMAT BEFORE ADDING
+        this.FIDBID[newFIDNumber] = bin;
+        if (!this.DBFormat[bin]) {
+          this.DBFormat[bin] = {};
+        }
+        this.DBFormat[bin][newFIDNumber] = [pkID, att, FID];
+        //RESET
+        if (clearWorking) {
+          this.workingQuery[bin] = {};
+          this.workingFID[bin] = "";
+        }
       }
-
-      //SET FID TO CURRENT OR GENERATE NEW ONE
-      var newFIDNumber;
-      if (this.workingFID[bin] != "") {
-        newFIDNumber = cloneDeep(this.workingFID[bin]);
-      } else {
-        newFIDNumber = String(Math.floor(Math.random() * 1000));
-        this.FIDCreationOrder[bin] = this.FIDCreationOrder[bin].concat([
-          newFIDNumber
-        ]);
-      }
-      //PUT THE WORKING QUERY IN NEW FIDs
-      var pkID = [];
-      this.FIDs[newFIDNumber] = Object.assign(
-        {},
-        cloneDeep(this.workingQuery[bin])
-      );
-      var att = cloneDeep(this.workingQuery[bin]);
-      //PULL OUT THE PKIDS AND PUT INTO THE FORM TO SEND UP TO THE DATA BASE
-      if (att[String(Number(bin) * -1)]) {
-        pkID = cloneDeep(att[String(Number(bin) * -1)]);
-        delete att[String(Number(bin) * -1)];
-      }
-
-      var FID = [];
-
-      //INIT THE NEW DB FORMAT BEFORE ADDING
-
-      this.FIDBID[newFIDNumber] = bin;
-      if (!this.DBFormat[bin]) {
-        this.DBFormat[bin] = {};
-      }
-      this.DBFormat[bin][newFIDNumber] = [pkID, att, FID];
-
       //RESET
       if (clearWorking) {
-        this.workingQuery[bin] = {};
-        this.workingFID[bin] = "";
+        this.form.reset();
       }
-    }
-    //RESET
-    if (clearWorking) {
-      this.form.reset();
-    }
 
-    //SEND UP TO THE DB
+      //SEND UP TO THE DB
 
-    if (!this.checkDBFormats(oldDB, cloneDeep(this.DBFormat))) {
-      this.saveAndSend();
-      this.updateRDURL();
+      if (!this.checkDBFormats(oldDB, cloneDeep(this.DBFormat))) {
+        this.saveAndSend();
+
+        this.updateRDURL();
+      }
     }
   }
 
@@ -1104,9 +1145,11 @@ export class FiltersService {
           this.pullData
             .constructAndSendFilters(dbFormatWithAddedHiddenYears)
             .subscribe(data => {
+              this.timeLastSent.next(String(Date.now()));
               this.updatePlayerData();
               this.updateClubData();
               this.updateCashFilters();
+              this.pullInfoFAHypo();
             });
           this.testSendFilters2();
           this.setActiveClub();
@@ -1153,8 +1196,9 @@ export class FiltersService {
       }
       for (let i = 0; i <= fids2.length - 1; i++) {
         if (
+          fids1[i] != fids2[i] ||
           JSON.stringify(structure1[bin][fids1[i]]) !=
-          JSON.stringify(structure2[bin][fids2[i]])
+            JSON.stringify(structure2[bin][fids2[i]])
         ) {
           return false;
         }
@@ -1189,6 +1233,7 @@ export class FiltersService {
 
     this.form.reset();
     this.formCash.reset();
+
     this.saveAndSend();
   }
 
@@ -1581,10 +1626,9 @@ export class FiltersService {
   }
 
   //Thisfunction creates and stores the RD URL
-  createRDURL(id: any) {
-    // var baseURL = "https://sail.raiders.com/view/REPLACEME///true/true/true";
+  createRDURL(id: any, count: any = 0) {
     this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-      "https://sail.raiders.com/"
+      "http://oakcmsreports01.raiders.com/"
     );
 
     if (this.reportURL) {
@@ -1600,10 +1644,12 @@ export class FiltersService {
         return cloneDeep(this.viewingURL);
       } catch (e) {}
     } else {
-      setTimeout(() => {
-        console.log("LOOP 13");
-        return this.createRDURL(id);
-      }, 100);
+      if (count <= 5) {
+        setTimeout(() => {
+          console.log("LOOP 13");
+          return this.createRDURL(id, count + 1);
+        }, 150);
+      }
     }
   }
 
@@ -1681,6 +1727,7 @@ export class FiltersService {
           }
         });
       } catch (e) {}
+
       this.saveAndSend();
     }
   }
@@ -1688,6 +1735,7 @@ export class FiltersService {
   //THIS FUNCTION WILL TAKE IN A JSON OF:
   //[BIN, ATT ID, [VALUES]]
   //removes content of a bin if a filter is being added
+  //removes filter content if the value is empty ex. ["-11","10092",[]]
   loadJSON(filters: any) {
     //[["-2","2",["1024","1026"]],["-11","10092",["10000001"]]]
     var tempDict = {};
@@ -1716,8 +1764,10 @@ export class FiltersService {
         this.portalYearsSelected = cloneDeep(add[2]);
         this.portalYearsOnly = cloneDeep(add[2]);
       } else {
-        tempDict[add[0]][add[1]] = add[2];
-        this.workingQuery[add[0]] = tempDict[add[0]];
+        if (JSON.stringify(add[2]) != "[]") {
+          tempDict[add[0]][add[1]] = add[2];
+          this.workingQuery[add[0]] = tempDict[add[0]];
+        }
       }
     }
 
@@ -1732,11 +1782,14 @@ export class FiltersService {
     if (this.workingQuery["-2"]) {
       tempDict = cloneDeep(this.workingQuery["-2"]);
     }
-    tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
 
+    tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
     var add = this.removeExplicitFilters("-2", this.teamPortalActiveClubID);
+    console.log("HERE 2");
     if (add) {
+      console.log("HERE 3");
       this.workingQuery["-2"] = tempDict;
+      console.log();
     }
   }
 
@@ -1748,6 +1801,7 @@ export class FiltersService {
     }
     tempDict["3"] = [cloneDeep(this.playerPortalActivePlayerID)];
     var add = this.removeExplicitFilters("-3", this.playerPortalActivePlayerID);
+
     if (add) {
       this.workingQuery["-3"] = tempDict;
     }
@@ -1782,7 +1836,10 @@ export class FiltersService {
     var oldWorkingQuery = cloneDeep(this.workingQuery);
     var oldWorkingFID = cloneDeep(this.workingFID);
     var oldForm = cloneDeep(this.form);
-    this.pushDBFormat(alteredDBFormat);
+    if (!this.checkDBFormats(alteredDBFormat, cloneDeep(this.DBFormat))) {
+      this.pushDBFormat(alteredDBFormat);
+    }
+
     this.workingQuery = oldWorkingQuery;
     this.workingFID = oldWorkingFID;
     this.form = oldForm;
@@ -1839,7 +1896,6 @@ export class FiltersService {
     var oldWorkingQuery = cloneDeep(this.workingQuery);
     var oldWorkingFID = cloneDeep(this.workingFID);
     var oldForm = cloneDeep(this.form);
-
     this.pushDBFormat(alteredDBFormat);
     this.workingQuery = oldWorkingQuery;
     this.workingFID = oldWorkingFID;

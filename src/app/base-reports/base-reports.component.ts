@@ -62,4 +62,27 @@ export class BaseReportsComponent implements OnInit {
     this.filterService.clickedReport = true;
     this.body.changeReportType(num);
   }
+
+  reportClicked(e: any, name: any) {
+    if (e.ctrlKey) {
+      var url = this.router.url.split("/");
+      var number = name;
+      var base = "report";
+      this.filterService.goToLink(
+        "http://oakcmsreports01.raiders.com:88" +
+          "/" +
+          url[1] +
+          "/" +
+          url[2] +
+          "/" +
+          url[3] +
+          "/" +
+          base +
+          "/" +
+          number
+      );
+    } else {
+      this.changeReportType(name);
+    }
+  }
 }

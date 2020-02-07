@@ -1,0 +1,158 @@
+<div style="overflow-y: scroll;height: 853px;">
+  <div class="leftSide">
+    <div class="depthchartContainer">
+      <div class="posContainer" *ngFor="let pos of positionGroups">
+        <div class="posHeader">{{ pos.id.substring(5) }}</div>
+
+        <div
+          cdkDropList
+          id="{{ pos.id }}"
+          [cdkDropListData]="pos.players"
+          [cdkDropListConnectedTo]="connectedPositionLists"
+          class="item-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+          <div class="item-box" *ngFor="let player of pos.players" cdkDrag>
+            {{ player["PlayerName"] }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rightSide">
+    <div>
+      <div class="posSelect">
+        <div
+          class="posButtons"
+          *ngFor="let group of ufaGroups | keyvalue"
+          (click)="changeView(group.key)"
+          [ngStyle]="highlightOrNot(group.key)"
+        >
+          {{ group.key }}
+        </div>
+      </div>
+      <div class="ufachartContainer">
+        <ng-container *ngFor="let pos of ufaPositionGroups">
+          <div class="posContainer UFAContainer" *ngIf="pos.id == ufaViewing">
+            <div class="posHeaderUFA">{{ pos.id.substring(3) }}</div>
+
+            <div
+              cdkDropList
+              id="{{ pos.id }}"
+              [cdkDropListData]="pos.players"
+              [cdkDropListConnectedTo]="connectedPositionLists"
+              class="item-list"
+              (cdkDropListDropped)="drop($event)"
+              *ngIf="pos.id == ufaViewing"
+            >
+              <div
+                class="item-box"
+                id="ufa{{ player['SailID'] }}"
+                *ngFor="let player of pos.players"
+                cdkDrag
+                [innerHTML]="
+                  player['PlayerHTML'].replace('12px;', '12px;width:100%;')
+                    | safehtml
+                "
+              ></div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="depthchartContainer">
+  <div class="posContainer">
+    <div class="posHeader">
+      EDGE
+    </div>
+    <div class="playerDepth" *ngFor="let player of filterPlayers(['EDGE'])">
+      &nbsp;{{ player["PlayerName"] }}
+    </div>
+  </div>
+  <div class="posContainer">
+    <div class="posHeader">
+      WR
+    </div>
+    <div
+      class="playerDepth"
+      *ngFor="let player of filterPlayers(['OWR', 'SWR', 'WR'])"
+    >
+      &nbsp;{{ player["PlayerName"] }}
+    </div>
+  </div>
+  <div class="posContainer">
+    <div class="posHeader">
+      CB
+    </div>
+    <div
+      class="playerDepth"
+      *ngFor="
+        let player of filterPlayers(['CB', 'LCB', 'RCB', 'OCB', 'NCB', 'ICB'])
+      "
+    >
+      &nbsp;{{ player["PlayerName"] }}
+    </div>
+  </div>
+  <div class="posContainer">
+    <div class="posHeader">
+      QB
+    </div>
+    <div class="playerDepth" *ngFor="let player of filterPlayers(['QB'])">
+      &nbsp;{{ player["PlayerName"] }}
+    </div>
+  </div>
+  <div class="posContainer">
+    <div class="posHeader">
+      RB
+    </div>
+    <div
+      class="playerDepth"
+      *ngFor="let player of filterPlayers(['RB', 'HB', 'FB'])"
+    >
+      &nbsp;{{ player["PlayerName"] }}
+    </div>
+  </div>
+</div>
+<div class="UFAPlayers">
+  <div
+    class="playerDepth UFAPlayer"
+    *ngFor="
+      let player of filterPlayers([
+        'OL',
+        'C',
+        'G',
+        'OG',
+        'OT',
+        'LT',
+        'RT',
+        'LG',
+        'RG'
+      ])
+    "
+  >
+    &nbsp;{{ player["PlayerName"] }}
+  </div>
+</div> -->
+
+<!-- 
+<div class="col-md-3" *ngFor="let week of weeks">
+  <div class="drag-container">
+    <div class="section-heading">Week {{ week.id }}</div>
+
+    <div
+      cdkDropList
+      id="{{ week.id }}"
+      [cdkDropListData]="week.weeklist"
+      [cdkDropListConnectedTo]="connectedTo"
+      class="item-list"
+      (cdkDropListDropped)="drop($event)"
+    >
+      <div class="item-box" *ngFor="let weekItem of week.weeklist" cdkDrag>
+        Week {{ week.id }} {{ weekItem }}
+      </div>
+    </div>
+  </div>
+</div> -->

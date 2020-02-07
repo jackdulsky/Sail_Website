@@ -16,7 +16,7 @@ import { dependenciesFromGlobalMetadata } from "@angular/compiler/src/render3/r3
 })
 export class PullDataService {
   //UTILITY SERVER URL
-  serverURL = "http://oaksvr06.raiders.com/";
+  serverURL = "https://oaksvr06.raiders.com/";
   GUID;
   constructor(private http: HttpClient) {}
   //RETURN ALL THE INFOR RELATED TO TEAMS FROM THE DATA BASE
@@ -56,9 +56,7 @@ export class PullDataService {
 
   //GET NEXT LEVEL OF SUBFOLDERS FROM DATABASE
   getSubFolders(name: string) {
-    return this.http.get(
-      "http://oaksvr06.raiders.com/api/xos/subfolders/" + name
-    );
+    return this.http.get("oaksvr06.raiders.com/api/xos/subfolders/" + name);
   }
 
   //SAVE THE FILTER SET IN THE DB
@@ -85,8 +83,7 @@ export class PullDataService {
       "', N'" +
       description +
       "'";
-    console.log("QUERY");
-    console.log(query);
+
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
@@ -337,6 +334,23 @@ export class PullDataService {
   pullPlayerURL() {
     var query =
       "Select p.SailID, PlayerImageUrl from ContractsDB..Player join saildb.org.Player p on player.PlayerId = p.GSISPlayerID where p.CurrentPlayerLevel = 'NFL'";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+  pullfahypo() {
+    var query =
+      "EXEC	[SaildB].[Reports].[spRD_Player_Position_Stats] N'ce9df573-eea4-3ff6-fb8d-6ccabb606ee5'";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+  pullUFABoard() {
+    var query =
+      "EXEC	[SaildB].[Reports].[spRD_Market_FreeAgentBoard] N'fa4ca790-f36e-5554-1f14-1fb67bbddd4c'";
+    //'" +
+    //      this.GUID +
+    //    "'";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

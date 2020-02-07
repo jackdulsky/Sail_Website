@@ -1,5 +1,7 @@
 <div class="cashFilters" [formGroup]="filterService.formCash">
-  <span>
+  <span
+    style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 125px; grid-column-gap: 5px;"
+  >
     <ng-container *ngFor="let att of showFilters">
       <ng-container
         *ngIf="
@@ -7,10 +9,15 @@
           0 == filterService.pullAttribute[att]['UITypeID']
         "
       >
-        <ng-container
-          *ngTemplateOutlet="type0Selection; context: { id: att, values: null }"
-          style="width:100%"
-        ></ng-container>
+        <span>
+          <ng-container
+            *ngTemplateOutlet="
+              type0Selection;
+              context: { id: att, values: null }
+            "
+            style="width:100%"
+          ></ng-container>
+        </span>
       </ng-container>
 
       <ng-container
@@ -19,10 +26,15 @@
           5 == filterService.pullAttribute[att]['UITypeID']
         "
       >
-        <ng-container
-          *ngTemplateOutlet="type5Selection; context: { id: att, values: null }"
-          style="width:100%"
-        ></ng-container>
+        <span>
+          <ng-container
+            *ngTemplateOutlet="
+              type5Selection;
+              context: { id: att, values: null }
+            "
+            style="width:100%"
+          ></ng-container>
+        </span>
       </ng-container>
     </ng-container>
     <div style="float: right;min-width: 125px;margin-top: 7px;">
@@ -55,7 +67,7 @@
   <div class="toggleContainerSelection" [formGroup]="filterService.formCash">
     <div class="togglelabel">{{ filterService.pullAttribute[id][Label] }}:</div>
 
-    <mat-form-field id="tier3Tab{{ id }}" style="width:100%; padding-right:5%;">
+    <mat-form-field id="tier3Tab{{ id }}" style="width:100%;">
       <mat-select
         [formControl]="filterService.formCash.controls[id]"
         multiple
@@ -90,7 +102,7 @@
 
 <ng-template #type5Selection let-id="id" let-values="values">
   <div
-    class="toggleContainerSelectionPlayerSel"
+    class="toggleContainerSelectionPositionSel"
     [formGroup]="filterService.formCash"
   >
     <div class="togglelabel">
@@ -102,10 +114,7 @@
         {{ filterService.pullAttribute[id][Label] }}:
       </span>
     </div>
-    <mat-form-field
-      id="tier3Tab{{ id }}"
-      style="width:150px; padding-right:5%;"
-    >
+    <mat-form-field id="tier3Tab{{ id }}" style="width:100%;">
       <mat-select
         [formControl]="filterService.formCash.controls[id]"
         multiple
@@ -137,9 +146,13 @@
     </mat-form-field>
   </div>
   <mat-menu #Pos="matMenu"
-    ><button mat-menu-item [matMenuTriggerFor]="DEF">DEF</button
-    ><button mat-menu-item [matMenuTriggerFor]="OFF">OFF</button
-    ><button mat-menu-item [matMenuTriggerFor]="ST">ST</button></mat-menu
+    ><button mat-menu-item [matMenuTriggerFor]="DEF">
+      DEF</button
+    ><button mat-menu-item [matMenuTriggerFor]="OFF">
+      OFF</button
+    ><button mat-menu-item [matMenuTriggerFor]="ST">
+      ST
+    </button></mat-menu
   ><mat-menu #DEF="matMenu"
     ><button
       mat-menu-item
@@ -175,13 +188,13 @@
       RB</button
     ><button
       mat-menu-item
-      (click)="toggleNestedSelect(id, 210)"
+      (click)="toggleNestedSelect(id, 211)"
       [matMenuTriggerFor]="TE"
     >
       TE</button
     ><button
       mat-menu-item
-      (click)="toggleNestedSelect(id, 211)"
+      (click)="toggleNestedSelect(id, 212)"
       [matMenuTriggerFor]="WR"
     >
       WR</button
@@ -205,7 +218,13 @@
       (click)="toggleNestedSelect(id, 203)"
       [matMenuTriggerFor]="K"
     >
-      K
+      K</button
+    ><button
+      mat-menu-item
+      (click)="toggleNestedSelect(id, 210)"
+      [matMenuTriggerFor]="ST"
+    >
+      ST
     </button></mat-menu
   ><mat-menu #DB="matMenu"
     ><button
@@ -258,7 +277,7 @@
   ><mat-menu #OL="matMenu"
     ><button
       mat-menu-item
-      (click)="toggleNestedSelect(id, 318)"
+      (click)="toggleNestedSelect(id, 319)"
       [matMenuTriggerFor]="T"
     >
       T</button
@@ -281,7 +300,7 @@
       DQB
     </button></mat-menu
   ><mat-menu #RB="matMenu"
-    ><button mat-menu-item (click)="toggleNestedSelect(id, 574)">URB</button
+    ><button mat-menu-item (click)="toggleNestedSelect(id, 575)">URB</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 514)">CRB</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 566)">SRB</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 553)">PRB</button
@@ -292,8 +311,12 @@
     >
       FB
     </button></mat-menu
+  ><mat-menu #ST="matMenu"
+    ><button mat-menu-item (click)="toggleNestedSelect(id, 318)">
+      ST
+    </button></mat-menu
   ><mat-menu #TE="matMenu"
-    ><button mat-menu-item (click)="toggleNestedSelect(id, 578)">YTE</button
+    ><button mat-menu-item (click)="toggleNestedSelect(id, 579)">YTE</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 522)">FTE</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 529)">HTE</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 534)">
@@ -333,13 +356,13 @@
   ><mat-menu #ILB="matMenu"
     ><button
       mat-menu-item
-      (click)="toggleNestedSelect(id, 429)"
+      (click)="toggleNestedSelect(id, 430)"
       [matMenuTriggerFor]="MLB"
     >
       MLB</button
     ><button
       mat-menu-item
-      (click)="toggleNestedSelect(id, 433)"
+      (click)="toggleNestedSelect(id, 434)"
       [matMenuTriggerFor]="WLB"
     >
       WLB
@@ -375,7 +398,7 @@
     ><button mat-menu-item (click)="toggleNestedSelect(id, 407)">FS</button
     ><button
       mat-menu-item
-      (click)="toggleNestedSelect(id, 430)"
+      (click)="toggleNestedSelect(id, 431)"
       [matMenuTriggerFor]="SS"
     >
       SS</button
@@ -384,10 +407,10 @@
     </button></mat-menu
   ><mat-menu #T="matMenu"
     ><button mat-menu-item (click)="toggleNestedSelect(id, 508)">T5</button
-    ><button mat-menu-item (click)="toggleNestedSelect(id, 572)">TG</button
+    ><button mat-menu-item (click)="toggleNestedSelect(id, 573)">TG</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 539)">LT</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 561)">RT</button
-    ><button mat-menu-item (click)="toggleNestedSelect(id, 570)">
+    ><button mat-menu-item (click)="toggleNestedSelect(id, 571)">
       SWT
     </button></mat-menu
   ><mat-menu #C="matMenu"
@@ -415,8 +438,8 @@
       MCB
     </button></mat-menu
   ><mat-menu #OWR="matMenu"
-    ><button mat-menu-item (click)="toggleNestedSelect(id, 577)">XWR</button
-    ><button mat-menu-item (click)="toggleNestedSelect(id, 579)">ZWR</button
+    ><button mat-menu-item (click)="toggleNestedSelect(id, 578)">XWR</button
+    ><button mat-menu-item (click)="toggleNestedSelect(id, 580)">ZWR</button
     ><button mat-menu-item (click)="toggleNestedSelect(id, 533)">
       JWR
     </button></mat-menu
@@ -444,7 +467,7 @@
       let cat of filterService.getReportHeaders(4) | keyvalue: body.valueOrder
     "
     id="{{ cat.key }}cashBarHighlightid"
-    (click)="subRoute(cat.key)"
+    (click)="tabClicked($event, cat.key)"
   >
     {{ cat.value.Label }}
   </div>
