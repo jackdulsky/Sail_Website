@@ -68,6 +68,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { ExcelComponent } from "./excel/excel.component";
 import { FaHypoComponent } from "./fa-hypo/fa-hypo.component";
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import { ReversePipe } from './reverse.pipe';
 
 @NgModule({
   declarations: [
@@ -98,7 +99,8 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     MenuItemComponent,
     OrderAttributePipe,
     ExcelComponent,
-    FaHypoComponent
+    FaHypoComponent,
+    ReversePipe
   ],
   imports: [
     NgCircleProgressModule.forRoot({

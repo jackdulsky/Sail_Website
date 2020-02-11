@@ -66,6 +66,7 @@ export class FiltersService {
   clubSpecifics;
   playerSpecifics;
   faHypo;
+  faHypoBins;
   ufaBorad;
   OrderID = "OrderID";
   conferenceSelected = "AFC";
@@ -79,7 +80,7 @@ export class FiltersService {
   teamPortalActiveClubID = "1012";
   teamPortalSelected = {
     SailTeamID: "1012",
-    TeamCode: "OAK",
+    TeamCode: "LV",
     Conference: "AFC",
     Division: "West",
     ClubCityName: "NFL",
@@ -610,24 +611,23 @@ export class FiltersService {
         //     ";"
         // );
       });
-      this.pullData.pullfahypo().subscribe(data => {
-        // this.faHypo = {};
-        // this.extractID(data, "SailID", this.faHypo);
-        // var order = 1;
-        // for (let player in this.faHypo) {
-        //   this.faHypo[player]["OrderID"] = order;
-        //   order += 1;
-        // }
-        var order = 0;
+      // this.pullData.pullfahypo().subscribe(data => {
+      //   var order = 0;
+      //   this.faHypo = data;
+      //   for (let player of this.faHypo) {
+      //     player["OrderID"] = order;
+      //     player["PlayerHTML"] = player["PlayerName"];
+      //     order += 1;
+      //   }
+      // });
+      this.pullData.pullHypoPlayers().subscribe(data => {
         this.faHypo = data;
-        for (let player of this.faHypo) {
-          player["OrderID"] = order;
-          player["PlayerHTML"] = player["PlayerName"];
-          order += 1;
-        }
-        //call sort and distribute function
 
-        // console.log(this.faHypo);
+        console.log("FA HYPO PLAYERS", this.faHypo);
+      });
+      this.pullData.pullHypoBins().subscribe(data => {
+        this.faHypoBins = data;
+        console.log("FA HYPO Bins", this.faHypoBins);
       });
     }
     this.bulkImported = true;
@@ -635,17 +635,15 @@ export class FiltersService {
   }
 
   pullInfoFAHypo() {
-    this.pullData.pullUFABoard().subscribe(data => {
-      var order = 0;
-      this.ufaBorad = data;
-      for (let player of this.ufaBorad) {
-        player["OrderID"] = order;
-        order += 1;
-      }
-      console.log("DAT", this.ufaBorad);
-
-      this.timeLastUFAPull.next(String(Date.now()));
-    });
+    // this.pullData.pullUFABoard().subscribe(data => {
+    //   var order = 0;
+    //   this.ufaBorad = data;
+    //   for (let player of this.ufaBorad) {
+    //     player["OrderID"] = order;
+    //     order += 1;
+    //   }
+    //   this.timeLastUFAPull.next(String(Date.now()));
+    // });
   }
 
   //IMPORT A SAVED FILTER
@@ -1933,7 +1931,7 @@ export class FiltersService {
       this.teamPortalActiveClubID = "1012";
       this.teamPortalSelected = {
         SailTeamID: "1012",
-        TeamCode: "OAK",
+        TeamCode: "LV",
         Conference: "AFC",
         Division: "West",
         ClubCityName: "NFL",

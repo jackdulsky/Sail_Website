@@ -1,55 +1,65 @@
 <div style="overflow-y: scroll;height: 853px;">
   <div class="leftSide">
     <div class="depthchartContainer">
-      <div class="posContainer" *ngFor="let pos of positionGroups">
-        <div class="posHeader">{{ pos.id.substring(5) }}</div>
-
+      <ng-container *ngFor="let bin of allBins">
         <div
-          cdkDropList
-          id="{{ pos.id }}"
-          [cdkDropListData]="pos.players"
-          [cdkDropListConnectedTo]="connectedPositionLists"
-          class="item-list"
-          (cdkDropListDropped)="drop($event)"
+          class="posContainer"
+          *ngIf="bin.id > 0"
+          [ngStyle]="depthLocationStyle(bin.id)"
         >
-          <div class="item-box" *ngFor="let player of pos.players" cdkDrag>
-            {{ player["PlayerName"] }}
+          <div class="posHeader">{{ bin.label }}</div>
+
+          <div
+            cdkDropList
+            id="{{ bin.id }}"
+            [cdkDropListData]="bin.players"
+            [cdkDropListConnectedTo]="connectedPositionLists"
+            class="item-list"
+            (cdkDropListDropped)="drop($event)"
+          >
+            <div
+              class="item-box"
+              *ngFor="let player of bin.players"
+              [innerHTML]="
+                player['DepthHTML'].replace('12px;', '12px;width:100%;')
+                  | safehtml
+              "
+              cdkDrag
+            ></div>
           </div>
         </div>
-      </div>
+      </ng-container>
     </div>
   </div>
   <div class="rightSide">
+    <div>Cap &nbsp; - &nbsp;{{ cap }} &nbsp;</div>
     <div class="capInfo">
-      <div>
-        Sum of Sail ID's &nbsp; - &nbsp;{{ calcTest }} &nbsp;{{
-          calcTestDifference
-        }}
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
+        <div style=" float:left" *ngFor="let sum of cashSums | keyvalue">
+          <span style="float:left">{{ sum.value.label }} - &nbsp;</span>
+          <span style="float:left">
+            <ng-container *ngIf="sum.key <= 0">
+              {{ sum.value.total | number: "1.1-1" }}
+            </ng-container>
+
+            <ng-container *ngIf="sum.key > 0">
+              {{ this.math.floor(sum.value.total) }}
+            </ng-container>
+          </span>
+        </div>
       </div>
       <div>
-        <div *ngFor="let operation of logOfMoves | keyvalue">
+        <div *ngFor="let operation of logOfMoves | keyvalue: valueOrder">
           <span *ngIf="operation.value.type == 0"> Cut </span>
           <span *ngIf="operation.value.type == 1"> Sign </span>
           &nbsp;-&nbsp;
-          {{ operation.value.item.PlayerName }}
+          {{ operation.value.item.DepthHTML }}
         </div>
       </div>
-    </div>
-    <div class="UFASelectionArea">
-      <div class="posSelect">
-        <div
-          class="posButtons"
-          *ngFor="let group of ufaGroups | keyvalue"
-          (click)="changeView(group.key)"
-          [ngStyle]="highlightOrNot(group.key)"
-        >
-          {{ group.key }}
-        </div>
-      </div>
-      <div class="ufachartContainer">
-        <ng-container *ngFor="let pos of ufaPositionGroups">
-          <div class="posContainer UFAContainer" *ngIf="pos.id == ufaViewing">
-            <div class="posHeaderUFA">{{ pos.id.substring(3) }}</div>
+      <div style="position: absolute; bottom:0; width: 100%">
+        <ng-container *ngFor="let pos of allBins">
+          <div class="posContainer UFAContainer" *ngIf="pos.id == 0">
+            <div class="posHeaderUFA">{{ pos.label }}</div>
 
             <div
               cdkDropList
@@ -57,16 +67,60 @@
               [cdkDropListData]="pos.players"
               [cdkDropListConnectedTo]="connectedPositionLists"
               class="item-list"
+              style="height:128px !important;"
+              (cdkDropListDropped)="drop($event)"
+            >
+              <div
+                class="item-box"
+                id="{{ player['SailID'] }}"
+                *ngFor="let player of pos.players"
+                cdkDrag
+                [innerHTML]="
+                  player['UfaHTML'].replace('12px;', '12px;width:100%;')
+                    | safehtml
+                "
+              ></div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="UFASelectionArea">
+      <div class="posSelect">
+        <ng-container *ngFor="let group of filterService.faHypoBins">
+          <div
+            *ngIf="group['BinID'] < 0"
+            class="posButtons"
+            (click)="changeView(group['BinID'])"
+            [ngStyle]="highlightOrNot(group['BinID'])"
+          >
+            {{ group["BinLabel"] }}
+          </div>
+        </ng-container>
+      </div>
+      <div class="ufachartContainer">
+        <ng-container *ngFor="let pos of allBins">
+          <div class="posContainer UFAContainer" *ngIf="pos.id == ufaViewing">
+            <div class="posHeaderUFA">{{ pos.label }}</div>
+
+            <div
+              cdkDropList
+              id="{{ pos.id }}"
+              [cdkDropListData]="pos.players"
+              [cdkDropListConnectedTo]="connectedPositionLists"
+              class="item-list"
+              style="height:367px !important;"
               (cdkDropListDropped)="drop($event)"
               *ngIf="pos.id == ufaViewing"
             >
               <div
                 class="item-box"
-                id="ufa{{ player['SailID'] }}"
+                id="{{ player['SailID'] }}"
                 *ngFor="let player of pos.players"
                 cdkDrag
                 [innerHTML]="
-                  player['PlayerHTML'].replace('12px;', '12px;width:100%;')
+                  player['UfaHTML'].replace('12px;', '12px;width:100%;')
                     | safehtml
                 "
               ></div>

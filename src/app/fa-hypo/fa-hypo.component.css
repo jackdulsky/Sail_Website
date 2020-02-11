@@ -18,13 +18,16 @@ a,
   width: 64.5%;
   float: left;
   margin-left: 0.5%;
+  height: calc(100vh - 128px);
+  overflow-y: auto;
 }
 .rightSide {
-  width: 34.5%;
+  width: 34%;
   float: left;
   margin-left: 0.5%;
 }
 .capInfo {
+  position: relative;
   height: calc(0.5 * (100vh - 190px));
 }
 .posSelect {
@@ -36,10 +39,19 @@ a,
   min-width: 10px;
   float: left;
   text-align: center;
-  min-width: 80px;
+  min-width: 72px;
   /* width: -webkit-fill-available; */
   border-bottom: 3px solid white;
 }
+.SOBButton {
+  width: 50%;
+  text-align: center;
+  height: 35px;
+  border-bottom: 3px solid white;
+  float: left;
+  line-height: 35px;
+}
+.SOBButton:hover,
 .posButtons:hover {
   background-color: var(--raiders-gray);
   color: black !important;
@@ -114,15 +126,19 @@ a,
   border: 1px solid #f0f2f5;
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
-  height: 400px;
+  height: 150px;
   width: 150px;
 }
 .UFAContainer {
+  border: 1px solid black;
   /* height: 350px !important; */
   width: 100% !important;
+  height: fit-content;
+  min-height: 160px;
+  border-radius: 7px;
 }
 .heightLimit {
-  height: 370px;
+  height: 120px;
   overflow-y: scroll;
 }
 .heightLimitUFA {
@@ -164,8 +180,8 @@ a,
   min-height: 60px;
   border-radius: 4px;
   display: block;
-  height: 370px;
-  overflow-y: scroll;
+  height: 170px;
+  overflow-y: auto;
 }
 
 .item-box {

@@ -23,7 +23,7 @@ export class PullDataService {
   getTeams() {
     return this.http.post(this.serverURL + "db/query", {
       query:
-        "select SailTeamID,TeamCode,Conference,Division,ClubCityName, ClubNickName from SaildB.org.TeamSeason where LeagueType = 'NFL' and Season  = '2019'"
+        "select SailTeamID,TeamCode,Conference,Division,ClubCityName, ClubNickName from SaildB.org.TeamSeason where LeagueType = 'NFL' and Season  = '2020'"
     });
   }
 
@@ -353,6 +353,18 @@ export class PullDataService {
     //'" +
     //      this.GUID +
     //    "'";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+  pullHypoPlayers() {
+    var query = "select * from saildb.Reports.Hypo_ScenarioPlayers";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+  pullHypoBins() {
+    var query = "select * from saildb.Reports.Hypo_Bins";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

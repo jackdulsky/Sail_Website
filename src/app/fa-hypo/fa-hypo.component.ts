@@ -37,108 +37,202 @@ export class FaHypoComponent implements OnInit {
   ufaGroups = {};
   positionGroups = [];
   ufaPositionGroups = [];
+
+  locationDepth = {
+    1: { BinLabel: "QB", Top: 625, Left: 475 },
+    2: { BinLabel: "LT", Top: 400, Left: 165 },
+    3: { BinLabel: "LG", Top: 400, Left: 320 },
+    4: { BinLabel: "C", Top: 400, Left: 475 },
+    5: { BinLabel: "RG", Top: 400, Left: 630 },
+    6: { BinLabel: "RT", Top: 400, Left: 785 },
+    7: { BinLabel: "TE", Top: 400, Left: 940 },
+    8: { BinLabel: "FB", Top: 585, Left: 630 },
+    9: { BinLabel: "RB", Top: 625, Left: 320 },
+    10: { BinLabel: "SWR", Top: 585, Left: 87.5 },
+    11: { BinLabel: "XWR", Top: 400, Left: 10 },
+    12: { BinLabel: "ZWR", Top: 585, Left: 940 },
+    13: { BinLabel: "NT", Top: 10, Left: 554.5 },
+    14: { BinLabel: "3T", Top: 10, Left: 393.5 },
+    15: { BinLabel: "LDE", Top: 10, Left: 232.5 },
+    16: { BinLabel: "RDE", Top: 10, Left: 715.5 },
+    17: { BinLabel: "MLB", Top: 195, Left: 456 },
+    18: { BinLabel: "WLB", Top: 195, Left: 617 },
+    19: { BinLabel: "SLB", Top: 195, Left: 134 },
+    20: { BinLabel: "SS", Top: 235, Left: 295 },
+    21: { BinLabel: "FS", Top: 235, Left: 778 },
+    22: { BinLabel: "NCB", Top: 195, Left: 940 },
+    23: { BinLabel: "RCB", Top: 10, Left: 940 },
+    24: { BinLabel: "LCB", Top: 10, Left: 10 },
+    25: { BinLabel: "ST", Top: 750, Left: 10 }
+  };
+  depthLocationStyle(binID: number) {
+    // areaWidth: height: calc(100vh - 128px);
+    // width: 64%
+    // based off 1104
+    return {
+      position: "fixed",
+      top: String(this.locationDepth[binID].Top + 103) + "px",
+      left:
+        "calc((" +
+        String(this.locationDepth[binID].Left / 1104) +
+        " * .64 * (100vw - 200px)) + 200px)"
+    };
+  }
   connectedPositionLists = [];
-  ufaViewing = "UFAQB";
-  calcTest = 0;
-  calcTestDifference;
+  math;
+  allBins = [];
+
+  ufaViewing = -1;
+  cashSums = {};
+  emptySums = {};
+  cap = 0;
   logOfMoves = {};
 
   constructor(
     public filterService: FiltersService,
     private sanitizer: DomSanitizer
-  ) {}
+  ) {
+    this.math = Math;
+  }
 
   ngOnInit() {
-    this.filterService.timeLastUFAPull.subscribe(data => {
-      console.log("CHANGE", data);
-      this.initUFABoard();
-    });
+    // this.filterService.timeLastUFAPull.subscribe(data => {
+    //   console.log("CHANGE", data);
+    //   this.initUFABoard();
+    // });
     this.initArraysRaiders();
   }
 
   initArraysRaiders() {
-    if (this.filterService.faHypo) {
-      for (let player of this.filterService.faHypo) {
-        this.calcTest += player["SailID"];
-      }
-      for (let group in this.groups) {
-        this.positionGroups.push({
-          id: "Depth" + group,
-          players: this.filterPlayers(
-            this.filterService.faHypo,
-            this.groups[group],
-            "Pos"
-          )
+    if (this.filterService.faHypo && this.filterService.faHypoBins) {
+      // for (let player of this.filterService.faHypo) {
+      //   this.calcTest += player["SailID"];
+      // }
+
+      for (let group of this.filterService.faHypoBins) {
+        if (group["BinID"] >= 0) {
+          this.cashSums[group["BinID"]] = {
+            label: group["BinLabel"],
+            total: 0
+          };
+        }
+
+        this.allBins.push({
+          id: group["BinID"],
+          label: group["BinLabel"],
+          players: this.filterPlayers(this.filterService.faHypo, group["BinID"])
         });
 
-        this.connectedPositionLists.push("Depth" + group);
+        this.connectedPositionLists.push(String(group["BinID"]));
       }
+      this.emptySums = cloneDeep(this.cashSums);
+      this.performCalculations();
     } else {
       setTimeout(() => {
         this.initArraysRaiders();
       }, 100);
     }
   }
-  initUFABoard() {
-    if (this.filterService.ufaBorad) {
-      this.ufaGroups = {};
-      this.ufaPositionGroups = [];
-      for (let player of this.filterService.ufaBorad) {
-        if (-1 == ["P", "K", "LS", "FB"].indexOf(player["PosBucket"])) {
-          if (!("UFA" + player["PosBucket"] in this.ufaGroups)) {
-            this.ufaGroups[player["PosBucket"]] = [String(player["PosBucket"])];
+
+  performCalculations() {
+    this.cashSums = cloneDeep(this.emptySums);
+    this.cap = 0;
+    var sumAdd = 0;
+    for (let bin of this.allBins) {
+      var binAdd = 0;
+      if (bin.id > 0) {
+        for (let player of bin["players"]) {
+          if (player["CashValue"] == null) {
+            binAdd += player["SailID"];
+            sumAdd += player["SailID"];
+          } else {
+            binAdd += player["CashValue"];
+            sumAdd += player["CashValue"];
+          }
+        }
+      } else {
+        for (let player of bin["players"]) {
+          if (player["CashValue"] == null) {
+            binAdd += player["SailID"];
+          } else {
+            binAdd += player["CashValue"];
           }
         }
       }
-      for (let group in this.ufaGroups) {
-        if (-1 == ["P", "K", "LS", "FB"].indexOf(group)) {
-          this.ufaPositionGroups.push({
-            id: "UFA" + group,
-            players: this.filterPlayers(
-              this.filterService.ufaBorad,
-              this.ufaGroups[group],
-              "PosBucket"
-            )
-          });
-          this.connectedPositionLists.push("UFA" + group);
-        }
+      if (bin.id >= 0) {
+        this.cashSums[bin.id]["total"] += binAdd;
       }
-    } else {
-      setTimeout(() => {
-        this.initUFABoard();
-      }, 100);
     }
+    this.cap += sumAdd;
   }
+  // initUFABoard() {
+  //   if (this.filterService.ufaBorad) {
+  //     this.ufaGroups = {};
+  //     this.ufaPositionGroups = [];
+  //     for (let player of this.filterService.ufaBorad) {
+  //       if (-1 == ["P", "K", "LS", "FB"].indexOf(player["PosBucket"])) {
+  //         if (!("UFA" + player["PosBucket"] in this.ufaGroups)) {
+  //           this.ufaGroups[player["PosBucket"]] = [String(player["PosBucket"])];
+  //         }
+  //       }
+  //     }
+  //     for (let group in this.ufaGroups) {
+  //       if (-1 == ["P", "K", "LS", "FB"].indexOf(group)) {
+  //         this.ufaPositionGroups.push({
+  //           id: "UFA" + group,
+  //           players: this.filterPlayers(
+  //             this.filterService.ufaBorad,
+  //             this.ufaGroups[group],
+  //             "PosBucket"
+  //           )
+  //         });
+  //         this.connectedPositionLists.push("UFA" + group);
+  //       }
+  //     }
+  //   } else {
+  //     setTimeout(() => {
+  //       this.initUFABoard();
+  //     }, 100);
+  //   }
+  // }
 
-  updateOrders(lists: any[]) {
-    for (let pos of lists) {
+  update(lists: any[], ids: any[]) {
+    for (let index = 0; index < lists.length; index++) {
+      var pos = lists[index];
       for (let i = 0; i < pos.length; i++) {
-        pos[i]["OrderID"] = i;
+        pos[i]["OrderID"] = i + 1;
+        pos[i]["BinID"] = ids[index];
       }
     }
+    this.performCalculations();
   }
 
-  filterPlayers(data: any, position: string[], id: string) {
+  filterPlayers(data: any, position: number) {
+    // if (position == 0) {
+    //   return [cloneDeep(data[0])];
+    // }
     try {
       var returnPlayer = [];
-      if (position.length < 1) {
+      if (data.length < 1) {
         return returnPlayer;
       }
       for (let player of data) {
-        if (-1 != position.indexOf(player[id])) {
-          returnPlayer.push(player);
+        if (position == player["BinID"]) {
+          returnPlayer.push(cloneDeep(player));
         }
       }
       return returnPlayer;
-    } catch (e) {}
+    } catch (e) {
+      return [];
+    }
   }
 
-  changeView(newPos: string) {
-    this.ufaViewing = "UFA" + newPos;
+  changeView(newPos: number) {
+    this.ufaViewing = newPos;
   }
 
-  highlightOrNot(name: string) {
-    if ("UFA" + name == this.ufaViewing) {
+  highlightOrNot(id: number) {
+    if (id == this.ufaViewing) {
       return {
         //backgroundColor: "cornflowerblue" ,
         backgroundColor: "white",
@@ -184,44 +278,58 @@ export class FaHypoComponent implements OnInit {
         event.currentIndex
       );
 
-      this.updateOrders([event.container.data]);
+      this.update([event.container.data], [event.container.id]);
     } else {
       console.log("event", event);
       var previousID = event.previousContainer.id;
       var newID = event.container.id;
       var dataItem = event.previousContainer.data[event.previousIndex];
-      console.log(dataItem);
-      if (previousID[0] == "U" && newID[0] == "D") {
-        this.calcTest += dataItem["SailID"];
-        this.calcTestDifference = "(+" + String(dataItem["SailID"]) + ")";
+      console.log(previousID, newID, dataItem);
+      var lenMoves = Object.keys(this.logOfMoves).length;
+      if (Number(previousID) < 0 && Number(newID) > 0) {
         if (
           this.logOfMoves[dataItem["SailID"]] &&
           this.logOfMoves[dataItem["SailID"]].type == 0
         ) {
           delete this.logOfMoves[dataItem["SailID"]];
         } else {
-          this.logOfMoves[dataItem["SailID"]] = { item: dataItem, type: 1 };
+          this.logOfMoves[dataItem["SailID"]] = {
+            item: dataItem,
+            type: 1,
+            OrderID: lenMoves + 1
+          };
         }
       }
-      if (previousID[0] == "D" && newID[0] == "U") {
-        this.calcTest -= dataItem["SailID"];
-        this.calcTestDifference = "(-" + String(dataItem["SailID"]) + ")";
+      if (Number(previousID) > 0 && Number(newID) == 0) {
         if (
           this.logOfMoves[dataItem["SailID"]] &&
           this.logOfMoves[dataItem["SailID"]].type == 1
         ) {
           delete this.logOfMoves[dataItem["SailID"]];
         } else {
-          this.logOfMoves[dataItem["SailID"]] = { item: dataItem, type: 0 };
+          this.logOfMoves[dataItem["SailID"]] = {
+            item: dataItem,
+            type: 0,
+            OrderID: lenMoves + 1
+          };
         }
       }
+      if (Number(previousID) == 0 && Number(newID) > 0) {
+        if (this.logOfMoves[dataItem["SailID"]]) {
+          delete this.logOfMoves[dataItem["SailID"]];
+        }
+      }
+
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
-      this.updateOrders([event.previousContainer.data, event.container.data]);
+      this.update(
+        [event.previousContainer.data, event.container.data],
+        [previousID, newID]
+      );
     }
   }
 }
