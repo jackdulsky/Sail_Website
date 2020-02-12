@@ -14,6 +14,8 @@ import {
 } from "@angular/platform-browser";
 import { catchError } from "rxjs/operators";
 import { type } from "os";
+import { getRtlScrollAxisType } from "@angular/cdk/platform";
+import { ConstantPool } from "@angular/compiler";
 
 @Component({
   selector: "app-fa-hypo",
@@ -21,23 +23,6 @@ import { type } from "os";
   styleUrls: ["./fa-hypo.component.css"]
 })
 export class FaHypoComponent implements OnInit {
-  groups = {
-    EDGE: ["EDGE"],
-    WR: ["OWR", "SWR", "WR"],
-    CB: ["CB", "LCB", "RCB", "OCB", "NCB", "ICB"],
-    RB: ["RB", "HB", "FB"],
-    QB: ["QB"],
-    OL: ["OL", "T", "C", "G", "OG", "OT", "LT", "RT", "LG", "RG"],
-    ST: ["LS", "ST", "P", "K"],
-    TE: ["TE"],
-    DL: ["DT", "NT"],
-    DB: ["FS", "SS", "DB"],
-    LB: ["MLB", "OLB", "WLB"]
-  };
-  ufaGroups = {};
-  positionGroups = [];
-  ufaPositionGroups = [];
-
   locationDepth = {
     1: { BinLabel: "QB", Top: 625, Left: 475 },
     2: { BinLabel: "LT", Top: 400, Left: 165 },
@@ -65,19 +50,7 @@ export class FaHypoComponent implements OnInit {
     24: { BinLabel: "LCB", Top: 10, Left: 10 },
     25: { BinLabel: "ST", Top: 750, Left: 10 }
   };
-  depthLocationStyle(binID: number) {
-    // areaWidth: height: calc(100vh - 128px);
-    // width: 64%
-    // based off 1104
-    return {
-      position: "fixed",
-      top: String(this.locationDepth[binID].Top + 103) + "px",
-      left:
-        "calc((" +
-        String(this.locationDepth[binID].Left / 1104) +
-        " * .64 * (100vw - 200px)) + 200px)"
-    };
-  }
+
   connectedPositionLists = [];
   math;
   allBins = [];
@@ -87,12 +60,40 @@ export class FaHypoComponent implements OnInit {
   emptySums = {};
   cap = 0;
   logOfMoves = {};
+  connectedBinMapping = {};
+  originalBinMapping = {};
+  originalOrderMapping = {};
+  editValueDisplay = false;
+  editingValue = "0.0";
+  editingPlayer;
 
   constructor(
     public filterService: FiltersService,
     private sanitizer: DomSanitizer
   ) {
+    document.addEventListener("keypress", e => this.onKeyPress(e));
+    // document.addEventListener("click", e => this.onClick(e));
+
     this.math = Math;
+  }
+  onClick(event) {
+    console.log(event);
+    if (
+      this.editValueDisplay &&
+      event.target.id != "editValueBox" &&
+      event.target.id != "editValueInput"
+    ) {
+      this.editValueDisplay = false;
+      this.editingPlayer = null;
+      this.editingValue = "0.0";
+    }
+  }
+  onKeyPress(event) {
+    if (event.key == "Enter" && this.editValueDisplay) {
+      this.editValueDisplay = false;
+      this.editingPlayer = null;
+      this.editingValue = "0.0";
+    }
   }
 
   ngOnInit() {
@@ -105,9 +106,7 @@ export class FaHypoComponent implements OnInit {
 
   initArraysRaiders() {
     if (this.filterService.faHypo && this.filterService.faHypoBins) {
-      // for (let player of this.filterService.faHypo) {
-      //   this.calcTest += player["SailID"];
-      // }
+      this.createBinMappings();
 
       for (let group of this.filterService.faHypoBins) {
         if (group["BinID"] >= 0) {
@@ -133,7 +132,36 @@ export class FaHypoComponent implements OnInit {
       }, 100);
     }
   }
-
+  createBinMappings() {
+    for (let group of this.filterService.faHypoBins) {
+      this.connectedBinMapping[group["BinID"]] == [];
+      if (group["BinID"] >= 0) {
+        for (let group2 of this.filterService.faHypoBins) {
+          if (group2["BinID"] >= 0) {
+            this.connectedBinMapping[group["BinID"]] += [group2["BinID"]];
+          }
+        }
+      }
+      if (group["BinID"] < 0) {
+        for (let group2 of this.filterService.faHypoBins) {
+          if (group2["BinID"] > 0) {
+            this.connectedBinMapping[group["BinID"]] += [group2["BinID"]];
+          }
+        }
+      }
+    }
+    for (let player of this.filterService.faHypo) {
+      this.originalBinMapping[player["SailID"]] = cloneDeep(player["BinID"]);
+      this.originalOrderMapping[player["SailID"]] = cloneDeep(
+        player["OrderID"]
+      );
+    }
+    console.log(
+      "HERE ",
+      this.originalBinMapping[1007137],
+      this.originalOrderMapping[1007137]
+    );
+  }
   performCalculations() {
     this.cashSums = cloneDeep(this.emptySums);
     this.cap = 0;
@@ -165,43 +193,13 @@ export class FaHypoComponent implements OnInit {
     }
     this.cap += sumAdd;
   }
-  // initUFABoard() {
-  //   if (this.filterService.ufaBorad) {
-  //     this.ufaGroups = {};
-  //     this.ufaPositionGroups = [];
-  //     for (let player of this.filterService.ufaBorad) {
-  //       if (-1 == ["P", "K", "LS", "FB"].indexOf(player["PosBucket"])) {
-  //         if (!("UFA" + player["PosBucket"] in this.ufaGroups)) {
-  //           this.ufaGroups[player["PosBucket"]] = [String(player["PosBucket"])];
-  //         }
-  //       }
-  //     }
-  //     for (let group in this.ufaGroups) {
-  //       if (-1 == ["P", "K", "LS", "FB"].indexOf(group)) {
-  //         this.ufaPositionGroups.push({
-  //           id: "UFA" + group,
-  //           players: this.filterPlayers(
-  //             this.filterService.ufaBorad,
-  //             this.ufaGroups[group],
-  //             "PosBucket"
-  //           )
-  //         });
-  //         this.connectedPositionLists.push("UFA" + group);
-  //       }
-  //     }
-  //   } else {
-  //     setTimeout(() => {
-  //       this.initUFABoard();
-  //     }, 100);
-  //   }
-  // }
 
   update(lists: any[], ids: any[]) {
     for (let index = 0; index < lists.length; index++) {
       var pos = lists[index];
       for (let i = 0; i < pos.length; i++) {
         pos[i]["OrderID"] = i + 1;
-        pos[i]["BinID"] = ids[index];
+        pos[i]["BinID"] = Number(ids[index]);
       }
     }
     this.performCalculations();
@@ -226,7 +224,19 @@ export class FaHypoComponent implements OnInit {
       return [];
     }
   }
-
+  depthLocationStyle(binID: number) {
+    // areaWidth: height: calc(100vh - 128px);
+    // width: 64%
+    // based off 1104
+    return {
+      position: "fixed",
+      top: String(this.locationDepth[binID].Top + 103) + "px",
+      left:
+        "calc((" +
+        String(this.locationDepth[binID].Left / 1104) +
+        " * .64 * (100vw - 200px)) + 200px)"
+    };
+  }
   changeView(newPos: number) {
     this.ufaViewing = newPos;
   }
@@ -270,7 +280,12 @@ export class FaHypoComponent implements OnInit {
   };
 
   drop(event: CdkDragDrop<string[]>) {
-    console.log("event", event);
+    var previousID = Number(event.previousContainer.id);
+    var newID = Number(event.container.id);
+    var lenMoves = Object.keys(this.logOfMoves).length;
+    var sailID = event.previousContainer.data[event.previousIndex]["SailID"];
+
+    console.log("event", previousID, newID, sailID);
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -279,57 +294,137 @@ export class FaHypoComponent implements OnInit {
       );
 
       this.update([event.container.data], [event.container.id]);
-    } else {
-      console.log("event", event);
-      var previousID = event.previousContainer.id;
-      var newID = event.container.id;
-      var dataItem = event.previousContainer.data[event.previousIndex];
-      console.log(previousID, newID, dataItem);
-      var lenMoves = Object.keys(this.logOfMoves).length;
-      if (Number(previousID) < 0 && Number(newID) > 0) {
-        if (
-          this.logOfMoves[dataItem["SailID"]] &&
-          this.logOfMoves[dataItem["SailID"]].type == 0
-        ) {
-          delete this.logOfMoves[dataItem["SailID"]];
-        } else {
-          this.logOfMoves[dataItem["SailID"]] = {
-            item: dataItem,
-            type: 1,
-            OrderID: lenMoves + 1
-          };
-        }
-      }
-      if (Number(previousID) > 0 && Number(newID) == 0) {
-        if (
-          this.logOfMoves[dataItem["SailID"]] &&
-          this.logOfMoves[dataItem["SailID"]].type == 1
-        ) {
-          delete this.logOfMoves[dataItem["SailID"]];
-        } else {
-          this.logOfMoves[dataItem["SailID"]] = {
-            item: dataItem,
-            type: 0,
-            OrderID: lenMoves + 1
-          };
-        }
-      }
-      if (Number(previousID) == 0 && Number(newID) > 0) {
-        if (this.logOfMoves[dataItem["SailID"]]) {
-          delete this.logOfMoves[dataItem["SailID"]];
-        }
-      }
+      var dataItem = cloneDeep(event.container.data[event.currentIndex]);
 
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      this.update(
-        [event.previousContainer.data, event.container.data],
-        [previousID, newID]
-      );
+      if (this.logOfMoves[dataItem["SailID"]]) {
+        var old = this.logOfMoves[dataItem["SailID"]];
+
+        if (
+          old["originalBin"] == newID &&
+          old["originalOrder"] == Number(event.currentIndex) + 1
+        ) {
+          delete this.logOfMoves[dataItem["SailID"]];
+        } else {
+          old["item"] = dataItem;
+          this.logOfMoves[dataItem["SailID"]] = old;
+        }
+      } else {
+        if (dataItem.BinID > 0) {
+          this.logOfMoves[dataItem["SailID"]] = {
+            item: dataItem,
+            newBin: newID,
+            originalBin: this.originalBinMapping[dataItem["SailID"]],
+            originalOrder: this.originalOrderMapping[dataItem["SailID"]],
+            type: this.getType(
+              this.originalBinMapping[dataItem["SailID"]],
+              Number(newID)
+            ),
+            OrderID: lenMoves + 1
+          };
+        }
+      }
+      console.log("MOVES", cloneDeep(this.logOfMoves));
+    } else {
+      if (
+        (newID == 0 && this.originalBinMapping[sailID] > 0) ||
+        newID > 0 ||
+        (newID < 0 && this.originalBinMapping[sailID] < 0)
+      ) {
+        console.log("event", event);
+
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
+        this.update(
+          [event.previousContainer.data, event.container.data],
+          [previousID, newID]
+        );
+        var dataItem = cloneDeep(event.container.data[event.currentIndex]);
+        console.log(previousID, newID, dataItem);
+
+        // log of moves = {Item, original bin, new bin, type, orderdisplayed}
+        if (this.logOfMoves[dataItem["SailID"]]) {
+          var old = this.logOfMoves[dataItem["SailID"]];
+          console.log("HERE");
+          console.log(cloneDeep(old["originalBin"]));
+          console.log(cloneDeep(newID));
+          console.log(cloneDeep(old["originalOrder"]));
+          console.log(cloneDeep(dataItem["OrderID"]));
+          if (newID < 0) {
+            delete this.logOfMoves[dataItem["SailID"]];
+          } else {
+            if (old["originalBin"] == newID) {
+              if (
+                old["originalBin"] < 0 ||
+                old["originalOrder"] == dataItem["OrderID"]
+              ) {
+                delete this.logOfMoves[dataItem["SailID"]];
+              } else {
+                old["item"] = dataItem;
+                old["newBin"] = Number(newID);
+                old["type"] = this.getType(old["originalBin"], Number(newID));
+                this.logOfMoves[dataItem["SailID"]] = old;
+              }
+            } else {
+              old["item"] = dataItem;
+              old["newBin"] = Number(newID);
+              old["type"] = this.getType(old["originalBin"], Number(newID));
+              this.logOfMoves[dataItem["SailID"]] = old;
+            }
+          }
+        } else {
+          this.logOfMoves[dataItem["SailID"]] = {
+            item: dataItem,
+            newBin: Number(newID),
+            originalBin: this.originalBinMapping[dataItem["SailID"]],
+            originalOrder: this.originalOrderMapping[dataItem["SailID"]],
+            type: this.getType(
+              this.originalBinMapping[dataItem["SailID"]],
+              Number(newID)
+            ),
+            OrderID: lenMoves + 1
+          };
+        }
+
+        console.log("MOVES", this.logOfMoves);
+      }
     }
+  }
+  getType(originalID: Number, newID: number) {
+    //cut 0
+    //sign 1
+    //move 2
+    //Depth change 3
+    if (originalID == newID) {
+      return 3;
+    } else if (originalID > 0 && newID == 0) {
+      return 0;
+    } else if (originalID > 0 && newID > 0) {
+      return 2;
+    } else if (originalID < 0 && newID > 0) {
+      return 1;
+    }
+    //invalid move
+    return -1;
+  }
+  editValue(event: any, pos: any, player: any) {
+    this.editValueDisplay = true;
+    console.log("CLICK", pos, player);
+    console.log("Value", player["CashValue"]);
+    console.log("event", event);
+    this.editingPlayer = player;
+    this.editingValue = player["CashValue"];
+    setTimeout(() => {
+      var box = <HTMLInputElement>document.getElementById("editValueBox");
+      box.style.left = String(event.clientX) + "px";
+      box.style.top = String(event.clientY - 42) + "px";
+    }, 1);
+  }
+  overrideValue(newVal: any) {
+    console.log("newValue", newVal);
+    this.editingPlayer.CashValue = Number(newVal);
   }
 }

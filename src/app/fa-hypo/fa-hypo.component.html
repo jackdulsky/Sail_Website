@@ -21,10 +21,12 @@
               class="item-box"
               *ngFor="let player of bin.players"
               [innerHTML]="
-                player['DepthHTML'].replace('12px;', '12px;width:100%;')
-                  | safehtml
+                player['DepthHTML'].replace('12px;', '12px;width:100%;') +
+                  ' ' +
+                  player['CashValue'] | safehtml
               "
               cdkDrag
+              (click)="editValue($event, bin.id, player)"
             ></div>
           </div>
         </div>
@@ -52,14 +54,24 @@
         <div *ngFor="let operation of logOfMoves | keyvalue: valueOrder">
           <span *ngIf="operation.value.type == 0"> Cut </span>
           <span *ngIf="operation.value.type == 1"> Sign </span>
+          <span *ngIf="operation.value.type == 2"> Move </span>
+          <span *ngIf="operation.value.type == -1"> ERROR </span>
+          <span *ngIf="operation.value.type == 3"> Depth Change </span>
           &nbsp;-&nbsp;
-          {{ operation.value.item.DepthHTML }}
+          {{ operation.value.item.DepthHTML }}&nbsp;({{
+            cashSums[operation.value.item.BinID].label
+          }}&nbsp;{{ operation.value.item.OrderID }})
         </div>
       </div>
       <div style="position: absolute; bottom:0; width: 100%">
         <ng-container *ngFor="let pos of allBins">
           <div class="posContainer UFAContainer" *ngIf="pos.id == 0">
-            <div class="posHeaderUFA">{{ pos.label }}</div>
+            <div class="posHeaderUFA" *ngIf="cashSums[0].total == 0">
+              {{ pos.label }}
+            </div>
+            <div class="posHeaderUFA" *ngIf="cashSums[0].total != 0">
+              {{ pos.label }} (+{{ cashSums[0]["total"] }})
+            </div>
 
             <div
               cdkDropList
@@ -76,9 +88,11 @@
                 *ngFor="let player of pos.players"
                 cdkDrag
                 [innerHTML]="
-                  player['UfaHTML'].replace('12px;', '12px;width:100%;')
-                    | safehtml
+                  player['UfaHTML'].replace('12px;', '12px;width:100%;') +
+                    ' ' +
+                    player['CashValue'] | safehtml
                 "
+                (click)="editValue($event, pos.id, player)"
               ></div>
             </div>
           </div>
@@ -120,15 +134,25 @@
                 *ngFor="let player of pos.players"
                 cdkDrag
                 [innerHTML]="
-                  player['UfaHTML'].replace('12px;', '12px;width:100%;')
-                    | safehtml
+                  player['UfaHTML'].replace('12px;', '12px;width:100%;') +
+                    ' ' +
+                    player['CashValue'] | safehtml
                 "
+                (click)="editValue($event, pos.id, player)"
               ></div>
             </div>
           </div>
         </ng-container>
       </div>
     </div>
+  </div>
+  <div id="editValueBox" *ngIf="editValueDisplay" class="editValueBox">
+    <input
+      id="editValueInput"
+      [value]="editingValue"
+      class="editValueInput"
+      (input)="overrideValue($event.target.value)"
+    />
   </div>
 </div>
 
