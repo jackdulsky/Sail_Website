@@ -1,0 +1,38 @@
+<mat-dialog-content
+  [formGroup]="form"
+  style="background-color:#efefef; max-height: 500px; font-family: 'DIN-Regular';"
+>
+  <div
+    style="height: 40px; margin-bottom: 15px; font-family: 'DIN-Medium'; color:#7e7e7e; font-size: 32px;"
+  >
+    Save Scenario<span style="float:right; margin-right:13px" class="exit"
+      ><i class="fa fa-close" (click)="close()"></i
+    ></span>
+  </div>
+  <mat-form-field [formGroup]="form" style="width:95%; padding-right:5%;">
+    <input
+      matInput
+      placeholder="Name"
+      id="name"
+      formControlName="name"
+      style="color:black !important; caret-color: black;"
+    />
+  </mat-form-field>
+  <mat-form-field [formGroup]="form" style="width:95%; padding-right:5%;">
+    <input
+      matInput
+      placeholder="Description"
+      id="description"
+      formControlName="description"
+      style="color:black !important; caret-color: black;"
+    />
+  </mat-form-field>
+  <div>
+    <button class="mat-raised-button mat-primary save" (click)="save()">
+      Upload
+    </button>
+  </div>
+  <div style="height: 10px;"></div>
+</mat-dialog-content>
+<mat-dialog-actions style="min-height: 0px !important; padding:0px !important;">
+</mat-dialog-actions>

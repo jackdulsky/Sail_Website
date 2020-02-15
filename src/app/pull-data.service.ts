@@ -357,14 +357,81 @@ export class PullDataService {
       query: query
     });
   }
-  pullHypoPlayers() {
-    var query = "select * from saildb.Reports.Hypo_ScenarioPlayers";
+  pullHypoPlayers(scenario: number = 0) {
+    console.log("PULLING SCENARIO HYPO ", scenario);
+    var query = "FreeAgency.FA20.spScenario_Get " + scenario;
+
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
   pullHypoBins() {
     var query = "select * from saildb.Reports.Hypo_Bins";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+  pullHypoMaxScenario() {
+    var query =
+      "SELECT * MAX([ScenarioID]) FROM [SaildB].[Reports].[Hypo_Scenarios]";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+  pullHypoScenario() {
+    var query =
+      "SELECT * FROM [SaildB].[Reports].[Hypo_Scenarios] Order By ScenarioID";
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+  insertHypoScenario(data: any) {
+    var query =
+      "INSERT INTO [SaildB].[Reports].[Hypo_Scenarios] (ScenarioID, Label, ScenarioDesc, LastChangeDt, LastChangeUserID)";
+    query += " Values ";
+    for (let row in data) {
+      query +=
+        "(" +
+        data[row]["ScenarioID"] +
+        "," +
+        data[row]["Label"] +
+        "," +
+        data[row]["ScenarioDesc"] +
+        ", GETDATE(),'TESTUSER1')";
+      // console.log("DATA", data[row]);
+    }
+    console.log("query", query);
+    return this.http.post(this.serverURL + "db/query", {
+      query: query
+    });
+  }
+
+  insertHypoScenarioData(data: any, ScenarioID: number) {
+    var query =
+      "INSERT INTO [SaildB].[Reports].[Hypo_ScenarioPlayers] (ScenarioID, Label, ScenarioDesc, LastChangeDt, LastChangeUserID)";
+
+    query += " Values ";
+    for (let row in data) {
+      query +=
+        "(" +
+        String(ScenarioID) +
+        "," +
+        data[row]["SailID"] +
+        "," +
+        data[row]["BinID"] +
+        "," +
+        data[row]["OrderID"] +
+        "," +
+        data[row]["CashValue"] +
+        "," +
+        data[row]["DeadMoney"] +
+        "," +
+        data[row]["DepthHTML"] +
+        "," +
+        data[row]["UfaHTML"] +
+        "),";
+    }
+    console.log("QUERY @", query);
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

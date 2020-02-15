@@ -1,0 +1,49 @@
+<mat-dialog-content
+  style="background-color:#efefef; max-height: 500px; font-family: 'DIN-Regular';"
+>
+  <div
+    style="height: 40px;     font-family: 'DIN-Medium'; color:#7e7e7e; margin-left:10px;font-size: 32px;"
+  >
+    Scenarios<span style="float:right; margin-right:13px" class="exit"
+      ><i class="fa fa-close" (click)="close()"></i
+    ></span>
+  </div>
+
+  <div class="header">
+    <span style="display:flex;"> </span>
+    <span>
+      Name
+    </span>
+
+    <span> Description </span>
+    <span>
+      Last Updated
+    </span>
+    <span> Delete </span>
+  </div>
+  <div
+    *ngFor="let item of savedOptions"
+    class="padTop"
+    (click)="pushScenario(item.ScenarioID)"
+  >
+    <span style="display:flex;">
+      <i style="margin: auto 0px;" class="fa fa-ellipsis-v"></i>
+    </span>
+    <span style="margin:auto 0px;font-size: 20px;">
+      {{ item.Label }}
+    </span>
+
+    <span style="margin:auto 0px;font-size: 14px;">
+      {{ item.ScenarioDesc }}
+    </span>
+    <span style="margin:auto 0px;font-size: 14px;">
+      {{ convertSQLDateStringtoDisplayFormat(item.LastChangeDt) }}
+    </span>
+    <span>
+      <i class="fa fa-close"></i>
+    </span>
+  </div>
+  <div style="height: 10px;"></div>
+</mat-dialog-content>
+<mat-dialog-actions style="min-height: 0px !important; padding:0px !important;">
+</mat-dialog-actions>

@@ -67,6 +67,7 @@ export class FiltersService {
   playerSpecifics;
   faHypo;
   faHypoBins;
+  faHypoScenarios;
   ufaBorad;
   OrderID = "OrderID";
   conferenceSelected = "AFC";
@@ -623,27 +624,23 @@ export class FiltersService {
       this.pullData.pullHypoPlayers().subscribe(data => {
         this.faHypo = data;
 
-        console.log("FA HYPO PLAYERS", this.faHypo);
+        // console.log("FA HYPO PLAYERS", this.faHypo);
       });
+      this.pullHypoScenario();
       this.pullData.pullHypoBins().subscribe(data => {
         this.faHypoBins = data;
-        console.log("FA HYPO Bins", this.faHypoBins);
+        // console.log("FA HYPO Bins", this.faHypoBins);
       });
     }
     this.bulkImported = true;
     return true;
   }
 
-  pullInfoFAHypo() {
-    // this.pullData.pullUFABoard().subscribe(data => {
-    //   var order = 0;
-    //   this.ufaBorad = data;
-    //   for (let player of this.ufaBorad) {
-    //     player["OrderID"] = order;
-    //     order += 1;
-    //   }
-    //   this.timeLastUFAPull.next(String(Date.now()));
-    // });
+  //pull the scenarios
+  pullHypoScenario() {
+    this.pullData.pullHypoMaxScenario().subscribe(data => {
+      this.faHypoScenarios = data;
+    });
   }
 
   //IMPORT A SAVED FILTER
@@ -1149,7 +1146,6 @@ export class FiltersService {
               this.updatePlayerData();
               this.updateClubData();
               this.updateCashFilters();
-              this.pullInfoFAHypo();
             });
           this.testSendFilters2();
           this.setActiveClub();

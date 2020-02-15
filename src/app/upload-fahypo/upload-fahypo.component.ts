@@ -5,23 +5,24 @@ import { MAT_DIALOG_DATA } from "@angular/material";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { PullDataService } from "../pull-data.service";
 import { FiltersService } from "../filters.service";
+import * as cloneDeep from "lodash/cloneDeep";
 
 @Component({
-  selector: "app-savedfilterspop",
-  templateUrl: "./savedfilterspop.component.html",
-  styleUrls: ["./savedfilterspop.component.css"]
+  selector: "app-upload-fahypo",
+  templateUrl: "./upload-fahypo.component.html",
+  styleUrls: ["./upload-fahypo.component.css"]
 })
-export class SavedfilterspopComponent implements OnInit {
+export class UploadFAHYPOComponent implements OnInit {
   public form: FormGroup;
   savedOptions;
   options: { [name: string]: string } = {};
   visible: { [name: string]: boolean } = { USERS: true };
-  justSelected: string;
+
   constructor(
     public filterService: FiltersService,
     public pullData: PullDataService,
     public fb: FormBuilder,
-    public dialogRef: MatDialogRef<SavedfilterspopComponent>,
+    public dialogRef: MatDialogRef<UploadFAHYPOComponent>,
 
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
@@ -30,39 +31,25 @@ export class SavedfilterspopComponent implements OnInit {
     this.form = this.fb.group({});
     this.pullSavedList();
   }
+
   pullSavedList() {
-    this.pullData.getSavedFilters().subscribe(data => {
-      this.savedOptions = data;
+    this.pullData.pullHypoScenario().subscribe(data => {
+      this.filterService.faHypoScenarios = cloneDeep(data);
+      this.savedOptions = cloneDeep(data);
+      console.log(this.savedOptions);
     });
   }
-
-  //CLOSE WITH SELECTED PASSED BACK
   close() {
-    this.dialogRef.close({ folderID: this.justSelected });
+    this.dialogRef.close({ scenario: 0 });
   }
-
-  //CLOSE THE DIALOG BUT UPLOAD THE SAVED FILTERS SELECTED
-  //uploadSavedFilter IS NOT FUNCTIONAL
   save() {
-    // this.filterService.uploadSavedFilter(
-    //   this.justSelected,
-    //   this.savedOptions[this.justSelected]["name"],
-    //   this.savedOptions[this.justSelected]["filters"]
-    // );
-
-    this.dialogRef.close();
+    this.dialogRef.close({ scenario: 0 });
   }
 
   //NO RECURSIVE DATA STRUCTURE
-  selectFilter(name: string) {
-    this.justSelected = name;
-    document.getElementById(name).className = "itemSelected but mat-button";
-    document.getElementById(name + "ico").className = "space fa fa-folder-open";
-  }
 
-  pushDBFormat(filter: string) {
-    this.filterService.pushDBFormat(JSON.parse(filter));
-    this.dialogRef.close();
+  pushScenario(filter: string) {
+    this.dialogRef.close({ scenario: filter });
   }
   convertSQLDateStringtoDisplayFormat(date: string) {
     if (date == null) {

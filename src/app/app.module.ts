@@ -68,7 +68,9 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { ExcelComponent } from "./excel/excel.component";
 import { FaHypoComponent } from "./fa-hypo/fa-hypo.component";
 import { DragDropModule } from "@angular/cdk/drag-drop";
-import { ReversePipe } from './reverse.pipe';
+import { ReversePipe } from "./reverse.pipe";
+import { SavingFAHYPOComponent } from "./saving-fahypo/saving-fahypo.component";
+import { UploadFAHYPOComponent } from "./upload-fahypo/upload-fahypo.component";
 
 @NgModule({
   declarations: [
@@ -100,7 +102,9 @@ import { ReversePipe } from './reverse.pipe';
     OrderAttributePipe,
     ExcelComponent,
     FaHypoComponent,
-    ReversePipe
+    ReversePipe,
+    SavingFAHYPOComponent,
+    UploadFAHYPOComponent
   ],
   imports: [
     NgCircleProgressModule.forRoot({
@@ -195,7 +199,9 @@ import { ReversePipe } from './reverse.pipe';
     NameenterpopComponent,
     SavedfilterspopComponent,
     FolderselectpopComponent,
-    FilterspopComponent
+    FilterspopComponent,
+    SavingFAHYPOComponent,
+    UploadFAHYPOComponent
   ]
 })
 export class AppModule {}
