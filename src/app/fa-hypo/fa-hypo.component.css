@@ -84,7 +84,7 @@ a,
   border: 1px solid transparent;
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
-  padding: 5px;
+  /* padding: 5px; */
   text-align: center;
   text-transform: uppercase;
   font-size: 16px;
@@ -126,7 +126,7 @@ a,
   border: 1px solid #f0f2f5;
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
-  height: 150px;
+  height: auto;
   width: 150px;
 }
 .UFAContainer {
@@ -134,7 +134,7 @@ a,
   /* height: 350px !important; */
   width: 100% !important;
   height: fit-content;
-  height: 400px !important;
+  height: 377px !important;
   min-height: 160px;
   border-radius: 7px;
 }
@@ -183,25 +183,62 @@ a,
   display: block;
   /* height: 170px; */
   overflow-y: auto;
-  max-height: 367px;
+  max-height: 322px;
 }
 
 .item-box {
   border: solid 1px #ccc;
   margin-bottom: 5px;
   color: rgba(0, 0, 0, 0.87);
-  display: flex;
+  /* display: flex; */
+  /* flex-direction: row; */
+  align-items: center;
+  /* justify-content: space-between; */
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+  font-size: 12px;
+  /* border-radius: 20px; */
+  height: 36px;
+}
+
+.item-boxUFA {
+  border: solid 1px #ccc;
+  margin-bottom: 5px;
+  color: white;
+  display: grid;
+  grid-template-columns: 145px repeat(7, 1fr);
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
   cursor: move;
-  background: white;
-  font-size: 12px;
+
+  font-size: 16px;
+  padding-left: 10px;
   border-radius: 20px;
 }
-.item-box:hover {
-  background-color: burlywood;
+.item-boxCUT {
+  border: solid 1px #ccc;
+  margin-bottom: 5px;
+  color: black;
+  display: grid;
+  grid-template-columns: 145px repeat(7, 1fr);
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+
+  font-size: 16px;
+  padding-left: 10px;
+  border-radius: 20px;
+}
+.item-box:hover,
+.item-boxUFA:hover,
+.item-boxCUT:hover {
+  cursor: pointer;
+  /* background-color: burlywood; */
 }
 
 .cdk-drag-preview {
@@ -209,7 +246,7 @@ a,
   border-radius: 4px;
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
     0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
-  border-radius: 20px;
+  /* border-radius: 20px; */
 }
 
 .cdk-drag-placeholder {
@@ -306,4 +343,111 @@ a,
   position: absolute;
   top: -13px;
   left: -14px;
+}
+.UFAVal {
+  float: left;
+}
+.posHeaderUFACols {
+  display: grid;
+  grid-template-columns: 145px repeat(7, 1fr);
+  padding-left: 10px;
+  font-size: 12px;
+  background-color: #474747;
+  color: white;
+  padding-bottom: 4px;
+}
+.DepthTopHalf {
+  display: grid;
+  grid-template-columns: 37px 1fr;
+  width: 100%;
+  height: 19px;
+  line-height: 18px;
+  color: white;
+}
+.DepthBottonHalf {
+  display: grid;
+  color: white;
+  grid-template-columns: 37px repeat(3, 1fr);
+  width: 100%;
+  height: 15px;
+}
+.item-box {
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+}
+.DepthTopHalf > div,
+.DepthBottonHalf > span {
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
+.itemListMaxHeight125 {
+  max-height: 135px;
+  overflow-y: scroll;
+  min-height: 135px;
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-left: calc(50vw - 150px);
+  margin-top: calc(50vh - 100px);
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 51px;
+  height: 51px;
+  margin: 6px;
+  border: 6px solid rgb(107, 107, 107);
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: rgb(107, 107, 107) transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.topButton {
+  margin-top: 3px;
+  margin-right: 2px;
+  background-color: #3e4345;
+  font-family: "DIN-Regular";
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  padding-top: 3px;
+  float: left;
+  width: 75px;
+  min-width: 75px;
+  margin-left: 2px;
+  border: none;
+  border-radius: 5px;
+}
+.TopRow {
+  height: 40px;
+}
+.viewScenario {
+  line-height: 27px;
+  float: left;
+  height: 24px;
+  min-width: 255px;
+  border: 3px solid var(--lighter-blue);
+  border-radius: 10px;
+  padding-left: 1px;
 }

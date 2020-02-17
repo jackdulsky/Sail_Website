@@ -183,7 +183,7 @@ export class PullDataService {
   //SEND THE DATA BACK UP TO THE DB
   // INSERT THE GUI AND FILTERS SELECTED
   constructAndSendFilters(filter) {
-    console.log("PUSHING", JSON.stringify(filter));
+    // console.log("PUSHING", JSON.stringify(filter));
 
     var query =
       "exec SailDB.filter.spSAIL_StoreUpdateFilter N'" +
@@ -380,58 +380,36 @@ export class PullDataService {
   }
   pullHypoScenario() {
     var query =
-      "SELECT * FROM [SaildB].[Reports].[Hypo_Scenarios] Order By ScenarioID";
+      "SELECT * FROM [FreeAgency].[FA20].[Hypo_Scenarios] Order By ScenarioID";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  insertHypoScenario(data: any) {
-    var query =
-      "INSERT INTO [SaildB].[Reports].[Hypo_Scenarios] (ScenarioID, Label, ScenarioDesc, LastChangeDt, LastChangeUserID)";
-    query += " Values ";
-    for (let row in data) {
-      query +=
-        "(" +
-        data[row]["ScenarioID"] +
-        "," +
-        data[row]["Label"] +
-        "," +
-        data[row]["ScenarioDesc"] +
-        ", GETDATE(),'TESTUSER1')";
-      // console.log("DATA", data[row]);
-    }
-    console.log("query", query);
-    return this.http.post(this.serverURL + "db/query", {
-      query: query
-    });
-  }
+  // insertHypoScenario(data: any) {
+  //   var query =
+  //     "INSERT INTO [SaildB].[Reports].[Hypo_Scenarios] (ScenarioID, Label, ScenarioDesc, LastChangeDt, LastChangeUserID)";
+  //   query += " Values ";
+  //   for (let row in data) {
+  //     query +=
+  //       "(" +
+  //       data[row]["ScenarioID"] +
+  //       "," +
+  //       data[row]["Label"] +
+  //       "," +
+  //       data[row]["ScenarioDesc"] +
+  //       ", GETDATE(),'TESTUSER1')";
+  //     // console.log("DATA", data[row]);
+  //   }
+  //   console.log("query", query);
+  //   return this.http.post(this.serverURL + "db/query", {
+  //     query: query
+  //   });
+  // }
 
-  insertHypoScenarioData(data: any, ScenarioID: number) {
+  insertHypoScenarioData(jsonData: String) {
     var query =
-      "INSERT INTO [SaildB].[Reports].[Hypo_ScenarioPlayers] (ScenarioID, Label, ScenarioDesc, LastChangeDt, LastChangeUserID)";
-
-    query += " Values ";
-    for (let row in data) {
-      query +=
-        "(" +
-        String(ScenarioID) +
-        "," +
-        data[row]["SailID"] +
-        "," +
-        data[row]["BinID"] +
-        "," +
-        data[row]["OrderID"] +
-        "," +
-        data[row]["CashValue"] +
-        "," +
-        data[row]["DeadMoney"] +
-        "," +
-        data[row]["DepthHTML"] +
-        "," +
-        data[row]["UfaHTML"] +
-        "),";
-    }
-    console.log("QUERY @", query);
+      "Exec [FreeAgency].[FA20].[spScenario_Write] '" + jsonData + "'";
+    // var query = "select 1";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

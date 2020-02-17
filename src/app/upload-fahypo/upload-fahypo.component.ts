@@ -48,8 +48,12 @@ export class UploadFAHYPOComponent implements OnInit {
 
   //NO RECURSIVE DATA STRUCTURE
 
-  pushScenario(filter: string) {
-    this.dialogRef.close({ scenario: filter });
+  pushScenario(item: any) {
+    this.dialogRef.close({
+      scenario: item.ScenarioID,
+      name: item.Label,
+      desc: item.ScenarioDesc
+    });
   }
   convertSQLDateStringtoDisplayFormat(date: string) {
     if (date == null) {

@@ -38,7 +38,7 @@ export class FaHypoComponent implements OnInit {
     7: { BinLabel: "TE", Top: 400, Left: 940 },
     8: { BinLabel: "FB", Top: 585, Left: 630 },
     9: { BinLabel: "RB", Top: 625, Left: 320 },
-    10: { BinLabel: "SWR", Top: 585, Left: 87.5 },
+    10: { BinLabel: "SWR", Top: 585, Left: 164 },
     11: { BinLabel: "XWR", Top: 400, Left: 10 },
     12: { BinLabel: "ZWR", Top: 585, Left: 940 },
     13: { BinLabel: "NT", Top: 10, Left: 554.5 },
@@ -53,14 +53,14 @@ export class FaHypoComponent implements OnInit {
     22: { BinLabel: "NCB", Top: 195, Left: 940 },
     23: { BinLabel: "RCB", Top: 10, Left: 940 },
     24: { BinLabel: "LCB", Top: 10, Left: 10 },
-    25: { BinLabel: "ST", Top: 750, Left: 10 }
+    25: { BinLabel: "ST", Top: 662, Left: 10 }
   };
 
   math;
   number;
   connectedPositionLists = [];
   allBins = [];
-
+  uploadingScenario = true;
   ufaViewing = -1;
   cashSums = {};
   emptySums = {};
@@ -77,6 +77,7 @@ export class FaHypoComponent implements OnInit {
   name: string;
   description: string;
   scenarioID: any = null;
+  playerCount = 0;
   draftp5 = 0;
   draftsb = 0;
   draftPicks = {
@@ -143,7 +144,7 @@ export class FaHypoComponent implements OnInit {
       calc: 0,
       display: 1
     },
-    CT: {
+    CTZ: {
       Label: "Contracts and Tenders (ERFA, RFA)",
       Value: 0,
       calc: 1,
@@ -159,19 +160,19 @@ export class FaHypoComponent implements OnInit {
       Label: "Pre Training Camp Signing",
       Value: 10000000,
       calc: 0,
-      display: 0
+      display: 1
     },
     PSOM: {
       Label: "Practice Squad Over Minimum",
       Value: 500000,
       calc: 0,
-      display: 0
+      display: 1
     },
     DS: {
       Label: "2020 Draft Selections",
       Value: 27030000,
       calc: 1,
-      display: 0
+      display: 1
     },
     RC: {
       Label: "Roster to 53 Credit",
@@ -179,8 +180,14 @@ export class FaHypoComponent implements OnInit {
       calc: 1,
       display: 1
     },
+    PA: {
+      Label: "Potential Adjustments (Cuts)",
+      Value: 0,
+      calc: 1,
+      display: 1
+    },
     SAWOA: {
-      Label: "Spending Available w/o Adjustments",
+      Label: "Spending Available",
       Value: 0,
       calc: 1,
       display: 1
@@ -200,7 +207,6 @@ export class FaHypoComponent implements OnInit {
   }
   onClick(event) {
     if (this.editValueDisplay && event.target.id == "") {
-      console.log("OFF");
       this.editValueDisplay = false;
       this.editingPlayer = null;
       this.editingValue = "0.0";
@@ -208,7 +214,6 @@ export class FaHypoComponent implements OnInit {
   }
   onKeyPress(event) {
     if (event.key == "Enter" && this.editValueDisplay) {
-      console.log("OFF 2");
       this.editValueDisplay = false;
       this.editingPlayer = null;
       this.editingValue = "0.0";
@@ -238,9 +243,7 @@ export class FaHypoComponent implements OnInit {
       this.editValueDisplay = false;
       this.editingValue = "0.0";
       this.editingPlayer = null;
-      this.scenarioID = null;
-      this.name = null;
-      this.description = null;
+
       this.createBinMappings();
 
       for (let group of this.filterService.faHypoBins) {
@@ -261,7 +264,8 @@ export class FaHypoComponent implements OnInit {
       }
       this.emptySums = cloneDeep(this.cashSums);
       this.performCalculations();
-      console.log("DONE UPLOADING");
+      // DONE UPLOADING
+      this.uploadingScenario = false;
     } else {
       setTimeout(() => {
         this.initArraysRaiders();
@@ -271,41 +275,42 @@ export class FaHypoComponent implements OnInit {
   createBinMappings() {
     if (this.initMappings) {
       return null;
-    }
-    for (let group of this.filterService.faHypoBins) {
-      this.connectedBinMapping[group["BinID"]] == [];
-      if (group["BinID"] >= 0) {
-        for (let group2 of this.filterService.faHypoBins) {
-          if (group2["BinID"] >= 0) {
-            this.connectedBinMapping[group["BinID"]] += [group2["BinID"]];
+    } else {
+      for (let group of this.filterService.faHypoBins) {
+        this.connectedBinMapping[group["BinID"]] == [];
+        if (group["BinID"] >= 0) {
+          for (let group2 of this.filterService.faHypoBins) {
+            if (group2["BinID"] >= 0) {
+              this.connectedBinMapping[group["BinID"]] += [group2["BinID"]];
+            }
+          }
+        }
+        if (group["BinID"] < 0) {
+          for (let group2 of this.filterService.faHypoBins) {
+            if (group2["BinID"] > 0) {
+              this.connectedBinMapping[group["BinID"]] += [group2["BinID"]];
+            }
           }
         }
       }
-      if (group["BinID"] < 0) {
-        for (let group2 of this.filterService.faHypoBins) {
-          if (group2["BinID"] > 0) {
-            this.connectedBinMapping[group["BinID"]] += [group2["BinID"]];
-          }
-        }
+      for (let player of this.filterService.faHypo) {
+        this.originalBinMapping[player["PlayerID"]] = cloneDeep(
+          player["BinID"]
+        );
+
+        this.originalOrderMapping[player["PlayerID"]] = cloneDeep(
+          player["OrderID"]
+        );
       }
+      this.initMappings = true;
     }
-    for (let player of this.filterService.faHypo) {
-      this.originalBinMapping[player["PlayerID"]] = cloneDeep(player["BinID"]);
-      // this.originalValueMapping[player["PlayerID"]] = cloneDeep(
-      //   player["CashValue"]
-      // );
-      this.originalOrderMapping[player["PlayerID"]] = cloneDeep(
-        player["OrderID"]
-      );
-    }
-    this.initMappings = true;
   }
   performCalculations() {
     this.cashSums = cloneDeep(this.emptySums);
 
-    this.calculationsValues["CT"].Value = 0;
+    this.calculationsValues["CTZ"].Value = 0;
     var sumAdd = 0;
-
+    this.playerCount = Object.keys(this.draftPicks).length;
     for (let bin of this.allBins) {
       var binAdd = 0;
 
@@ -313,6 +318,10 @@ export class FaHypoComponent implements OnInit {
         binAdd += this.calcValueToUseAndDisplay(player);
         if (bin.id > 0) {
           sumAdd += this.calcValueToUseAndDisplay(player);
+          this.playerCount += 1;
+        }
+        if (bin.id == 0) {
+          binAdd -= player.DeadMoney;
         }
       }
 
@@ -321,10 +330,15 @@ export class FaHypoComponent implements OnInit {
       }
     }
 
-    this.calculationsValues["CT"].Value = sumAdd;
+    this.calculationsValues.RC.Value =
+      (this.playerCount <= 53,
+      1000000 * (53 - this.playerCount),
+      510000 * (53 - this.playerCount));
+    this.calculationsValues.PA.Value = this.cashSums[0].total;
+    this.calculationsValues["CTZ"].Value = sumAdd;
     this.calculationsValues.SAWOA.Value =
       this.calculationsValues.CTSC.Value -
-      this.calculationsValues.CT.Value -
+      this.calculationsValues.CTZ.Value -
       this.calculationsValues.IRRIM.Value -
       this.calculationsValues.PTCS.Value -
       this.calculationsValues.PSOM.Value -
@@ -410,7 +424,6 @@ export class FaHypoComponent implements OnInit {
   highlightOrNot(id: number) {
     if (id == this.ufaViewing) {
       return {
-        //backgroundColor: "cornflowerblue" ,
         backgroundColor: "white",
         color: "black",
         borderLeft: "0px",
@@ -494,12 +507,10 @@ export class FaHypoComponent implements OnInit {
     return -1;
   }
   editValue(event: any, pos: any, player: any) {
-    console.log("ON");
     this.editValueDisplay = true;
     this.editingPlayer = player;
 
-    this.editingValue = this.calcValueToUseAndDisplay(player);
-    console.log("EVENT", event.clientX, window.innerWidth);
+    this.editingValue = String(this.calcValueToUseAndDisplay(player) / 1000000);
     setTimeout(() => {
       var box = <HTMLInputElement>document.getElementById("editValueBox");
       box.style.left =
@@ -509,32 +520,38 @@ export class FaHypoComponent implements OnInit {
     }, 1);
   }
   overrideValue(newVal: any) {
-    this.editingPlayer.CashValue = Number(newVal);
-    // this.editingPlayer.UserMarket = Number(newVal);
+    this.editingPlayer.CustomAmt = Number(newVal) * 1000000;
   }
 
   save() {
-    console.log("SAVING", this.logOfMoves);
     var savingList = [];
     for (let bin of this.allBins) {
       for (let player in bin.players) {
         var returnPlayer = cloneDeep(bin.players[player]);
-        savingList.push(returnPlayer);
+        savingList.push({
+          BinID: returnPlayer.BinID,
+          OrderID: returnPlayer.OrderID,
+          PlayerID: returnPlayer.PlayerID,
+          CustomAmt: returnPlayer.CustomAmt
+        });
       }
     }
-    //call to send scenario
+
     this.pullData
-      .insertHypoScenario([
-        {
+      .insertHypoScenarioData(
+        JSON.stringify({
           ScenarioID: this.scenarioID,
           Label: this.name,
           ScenarioDesc: this.description,
           data: savingList
-        }
-      ])
+        })
+      )
       .subscribe(data => {
-        // this.scenarioID = data[0]
+        try {
+          this.scenarioID = data[0][""];
+        } catch (e) {}
       });
+
     setTimeout(() => {
       this.filterService.pullHypoScenario;
     }, 150);
@@ -554,8 +571,8 @@ export class FaHypoComponent implements OnInit {
 
       const dialogRef = this.dialog.open(SavingFAHYPOComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(data => {
+        this.scenarioID = null;
         if (data != undefined) {
-          console.log("Saving FA HYPO", data.name, data.description);
           this.name = data.name;
           this.description = data.description;
           this.save();
@@ -577,35 +594,42 @@ export class FaHypoComponent implements OnInit {
     //OPEN WINDOW
     const dialogRef = this.dialog.open(UploadFAHYPOComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data => {
-      if (data != undefined) {
-        console.log("UPLOAD", data);
-        this.pullData.pullHypoPlayers(data.scenario).subscribe(dataPlayers => {
-          this.filterService.faHypo = dataPlayers;
-          this.initArraysRaiders();
-        });
-      }
+      try {
+        if (data.scenario != undefined && data.scenario > 0) {
+          this.scenarioID = data.scenario;
+          this.uploadingScenario = true;
+          this.pullData
+            .pullHypoPlayers(data.scenario)
+            .subscribe(dataPlayers => {
+              this.filterService.faHypo = dataPlayers;
+              this.name = data.name;
+              this.description = data.desc;
+              this.initArraysRaiders();
+            });
+        }
+      } catch (e) {}
     });
   }
 
   //Reset to original starting scenario
   resetScenario() {
-    this.pullData.pullHypoPlayers(1).subscribe(dataPlayers => {
+    this.uploadingScenario = true;
+    this.pullData.pullHypoPlayers(0).subscribe(dataPlayers => {
       this.filterService.faHypo = dataPlayers;
+      this.scenarioID = null;
+      this.name = null;
+      this.description = null;
       this.initArraysRaiders();
     });
   }
 
   //change player to stop using input value
   resetInputValueNull() {
-    // this.editingPlayer.UserMarket = null;
+    this.editingPlayer.CustomAmt = null;
   }
 
   //Return the value of the player
   calcValueToUseAndDisplay(player) {
-    // if(player.UserMarket != null){
-    //   return player.UserMarket * 1000000;
-    // }
-    // return player.MarketValue
     if (player.CustomAmt != null) {
       return player.CustomAmt;
     }
@@ -613,5 +637,62 @@ export class FaHypoComponent implements OnInit {
       return player.Amt;
     }
     return 0;
+  }
+  createUFAHTML(player) {
+    var inner;
+  }
+  UFAPlayerStyle(player: any) {
+    return {
+      backgroundColor: String(player.HexColor),
+      color: String(player.TextColor)
+    };
+  }
+  depthBorderInsideTop(player: any) {
+    return {
+      borderBottom: "1px solid white", // + String(player.TextColor),
+      borderRight: "1px solid white" // + String(player.TextColor)
+    };
+  }
+  depthBorderInsideBottom(player: any) {
+    return {
+      borderRight: "1px solid white"
+    };
+  }
+  depthBorderOutside(player: any) {
+    return {
+      // borderLeft: "1px solid black",
+      // borderTop: "1px solid black"
+    };
+  }
+  depthBorderOutsideBottom(player: any) {
+    return {
+      // borderBottom: "1px solid black",
+      // borderLeft: "1px solid black"
+    };
+  }
+  depthBorderRightBlack(player: any) {
+    return {
+      borderRight: "1px solid black"
+    };
+  }
+  depthBorderRightBlackBottomColor(player: any) {
+    return {
+      borderRight: "1px solid black",
+      borderBottom: "1px solid white"
+    };
+  }
+  DepthPlayerStyleTop(player: any) {
+    if (this.originalBinMapping[player.PlayerID] >= 0) {
+      return { backgroundColor: "#868287" };
+      // return { backgroundColor: "#EOEOEO", color: "black" };
+    }
+    return { backgroundColor: "#179c25" };
+  }
+  DepthPlayerStyleBottom(player: any) {
+    if (this.originalBinMapping[player.PlayerID] >= 0) {
+      return { backgroundColor: "#5E5B5E" };
+      // return { backgroundColor: "#9C9C9C" };
+    }
+    return { backgroundColor: "#116D1A" };
   }
 }
