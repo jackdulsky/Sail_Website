@@ -52,7 +52,10 @@ export class UploadFAHYPOComponent implements OnInit {
     this.dialogRef.close({
       scenario: item.ScenarioID,
       name: item.Label,
-      desc: item.ScenarioDesc
+      desc: item.ScenarioDesc,
+      Budget_Target: item.Budget_Target,
+      Budget_Signings: item.Budget_Signings,
+      Budget_Replacements: item.Budget_Replacements
     });
   }
   convertSQLDateStringtoDisplayFormat(date: string) {

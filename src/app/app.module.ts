@@ -71,6 +71,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { ReversePipe } from "./reverse.pipe";
 import { SavingFAHYPOComponent } from "./saving-fahypo/saving-fahypo.component";
 import { UploadFAHYPOComponent } from "./upload-fahypo/upload-fahypo.component";
+import { MinusSignToParensPipe } from './minus-sign-to-parens.pipe';
 
 @NgModule({
   declarations: [
@@ -104,7 +105,8 @@ import { UploadFAHYPOComponent } from "./upload-fahypo/upload-fahypo.component";
     FaHypoComponent,
     ReversePipe,
     SavingFAHYPOComponent,
-    UploadFAHYPOComponent
+    UploadFAHYPOComponent,
+    MinusSignToParensPipe
   ],
   imports: [
     NgCircleProgressModule.forRoot({

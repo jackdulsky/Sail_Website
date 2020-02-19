@@ -358,7 +358,7 @@ export class PullDataService {
     });
   }
   pullHypoPlayers(scenario: number = 0) {
-    console.log("PULLING SCENARIO HYPO ", scenario);
+    // console.log("PULLING SCENARIO HYPO ", scenario);
     var query = "FreeAgency.FA20.spScenario_Get " + scenario;
 
     return this.http.post(this.serverURL + "db/query", {

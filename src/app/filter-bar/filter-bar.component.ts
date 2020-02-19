@@ -282,7 +282,10 @@ export class FilterBarComponent implements OnInit {
     dialogConfig.height = "auto";
     dialogConfig.autoFocus = true;
     dialogConfig.position = { top: "175px", left: "15%" };
-    dialogConfig.data = { previousName: this.filterService.getName() };
+    dialogConfig.data = {
+      previousName: this.filterService.getName(),
+      previousDescription: null
+    };
 
     const dialogRef = this.dialog.open(NameenterpopComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data => {

@@ -30,29 +30,43 @@ import { ConstantPool } from "@angular/compiler";
 export class FaHypoComponent implements OnInit {
   locationDepth = {
     1: { BinLabel: "QB", Top: 625, Left: 475 },
-    2: { BinLabel: "LT", Top: 400, Left: 165 },
-    3: { BinLabel: "LG", Top: 400, Left: 320 },
+    2: { BinLabel: "LT", Top: 400, Left: 205 },
+    3: { BinLabel: "LG", Top: 400, Left: 340 },
     4: { BinLabel: "C", Top: 400, Left: 475 },
-    5: { BinLabel: "RG", Top: 400, Left: 630 },
-    6: { BinLabel: "RT", Top: 400, Left: 785 },
+    5: { BinLabel: "RG", Top: 400, Left: 610 },
+    6: { BinLabel: "RT", Top: 400, Left: 745 },
     7: { BinLabel: "TE", Top: 400, Left: 940 },
     8: { BinLabel: "FB", Top: 585, Left: 630 },
     9: { BinLabel: "RB", Top: 625, Left: 320 },
     10: { BinLabel: "SWR", Top: 585, Left: 164 },
     11: { BinLabel: "XWR", Top: 400, Left: 10 },
     12: { BinLabel: "ZWR", Top: 585, Left: 940 },
-    13: { BinLabel: "NT", Top: 10, Left: 554.5 },
-    14: { BinLabel: "3T", Top: 10, Left: 393.5 },
-    15: { BinLabel: "LDE", Top: 10, Left: 232.5 },
-    16: { BinLabel: "RDE", Top: 10, Left: 715.5 },
-    17: { BinLabel: "MLB", Top: 195, Left: 456 },
-    18: { BinLabel: "WLB", Top: 195, Left: 617 },
-    19: { BinLabel: "SLB", Top: 195, Left: 134 },
-    20: { BinLabel: "SS", Top: 235, Left: 295 },
-    21: { BinLabel: "FS", Top: 235, Left: 778 },
-    22: { BinLabel: "NCB", Top: 195, Left: 940 },
-    23: { BinLabel: "RCB", Top: 10, Left: 940 },
-    24: { BinLabel: "LCB", Top: 10, Left: 10 },
+
+    13: { BinLabel: "NT", Top: 210, Left: 544.5 },
+    14: { BinLabel: "3T", Top: 210, Left: 310.5 },
+    15: { BinLabel: "LDE", Top: 210, Left: 773 },
+    16: { BinLabel: "RDE", Top: 210, Left: 165 },
+    17: { BinLabel: "MLB", Top: 30, Left: 456 },
+    18: { BinLabel: "WLB", Top: 30, Left: 617 },
+    19: { BinLabel: "SLB", Top: 30, Left: 134 },
+    20: { BinLabel: "SS", Top: 0, Left: 295 },
+    21: { BinLabel: "FS", Top: 0, Left: 778 },
+    22: { BinLabel: "NCB", Top: 30, Left: 940 },
+    23: { BinLabel: "RCB", Top: 210, Left: 940 },
+    24: { BinLabel: "LCB", Top: 210, Left: 8 },
+    // 13: { BinLabel: "NT", Top: 10, Left: 554.5 },
+    // 14: { BinLabel: "3T", Top: 10, Left: 393.5 },
+    // 15: { BinLabel: "LDE", Top: 10, Left: 232.5 },
+    // 16: { BinLabel: "RDE", Top: 10, Left: 715.5 },
+    // 17: { BinLabel: "MLB", Top: 195, Left: 456 },
+    // 18: { BinLabel: "WLB", Top: 195, Left: 617 },
+    // 19: { BinLabel: "SLB", Top: 195, Left: 134 },
+    // 20: { BinLabel: "SS", Top: 235, Left: 295 },
+    // 21: { BinLabel: "FS", Top: 235, Left: 778 },
+    // 22: { BinLabel: "NCB", Top: 195, Left: 940 },
+    // 23: { BinLabel: "RCB", Top: 10, Left: 940 },
+    // 24: { BinLabel: "LCB", Top: 10, Left: 10 },
+
     25: { BinLabel: "ST", Top: 662, Left: 10 }
   };
 
@@ -73,6 +87,10 @@ export class FaHypoComponent implements OnInit {
   editValueDisplay = false;
   editingValue = "0.0";
   editingPlayer;
+  editCapInfoDisplay = false;
+  editingCapInfo = "0.0";
+  editingCap: string;
+  capInfoOriginal: { CT: 230000000; PTCS: 12500000; IRRIM: 12500000 };
   initMappings = false;
   name: string;
   description: string;
@@ -138,59 +156,75 @@ export class FaHypoComponent implements OnInit {
     //   calc: 0,
     //   display: 0
     // },
-    CTSC: {
-      Label: "Cash Target (Salary Cap)",
-      Value: 198500000,
+    CT: {
+      Label: "Cash Target:",
+      Value: 230000000,
       calc: 0,
-      display: 1
+      display: 1,
+      OrderID: 1
     },
     CTZ: {
-      Label: "Contracts and Tenders (ERFA, RFA)",
+      Label: "Contracts and Tenders:",
       Value: 0,
       calc: 1,
-      display: 1
+      display: 1,
+      OrderID: 5
     },
     IRRIM: {
-      Label: "IR Replacements, Incentives, Misc",
+      Label: "IR Replacements, Incentives, Misc:",
       Value: 12500000,
       calc: 0,
-      display: 0
+      display: 1,
+      OrderID: 3
+    },
+    GAP: {
+      Label: "",
+      Value: null,
+      calc: 1,
+      display: 1,
+      OrderID: 4
     },
     PTCS: {
-      Label: "Pre Training Camp Signing",
-      Value: 10000000,
+      Label: "Pre Training Camp Signing:",
+      Value: 12500000,
       calc: 0,
-      display: 1
+      display: 1,
+      OrderID: 2
     },
     PSOM: {
-      Label: "Practice Squad Over Minimum",
+      Label: "Practice Squad Over Minimum:",
       Value: 500000,
-      calc: 0,
-      display: 1
+      calc: 1,
+      display: 1,
+      OrderID: 7
     },
     DS: {
-      Label: "2020 Draft Selections",
+      Label: "2020 Draft Selections:",
       Value: 27030000,
       calc: 1,
-      display: 1
+      display: 1,
+      OrderID: 6
     },
     RC: {
-      Label: "Roster to 53 Credit",
+      Label: "Roster to 53 Credit:",
       Value: 0,
       calc: 1,
-      display: 1
+      display: 1,
+      OrderID: 8
     },
     PA: {
-      Label: "Potential Adjustments (Cuts)",
+      Label: "Released Players:",
       Value: 0,
       calc: 1,
-      display: 1
+      display: 1,
+      OrderID: 9
     },
     SAWOA: {
-      Label: "Spending Available",
+      Label: "Spending Available:",
       Value: 0,
       calc: 1,
-      display: 1
+      display: 0,
+      OrderID: 1
     }
   };
 
@@ -211,12 +245,22 @@ export class FaHypoComponent implements OnInit {
       this.editingPlayer = null;
       this.editingValue = "0.0";
     }
+    if (this.editCapInfoDisplay && event.target.id == "") {
+      this.editCapInfoDisplay = false;
+      this.editingCap = null;
+      this.editingCapInfo = "0.0";
+    }
   }
   onKeyPress(event) {
     if (event.key == "Enter" && this.editValueDisplay) {
       this.editValueDisplay = false;
       this.editingPlayer = null;
       this.editingValue = "0.0";
+    }
+    if (event.key == "Enter" && this.editCapInfoDisplay) {
+      this.editCapInfoDisplay = false;
+      this.editingCap = null;
+      this.editingCapInfo = "0.0";
     }
   }
 
@@ -315,13 +359,16 @@ export class FaHypoComponent implements OnInit {
       var binAdd = 0;
 
       for (let player of bin["players"]) {
-        binAdd += this.calcValueToUseAndDisplay(player);
         if (bin.id > 0) {
+          binAdd += this.calcValueToUseAndDisplay(player);
           sumAdd += this.calcValueToUseAndDisplay(player);
           this.playerCount += 1;
         }
         if (bin.id == 0) {
-          binAdd -= player.DeadMoney;
+          binAdd += this.math.max(
+            this.calcValueToUseAndDisplay(player) - player.DeadMoney,
+            0
+          );
         }
       }
 
@@ -334,10 +381,10 @@ export class FaHypoComponent implements OnInit {
       (this.playerCount <= 53,
       1000000 * (53 - this.playerCount),
       510000 * (53 - this.playerCount));
-    this.calculationsValues.PA.Value = this.cashSums[0].total;
+    this.calculationsValues.PA.Value = -1 * this.cashSums[0].total;
     this.calculationsValues["CTZ"].Value = sumAdd;
     this.calculationsValues.SAWOA.Value =
-      this.calculationsValues.CTSC.Value -
+      this.calculationsValues.CT.Value -
       this.calculationsValues.CTZ.Value -
       this.calculationsValues.IRRIM.Value -
       this.calculationsValues.PTCS.Value -
@@ -356,9 +403,13 @@ export class FaHypoComponent implements OnInit {
   update(lists: any[], ids: any[]) {
     for (let index = 0; index < lists.length; index++) {
       var pos = lists[index];
+      var bin = ids[index];
+
       for (let i = 0; i < pos.length; i++) {
         var lenMoves = Object.keys(this.logOfMoves).length;
-        pos[i]["OrderID"] = i + 1;
+
+        pos[i]["OrderID"] = 1 + i;
+
         pos[i]["BinID"] = Number(ids[index]);
         var player = cloneDeep(pos[i]);
         var SailID = player["PlayerID"];
@@ -385,7 +436,17 @@ export class FaHypoComponent implements OnInit {
         }
       }
     }
+
     this.performCalculations();
+  }
+  compareOrders(a, b) {
+    if (a.OrderID < b.OrderID) {
+      return -1;
+    }
+    if (a.OrderID > b.OrderID) {
+      return 1;
+    }
+    return 0;
   }
 
   filterPlayers(data: any, position: number) {
@@ -414,7 +475,8 @@ export class FaHypoComponent implements OnInit {
       left:
         "calc((" +
         String(this.locationDepth[binID].Left / 1104) +
-        " * .64 * (100vw - 200px)) + 200px)"
+        " * .64 * (100vw - 200px)) + 200px)",
+      border: "1px solid #ececec"
     };
   }
   changeView(newPos: number) {
@@ -462,12 +524,13 @@ export class FaHypoComponent implements OnInit {
     var previousID = Number(event.previousContainer.id);
     var newID = Number(event.container.id);
     var sailID = event.previousContainer.data[event.previousIndex]["PlayerID"];
+    var newIndex = event.currentIndex;
+
     if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
+      if (13 <= newID && newID <= 24) {
+        newIndex = event.container.data.length - 1 - event.currentIndex;
+      }
+      moveItemInArray(event.container.data, event.previousIndex, newIndex);
 
       this.update([event.container.data], [event.container.id]);
     } else {
@@ -476,11 +539,14 @@ export class FaHypoComponent implements OnInit {
         newID > 0 ||
         (newID < 0 && this.originalBinMapping[sailID] < 0)
       ) {
+        if (13 <= newID && newID <= 24) {
+          newIndex = event.container.data.length - event.currentIndex;
+        }
         transferArrayItem(
           event.previousContainer.data,
           event.container.data,
           event.previousIndex,
-          event.currentIndex
+          newIndex
         );
         this.update(
           [event.previousContainer.data, event.container.data],
@@ -519,8 +585,32 @@ export class FaHypoComponent implements OnInit {
       document.getElementById("editValueInput").focus();
     }, 1);
   }
+  editCapInfo(event: any, category: string) {
+    console.log("ON");
+    this.editCapInfoDisplay = true;
+
+    this.editingCap = category;
+    this.editingCapInfo = String(
+      this.calculationsValues[category].Value / 1000000
+    );
+
+    setTimeout(() => {
+      var box = <HTMLInputElement>document.getElementById("editCapInfoBox");
+      box.style.left =
+        String(this.math.min(event.clientX, window.innerWidth - 262)) + "px";
+      box.style.top = String(event.clientY - 36) + "px";
+      document.getElementById("editCapInfoInput").focus();
+    }, 1);
+  }
   overrideValue(newVal: any) {
     this.editingPlayer.CustomAmt = Number(newVal) * 1000000;
+    this.performCalculations();
+  }
+
+  overrideCapInfo(newVal: any) {
+    // this.editingCapInfo.CustomAmt = Number(newVal) * 1000000;
+    this.calculationsValues[this.editingCap].Value = Number(newVal) * 1000000;
+    this.performCalculations();
   }
 
   save() {
@@ -543,7 +633,10 @@ export class FaHypoComponent implements OnInit {
           ScenarioID: this.scenarioID,
           Label: this.name,
           ScenarioDesc: this.description,
-          data: savingList
+          data: savingList,
+          Budget_Target: this.calculationsValues["CT"].Value,
+          Budget_Signings: this.calculationsValues["PTCS"].Value,
+          Budget_Replacements: this.calculationsValues["IRRIM"].Value
         })
       )
       .subscribe(data => {
@@ -580,7 +673,7 @@ export class FaHypoComponent implements OnInit {
       });
     }
   }
-  //IMPORT A FILTER POP UP MODAL
+  //IMPORT A Scenario POP UP MODAL
   uploadScenario() {
     //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
 
@@ -604,6 +697,10 @@ export class FaHypoComponent implements OnInit {
               this.filterService.faHypo = dataPlayers;
               this.name = data.name;
               this.description = data.desc;
+              this.calculationsValues["CT"].Value = data.Budget_Target;
+
+              this.calculationsValues["IRRIM"].Value = data.Budget_Replacements;
+              this.calculationsValues["PTCS"].Value = data.Budget_Signings;
               this.initArraysRaiders();
             });
         }
@@ -626,6 +723,13 @@ export class FaHypoComponent implements OnInit {
   //change player to stop using input value
   resetInputValueNull() {
     this.editingPlayer.CustomAmt = null;
+    this.performCalculations();
+  }
+  resetInputCapInfoNull() {
+    this.calculationsValues[this.editingCap].Value = this.capInfoOriginal[
+      this.editingCap
+    ];
+    this.performCalculations();
   }
 
   //Return the value of the player
@@ -647,10 +751,30 @@ export class FaHypoComponent implements OnInit {
       color: String(player.TextColor)
     };
   }
+  CUTPlayerStyle(player: any) {
+    return {
+      backgroundColor: "lightgrey",
+      color: "black"
+    };
+  }
   depthBorderInsideTop(player: any) {
+    if (this.originalBinMapping[player.PlayerID] < 0) {
+      return {
+        borderBottom: "1px solid white", // + String(player.TextColor),
+        borderRight: "1px solid white", // + String(player.TextColor)
+        backgroundColor: "white",
+        color: "black",
+        fontWeight: "bold",
+        marginLeft: "-2px"
+      };
+    }
     return {
       borderBottom: "1px solid white", // + String(player.TextColor),
-      borderRight: "1px solid white" // + String(player.TextColor)
+      borderRight: "1px solid white", // + String(player.TextColor)
+      backgroundColor: "black",
+      color: "white",
+      fontWeight: "bold",
+      marginLeft: "-2px"
     };
   }
   depthBorderInsideBottom(player: any) {
@@ -678,21 +802,66 @@ export class FaHypoComponent implements OnInit {
   depthBorderRightBlackBottomColor(player: any) {
     return {
       borderRight: "1px solid black",
-      borderBottom: "1px solid white"
+      borderBottom: "1px solid white",
+      overflowX: "hidden"
     };
   }
   DepthPlayerStyleTop(player: any) {
     if (this.originalBinMapping[player.PlayerID] >= 0) {
-      return { backgroundColor: "#868287" };
+      // return { backgroundColor: "#868287" };
+      return { backgroundColor: "white", color: "black" };
       // return { backgroundColor: "#EOEOEO", color: "black" };
     }
     return { backgroundColor: "#179c25" };
   }
   DepthPlayerStyleBottom(player: any) {
     if (this.originalBinMapping[player.PlayerID] >= 0) {
-      return { backgroundColor: "#5E5B5E" };
+      // return { backgroundColor: "#5E5B5E" };
+      return { backgroundColor: "#EAEAEA", color: "black" };
       // return { backgroundColor: "#9C9C9C" };
     }
-    return { backgroundColor: "#116D1A" };
+    return { backgroundColor: "#6CDE77", color: "black" };
+  }
+  depthOrientationStyle(bin) {
+    // return {
+    //   position: "fixed",
+    //   top: String(this.locationDepth[binID].Top + 103) + "px",
+    //   left:
+    //     "calc((" +
+    //     String(this.locationDepth[binID].Left / 1104) +
+    //     " * .64 * (100vw - 200px)) + 200px)"
+    // };
+    if (13 <= bin.id && bin.id <= 24) {
+      return {
+        flexDirection: "column-reverse",
+        position: "absolute",
+        bottom: "0",
+        width: "100%"
+      };
+    }
+    return {
+      flexDirection: "column"
+      // borderBottom: "1px solid black"
+    };
+  }
+  depthHeaderOrientationStyle(bin) {
+    if (13 <= bin.id && bin.id <= 24) {
+      return {
+        position: "absolute",
+        bottom: "-21px",
+        width: "98%",
+        borderTopLeftRadius: "0px",
+        borderTopRightRadius: "0px",
+        borderBottomLeftRadius: "7px",
+        borderBottomRightRadius: "7px",
+        zIndex: "100"
+      };
+    }
+    return { marginBottom: "3px" };
+  }
+  colorTextRedIfNegative(val: Number) {
+    if (val < 0) {
+      return { color: "Red" };
+    }
   }
 }

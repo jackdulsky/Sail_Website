@@ -1,3 +1,7 @@
+<!-- <div
+  style="background-image: url(../../assets/test2.png);;margin-left:300px;height:700px;width:700px"
+></div> -->
+
 <div style="overflow-y: scroll;height: 853px;">
   <div class="leftSide">
     <div class="depthchartContainer">
@@ -7,14 +11,23 @@
           *ngIf="bin.id > 0"
           [ngStyle]="depthLocationStyle(bin.id)"
         >
-          <div class="posHeader">{{ bin.label }}</div>
+          <div class="posHeader" [ngStyle]="depthHeaderOrientationStyle(bin)">
+            <span class="posHeaderCount">
+              <!-- ({{ bin.players.length }}) -->
+            </span>
+            <span class="posHeaderLabel">
+              {{ bin.label }}
+            </span>
+            <span class="posHeaderCash"> ({{ bin.players.length }}) </span>
+          </div>
 
           <div
             cdkDropList
             id="{{ bin.id }}"
             [cdkDropListData]="bin.players"
             [cdkDropListConnectedTo]="connectedPositionLists"
-            class="item-list itemListMaxHeight125"
+            class="item-list itemListHeightFlip"
+            [ngStyle]="depthOrientationStyle(bin)"
             (cdkDropListDropped)="drop($event)"
           >
             <div
@@ -24,18 +37,6 @@
               cdkDrag
               (click)="editValue($event, bin.id, player)"
             >
-              <!-- [innerHTML]="
-                player['LastName'] +
-                ', ' +
-                player['FirstName'] +
-                ' ' +
-                math.round(
-                  (calcValueToUseAndDisplay(player) / 1000000 +
-                    number.EPSILON) *
-                    100
-                ) /
-                  100
-              " -->
               <div
                 class="DepthTopHalf"
                 id="{{ player['PlayerID'] }}"
@@ -51,7 +52,7 @@
                       (calcValueToUseAndDisplay(player) / 1000000 +
                         number.EPSILON) *
                         100
-                    ) / 100
+                    ) / 100 | number: "1.2-2"
                   }}
                 </div>
                 <div
@@ -123,47 +124,72 @@
       <button class="topButton" (click)="resetScenario()">Reset</button>
       <div class="viewScenario">Scenario : {{ name }}</div>
     </div>
-    <div style="display: grid; grid-template-columns: 1fr  1fr;">
-      <div>
-        Player Count : &nbsp;
+    <div class="topValuesCapInfo">
+      <div
+        class="spendingCalculation"
+        [ngStyle]="colorTextRedIfNegative(calculationsValues['SAWOA'].Value)"
+      >
+        {{
+          calculationsValues["SAWOA"].Value
+            | currency: "USD":"symbol":"1.0-0"
+            | minusSignToParens
+        }}
       </div>
-      <div>
-        {{ playerCount }}
-      </div>
+      <div></div>
+      <div class="playerCount">{{ playerCount }} &nbsp; Players</div>
     </div>
-    <div class="capInfo">
-      <div style="display: grid; grid-template-columns: 1fr  1fr;">
-        <ng-container *ngFor="let figure of calculationsValues | keyvalue">
-          <div style=" float:left" *ngIf="figure.value.display == 1">
-            <span style="float:left">{{ figure.value.Label }} : &nbsp;</span>
+    <div class="capInfoCut">
+      <div
+        style="display: grid; grid-template-columns: 67%  33%;"
+        class="capInfo"
+      >
+        <ng-container
+          *ngFor="let figure of calculationsValues | keyvalue: valueOrder"
+        >
+          <div class="displayInfoCapLabel" *ngIf="figure.value.display == 1">
+            <span class="capInfoGrid"
+              >&nbsp;{{ figure.value.Label }} &nbsp;</span
+            >
           </div>
-          <div style=" float:left" *ngIf="figure.value.display == 1">
-            <span style="float:left">
-              {{ figure.value.Value / 1000000 | number: "1.1-3" }}
+          <div class="displayInfoCapValue" *ngIf="figure.value.display == 1">
+            <span
+              *ngIf="figure.value.Value != null && figure.value.calc == 1"
+              class="capInfoGrid"
+              [ngStyle]="colorTextRedIfNegative(figure.value.Value)"
+            >
+              &nbsp;{{
+                figure.value.Value
+                  | currency: "USD":"symbol":"1.0-0"
+                  | minusSignToParens
+              }}
+            </span>
+            <span
+              id="{{ figure.key }}"
+              *ngIf="figure.value.Value != null && figure.value.calc == 0"
+              class="capInfoGrid"
+              (click)="editCapInfo($event, figure.key)"
+            >
+              &nbsp;
+              {{
+                figure.value.Value
+                  | currency: "USD":"symbol":"1.0-0"
+                  | minusSignToParens
+              }}
+            </span>
+            <span *ngIf="figure.value.Value == null" class="capInfoGrid">
             </span>
           </div>
         </ng-container>
       </div>
-      <!-- <div>
-        <div *ngFor="let operation of logOfMoves | keyvalue: valueOrder">
-          <span *ngIf="operation.value.type == 0"> Cut </span>
-          <span *ngIf="operation.value.type == 1"> Sign </span>
-          <span *ngIf="operation.value.type == 2"> Move </span>
-          <span *ngIf="operation.value.type == -1"> ERROR </span>
-          <span *ngIf="operation.value.type == 3"> Depth Change </span>
-          &nbsp;-&nbsp;
-          {{ operation.value.item["LastName"] }} ,&nbsp;{{
-            operation.value.item["FirstName"]
-          }}&nbsp;({{ cashSums[operation.value.item.BinID].label }}&nbsp;{{
-            operation.value.item.OrderID
-          }})
-        </div>
-      </div> -->
-      <div style="position: absolute; bottom:0; width: 100%">
+
+      <div
+        style="position: absolute; bottom:0; width: 100%"
+        class="capInfoCuts"
+      >
         <ng-container *ngFor="let pos of allBins">
           <div
-            class="posContainer UFAContainer"
-            style="height:auto !important"
+            class="posContainer CUTContainer"
+            style="height:auto !important;"
             *ngIf="pos.id == 0"
           >
             <div class="posHeaderUFA" *ngIf="cashSums[0].total == 0">
@@ -174,7 +200,7 @@
                 cashSums[0]["total"] / 1000000 | number: "1.1-3"
               }})
             </div>
-            <div class="posHeaderUFACols">
+            <div class="posHeaderCUTCols">
               <span class="UFAVal">
                 Name
               </span>
@@ -192,13 +218,7 @@
                 Snap %
               </span>
               <span class="UFAVal">
-                Pro
-              </span>
-              <span class="UFAVal">
-                GH
-              </span>
-              <span class="UFAVal">
-                GID
+                Savings
               </span>
             </div>
 
@@ -208,7 +228,7 @@
               [cdkDropListData]="pos.players"
               [cdkDropListConnectedTo]="connectedPositionLists"
               class="item-list"
-              style="height:128px !important;"
+              style="height: 110px !important; max-height: 110px; overflow-y: auto;"
               (cdkDropListDropped)="drop($event)"
             >
               <div
@@ -217,21 +237,8 @@
                 *ngFor="let player of pos.players"
                 cdkDrag
                 (click)="editValue($event, pos.id, player)"
-                [ngStyle]="UFAPlayerStyle(player)"
+                [ngStyle]="CUTPlayerStyle(player)"
               >
-                <!-- [innerHTML]="
-                  player['LastName'] +
-                  ', ' +
-                  player['FirstName'] +
-                  ' ' +
-                  math.round(
-                    (calcValueToUseAndDisplay(player) / 1000000 +
-                      number.EPSILON) *
-                      100
-                  ) /
-                    100 +
-                  ' '
-                " -->
                 <span class="UFAVal" id="{{ player['PlayerID'] }}">
                   {{ player.FirstName[0] }}.&nbsp;
 
@@ -260,7 +267,7 @@
                 <span class="UFAVal" id="{{ player['PlayerID'] }}">
                   {{ player.Value4 }}
                 </span>
-                <span class="UFAVal" id="{{ player['PlayerID'] }}">
+                <!-- <span class="UFAVal" id="{{ player['PlayerID'] }}">
                   {{ player.Pro }}
                 </span>
                 <span class="UFAVal" id="{{ player['PlayerID'] }}">
@@ -268,6 +275,23 @@
                 </span>
                 <span class="UFAVal" id="{{ player['PlayerID'] }}">
                   {{ player.Gid }}
+                </span> -->
+                <span class="UFAVal">
+                  {{
+                    math.max(
+                      math.round(
+                        (calcValueToUseAndDisplay(player) / 1000000 +
+                          number.EPSILON) *
+                          100
+                      ) /
+                        100 -
+                        math.round(
+                          (player.DeadMoney / 1000000 + number.EPSILON) * 100
+                        ) /
+                          100,
+                      0
+                    )
+                  }}
                 </span>
               </div>
               <!-- [innerHTML]="
@@ -427,6 +451,28 @@
       </div>
     </div>
   </div>
+  <div id="editCapInfoBox" *ngIf="editCapInfoDisplay" class="editValueBox">
+    <div class="triangleValueBox"></div>
+    <div class="editValueTop">&nbsp;&nbsp;&nbsp;{{ editingCap["Label"] }}</div>
+    <div class="editValueBottom">
+      <input
+        id="editCapInfoInput"
+        [value]="editingCapInfo"
+        class="editValueInput"
+        (input)="overrideCapInfo($event.target.value)"
+      />
+      <div class="editValueGo" (click)="onKeyPress({ key: 'Enter' })">
+        &#10004;
+      </div>
+      <div
+        class="editValueGo"
+        style="background-color: #60c524 !important;background-image: none; margin-left: 5px; margin-right: 5px;"
+        (click)="resetInputCapInfoNull()"
+      >
+        &#8635;
+      </div>
+    </div>
+  </div>
 </div>
 <div
   style="background-color: var(--raiders-gray);width:100vw;height:100vh;position: absolute;top: 50px;left: 200px;"
@@ -439,3 +485,18 @@
     <div></div>
   </div>
 </div>
+<!-- <div>
+        <div *ngFor="let operation of logOfMoves | keyvalue: valueOrder">
+          <span *ngIf="operation.value.type == 0"> Cut </span>
+          <span *ngIf="operation.value.type == 1"> Sign </span>
+          <span *ngIf="operation.value.type == 2"> Move </span>
+          <span *ngIf="operation.value.type == -1"> ERROR </span>
+          <span *ngIf="operation.value.type == 3"> Depth Change </span>
+          &nbsp;-&nbsp;
+          {{ operation.value.item["LastName"] }} ,&nbsp;{{
+            operation.value.item["FirstName"]
+          }}&nbsp;({{ cashSums[operation.value.item.BinID].label }}&nbsp;{{
+            operation.value.item.OrderID
+          }})
+        </div>
+      </div> -->

@@ -612,15 +612,7 @@ export class FiltersService {
         //     ";"
         // );
       });
-      // this.pullData.pullfahypo().subscribe(data => {
-      //   var order = 0;
-      //   this.faHypo = data;
-      //   for (let player of this.faHypo) {
-      //     player["OrderID"] = order;
-      //     player["PlayerHTML"] = player["PlayerName"];
-      //     order += 1;
-      //   }
-      // });
+
       this.pullData.pullHypoPlayers().subscribe(data => {
         this.faHypo = data;
 

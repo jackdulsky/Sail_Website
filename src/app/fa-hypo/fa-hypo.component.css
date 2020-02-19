@@ -26,10 +26,11 @@ a,
   float: left;
   margin-left: 0.5%;
 }
-.capInfo {
+.capInfoCut {
   position: relative;
-  height: calc(0.5 * (100vh - 190px));
+  height: calc(0.48 * (100vh - 190px));
 }
+
 .posSelect {
   width: 100%;
   /* display: flex; */
@@ -79,7 +80,7 @@ a,
   margin: 0px;
 }
 .posHeader {
-  background-color: #f0f2f5;
+  background-color: #ececec;
   color: black;
   border: 1px solid transparent;
   border-top-left-radius: 7px;
@@ -94,7 +95,7 @@ a,
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  margin-bottom: 3px;
+  margin-bottom: 1px;
 }
 .posHeaderUFA {
   background-color: #474747;
@@ -123,11 +124,22 @@ a,
   user-select: none;
 }
 .posContainer {
-  border: 1px solid #f0f2f5;
+  /* border: 1px solid #f0f2f5; */
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
   height: auto;
-  width: 150px;
+  width: 125px;
+  max-height: 162px;
+  min-height: 154px;
+}
+.CUTContainer {
+  border: 1px solid black;
+  /* height: 350px !important; */
+  width: 100% !important;
+  height: fit-content;
+  height: 377px !important;
+  min-height: 160px;
+  border-radius: 7px;
 }
 .UFAContainer {
   border: 1px solid black;
@@ -135,7 +147,7 @@ a,
   width: 100% !important;
   height: fit-content;
   height: 377px !important;
-  min-height: 160px;
+  min-height: 374px;
   border-radius: 7px;
 }
 .heightLimit {
@@ -178,7 +190,7 @@ a,
 }
 
 .item-list {
-  min-height: 60px;
+  /* min-height: 60px; */
   border-radius: 4px;
   display: block;
   /* height: 170px; */
@@ -200,6 +212,7 @@ a,
   font-size: 12px;
   /* border-radius: 20px; */
   height: 36px;
+  width: 100%;
 }
 
 .item-boxUFA {
@@ -216,14 +229,14 @@ a,
 
   font-size: 16px;
   padding-left: 10px;
-  border-radius: 20px;
+  border-radius: 5px;
 }
 .item-boxCUT {
   border: solid 1px #ccc;
   margin-bottom: 5px;
   color: black;
   display: grid;
-  grid-template-columns: 145px repeat(7, 1fr);
+  grid-template-columns: 145px repeat(5, 1fr);
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -232,7 +245,7 @@ a,
 
   font-size: 16px;
   padding-left: 10px;
-  border-radius: 20px;
+  border-radius: 5px;
 }
 .item-box:hover,
 .item-boxUFA:hover,
@@ -356,6 +369,15 @@ a,
   color: white;
   padding-bottom: 4px;
 }
+.posHeaderCUTCols {
+  display: grid;
+  grid-template-columns: 145px repeat(5, 1fr);
+  padding-left: 10px;
+  font-size: 12px;
+  background-color: #474747;
+  color: white;
+  padding-bottom: 4px;
+}
 .DepthTopHalf {
   display: grid;
   grid-template-columns: 37px 1fr;
@@ -370,6 +392,8 @@ a,
   grid-template-columns: 37px repeat(3, 1fr);
   width: 100%;
   height: 15px;
+  font-size: 10px;
+  line-height: 13px;
 }
 .item-box {
   border-top: 1px solid black;
@@ -380,10 +404,33 @@ a,
   border-bottom: 1px solid black;
   border-right: 1px solid black;
 }
-.itemListMaxHeight125 {
-  max-height: 135px;
-  overflow-y: scroll;
-  min-height: 135px;
+.itemListHeightFlip {
+  /* max-height: 135px;
+  
+  display: flex;
+  flex-wrap: wrap;
+   */
+  max-height: 150px;
+  display: -webkit-box;
+  display: flex;
+  /* flex-direction: column-reverse; */
+  /* flex-wrap: wrap; */
+  /* justify-content: center; */
+  /* overflow-y: scroll; */
+}
+.itemListHeightRegular {
+  /* max-height: 135px;
+  
+  display: flex;
+  flex-wrap: wrap;
+   */
+  max-height: 150px;
+  display: -webkit-box;
+  display: flex;
+  /* flex-direction: column-reverse; */
+  /* flex-wrap: wrap; */
+  /* justify-content: center; */
+  /* overflow-y: scroll; */
 }
 
 .lds-ring {
@@ -450,4 +497,57 @@ a,
   border: 3px solid var(--lighter-blue);
   border-radius: 10px;
   padding-left: 1px;
+}
+.posHeaderCash {
+  font-size: 12px;
+}
+.posHeaderLabel {
+  margin-left: 0px;
+}
+.posHeaderCount {
+  margin-left: 15px;
+  font-size: 12px;
+}
+.capInfo {
+  border: 1px solid black;
+}
+/* .capInfo:first-child {
+  border-top: none !important;
+}
+.capInfo:nth-child(2),
+.capInfo:nth-child(1) {
+  border-top: none !important;
+} */
+.displayInfoCapValue:nth-child(1),
+.displayInfoCapLabel:nth-child(1) {
+  border-top: none !important;
+}
+.displayInfoCapValue {
+  float: left;
+  /* border-left: 1px solid #bfbfbf; */
+  border-top: 1px solid #bfbfbf;
+  background-color: #f2f2f2;
+}
+.displayInfoCapLabel {
+  float: left;
+  border-top: 1px solid #bfbfbf;
+  background-color: #f2f2f2;
+}
+.spendingCalculation,
+.playerCount {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  border: 1px solid black;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.topValuesCapInfo {
+  display: grid;
+  grid-template-columns: 40% 5% 55%;
+  margin-bottom: 10px;
+}
+.capInfoGrid {
+  font-size: 15px;
+  float: left;
 }
