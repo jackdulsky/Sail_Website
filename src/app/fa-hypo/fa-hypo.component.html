@@ -157,24 +157,23 @@
               class="capInfoGrid"
               [ngStyle]="colorTextRedIfNegative(figure.value.Value)"
             >
-              &nbsp;{{
-                figure.value.Value
-                  | currency: "USD":"symbol":"1.0-0"
-                  | minusSignToParens
-              }}
-            </span>
-            <span
-              id="{{ figure.key }}"
-              *ngIf="figure.value.Value != null && figure.value.calc == 0"
-              class="capInfoGrid"
-              (click)="editCapInfo($event, figure.key)"
-            >
-              &nbsp;
               {{
                 figure.value.Value
                   | currency: "USD":"symbol":"1.0-0"
                   | minusSignToParens
-              }}
+              }}&nbsp;
+            </span>
+            <span
+              id="{{ figure.key }}"
+              *ngIf="figure.value.Value != null && figure.value.calc == 0"
+              class="capInfoGrid capEditHover"
+              (click)="editCapInfo($event, figure.key)"
+            >
+              {{
+                figure.value.Value
+                  | currency: "USD":"symbol":"1.0-0"
+                  | minusSignToParens
+              }}&nbsp;
             </span>
             <span *ngIf="figure.value.Value == null" class="capInfoGrid">
             </span>
@@ -453,7 +452,9 @@
   </div>
   <div id="editCapInfoBox" *ngIf="editCapInfoDisplay" class="editValueBox">
     <div class="triangleValueBox"></div>
-    <div class="editValueTop">&nbsp;&nbsp;&nbsp;{{ editingCap["Label"] }}</div>
+    <div class="editValueTop">
+      &nbsp;&nbsp;&nbsp;{{ this.calculationsValues[editingCap].Label }}
+    </div>
     <div class="editValueBottom">
       <input
         id="editCapInfoInput"

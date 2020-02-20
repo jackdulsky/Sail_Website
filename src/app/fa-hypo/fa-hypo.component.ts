@@ -4,6 +4,8 @@ import * as cloneDeep from "lodash/cloneDeep";
 import { PullDataService } from "../pull-data.service";
 import { MatDialog, MatDialogConfig } from "@angular/material";
 import { SavingFAHYPOComponent } from "../saving-fahypo/saving-fahypo.component";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { BodyComponent } from "../body/body.component";
 
 import { UploadFAHYPOComponent } from "../upload-fahypo/upload-fahypo.component";
 import { KeyValue } from "@angular/common";
@@ -17,10 +19,6 @@ import {
   SafeUrl,
   ɵELEMENT_PROBE_PROVIDERS__POST_R3__
 } from "@angular/platform-browser";
-import { catchError } from "rxjs/operators";
-import { type } from "os";
-import { getRtlScrollAxisType } from "@angular/cdk/platform";
-import { ConstantPool } from "@angular/compiler";
 
 @Component({
   selector: "app-fa-hypo",
@@ -41,32 +39,18 @@ export class FaHypoComponent implements OnInit {
     10: { BinLabel: "SWR", Top: 585, Left: 164 },
     11: { BinLabel: "XWR", Top: 400, Left: 10 },
     12: { BinLabel: "ZWR", Top: 585, Left: 940 },
-
-    13: { BinLabel: "NT", Top: 210, Left: 544.5 },
-    14: { BinLabel: "3T", Top: 210, Left: 310.5 },
+    13: { BinLabel: "NT", Top: 210, Left: 410 },
+    14: { BinLabel: "3T", Top: 210, Left: 620.5 },
     15: { BinLabel: "LDE", Top: 210, Left: 773 },
-    16: { BinLabel: "RDE", Top: 210, Left: 165 },
-    17: { BinLabel: "MLB", Top: 30, Left: 456 },
-    18: { BinLabel: "WLB", Top: 30, Left: 617 },
-    19: { BinLabel: "SLB", Top: 30, Left: 134 },
-    20: { BinLabel: "SS", Top: 0, Left: 295 },
-    21: { BinLabel: "FS", Top: 0, Left: 778 },
-    22: { BinLabel: "NCB", Top: 30, Left: 940 },
-    23: { BinLabel: "RCB", Top: 210, Left: 940 },
-    24: { BinLabel: "LCB", Top: 210, Left: 8 },
-    // 13: { BinLabel: "NT", Top: 10, Left: 554.5 },
-    // 14: { BinLabel: "3T", Top: 10, Left: 393.5 },
-    // 15: { BinLabel: "LDE", Top: 10, Left: 232.5 },
-    // 16: { BinLabel: "RDE", Top: 10, Left: 715.5 },
-    // 17: { BinLabel: "MLB", Top: 195, Left: 456 },
-    // 18: { BinLabel: "WLB", Top: 195, Left: 617 },
-    // 19: { BinLabel: "SLB", Top: 195, Left: 134 },
-    // 20: { BinLabel: "SS", Top: 235, Left: 295 },
-    // 21: { BinLabel: "FS", Top: 235, Left: 778 },
-    // 22: { BinLabel: "NCB", Top: 195, Left: 940 },
-    // 23: { BinLabel: "RCB", Top: 10, Left: 940 },
-    // 24: { BinLabel: "LCB", Top: 10, Left: 10 },
-
+    16: { BinLabel: "RDE", Top: 210, Left: 185 },
+    17: { BinLabel: "MLB", Top: 30, Left: 536 },
+    18: { BinLabel: "WLB", Top: 30, Left: 355 },
+    19: { BinLabel: "SLB", Top: 30, Left: 854 },
+    20: { BinLabel: "SS", Top: 0, Left: 687 },
+    21: { BinLabel: "FS", Top: 0, Left: 164 },
+    22: { BinLabel: "NCB", Top: 30, Left: 8 },
+    23: { BinLabel: "RCB", Top: 210, Left: 8 },
+    24: { BinLabel: "LCB", Top: 210, Left: 940 },
     25: { BinLabel: "ST", Top: 662, Left: 10 }
   };
 
@@ -90,7 +74,7 @@ export class FaHypoComponent implements OnInit {
   editCapInfoDisplay = false;
   editingCapInfo = "0.0";
   editingCap: string;
-  capInfoOriginal: { CT: 230000000; PTCS: 12500000; IRRIM: 12500000 };
+  capInfoOriginal = { CT: 230000000, PTCS: 12500000, IRRIM: 12500000 };
   initMappings = false;
   name: string;
   description: string;
@@ -150,12 +134,6 @@ export class FaHypoComponent implements OnInit {
     }
   };
   calculationsValues = {
-    // CCCR: {
-    //   Label: "Current Count 51 Cap Room",
-    //   Value: 37827146,
-    //   calc: 0,
-    //   display: 0
-    // },
     CT: {
       Label: "Cash Target:",
       Value: 230000000,
@@ -230,8 +208,10 @@ export class FaHypoComponent implements OnInit {
 
   constructor(
     public filterService: FiltersService,
-    private sanitizer: DomSanitizer,
     public pullData: PullDataService,
+    public route: ActivatedRoute,
+    public router: Router,
+    public body: BodyComponent,
     public dialog: MatDialog
   ) {
     document.addEventListener("keypress", e => this.onKeyPress(e));
@@ -241,36 +221,39 @@ export class FaHypoComponent implements OnInit {
   }
   onClick(event) {
     if (this.editValueDisplay && event.target.id == "") {
-      this.editValueDisplay = false;
-      this.editingPlayer = null;
-      this.editingValue = "0.0";
+      this.clearPlayerValue();
     }
     if (this.editCapInfoDisplay && event.target.id == "") {
-      this.editCapInfoDisplay = false;
-      this.editingCap = null;
-      this.editingCapInfo = "0.0";
+      this.clearEditCap();
     }
   }
   onKeyPress(event) {
     if (event.key == "Enter" && this.editValueDisplay) {
-      this.editValueDisplay = false;
-      this.editingPlayer = null;
-      this.editingValue = "0.0";
+      this.clearPlayerValue();
     }
     if (event.key == "Enter" && this.editCapInfoDisplay) {
-      this.editCapInfoDisplay = false;
-      this.editingCap = null;
-      this.editingCapInfo = "0.0";
+      this.clearEditCap();
     }
+  }
+  clearEditCap() {
+    this.editCapInfoDisplay = false;
+    this.editingCap = null;
+    this.editingCapInfo = "0.0";
+  }
+  clearPlayerValue() {
+    this.editValueDisplay = false;
+    this.editingPlayer = null;
+    this.editingValue = "0.0";
   }
 
   ngOnInit() {
+    //This commented code will perform the function on a change to the data
     // this.filterService.timeLastUFAPull.subscribe(data => {
     //   console.log("CHANGE", data);
     //   this.initUFABoard();
     // });
 
-    // this.sumDraft();
+    this.body.portalHighlight("fa-hypo");
     this.initArraysRaiders();
   }
 
@@ -355,6 +338,7 @@ export class FaHypoComponent implements OnInit {
     this.calculationsValues["CTZ"].Value = 0;
     var sumAdd = 0;
     this.playerCount = Object.keys(this.draftPicks).length;
+    var DeadMoney = 0;
     for (let bin of this.allBins) {
       var binAdd = 0;
 
@@ -369,6 +353,7 @@ export class FaHypoComponent implements OnInit {
             this.calcValueToUseAndDisplay(player) - player.DeadMoney,
             0
           );
+          DeadMoney += player.DeadMoney;
         }
       }
 
@@ -390,14 +375,15 @@ export class FaHypoComponent implements OnInit {
       this.calculationsValues.PTCS.Value -
       this.calculationsValues.PSOM.Value -
       this.calculationsValues.DS.Value -
-      this.calculationsValues.RC.Value;
+      this.calculationsValues.RC.Value -
+      DeadMoney;
   }
   sumDraft() {
     for (let pick in this.draftPicks) {
       this.draftp5 += this.draftPicks[pick].p5;
       this.draftsb += this.draftPicks[pick].signing;
     }
-    console.log(this.draftp5, this.draftsb);
+    // console.log(this.draftp5, this.draftsb);
   }
 
   update(lists: any[], ids: any[]) {
@@ -507,6 +493,7 @@ export class FaHypoComponent implements OnInit {
       ? 1
       : 0;
   };
+
   //RETURN THE ITEMS IN THE REVERSE OF THE ORDER SdPECIFIED
 
   reverseValueOrder = (
@@ -586,7 +573,6 @@ export class FaHypoComponent implements OnInit {
     }, 1);
   }
   editCapInfo(event: any, category: string) {
-    console.log("ON");
     this.editCapInfoDisplay = true;
 
     this.editingCap = category;
@@ -645,9 +631,6 @@ export class FaHypoComponent implements OnInit {
         } catch (e) {}
       });
 
-    setTimeout(() => {
-      this.filterService.pullHypoScenario;
-    }, 150);
     // });
   }
   //SAVE FILTER / OPEN UP NAME POP UP MODAL
@@ -716,6 +699,10 @@ export class FaHypoComponent implements OnInit {
       this.scenarioID = null;
       this.name = null;
       this.description = null;
+      this.calculationsValues["CT"].Value = this.capInfoOriginal.CT;
+
+      this.calculationsValues["IRRIM"].Value = this.capInfoOriginal.IRRIM;
+      this.calculationsValues["PTCS"].Value = this.capInfoOriginal.PTCS;
       this.initArraysRaiders();
     });
   }

@@ -618,7 +618,7 @@ export class FiltersService {
 
         // console.log("FA HYPO PLAYERS", this.faHypo);
       });
-      this.pullHypoScenario();
+
       this.pullData.pullHypoBins().subscribe(data => {
         this.faHypoBins = data;
         // console.log("FA HYPO Bins", this.faHypoBins);
@@ -626,13 +626,6 @@ export class FiltersService {
     }
     this.bulkImported = true;
     return true;
-  }
-
-  //pull the scenarios
-  pullHypoScenario() {
-    this.pullData.pullHypoMaxScenario().subscribe(data => {
-      this.faHypoScenarios = data;
-    });
   }
 
   //IMPORT A SAVED FILTER
@@ -1632,7 +1625,7 @@ export class FiltersService {
         return cloneDeep(this.viewingURL);
       } catch (e) {}
     } else {
-      if (count <= 5) {
+      if (count <= 15) {
         setTimeout(() => {
           console.log("LOOP 13");
           return this.createRDURL(id, count + 1);

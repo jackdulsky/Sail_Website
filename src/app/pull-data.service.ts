@@ -359,25 +359,18 @@ export class PullDataService {
   }
   pullHypoPlayers(scenario: number = 0) {
     // console.log("PULLING SCENARIO HYPO ", scenario);
-    var query = "FreeAgency.FA20.spScenario_Get " + scenario;
-
+    var query = "Exec FreeAgency.FA20.spScenario_Get " + scenario;
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
   pullHypoBins() {
-    var query = "select * from saildb.Reports.Hypo_Bins";
+    var query = "select * from [FreeAgency].[FA20].[Hypo_Bins]";
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });
   }
-  pullHypoMaxScenario() {
-    var query =
-      "SELECT * MAX([ScenarioID]) FROM [SaildB].[Reports].[Hypo_Scenarios]";
-    return this.http.post(this.serverURL + "db/query", {
-      query: query
-    });
-  }
+
   pullHypoScenario() {
     var query =
       "SELECT * FROM [FreeAgency].[FA20].[Hypo_Scenarios] Order By ScenarioID";
@@ -409,7 +402,7 @@ export class PullDataService {
   insertHypoScenarioData(jsonData: String) {
     var query =
       "Exec [FreeAgency].[FA20].[spScenario_Write] '" + jsonData + "'";
-    // var query = "select 1";
+
     return this.http.post(this.serverURL + "db/query", {
       query: query
     });

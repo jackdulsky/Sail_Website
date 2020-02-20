@@ -551,3 +551,8 @@ a,
   font-size: 15px;
   float: left;
 }
+.capEditHover:hover {
+  cursor: pointer;
+  background-color: grey;
+  color: white;
+}

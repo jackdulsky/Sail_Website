@@ -36,7 +36,6 @@ export class UploadFAHYPOComponent implements OnInit {
     this.pullData.pullHypoScenario().subscribe(data => {
       this.filterService.faHypoScenarios = cloneDeep(data);
       this.savedOptions = cloneDeep(data);
-      console.log(this.savedOptions);
     });
   }
   close() {
