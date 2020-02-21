@@ -19,6 +19,7 @@ import {
   SafeUrl,
   ɵELEMENT_PROBE_PROVIDERS__POST_R3__
 } from "@angular/platform-browser";
+import { catchError } from "rxjs/operators";
 
 @Component({
   selector: "app-fa-hypo",
@@ -349,11 +350,8 @@ export class FaHypoComponent implements OnInit {
           this.playerCount += 1;
         }
         if (bin.id == 0) {
-          binAdd += this.math.max(
-            this.calcValueToUseAndDisplay(player) - player.DeadMoney,
-            0
-          );
-          DeadMoney += player.DeadMoney;
+          (binAdd += this.calcValueToUseAndDisplay(player) - player.DeadMoney),
+            (DeadMoney += player.DeadMoney);
         }
       }
 
@@ -383,7 +381,6 @@ export class FaHypoComponent implements OnInit {
       this.draftp5 += this.draftPicks[pick].p5;
       this.draftsb += this.draftPicks[pick].signing;
     }
-    // console.log(this.draftp5, this.draftsb);
   }
 
   update(lists: any[], ids: any[]) {
@@ -604,6 +601,11 @@ export class FaHypoComponent implements OnInit {
     for (let bin of this.allBins) {
       for (let player in bin.players) {
         var returnPlayer = cloneDeep(bin.players[player]);
+        if (
+          returnPlayer.BinID > 0 &&
+          this.originalBinMapping[returnPlayer.PlayerID] < 0
+        ) {
+        }
         savingList.push({
           BinID: returnPlayer.BinID,
           OrderID: returnPlayer.OrderID,
@@ -790,7 +792,9 @@ export class FaHypoComponent implements OnInit {
     return {
       borderRight: "1px solid black",
       borderBottom: "1px solid white",
-      overflowX: "hidden"
+      overflowX: "hidden",
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis"
     };
   }
   DepthPlayerStyleTop(player: any) {
@@ -810,25 +814,18 @@ export class FaHypoComponent implements OnInit {
     return { backgroundColor: "#6CDE77", color: "black" };
   }
   depthOrientationStyle(bin) {
-    // return {
-    //   position: "fixed",
-    //   top: String(this.locationDepth[binID].Top + 103) + "px",
-    //   left:
-    //     "calc((" +
-    //     String(this.locationDepth[binID].Left / 1104) +
-    //     " * .64 * (100vw - 200px)) + 200px)"
-    // };
     if (13 <= bin.id && bin.id <= 24) {
       return {
         flexDirection: "column-reverse",
         position: "absolute",
         bottom: "0",
-        width: "100%"
+        width: "100%",
+        minHeight: "150px"
       };
     }
     return {
-      flexDirection: "column"
-      // borderBottom: "1px solid black"
+      flexDirection: "column",
+      minHeight: "150px"
     };
   }
   depthHeaderOrientationStyle(bin) {

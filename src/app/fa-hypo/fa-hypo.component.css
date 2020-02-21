@@ -28,7 +28,7 @@ a,
 }
 .capInfoCut {
   position: relative;
-  height: calc(0.48 * (100vh - 190px));
+  height: calc(0.48 * (100vh - 240px));
 }
 
 .posSelect {
@@ -486,6 +486,10 @@ a,
   border: none;
   border-radius: 5px;
 }
+.topButton:hover {
+  cursor: pointer;
+  background-color: var(--raiders-gray);
+}
 .TopRow {
   height: 40px;
 }
@@ -493,7 +497,7 @@ a,
   line-height: 27px;
   float: left;
   height: 24px;
-  min-width: 255px;
+  width: calc(100% - 323px);
   border: 3px solid var(--lighter-blue);
   border-radius: 10px;
   padding-left: 1px;

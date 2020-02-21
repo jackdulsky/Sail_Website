@@ -74,7 +74,7 @@ export class LoadingComponent implements OnInit {
         }
 
         this.injectFilters();
-      }, 1500);
+      }, 1000);
     });
   }
 

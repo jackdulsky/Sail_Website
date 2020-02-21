@@ -5,7 +5,7 @@ import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { NonNullAssert, ThrowStmt } from "@angular/compiler";
-import { colours } from "./allReports";
+import { colours } from "./colourMapping";
 import {
   DomSanitizer,
   SafeUrl,
@@ -98,6 +98,9 @@ export class FiltersService {
   selected: string;
   portalSelected = "";
 
+  // viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+  //   "https://sailreports.raiders.com/"
+  // );
   viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
     "http://oakcmsreports01.raiders.com/"
   );
@@ -133,15 +136,7 @@ export class FiltersService {
   menuOpen = false;
   timeLastSent = new BehaviorSubject<string>("");
   timeLastUFAPull = new BehaviorSubject<string>("");
-  //   "OPTION 1":
-  //     "http://oakcmsreports01.raiders.com:88/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
-  //   "OPTION 2":
-  //     "oakcmsreports01.raiders.com:88/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
-  //   "OPTION 3":
-  //     "/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46",
-  //   "OPTION 4":
-  //     "/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46"
-  // };
+
   constructor(
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,
@@ -1141,7 +1136,7 @@ export class FiltersService {
             this.setPlayers();
           }, 200);
         }
-      }, 250);
+      }, 500);
     } else {
       setTimeout(() => {
         this.saveAndSend();
@@ -1611,6 +1606,9 @@ export class FiltersService {
     this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       "http://oakcmsreports01.raiders.com/"
     );
+    // this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+    //   "https://sailreports.raiders.com/"
+    // );
 
     if (this.reportURL) {
       //If Report is an excel file:
@@ -1619,6 +1617,17 @@ export class FiltersService {
         "&action=embedview&wdAllowInteractivity=True&wdbipreview=True&wdDownloadButton=True";
       try {
         var baseURL = this.reportURL[id]["ViewURL"];
+        if (document.location.hostname.includes("sail.raiders.com")) {
+          baseURL = baseURL.replace(
+            "http://oakcmsreports01.raiders.com",
+            "https://sailreports.raiders.com"
+          );
+        } else {
+          baseURL = baseURL.replace(
+            "https://sailreports.raiders.com",
+            "http://oakcmsreports01.raiders.com"
+          );
+        }
         this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
           baseURL.replace("[GUID]", this.pullData.GUID.toUpperCase())
         );
@@ -1667,9 +1676,11 @@ export class FiltersService {
           } else {
             var currentFid = cloneDeep(this.DBFormat[bin][fid][1]);
             this.FIDBID[fid] = bin;
-            this.FIDCreationOrder[bin] = this.FIDCreationOrder[bin].concat([
-              fid
-            ]);
+            try {
+              this.FIDCreationOrder[bin] = this.FIDCreationOrder[bin].concat([
+                fid
+              ]);
+            } catch (e) {}
             if (this.DBFormat[bin][fid][0].length > 0) {
               currentFid[String(-1 * Number(bin))] = this.DBFormat[bin][fid][0];
               if (String(bin) == "-2") {
@@ -1894,59 +1905,64 @@ export class FiltersService {
 
   setActiveClub() {
     var notFound = true;
-
-    for (let activeFID in this.FIDBID) {
-      if (String(this.FIDBID[activeFID]) == "-2") {
-        if ("2" in this.FIDs[activeFID] || 2 in this.FIDs[activeFID]) {
-          try {
-            this.teamPortalActiveClubID = this.FIDs[activeFID]["2"][0];
-          } catch (e) {
-            this.teamPortalActiveClubID = this.FIDs[activeFID][2][0];
+    try {
+      for (let activeFID in this.FIDBID) {
+        if (String(this.FIDBID[activeFID]) == "-2") {
+          if ("2" in this.FIDs[activeFID] || 2 in this.FIDs[activeFID]) {
+            try {
+              this.teamPortalActiveClubID = this.FIDs[activeFID]["2"][0];
+            } catch (e) {
+              this.teamPortalActiveClubID = this.FIDs[activeFID][2][0];
+            }
+            this.teamPortalSelected = this.teamsMap[
+              this.teamPortalActiveClubID
+            ];
+            notFound = false;
           }
-          this.teamPortalSelected = this.teamsMap[this.teamPortalActiveClubID];
-          notFound = false;
         }
       }
-    }
-    if (notFound) {
-      this.teamPortalActiveClubID = "1012";
-      this.teamPortalSelected = {
-        SailTeamID: "1012",
-        TeamCode: "LV",
-        Conference: "AFC",
-        Division: "West",
-        ClubCityName: "NFL",
-        ClubNickName: ""
-      };
-    }
+      if (notFound) {
+        this.teamPortalActiveClubID = "1012";
+        this.teamPortalSelected = {
+          SailTeamID: "1012",
+          TeamCode: "LV",
+          Conference: "AFC",
+          Division: "West",
+          ClubCityName: "NFL",
+          ClubNickName: ""
+        };
+      }
+    } catch (e) {}
   }
 
   //SET THE ACTIVE PLAYER BY GOING THROUGH THE DB OR SET DEFAULT
   setActivePlayer() {
-    var notFound = true;
-    for (let activeFID in this.FIDBID) {
-      if (String(this.FIDBID[activeFID]) == "-3") {
-        if ("3" in this.FIDs[activeFID] || 3 in this.FIDs[activeFID]) {
-          try {
-            this.playerPortalActivePlayerID = this.FIDs[activeFID]["3"][0];
-          } catch (e) {
-            this.playerPortalActivePlayerID = this.FIDs[activeFID][3][0];
+    try {
+      var notFound = true;
+      for (let activeFID in this.FIDBID) {
+        if (String(this.FIDBID[activeFID]) == "-3") {
+          if ("3" in this.FIDs[activeFID] || 3 in this.FIDs[activeFID]) {
+            try {
+              this.playerPortalActivePlayerID = this.FIDs[activeFID]["3"][0];
+            } catch (e) {
+              this.playerPortalActivePlayerID = this.FIDs[activeFID][3][0];
+            }
+            this.playerPortalSelected = this.pullValueMap["3"][
+              this.playerPortalActivePlayerID
+            ];
           }
-          this.playerPortalSelected = this.pullValueMap["3"][
-            this.playerPortalActivePlayerID
-          ];
+          notFound = false;
         }
-        notFound = false;
       }
-    }
 
-    if (notFound) {
-      this.playerPortalActivePlayerID = "";
-      this.playerPortalSelected = {
-        Label: "Player Select"
-      };
-    } else {
-    }
+      if (notFound) {
+        this.playerPortalActivePlayerID = "";
+        this.playerPortalSelected = {
+          Label: "Player Select"
+        };
+      } else {
+      }
+    } catch (e) {}
   }
 
   //This function will add add the years selected to the object that will be sent up
@@ -2350,6 +2366,21 @@ export class FiltersService {
 
   //link to new window
   goToLink(url: string) {
+    if (document.location.hostname.includes("sail.raiders.com")) {
+      url = url.replace(
+        "http://oakcmsreports01.raiders.com:88",
+        "https://sail.raiders.com"
+      );
+    } else {
+      url = url.replace(
+        "https://sail.raiders.com",
+        "http://oakcmsreports01.raiders.com:88"
+      );
+    }
+
+    // console.log("GO TO LINK", url);
+    // console.log(document.location.hostname, this.router.url);
+
     this.globalSearchShowSuggestions = false;
 
     //for new window

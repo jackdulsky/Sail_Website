@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import { FiltersService } from "./filters.service";
 
-//THSI FILTER PIPE IS USED FOR THE TYPE0 ENTRY FORMS
+//THSI FILTER PIPE IS USED FOR THE NARROWING OPTIONS IN THE REPORT-UPLOADER FORM
 @Pipe({ name: "filterReportLists" })
 export class FilterReportListsPipe implements PipeTransform {
   constructor(public filt: FiltersService) {}

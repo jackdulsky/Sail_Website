@@ -89,7 +89,7 @@
           *ngFor="
             let cat of filterService.type0Options(id)
               | keyvalue: valueOrder
-              | filter2: filterService.formCash.value[id + 'search']:id
+              | filterSearch: filterService.formCash.value[id + 'search']:id
           "
           [value]="cat.key"
           class="clickedWhite"
@@ -136,7 +136,7 @@
           *ngFor="
             let cat of filterService.positionHItem
               | keyvalue
-              | filter2: filterService.formCash.value[id + 'search']:id
+              | filterSearch: filterService.formCash.value[id + 'search']:id
           "
           [value]="cat.key"
           class="clickedWhite"

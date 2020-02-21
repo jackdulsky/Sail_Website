@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { BodyComponent } from "./body/body.component";
-import { SettingComponent } from "./setting/setting.component";
 import { FilterBarComponent } from "./filter-bar/filter-bar.component";
 import { ReportComponent } from "./report/report.component";
 import { BaseReportsComponent } from "./base-reports/base-reports.component";
@@ -37,10 +36,6 @@ export const routes: Routes = [
       },
 
       {
-        path: "setting",
-        component: SettingComponent
-      },
-      {
         path: "report/:reportid",
         component: ReportComponent,
         pathMatch: "full"
@@ -49,13 +44,9 @@ export const routes: Routes = [
         path: "filters",
         component: FilterBarComponent
       },
-      {
-        path: "",
-        component: FilterBarComponent,
-        outlet: "filterSection"
-      },
 
       {
+        //base-reportid is the variable for which list of reports is viewed
         path: "base-reports/:base-reportsid",
         component: BaseReportsComponent,
         pathMatch: "full"
@@ -76,6 +67,7 @@ export const routes: Routes = [
           },
           {
             path: "",
+            // 2679 is the default club home main page report view ID for Rockdaisy
             redirectTo: "report/2679",
             pathMatch: "full"
           }
@@ -92,7 +84,8 @@ export const routes: Routes = [
           },
           {
             path: "",
-            redirectTo: "base-reports/7",
+            // 2680 is the default player home main page report view ID for Rockdaisy
+            redirectTo: "report/2680",
             pathMatch: "full"
           }
         ]
@@ -121,6 +114,7 @@ export const routes: Routes = [
           }
         ]
       },
+      //These next three routes are for the ability to load a route that doesnt have a destination or a filterJSON to add
       {
         path: "loading/:guid/:filterjson/:destination",
         component: LoadingComponent
@@ -138,12 +132,15 @@ export const routes: Routes = [
         component: ReportUploadComponent
       },
       {
+        //** means invalid url from the parent correct */
+
         path: "**",
         redirectTo: "club"
       }
     ]
   },
   {
+    //** means invalid url from the parent correct */
     path: "**",
     component: NewpageComponent,
     pathMatch: "full"

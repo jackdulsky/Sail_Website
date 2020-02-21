@@ -9,14 +9,20 @@ import {
   stagger,
   keyframes
 } from "@angular/animations";
-
+/**
+ * The way animations work are you add a trigger for the name of the animation you want for the class,
+ * each item in the array is a different animation
+ * state is the label used for identifying the style to apply to the html element
+ * you can do this with any property styling such as opacity or size
+ * alter the speed of transitions grouped animation transitions section
+ */
 export const SlideInOutAnimation = [
   trigger("slideInOutYearPortal", [
     state(
       "in",
       style({
         "max-height": "500px",
-        opacity: "1",
+
         visibility: "visible",
         "overflow-y": "hidden"
       })
@@ -25,19 +31,13 @@ export const SlideInOutAnimation = [
       "out",
       style({
         "max-height": "0px",
-        opacity: "1",
+
         visibility: "hidden",
         "overflow-y": "hidden"
       })
     ),
     transition("in => out", [
       group([
-        animate(
-          "250ms ease-in-out",
-          style({
-            opacity: "1"
-          })
-        ),
         animate(
           "250ms ease-in-out",
           style({
@@ -64,12 +64,6 @@ export const SlideInOutAnimation = [
           "250ms ease-in-out",
           style({
             "max-height": "500px"
-          })
-        ),
-        animate(
-          "250ms ease-in-out",
-          style({
-            opacity: "1"
           })
         )
       ])
@@ -80,7 +74,7 @@ export const SlideInOutAnimation = [
       "in",
       style({
         "max-height": "500px",
-        opacity: "1",
+
         visibility: "visible"
       })
     ),
@@ -88,18 +82,12 @@ export const SlideInOutAnimation = [
       "out",
       style({
         "max-height": "0px",
-        opacity: "1",
+
         visibility: "hidden"
       })
     ),
     transition("in => out", [
       group([
-        animate(
-          "250ms ease-in-out",
-          style({
-            opacity: "1"
-          })
-        ),
         animate(
           "250ms ease-in-out",
           style({
@@ -126,12 +114,6 @@ export const SlideInOutAnimation = [
           "250ms ease-in-out",
           style({
             "max-height": "500px"
-          })
-        ),
-        animate(
-          "250ms ease-in-out",
-          style({
-            opacity: "1"
           })
         )
       ])

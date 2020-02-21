@@ -4,6 +4,13 @@ import { FiltersService } from "./filters.service";
 @Pipe({
   name: "orderAttribute"
 })
+
+/**
+ * Here will take a items that are id's and look up their navigation order to be displayed in
+ * Then sort the item, no items are added or deleted
+ * Only used in the filterspop component html file.
+ *
+ */
 export class OrderAttributePipe implements PipeTransform {
   constructor(public filt: FiltersService) {}
 
@@ -17,8 +24,6 @@ export class OrderAttributePipe implements PipeTransform {
       } else if (
         this.filt.pullNavigation[a]["OrderID"] >
         this.filt.pullNavigation[b]["OrderID"]
-        // this.filt.pullAttribute[a]["OrderID"] >
-        // this.filt.pullAttribute[b]["OrderID"]
       ) {
         return 1;
       } else {

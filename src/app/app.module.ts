@@ -5,7 +5,6 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { TopbarComponent } from "./topbar/topbar.component";
 import { BodyComponent } from "./body/body.component";
-import { SettingComponent } from "./setting/setting.component";
 // import {MdDialogModule} from '@angular/material/material';
 import { FolderselectpopComponent } from "./folderselectpop/folderselectpop.component";
 import { SavedfilterspopComponent } from "./savedfilterspop/savedfilterspop.component";
@@ -28,13 +27,11 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { SelectDropDownModule } from "ngx-select-dropdown";
 import { MatFormFieldModule, MatSelectModule } from "@angular/material";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
-import { FilterPipe } from "./filter.pipe";
-import { FilterPipe2 } from "./filter2.pipe";
+import { FilterSearchPipe } from "./filterSearch.pipe";
 import { FilterReportListsPipe } from "./filterReportLists.pipe";
 
 import { SafeHtmlPipe } from "./safe.pipe";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { SmartFilterPipe } from "./smartFilter.pipe";
 import { SortPipe } from "./sort.pipe";
 
 // import { Ng5SliderModule } from "ng5-slider";
@@ -68,23 +65,24 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { ExcelComponent } from "./excel/excel.component";
 import { FaHypoComponent } from "./fa-hypo/fa-hypo.component";
 import { DragDropModule } from "@angular/cdk/drag-drop";
-import { ReversePipe } from "./reverse.pipe";
 import { SavingFAHYPOComponent } from "./saving-fahypo/saving-fahypo.component";
 import { UploadFAHYPOComponent } from "./upload-fahypo/upload-fahypo.component";
-import { MinusSignToParensPipe } from './minus-sign-to-parens.pipe';
-
+import { MinusSignToParensPipe } from "./minus-sign-to-parens.pipe";
+/**
+ * This is where you will import all your modules, components, pipes and services
+ * As long as you know the location of the item you added it will be need to be placed appropriately
+ * If you have a pop up component they need to be placed under the entry components as well.
+ *
+ */
 @NgModule({
   declarations: [
     FilterReportListsPipe,
-    SmartFilterPipe,
     SortPipe,
     SafeHtmlPipe,
-    FilterPipe,
-    FilterPipe2,
+    FilterSearchPipe,
     AppComponent,
     TopbarComponent,
     BodyComponent,
-    SettingComponent,
     FolderselectpopComponent,
     FilterBarComponent,
     FilterspopComponent,
@@ -103,7 +101,6 @@ import { MinusSignToParensPipe } from './minus-sign-to-parens.pipe';
     OrderAttributePipe,
     ExcelComponent,
     FaHypoComponent,
-    ReversePipe,
     SavingFAHYPOComponent,
     UploadFAHYPOComponent,
     MinusSignToParensPipe

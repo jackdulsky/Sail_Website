@@ -34,7 +34,6 @@ import {
 import { ChangeDetectorRef } from "@angular/core";
 import { Location } from "@angular/common";
 import { routes } from "../app-routing.module";
-import { SettingComponent } from "../setting/setting.component";
 import { FilterBarComponent } from "../filter-bar/filter-bar.component";
 import { ReportComponent } from "../report/report.component";
 import { BaseReportsComponent } from "../base-reports/base-reports.component";

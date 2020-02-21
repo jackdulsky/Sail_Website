@@ -196,7 +196,7 @@
             </div>
             <div class="posHeaderUFA" *ngIf="cashSums[0].total != 0">
               {{ pos.label }} (+{{
-                cashSums[0]["total"] / 1000000 | number: "1.1-3"
+                cashSums[0]["total"] / 1000000 | number: "1.2-2"
               }})
             </div>
             <div class="posHeaderCUTCols">
@@ -289,7 +289,7 @@
                         ) /
                           100,
                       0
-                    )
+                    ) | number: "1.2-2"
                   }}
                 </span>
               </div>

@@ -13,7 +13,6 @@ import {
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 import { SafeHtmlPipe } from "../safe.pipe";
-import { SmartFilterPipe } from "../smartFilter.pipe";
 import { TEMPORARY_NAME } from "@angular/compiler/src/render3/view/util";
 import { KeyValue } from "@angular/common";
 import * as cloneDeep from "lodash/cloneDeep";

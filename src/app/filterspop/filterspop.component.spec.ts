@@ -47,7 +47,7 @@ import {
   MAT_DIALOG_DATA
 } from "@angular/material/dialog";
 import { MatFormFieldModule, MatSelectModule } from "@angular/material";
-import { FilterPipe2 } from "../filter2.pipe";
+import { FilterSearchPipe } from "../filterSearch.pipe";
 import { MatMenuModule } from "@angular/material/menu";
 import { OrderAttributePipe } from "../order-attribute.pipe";
 import { filter } from "rxjs/operators";
@@ -96,7 +96,7 @@ describe("FilterspopComponent", () => {
       declarations: [
         FilterspopComponent,
         OrderAttributePipe,
-        FilterPipe2,
+        FilterSearchPipe,
         SortPipe,
         OrderAttributePipe
       ],

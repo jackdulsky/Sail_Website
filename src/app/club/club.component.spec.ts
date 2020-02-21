@@ -18,7 +18,7 @@ import { BodyComponent } from "../body/body.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { MatFormFieldModule, MatSelectModule } from "@angular/material";
-import { FilterPipe2 } from "../filter2.pipe";
+import { FilterSearchPipe } from "../filterSearch.pipe";
 import { MatMenuModule } from "@angular/material/menu";
 import { NgCircleProgressModule } from "ng-circle-progress";
 import { routes } from "../app-routing.module";
@@ -50,7 +50,6 @@ import {
 } from "../testVariables";
 import { ChangeDetectorRef } from "@angular/core";
 import { fromEventPattern } from "rxjs";
-import { SettingComponent } from "../setting/setting.component";
 import { FilterBarComponent } from "../filter-bar/filter-bar.component";
 import { ReportComponent } from "../report/report.component";
 import { BaseReportsComponent } from "../base-reports/base-reports.component";
@@ -104,7 +103,7 @@ describe("ClubComponent", () => {
         ClubComponent,
         BodyComponent,
         SortPipe,
-        FilterPipe2
+        FilterSearchPipe
       ],
       providers: [
         ChangeDetectorRef,

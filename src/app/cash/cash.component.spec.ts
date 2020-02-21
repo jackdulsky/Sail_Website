@@ -12,7 +12,7 @@ import { BodyComponent } from "../body/body.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { MatFormFieldModule, MatSelectModule } from "@angular/material";
-import { FilterPipe2 } from "../filter2.pipe";
+import { FilterSearchPipe } from "../filterSearch.pipe";
 import { MatMenuModule } from "@angular/material/menu";
 import { TopbarComponent } from "../topbar/topbar.component";
 import { PullDataService } from "../pull-data.service";
@@ -62,7 +62,7 @@ describe("CashComponent", () => {
         TopbarComponent,
         BodyComponent,
         SortPipe,
-        FilterPipe2
+        FilterSearchPipe
       ],
       providers: [
         ChangeDetectorRef,
