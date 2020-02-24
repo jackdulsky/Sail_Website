@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { ReportListService } from "../report-list.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { FiltersService } from "../filters.service";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
@@ -15,7 +14,6 @@ export class ReportComponent implements OnInit {
   temp: string;
   sourceURL: string = "http://oakcmsreports01.raiders.com/view/";
   constructor(
-    private ReportListServices: ReportListService,
     public sanitizer: DomSanitizer,
     public filterService: FiltersService,
     public route: ActivatedRoute,

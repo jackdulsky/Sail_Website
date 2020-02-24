@@ -3,7 +3,6 @@ import { FiltersService } from "../filters.service";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
-import { ReportListService } from "../report-list.service";
 import { BodyComponent } from "../body/body.component";
 import * as cloneDeep from "lodash/cloneDeep";
 import { SlideInOutAnimation } from "../animations";
@@ -15,7 +14,6 @@ import { SlideInOutAnimation } from "../animations";
 })
 export class PlayerComponent implements OnInit {
   constructor(
-    public ReportListService: ReportListService,
     public filterService: FiltersService,
     public route: ActivatedRoute,
     public pullData: PullDataService,

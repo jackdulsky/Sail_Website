@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { FiltersService } from "../filters.service";
-import { ReportListService } from "../report-list.service";
 import { FolderselectpopComponent } from "../folderselectpop/folderselectpop.component";
 import { SavedfilterspopComponent } from "../savedfilterspop/savedfilterspop.component";
 import { MatDialog, MatDialogConfig } from "@angular/material";
@@ -19,7 +18,6 @@ import { ChangeDetectorRef } from "@angular/core";
 })
 export class BodyComponent implements OnInit {
   constructor(
-    public ReportListService: ReportListService,
     public dialog: MatDialog,
     public filterService: FiltersService,
     public pullData: PullDataService,
