@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
         } else {
           this.pullData.GUID = cloneDeep(this.guid);
         }
-      }, 1000);
+      }, 1500);
     });
   }
 }
