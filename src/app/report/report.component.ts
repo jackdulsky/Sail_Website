@@ -20,31 +20,28 @@ export class ReportComponent implements OnInit {
     public router: Router,
     public cdref: ChangeDetectorRef
   ) {}
-  displayURL: SafeUrl;
-  private sub: any;
-  sub2: any;
-  viewing;
-  test;
 
-  ngOnInit() {
-    // this.filterService.getBulkImport();
-  }
+  ngOnInit() {}
 
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
+  ngOnDestroy() {}
+  /**
+   * Get the report to show
+   * update the variables for creating the report url
+   * show the url
+   */
   ngAfterViewInit() {
-    this.sub = this.route.params.subscribe(params => {
-      this.viewing = String(params["reportid"]); // (+) converts string 'id' to a number
-      this.filterService.createRDURL(this.viewing);
+    this.route.params.subscribe(params => {
+      this.filterService.createRDURL(String(params["reportid"]));
       this.cdref.detectChanges();
       this.filterService.updateRDURL();
-
-      // this.cdref.detectChanges();
     });
   }
 
   //SETTING CSS OF THE iframe
+  /**
+   * depending on the portal this is in or not in (i.e. general or offense)
+   * set the height appropriately
+   */
   setIFrameStyle() {
     var h;
     if (
@@ -66,11 +63,5 @@ export class ReportComponent implements OnInit {
     };
 
     return styles;
-  }
-
-  checkUpload() {
-    let iframe = document.getElementById("iframe") as HTMLIFrameElement;
-    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-    console.log("DOC", innerDoc);
   }
 }

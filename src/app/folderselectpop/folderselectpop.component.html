@@ -3,7 +3,7 @@
     ><i class="fa fa-close fa-lg" (click)="close()"></i
   ></span>
 </h6>
-<mat-dialog-content [formGroup]="form" style="background-color:white">
+<mat-dialog-content style="background-color:white">
   <ng-template #recursiveList let-list>
     <div *ngFor="let item of list" class="padTop">
       <button
@@ -37,8 +37,4 @@
   <button class="mat-raised-button mat-primary save" (click)="save()">
     Select
   </button>
-  <!-- <button class="mat-raised-button mat-primary save" (click)="clearAll()">
-          Clear All
-        </button> -->
 </mat-dialog-actions>
-<!-- <button mat-raised-button matDialogClose>Close</button> -->

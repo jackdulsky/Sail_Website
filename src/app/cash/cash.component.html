@@ -2,6 +2,7 @@
   <span
     style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 125px; grid-column-gap: 5px;"
   >
+  <!-- go through the filters to display and get the right template code based on ui type -->
     <ng-container *ngFor="let att of showFilters">
       <ng-container
         *ngIf="
@@ -63,6 +64,7 @@
     </div>
   </span>
 </div>
+<!-- Normal Dropdown select GUI Template -->
 <ng-template #type0Selection let-id="id" let-values="values">
   <div class="toggleContainerSelection" [formGroup]="filterService.formCash">
     <div class="togglelabel">{{ filterService.pullAttribute[id][Label] }}:</div>
@@ -88,7 +90,7 @@
         <mat-option
           *ngFor="
             let cat of filterService.type0Options(id)
-              | keyvalue: valueOrder
+              | keyvalue: filterService.valueOrder
               | filterSearch: filterService.formCash.value[id + 'search']:id
           "
           [value]="cat.key"
@@ -100,6 +102,7 @@
   </div>
 </ng-template>
 
+<!-- Poisiton Select GUI -->
 <ng-template #type5Selection let-id="id" let-values="values">
   <div
     class="toggleContainerSelectionPositionSel"
@@ -145,6 +148,11 @@
       </mat-select>
     </mat-form-field>
   </div>
+
+  <!-- 
+    This section is the mat menu for the position select
+    If the position heirarchy is updated then this needs to be changed as well 
+  -->
   <mat-menu #Pos="matMenu"
     ><button mat-menu-item [matMenuTriggerFor]="DEF">
       DEF</button
@@ -460,11 +468,13 @@
   >
 </ng-template>
 
+
+<!-- This is the row of tabs (position 4 is cash) -->
 <div class="topBarCash">
   <div
     class="topLinkCash"
     *ngFor="
-      let cat of filterService.getReportHeaders(4) | keyvalue: body.valueOrder
+      let cat of filterService.getReportHeaders(4) | keyvalue: filterService.valueOrder
     "
     id="{{ cat.key }}cashBarHighlightid"
     (click)="tabClicked($event, cat.key)"
@@ -472,6 +482,7 @@
     {{ cat.value.Label }}
   </div>
 
+  <!-- This is here but will show up on the year box click  -->
   <div
     class="yearListAllCash shadow"
     [@slideInOutYearPortal]="yearListAnimationState"
@@ -495,5 +506,5 @@
     <i class="fa fa-window-maximize fa-sm"></i>
   </div>
 </div>
-
+<!-- for base reports or reports -->
 <router-outlet></router-outlet>

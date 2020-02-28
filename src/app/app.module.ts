@@ -59,7 +59,7 @@ import { HomeComponent } from "./home/home.component";
 import { NewpageComponent } from "./newpage/newpage.component";
 import { ClickOutsideModule } from "ng-click-outside";
 import { NgCircleProgressModule } from "ng-circle-progress";
-import { MenuItemComponent } from "./menu-item/menu-item.component";
+
 import { OrderAttributePipe } from "./order-attribute.pipe";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { ExcelComponent } from "./excel/excel.component";
@@ -97,7 +97,7 @@ import { MinusSignToParensPipe } from "./minus-sign-to-parens.pipe";
     CashComponent,
     HomeComponent,
     NewpageComponent,
-    MenuItemComponent,
+
     OrderAttributePipe,
     ExcelComponent,
     FaHypoComponent,

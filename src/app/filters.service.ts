@@ -1,43 +1,65 @@
 import { Injectable } from "@angular/core";
 import { Observable, of, BehaviorSubject } from "rxjs";
 import { PullDataService } from "./pull-data.service";
-import { filter } from "minimatch";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
-import { NonNullAssert, ThrowStmt } from "@angular/compiler";
-import { colours } from "./colourMapping";
-import {
-  DomSanitizer,
-  SafeUrl,
-  ɵELEMENT_PROBE_PROVIDERS__POST_R3__
-} from "@angular/platform-browser";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
-import { ReplaceSource } from "webpack-sources";
-import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
+import { colours } from "./constants";
+import { DomSanitizer } from "@angular/platform-browser";
+import { Router, ActivatedRoute } from "@angular/router";
 import { KeyValue } from "@angular/common";
-import { jsonpFactory } from "@angular/http/src/http_module";
 
 @Injectable({
   providedIn: "root"
 })
 export class FiltersService {
+  //variable to only perform bulk import once
   bulkImported = false;
 
-  tryingToSendDBFormat;
-  tryingToSetPlayersTime;
+  //This is the db format to check if no other edits were made after a timeout to send up the data.
+  tryingToSendDBFormat: string;
 
+  //This is used to get the players after an appropriate amount of time has passed.
+  tryingToSetPlayersTime: number;
+
+  //mapping of FID's to Bin ID's
   FIDBID: { [FID: string]: string } = {};
+
+  //mapping of FID to mapping of attribute ID's to list of values selected
   FIDs: { [FID: string]: {} } = {};
+
+  // This is the format that will be transfered to the database and back
+  //combining FID's and their bin mapping is how this variable is created and edited.
+  // { BID : { FID : [ [ ExplicitID ], { AttributeID : [ values ] } , [ FID Array Placeholder ] }
   DBFormat: { [bid: string]: {} } = {};
 
+  // Staged queries when fitlerspop component is up
+  //maps bin to object of attribute id's to list of values selected
+  //{ BID :  { AttributeID : [ values ] } }
   workingQuery = {};
+
+  //Maps bins to working FID or "" if no working fid
+  //allows you to edit a Filter once uploaded
   workingFID = {};
+
+  // orders the fid's in each bin for labels
+  //{ BID :  [ FID's ] } }
   FIDCreationOrder = {};
 
+  //The clicked on panel to know which attributes to show in the gui area
   show: string = "";
+
+  //list of panels in order to show from the filter structure.
   panels: string[] = [];
+
+  //This variable is a list of attrbiute ID's to display in the gui Area
+  //from the filter structure attributes either go into
+  // the panel to be displayed or in the gui area
   selectingAttributes: string[] = [];
-  filterBinSelected;
+
+  //String to keep track of the filter bin selected
+  filterBinSelected: string;
+
+  //Theses are the main (but not all) data structures from the database
   pullDataType;
   pullBin;
   pullNavigation;
@@ -50,34 +72,49 @@ export class FiltersService {
   pullStructure;
   pullOrderMap;
   pullPlayers;
-  teams;
-  teamsMap;
-  playLock;
-  clubData;
-  playerData;
+  teams; //raw array from DB
+  teamsMap; //extracted SailTeamID
+
+  //Data for reports Structure
+  //Determines which goes where how to link to them
   reportTabs;
   reportTabLocation;
   reportReportsStructure;
   reportReportsOnly;
   reportURL;
-  sub: any;
-  positionHierarchy;
-  positionHItem;
+
+  //These are the data structures for constructing the positional select drop down information
+  positionHierarchy; // mapped parents positions to children positions {parent:[children]}
+  positionHItem; // {filterID: filter object}
+
+  //Data for the top information bar in the club and player portals
   clubSpecifics;
   playerSpecifics;
-  faHypo;
-  faHypoBins;
-  faHypoScenarios;
-  ufaBorad;
+
+  //Data for FA-Hypo
+  faHypo; //players list with information
+  faHypoBins; //bin information
+  faHypoScenarios; // saved scenarios to upload
+
+  // label variables to access object info in html easier
   OrderID = "OrderID";
-  conferenceSelected = "AFC";
-  conferenceSelectedDEF = "AFC";
+  Label = "Label";
+
+  // for radial slider to know which side to be on
   conferenceSelections = { "2": "AFC", "400": "AFC" };
+
+  //count of plays based on filter to show in filter bar
+  //not functional (would get number from db)
   playCount = "0";
-  filterID: string = null;
+
+  //keeps track of filter name on save
+  //logic for saving over and saving as not implemented
   filterName: string = "";
   namePresent: boolean = false;
-  modified: boolean = false;
+  modified: boolean = false; //boolean for if db format has been modified
+
+  //default player club information
+  //might make sense to move this to a flag in the teams seciton passed down
   teamPortalActiveClubID = "1012";
   teamPortalSelected = {
     SailTeamID: "1012",
@@ -91,13 +128,20 @@ export class FiltersService {
     Label: "Player Select"
   };
   playerPortalActivePlayerID = "";
-  playerPortalActivePlayerIDOLD = "";
+
+  //imported static map for name to hex
   colours = colours;
 
-  Label = "Label";
+  //refers to which of the reports List is selected on the left body panel.
+  //also functions as which report list tab is clicked on inside portals
+  //The reorts in the body component on the left side function the same as report list tabs in portals
+  //These are imported from the database
+  //different than portal selected even though they are on the same sidebar
   selected: string;
   portalSelected = "";
 
+  //THIS SECTION IS COMMENTED OUT AND WILL BE THE EVENTUAL CODE IN PRODUCTION
+  //AFTER THE NETWORK ISSUE IS RESOLVED
   // viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
   //   "https://sailreports.raiders.com/"
   // );
@@ -105,6 +149,8 @@ export class FiltersService {
     "http://oakcmsreports01.raiders.com/"
   );
 
+  //Stores years selected from list of possible years to display
+  //portalYearsOnly is the variable that will be added to DBFormat and sent to the DB
   portalYearsSelected: String[] = [];
   portalYearsList = [
     "2021",
@@ -120,31 +166,52 @@ export class FiltersService {
     "2011"
   ];
   portalYearsOnly: String[] = ["2019"];
-  portalYearUpdated = false;
+  portalYearUpdated = false; //check if year updated to save and send
+
   fullScreenMode = false;
-  clickedReport = false;
-  displayPlayers = {};
+
+  //Stores list of players to display that are generated from the DB
   playersToDisplay: any[] = [];
 
+  //Showing the search suggestions from top search (right now we just automatically go to the first result)
   globalSearchShowSuggestions = false;
+
+  //give players to image urls
   playerImageURLs = {};
-  temp: any = {};
+
+  //temp variable to store results from global search, is depricated
+  globalSearchResults: any = {};
+
+  //attribute to values selected list, for filter selection
   form = this.fb.group({});
-  formCash = this.fb.group({});
+  formCash = this.fb.group({}); //specific to cash page
+
+  //for creating the structures of which filters to display in the cash tab top bar
+  //look in cash.component.ts for structure of these
   fidCashMap = {};
   fidCashMapFIDtoID = {};
+
+  //for settings menu in top right
   menuOpen = false;
+
+  //THESE ARE OBSERVABLE DATA OBJECTS THAT ARE STRINGS
+  //YOU CAN SUBSCRIBE TO CHANGES IN THEM FOR TRIGGERING
+  //THIS VARIABLE IS FOR TIME THE FILTERS WERE LAST SENT
   timeLastSent = new BehaviorSubject<string>("");
-  timeLastUFAPull = new BehaviorSubject<string>("");
 
   constructor(
+    //imported packages and components initialized
     public sanitizer: DomSanitizer,
     public pullData: PullDataService,
     public fb: FormBuilder,
     public route: ActivatedRoute,
     public router: Router
   ) {}
-  //This function returns the list of reports based on the location id
+
+  /**
+   * This function returns the list of reports based on the location id
+   * @param location the location that the report tabs exist in
+   */
   getReportHeaders(location: any) {
     var tabs;
     try {
@@ -158,47 +225,46 @@ export class FiltersService {
     return tabs;
   }
 
-  //RETURN TEAMS INFORMATION (NOT A LIST OF NAMES)
-  getTeams() {
-    return this.teams;
-  }
-  //RETURN THE NAME OF THE FILTER SET
-  getName() {
-    return this.filterName;
-  }
-  //RETURN THE ID ASSOCIATED WITH CURRENT FILTER SET
-  //LIKELY WILL BE THE GUID
-  getID() {
-    return this.filterID;
-  }
-  //RETURN IF A NAME EXISTS
+  /**
+   * RETURN IF A NAME EXISTS
+   */
   getNamePresent() {
     return this.namePresent;
   }
-  //CHANGE THE NAME OF THE FILTER SET
+
+  /**
+   * CHANGE THE NAME OF THE FILTER SET, set that the name is present
+   * @param name string to become name
+   */
   setName(name: string) {
     this.namePresent = true;
     this.filterName = name;
   }
 
-  //CHANGE THE ID ASSOCIATED WITH THE FILTER SET
-  setID(id: string) {
-    this.filterID = id;
-  }
-  //RESET THE FILTER SET ID
-  clearID() {
-    this.filterID = null;
+  /**
+   * RETURN THE FILTER NAME
+   */
+  getName() {
+    return this.filterName;
   }
 
-  //RESET THE NAME (AND ID)
+  /**
+   * RESET THE NAME (AND ID)
+   */
   clearName() {
     this.modified = false;
     this.filterName = null;
     this.namePresent = false;
-    this.clearID();
   }
 
-  //TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
+  /**
+   * TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
+   *
+   * @param data Array of objects returned from database
+   * @param idString the property of the object to make the key
+   * @param insertDict where to insert the new dicitonary
+   * @param keep optional param to indicate whether to delete the key from the object as well
+   */
   extractID(data, idString: string, insertDict, keep: number = 0) {
     for (let b in data) {
       var id = String(data[b][idString]);
@@ -210,7 +276,15 @@ export class FiltersService {
     }
   }
 
-  //extract key value to create mapping instead of array of dictionary
+  /**
+   *
+   * extract key value only to create mapping instead of array of dictionary
+   *
+   * @param data Array of objects returned from database
+   * @param key string of property to become the key
+   * @param value string of the property to become the value
+   * @param insertDict object to place the pair
+   */
   extractkeyValue(data, key: string, value: string, insertDict) {
     for (let b in data) {
       var id = String(data[b][key]);
@@ -226,13 +300,25 @@ export class FiltersService {
     }
   }
 
-  //RECURSIVELY GO THROUGH THE STRUCTURE TO CONVER TO THE DICTIONARY FORMAT REQUIRED
+  /**
+   * RECURSIVELY GO THROUGH THE FILTER STRUCTURE TO CONVER TO THE DICTIONARY FORMAT REQUIRED
+   *
+   * the property has "l" before the level (database specification)
+   *
+   * returned is a nested mapping for levels
+   *
+   * @param row the data object
+   * @param idString string of the object to become the key
+   * @param level recursion level
+   */
   recursiveExtractLevel(row, idString: string, level: number) {
     var id = String(row[idString]);
     var element = {};
     delete row[idString];
+    //if there is a next level proceed otherwise the value will be empty dictionary
     if (row["l" + String(level)]) {
       var next = {};
+      //iterate through the sub level
       for (let sub in row["l" + String(level)]) {
         next = Object.assign(
           {},
@@ -248,6 +334,7 @@ export class FiltersService {
       row["subLevel"] = next;
     }
 
+    //add each item of the filter structure to the form control.
     this.form.addControl(id, new FormControl());
     this.form.addControl(id + "search", new FormControl());
 
@@ -255,6 +342,13 @@ export class FiltersService {
     return element;
   }
 
+  /**
+   * Return the mapping of parents to children.
+   *
+   * @param data array of objects that have attributes for parent and id
+   * @param idCol string of attribute id
+   * @param parentCol string of parent id
+   */
   hierarchyTableToMap(data, idCol, parentCol) {
     var tempMap = {};
     for (let row in data) {
@@ -263,26 +357,17 @@ export class FiltersService {
       } else {
         tempMap[data[row][parentCol]].push(data[row][idCol]);
       }
-      // tempMap[data[row][parentCol]][data[row][idCol]] = data[row];
     }
     return tempMap;
   }
 
-  //return players to be displayed limit 15
-  getPlayers(players: any) {
-    // var returnPlayers = {};
-    // var i = 0;
-    // for (let player in players) {
-    //   if (i == 15) {
-    //     break;
-    //   }
-    //   returnPlayers[player] = players[player];
-    //   i += 1;
-    // }
-    // return returnPlayers;
-
-    return cloneDeep(this.playersToDisplay);
-  }
+  /**
+   * Through the database get the list of players to display. Does not automatically take in the DBFormat
+   * Because you may want to add some other values selected (Such as name text entered) without actually putting
+   * That in the filter structure
+   *
+   * @param sendString string in format of DB style JSON to send to DB to get return list of players
+   */
   setPlayers(sendString: string = JSON.stringify(this.DBFormat)) {
     var curTime = cloneDeep(Date.now());
     this.tryingToSetPlayersTime = curTime;
@@ -290,18 +375,23 @@ export class FiltersService {
       console.log("LOOP 16");
       if (Date.now() - this.tryingToSetPlayersTime > 349) {
         this.pullData.pullPlayersToDisplay(sendString).subscribe(data => {
-          var players = this.pullValueMap["3"];
+          var players = this.pullValueMap["3"]; //all players to get objects from SailID
           var arrPlayers = {};
+
+          //Add in players from returned query
           for (let row in data) {
             if (players[data[row]["SailID"]]) {
               arrPlayers[data[row]["SailID"]] = players[data[row]["SailID"]];
             }
           }
+
+          //add in any players selected in the form in the staged section (i.e. if in working query)
           for (let item in this.form.value["3"]) {
             if (players[item]) {
               arrPlayers[item] = players[item];
             }
           }
+          //Add in any players currently selected
           for (let fid in this.DBFormat["-3"]) {
             if (this.DBFormat["-3"][fid][0].length != 0) {
               for (let explicit in this.DBFormat["-3"][fid][0]) {
@@ -317,7 +407,13 @@ export class FiltersService {
       }
     }, 350);
   }
-  //addd keys to From
+
+  /**
+   * Add keys to form
+   * This is not used in production, but is used for testing to initialize the form variables
+   *
+   * @param structure list of keys of attributes to select
+   */
   initForm(structure: any) {
     structure.forEach(element => {
       this.form.addControl(element, new FormControl());
@@ -325,12 +421,15 @@ export class FiltersService {
     });
   }
 
-  //THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
+  /**
+   * THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
+   * ONLY CALLED ONCE (when top bar loads)
+   */
   getBulkImport() {
     if (!this.bulkImported) {
-      ////console.log("IMPORT BULK");
+      this.pullData.setGUID(); //set guid
 
-      this.pullData.setGUID();
+      //Pull structure (1 is for NFL)
       this.pullData.pullStructure("1").subscribe(data => {
         var d = JSON.parse(data[0][""]);
         this.pullStructure = {};
@@ -341,38 +440,21 @@ export class FiltersService {
             this.recursiveExtractLevel(d[b], "BinID", 2)
           );
         }
-        // console.log("PULLStructure", this.pullStructure);
-        // console.log(
-        //   "component.filterService.pullStructure = " +
-        //     JSON.stringify(this.pullStructure, function(k, v) {
-        //       return v === undefined ? null : v;
-        //     }) +
-        //     ";"
-        // );
-        // console.log("FORM", this.form);
-        // console.log(
-        //   "component.filterService.form = " + JSON.stringify(this.form) + ";"
-        // );
       });
+
+      //Data type information
       this.pullData.pullDataType().subscribe(data => {
         this.pullDataType = {};
         this.extractID(data, "DataTypeID", this.pullDataType);
-        // console.log(
-        //   "component.filterService.pullDataType = " +
-        //     JSON.stringify(this.pullDataType) +
-        //     ";"
-        // );
       });
+
+      //Players
       this.pullData.pullPlayers().subscribe(data => {
         this.pullPlayers = {};
         this.extractID(data, "SailID", this.pullPlayers);
-        //console.log("PLAYERS", this.pullPlayers);
-        // console.log(
-        //   "component.filterService.pullPlayers = " +
-        //     JSON.stringify(this.pullPlayers) +
-        //     ";"
-        // );
       });
+
+      //Bin information
       this.pullData.pullBin().subscribe(data => {
         this.pullBin = {};
         this.extractID(data, "BinID", this.pullBin);
@@ -382,23 +464,15 @@ export class FiltersService {
           this.workingFID[binKey] = "";
           this.FIDCreationOrder[binKey] = [];
         }
-        //console.log("BIN", this.pullBin);
-        // console.log(
-        //   "component.filterService.pullBin = " +
-        //     JSON.stringify(this.pullBin) +
-        //     ";"
-        // );
       });
+
+      //Overall navigation info
       this.pullData.pullNavigation().subscribe(data => {
         this.pullNavigation = {};
         this.extractID(data, "ItemID", this.pullNavigation);
-        // console.log("NAV", this.pullNavigation);
-        // console.log(
-        //   "component.filterService.pullNavigation = " +
-        //     JSON.stringify(this.pullNavigation) +
-        //     ";"
-        // );
       });
+
+      //Player Information
       this.pullData.pullPlayerURL().subscribe(data => {
         this.extractkeyValue(
           data,
@@ -406,53 +480,33 @@ export class FiltersService {
           "PlayerImageUrl",
           this.playerImageURLs
         );
-        // console.log(
-        //   "component.filterService.playerImageURLs = " +
-        //     JSON.stringify(this.playerImageURLs) +
-        //     ";"
-        // );
       });
+
+      //Navigation Information On where attributes go
       this.pullData.pullNavigationElement().subscribe(data => {
         this.pullNavigationElement = {};
         this.extractID(data, "ItemID", this.pullNavigationElement);
-        // console.log(
-        //   "component.filterService.pullNavigationElement = " +
-        //     JSON.stringify(this.pullNavigationElement) +
-        //     ";"
-        // );
-        // console.log("NAVELEM", this.pullNavigationElement);
       });
+
+      //Attribute Type information
       this.pullData.pullAttributeType().subscribe(data => {
         this.pullAttributeType = {};
         this.extractID(data, "AttributeTypeID", this.pullAttributeType);
-        //console.log("ATT TYPE", this.pullAttributeType);
-        // console.log(
-        //   "component.filterService.pullAttributeType = " +
-        //     JSON.stringify(this.pullAttributeType) +
-        //     ";"
-        // );
       });
+
+      //Attribute Info
       this.pullData.pullAttribute().subscribe(data => {
         this.pullAttribute = {};
         this.extractID(data, "AttributeID", this.pullAttribute);
-        // console.log("PULLATTRIBUTE", this.pullAttribute);
-        // console.log(
-        //   "component.filterService.pullAttribute = " +
-        //     JSON.stringify(this.pullAttribute) +
-        //     ";"
-        // );
       });
+
+      // UI Type information
       this.pullData.pullUIType().subscribe(data => {
         this.pullUIType = {};
         this.extractID(data, "UITypeID", this.pullUIType);
-        //console.log("PULL UI TYPE", this.pullUIType);
-        // console.log(
-        //   "component.filterService.pullUIType = " +
-        //     JSON.stringify(this.pullUIType) +
-        //     ";"
-        // );
       });
 
+      //get value map and overall order array
       this.pullData.pullValue().subscribe(data => {
         this.pullOrderMap = {};
         this.extractID(cloneDeep(data), "OrderID", this.pullOrderMap);
@@ -472,52 +526,27 @@ export class FiltersService {
 
           this.pullValue[valID] = data[b];
         }
-        // console.log("PULLValueMap", this.pullValueMap);
-        ////console.log("PULL ORDER MAP", this.pullOrderMap);
-        // console.log(
-        //   "component.filterService.pullValueMap = " +
-        //     JSON.stringify(this.pullValueMap) +
-        //     ";"
-        // );
-        // console.log(
-        //   "component.filterService.pullOrderMap = " +
-        //     JSON.stringify(this.pullOrderMap) +
-        //     ";"
-        // );
       });
+      //get sail Teams
       this.pullData.getTeams().subscribe(data => {
         this.teams = cloneDeep(data);
         this.teamsMap = {};
         this.extractID(data, "SailTeamID", this.teamsMap, 1);
-        // console.log(
-        //   "component.filterService.teamsMap = " +
-        //     JSON.stringify(this.teamsMap) +
-        //     ";"
-        // );
-        // console.log(
-        //   "component.filterService.teams = " + JSON.stringify(this.teams) + ";"
-        // );
       });
+
+      // Report Tabs list
       this.pullData.pullReportTabs().subscribe(data => {
         this.reportTabs = {};
         this.extractID(data, "TabID", this.reportTabs);
-        //  console.log("Pull Tabs", this.reportTabs);
-        // console.log(
-        //   "component.filterService.reportTabs = " +
-        //     JSON.stringify(this.reportTabs) +
-        //     ";"
-        // );
       });
+
+      //Report Tab Infomation Location
       this.pullData.pullReportTabLocation().subscribe(data => {
         this.reportTabLocation = {};
         this.extractID(data, "LocationID", this.reportTabLocation);
-        // console.log("Pull TabLocations", this.reportTabLocation);
-        // console.log(
-        //   "component.filterService.reportTabLocation = " +
-        //     JSON.stringify(this.reportTabLocation) +
-        //     ";"
-        // );
       });
+
+      //Report information
       this.pullData.pullReports().subscribe(data => {
         var tempReports = {};
         this.reportReportsStructure = {};
@@ -530,31 +559,15 @@ export class FiltersService {
             tempReports[report];
         }
         this.reportReportsOnly = cloneDeep(tempReports);
-
-        // console.log("Pull ReportsOnly", this.reportReportsOnly);
-        //  console.log("Pull Reports", this.reportReportsStructure);
-        // console.log(
-        //   "component.filterService.reportReportsOnly = " +
-        //     JSON.stringify(this.reportReportsOnly) +
-        //     ";"
-        // );
-        // console.log(
-        //   "component.filterService.reportReportsStructure = " +
-        //     JSON.stringify(this.reportReportsStructure) +
-        //     ";"
-        // );
       });
+
+      //Report URLs
       this.pullData.pullReportURL().subscribe(data => {
         this.reportURL = {};
         this.extractID(data, "ViewID", this.reportURL);
-        //console.log("REPORT URL", this.reportURL);
-        // console.log(
-        //   "component.filterService.reportURL = " +
-        //     JSON.stringify(this.reportURL) +
-        //     ";"
-        // );
       });
 
+      //Positional Information for the Attribute selection
       this.pullData.pullPositionHierarchy().subscribe(data => {
         this.positionHierarchy = {};
         this.positionHItem = {};
@@ -564,6 +577,8 @@ export class FiltersService {
           "ParentPosID"
         );
         this.extractID(data, "FilterPosID", this.positionHItem);
+
+        //THESE 4 add in the position menu, Offense, Defense, Specials that are not positions but needed for the positional hierarchy.
         this.positionHItem[102] = {
           PosName: "Offense",
           PosAbbr: "OFF",
@@ -593,167 +608,112 @@ export class FiltersService {
           ParentPosID: null
         };
         this.positionHierarchy[0] = [101, 102, 103];
-
-        // console.log("POS ITEMS", this.positionHItem);
-        // console.log("POS HIERARCHY", this.positionHierarchy);
-        // console.log(
-        //   "component.filterService.positionHItem = " +
-        //     JSON.stringify(this.positionHItem) +
-        //     ";"
-        // );
-        // console.log(
-        //   "component.filterService.positionHierarchy = " +
-        //     JSON.stringify(this.positionHierarchy) +
-        //     ";"
-        // );
       });
 
+      //FA HYPO PLAYERS INITALIZE
       this.pullData.pullHypoPlayers().subscribe(data => {
         this.faHypo = data;
-
-        // console.log("FA HYPO PLAYERS", this.faHypo);
       });
 
+      //FA HYPO BINS
       this.pullData.pullHypoBins().subscribe(data => {
         this.faHypoBins = data;
-        // console.log("FA HYPO Bins", this.faHypoBins);
       });
     }
     this.bulkImported = true;
     return true;
   }
 
-  //IMPORT A SAVED FILTER
-  //NOT FUNCTIONAL
-  uploadSavedFilter(filterID: string, name: string, filter: any) {
-    //   this.setName(name);
-    //   this.setID(filterID);
-    //   this.testFilters = filter;
+  //Check if all variables are uploaded from db
+  checkUploadComplete() {
+    if (
+      this.faHypoBins != null &&
+      this.faHypo != null &&
+      this.positionHierarchy != null &&
+      this.positionHItem != null &&
+      this.pullDataType != null &&
+      this.pullBin != null &&
+      this.pullNavigation != null &&
+      this.pullNavigationElement != null &&
+      this.pullAttributeType != null &&
+      this.pullAttribute != null &&
+      this.pullUIType != null &&
+      this.pullValue != null &&
+      this.pullValueMap != null &&
+      this.pullStructure != null &&
+      this.pullOrderMap != null &&
+      this.pullPlayers != null &&
+      this.teams != null &&
+      this.teamsMap != null &&
+      this.reportTabs != null &&
+      this.reportTabLocation != null &&
+      this.reportReportsStructure != null &&
+      this.reportReportsOnly != null &&
+      this.reportURL != null
+    ) {
+      return true;
+    }
+    return false;
   }
 
-  //NOT FUNCTIONAL
-  testSetSeasonWeek(
-    filterID: string,
-    year: string,
-    type: string,
-    week: string
-  ): void {
-    //   this.modified = true;
-    //   if (year != null) {
-    //     if (!this.testFilters[filterID]) {
-    //       this.testFilters[filterID] = {};
-    //     }
-    //     if (!this.testFilters[filterID][year]) {
-    //       this.testFilters[filterID][year] = { POST: [], PRE: [], REG: [] };
-    //     }
-    //     var old = this.testFilters[filterID][year][type];
-    //     if (old.indexOf(week) == -1) {
-    //       this.testFilters[filterID][year][type] = old.concat([week]);
-    //     }
-    //   } else {
-    //     this.testDelete(filterID);
-    //   }
-    //   this.testSendFilters();
-  }
-
-  //NOT FUNCTIONAL
-  testRemoveSeasonWeek(
-    filterID: string,
-    year: string,
-    type: string,
-    week: string
-  ): void {
-    //   this.testFilters[filterID][year][type] = this.testFilters[filterID][year][
-    //     type
-    //   ].filter(x => x != week);
-    //   if (
-    //     this.testFilters[filterID][year]["POST"].length == 0 &&
-    //     this.testFilters[filterID][year]["REG"].length == 0 &&
-    //     this.testFilters[filterID][year]["PRE"].length == 0
-    //   ) {
-    //     delete this.testFilters[filterID][year];
-    //   }
-    //   if (Object.keys(this.testFilters[filterID]).length == 0) {
-    //     delete this.testFilters[filterID];
-    //   }
-    //   this.testSendFilters();
-  }
-
-  //NOT FUNCTIONAL
-  XOSExport(folder: string) {
-    this.pullData.XOSExport(folder, this.filterID, {});
-  }
-
-  //NOT FUNCTIONAL
+  /**
+   * Save DBFormat to DB with name and description
+   * Takes current instance of DBFormat
+   *
+   * @param name string name of filter set
+   * @param description string descritption of filter set
+   */
   saveFilter(name: string, description: string) {
     if (Object.keys(this.DBFormat).length > 0) {
       this.pullData
-        .saveFilter(name, this.DBFormat, this.filterID, description)
+        .saveFilter(name, this.DBFormat, description)
         .subscribe(data => {
           console.log("SAVED!");
         });
-      // this.setID(newID);
-      // console.log("OUTPUT", newID);
     }
-    // this.modified = false;
   }
 
-  //NOT FUNCTIONAL
-  removeSingleSelection(filterID: string, filter: number) {
-    // const index: number = this.testFilters[filterID].indexOf(filter);
-    // this.testFilters[filterID] = this.testFilters[filterID].filter(
-    //   x => x != filter
-    // );
-    // if (this.testFilters[filterID].length == 0) {
-    //   delete this.testFilters[filterID];
-    // }
-    // this.testSendFilters();
-  }
-
-  //RETURN IF THE FILTER QUERY SET HAS BEEN MODIFIED AT ALL SINCE SAVED
+  /**
+   * RETURN IF THE FILTER QUERY SET HAS BEEN MODIFIED AT ALL SINCE SAVED
+   */
   modifiedStatus() {
     return this.modified && this.getNamePresent();
   }
 
-  //USED FOR TESTING THE PLAY COUNT
-  //LOCKS THE WRITING TO THE PLAYCOUNT VARIABLE
-  testSendFilters2() {
-    var game = Math.floor(Math.random() * 900) + 57000;
-    this.playCount = "";
-    this.playLock = game;
-    this.pullData.testSlowQuery(game).subscribe(data => {
-      try {
-        if (this.playLock == game) {
-          var temp = <any[]>data;
-          this.playCount = String(temp.length);
-        }
-      } catch (error) {
-        //console.log(error);
-      }
-    });
-  }
-
-  //TURN NUMBER TO STRING FOR HTML WORKAROUND
+  //
+  /**
+   * TURN ITEM TO STRING FOR HTML WORKAROUND SINCE YOU CANT PUT STRING() IN HTML
+   * @param item
+   */
   turnString(item: any) {
     return String(item);
   }
 
-  //DELETE A QUERY BASED ON FID
+  /**
+   * DELETE A QUERY BASED ON FID
+   *
+   * @param fid Filter ID to be deleted from DB format and existing query if applicable
+   */
   removeQuery(fid: string) {
     var oldBID = this.FIDBID[fid];
 
+    //if its in the cash portal top filter delete from there
     if (Object.keys(this.fidCashMapFIDtoID).indexOf(fid) != -1) {
       var id = this.fidCashMapFIDtoID[fid];
       this.formCash.controls[id].setValue(null);
     }
 
+    //go through the attribute ID's and delete them
     for (let id in this.FIDs[fid]) {
       this.clearSingleIDWorking(id, this.FIDBID[fid]);
     }
+
+    //delete from everywhere
     delete this.DBFormat[oldBID][fid];
 
     delete this.FIDBID[fid];
     delete this.FIDs[fid];
+
     if (JSON.stringify(this.DBFormat[oldBID]) == "{}") {
       delete this.DBFormat[oldBID];
     }
@@ -763,20 +723,28 @@ export class FiltersService {
     this.saveAndSend();
   }
 
-  //THIS IS THE GENERIC CHANGE FUNCTION
-  //TAKES IN THE FORMKEY (ATT OR PKID), AND ITS VALUES
-  //AND WILL PUT THE CHANGES IN THE COMBINED VARIABLE
-  //STAGED FOR PUTTIN INTO THE WORKING QUERY
-  //RESET VARIABLES APPROPRIATELY
+  /**
+   *   THIS IS THE GENERIC CHANGE FUNCTION
+   * TAKES IN THE FORMKEY (ATT OR PKID), AND ITS VALUES
+   * AND WILL PUT THE CHANGES IN THE COMBINED VARIABLE
+   * STAGED FOR PUTTIN INTO THE WORKING QUERY
+   * RESET VARIABLES APPROPRIATELY
+   *
+   *
+   *
+   * @param formKey Attribute ID
+   * @param formVals Value ID's or similar (i.e. numbers or string depending on type of input)
+   * @param bid BIN ID
+   */
   type0change(formKey, formVals, bid) {
     var values = cloneDeep(formVals);
 
     //CHECK IF A DELETE NEEDS TO OCCUR CAUSE VALUE IS EMPTY
-
     if (values != null && values.length == 0) {
       delete this.workingQuery[bid][formKey];
       this.form.controls[formKey].setValue(null);
 
+      //Also make change in DB Format if there is a FID being modified
       if (this.workingFID[bid] != "") {
         this.pushBIDActiveFIDToActiveFilter(bid, false);
       }
@@ -786,8 +754,8 @@ export class FiltersService {
         this.workingFID[bid] = "";
       }
     } else {
+      //Set active player ID and object if pushing a player
       if (String(formKey) == "3" && String(bid) == "-3") {
-        this.playerPortalActivePlayerIDOLD = this.playerPortalActivePlayerID;
         this.playerPortalActivePlayerID = formVals[0];
         this.playerPortalSelected = this.pullValueMap["3"][
           this.playerPortalActivePlayerID
@@ -795,31 +763,52 @@ export class FiltersService {
       }
       this.workingQuery[bid][formKey] = formVals;
     }
+    // If its not a bin or team is changed then update players
+    //IF team selected changed then players to display change
     if (Number(formKey) > 14 || Number(formKey) == 2) {
       this.setPlayers(this.combinedJSONstring());
     }
   }
-  //DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
-  //REMOVE FROM THE WORKING QUERY AND
+
+  /**
+   * REMOVE FROM THE WORKING QUERY AND
+   * DELETING A SINGLE SELECTION ON THE FILTERS POP PAGE
+   *
+   *
+   * @param id Attribute ID
+   * @param BID Bin ID associated with attribute (if not passed in can be figured out through variables)
+   * @param input boolean whether or not the active working should be cleared
+   */
   clearSingleIDWorking(id: string, BID: string, input: boolean = true) {
     delete this.workingQuery[BID][id];
 
+    //update filters if editing a FID
     if (this.workingFID[BID] != "") {
       this.pushQueryToActiveFilter(BID, input);
     }
+    //Reset the form
     if (this.form.value[String(id) + "search"] != null) {
       this.form.controls[String(id) + "search"].setValue(null);
     }
     this.form.controls[id].setValue(null);
+    // If its not a bin or team is changed then update players
+    //IF team selected changed then players to display change
     if (Number(id) > 14 || Number(id) == 2) {
       this.setPlayers(this.combinedJSONstring());
     }
   }
 
-  //IS TWO OBJECTS EQUAL CONTENTS NOT MEMORY POINTERS
+  /**
+   * IS TWO OBJECTS EQUAL CONTENTS NOT MEMORY POINTERS
+   *
+   *
+   * @param a Object A
+   * @param b Object B
+   */
   isEqualObjectsContents(a, b) {
     var aProps = Object.getOwnPropertyNames(a).sort();
     var bProps = Object.getOwnPropertyNames(b).sort();
+    //check if same length of keys then if keys are the same
     if (
       aProps.length != bProps.length ||
       !(
@@ -829,6 +818,7 @@ export class FiltersService {
     ) {
       return false;
     }
+    // go through values if keys are identical
     for (var i = 0; i < aProps.length; i++) {
       var propName = aProps[i];
 
@@ -844,7 +834,13 @@ export class FiltersService {
     return true;
   }
 
-  //PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
+  /**
+   * PUT THE STAGED CHANGES FROM THE FILTERSPOP DISPLAY AND PUT INTO THE WORKING FID OR CREATE A NEW ONE
+   *
+   *
+   * @param BID Bin ID
+   * @param clearWorking Boolean to decide whether to clear it from the working query
+   */
   pushQueryToActiveFilter(BID: string, clearWorking: boolean = true) {
     if (JSON.stringify(this.workingFID) == "{}") {
       setTimeout(() => {
@@ -852,6 +848,7 @@ export class FiltersService {
       }, 100);
     } else {
       var oldDB = cloneDeep(this.DBFormat);
+      //only allow one club or player if on that portal
       if (this.router.url.includes("club/")) {
         this.reduceFiltersSingleClub();
       }
@@ -938,6 +935,11 @@ export class FiltersService {
     }
   }
 
+  /**
+   *  Push specific Bin ID's active FID to DB Format
+   * @param BID
+   * @param clearWorking
+   */
   pushBIDActiveFIDToActiveFilter(BID: string, clearWorking: boolean = true) {
     var oldDB = cloneDeep(this.DBFormat);
     if (this.router.url.includes("club/")) {
@@ -1022,8 +1024,12 @@ export class FiltersService {
     }
   }
 
-  //CREATE THE FAKE JSON DB FORMAT AS IS PUSH QUERY
-  //HAS OCCURED TO SEND TO DATABASE WITH STAGED CHANGES
+  /**
+   * CREATE THE FAKE JSON DB FORMAT AS IS PUSH QUERY
+   * HAS OCCURED TO SEND TO DATABASE WITH STAGED CHANGES
+   *
+   *
+   */
   combinedJSONstring() {
     var combinedDB = cloneDeep(this.DBFormat);
     for (let bin in this.workingQuery) {
@@ -1074,19 +1080,21 @@ export class FiltersService {
     //SEND TO UPDATE PLAYER LIST
   }
 
-  //SAVE LOCAL STORAGE FOR REFRESH AND THEN SEND THE FILTERS TO THE DB
+  /**
+   * SEND THE FILTERS TO THE DB
+   * Add in years variable as the "-4" bin
+   * Set the order of FID's and make sure none are missed
+   * the DB will not be inserted into until 500 ms has passed after the last call to this function
+   *
+   */
   saveAndSend() {
     var dbFormatWithAddedHiddenYears = cloneDeep(this.DBFormat);
     //set the Order of FIDs by double checking against what is sent to DB
 
-    if (
-      this.pullStructure &&
-      this.pullAttribute &&
-      this.pullValueMap &&
-      this.form
-    ) {
+    if (this.checkUploadComplete()) {
       for (let bin in dbFormatWithAddedHiddenYears) {
         var activeFIDs = [];
+        //Add in FID's if they still exist in the order they were pushed
         for (let fid in this.FIDCreationOrder[bin]) {
           if (
             Object.keys(dbFormatWithAddedHiddenYears[bin]).indexOf(
@@ -1096,6 +1104,8 @@ export class FiltersService {
             activeFIDs = activeFIDs.concat([this.FIDCreationOrder[bin][fid]]);
           }
         }
+
+        //Go through the added FID's in DBFormat to add in any missed FID's
         for (let fid in Object.keys(dbFormatWithAddedHiddenYears[bin])) {
           var activeFID = Object.keys(dbFormatWithAddedHiddenYears[bin])[fid];
           if (activeFIDs.indexOf(activeFID) == -1) {
@@ -1111,10 +1121,16 @@ export class FiltersService {
           "4": [this.portalYearsOnly, {}, []]
         };
       }
+
+      //Global Variable holding the JSON string of what to send to the DB
+      //Will be overridden if the function is call again
       this.tryingToSendDBFormat = JSON.stringify(dbFormatWithAddedHiddenYears);
 
       setTimeout(() => {
         console.log("LOOP 17");
+        //If the function has not been called within 500 millisecond then send up the JSON string
+        //implicitly the time out and the global variable will allow for the check to occur
+
         if (
           this.tryingToSendDBFormat ==
           JSON.stringify(dbFormatWithAddedHiddenYears)
@@ -1127,11 +1143,11 @@ export class FiltersService {
               this.updateClubData();
               this.updateCashFilters();
             });
-          this.testSendFilters2();
           this.setActiveClub();
           this.setActivePlayer();
           this.updateRDURL();
           setTimeout(() => {
+            //wait for the DB to take and insert to make the call
             console.log("LOOP 12");
             this.setPlayers();
           }, 200);
@@ -1144,7 +1160,10 @@ export class FiltersService {
     }
   }
 
-  //Set parameters for the cash tab filers
+  /**
+   * Set variables added in what was sent to the DB to the cash tab instances
+   * This allows you to open the cash tab and it appear as if everything is one variable set
+   */
   updateCashFilters() {
     for (let fid in this.DBFormat["-3"]) {
       for (let att in this.DBFormat["-3"][fid][1]) {
@@ -1159,7 +1178,12 @@ export class FiltersService {
     }
   }
 
-  //CHECK IF TWO DB FORMAT's ARE THE SAME
+  /**
+   * CHECK IF TWO DB FORMAT's ARE THE SAME
+   * return outcome
+   * @param structure1 Object 1
+   * @param structure2 Object 2
+   */
   checkDBFormats(structure1: any, structure2: any) {
     if (Object.keys(structure1).length != Object.keys(structure2).length) {
       return false;
@@ -1183,7 +1207,10 @@ export class FiltersService {
     return true;
   }
 
-  //EMPTY THE WORKING QUERY
+  /**
+   * Clear all staged filters added in the working query variable
+   * Clears a FID if the FID was being edited
+   */
   clearWorking() {
     for (let bin in this.workingQuery) {
       for (let id in this.workingQuery[bin]) {
@@ -1196,7 +1223,11 @@ export class FiltersService {
       }
     }
   }
-  //HARD RESET OF ALL VARIABLES CALLED FROM THE FILTER BAR
+
+  /**
+   * HARD RESET OF ALL VARIABLES CALLED FROM THE FILTER BAR
+   * Clear everything relating to filters selected
+   */
   clearAll() {
     for (let bin in this.workingQuery) {
       this.workingFID[bin] = "";
@@ -1213,9 +1244,18 @@ export class FiltersService {
     this.saveAndSend();
   }
 
-  //This function clears a single value from the newWorking query, if a
-  //Working FID is set it pushes the updates
-  clearSingleValuePop(bin: any, att: any, val: any, input: boolean = true) {
+  /**
+   * This function clears a single value from the newWorking query, if a
+   * Working FID is set it pushes the updates
+   *
+   *
+   * @param bin Bin from which value is being cleared
+   * @param att Attribute from which value is being cleared
+   * @param val value being cleared
+   * @param input
+   */
+  clearSingleValuePop(bin: any, att: any, val: any) {
+    //check if its a special value for min max or string to clear entire attribute
     if (
       JSON.stringify(this.workingQuery[bin][att]) ==
         JSON.stringify([String(val)]) ||
@@ -1223,10 +1263,9 @@ export class FiltersService {
         JSON.stringify([val, null]) ||
       JSON.stringify(this.workingQuery[bin][att]) == JSON.stringify([null, val])
     ) {
-      // ||
-      // Number(this.pullAttribute[att]["UITypeID"]) == 8
       this.clearSingleIDWorking(att, bin, false);
     } else {
+      //remove it from filter set and from form
       this.workingQuery[bin][att] = this.workingQuery[bin][att].filter(
         x => x != String(val)
       );
@@ -1237,11 +1276,18 @@ export class FiltersService {
         this.pushQueryToActiveFilter(bin, false);
       }
     }
+
+    //get new players
     if (Number(att) > 14 || Number(att) == 2) {
       this.setPlayers(this.combinedJSONstring());
     }
   }
-  //SETTING CSS OF THE LEAGUE ICONS
+
+  /**
+   * SETTING CSS OF THE LEAGUE ICONS SINCE THE IMAGES ARE DIF SIZES
+   * @param leagueID NFL or NCAA
+   * @param id Attribute ID
+   */
   setLeagueIconStyle(leagueID: string, id: string) {
     var obj = this.pullValueMap[id][leagueID];
 
@@ -1262,7 +1308,13 @@ export class FiltersService {
     return styles;
   }
 
-  //GET IMG URL FOR LEAGUE GUI
+  /**
+   * GET IMG URL FOR LEAGUE GUI
+   *
+   *
+   * @param league 'NCAA' or 'NFL'
+   */
+
   createLeagueImages(league: string) {
     return (
       "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos/" +
@@ -1271,8 +1323,15 @@ export class FiltersService {
     );
   }
 
-  //CHANGE A LEAGUES STATUS IN THE FORM FOR LEAGUE SELECT GUI
-  //CHANGE THE CSS AND INSERT/REMOVE
+  /**
+   * CHANGE A LEAGUES STATUS IN THE FORM FOR LEAGUE SELECT GUI
+   * CHANGE THE CSS AND INSERT/REMOVE
+   * SPECIFIC TO THE LEAGUE GUI TYPE
+   *
+   * @param attID Attribute ID
+   * @param value Value to set for attribute
+   * @param bin BIN ID for attribute
+   */
   toggleLeague(attID: string, value: string, bin: string) {
     var id = this.pullValueMap[attID][value]["Label"];
     var logo = document.getElementById(id);
@@ -1291,22 +1350,37 @@ export class FiltersService {
     this.type0change(attID, this.form.value[attID], bin);
   }
 
-  //SELECT OR DESELECT ALL FROM THE TYPE 0 INPUT
+  /**
+   * SELECT OR DESELECT ALL FROM THE TYPE 0 INPUT
+   *
+   * @param id Attribute ID
+   * @param toLabel Value to put in for toggle
+   * @param remove boolean if the toggle is placed in the middle
+   * @param bin BIN ID the Attribute ID is associated with
+   */
   changeToggleValue(id: string, toLabel: any, remove: boolean, bin: string) {
     if (remove) {
       this.form.controls[id].setValue(null);
-      this.type0change(id, [], bin);
+      this.type0change(id, [], bin); //will delete the filter
     } else {
       this.form.controls[id].setValue([String(toLabel)]);
       this.type0change(id, [String(toLabel)], bin);
     }
   }
 
-  //SLIDER RETURN STARTING POSITION OF THE SLIDER
+  /**
+   * RETURN STARTING POSITION OF THE SLIDER
+   * check in form (i.e. filters selected) if the position should be true for the label
+   * Also set the color of the slider from green to red if appropriate
+   *
+   * @param id Attribute ID of slider filter
+   * @param Label Value of the position
+   */
   checkType3ToggleChecked(id: string, Label: any) {
     var switchType3 = document.getElementById("type3Switch" + id);
     if (switchType3 != null) {
       try {
+        //For if none is selected
         if (this.form.value[id] == null) {
           if (Label == "na") {
             switchType3.style.backgroundColor = "var(--raiders-gray)";
@@ -1315,6 +1389,8 @@ export class FiltersService {
             return "";
           }
         }
+
+        //if label is on either way set color and reutrn appropriately
         if (this.form.value[id][0] == String(Label)) {
           if (Number(Label) == 1) {
             switchType3.style.backgroundColor = "Green";
@@ -1329,13 +1405,15 @@ export class FiltersService {
         return "";
       }
     } else {
-      setTimeout(() => {
-        console.log("LOOP 18", id, Label);
-        return "";
-      }, 50);
+      return "";
     }
   }
-  //RETURN SLIDER STARTING POS FOR THE TOGGEL OF CONFERENCE
+
+  /**
+   * RETURN SLIDER STARTING POS FOR THE TOGGEL OF CONFERENCE
+   * @param id attribute ID
+   * @param Label 'AFC' or 'NFC'
+   */
   checkType2ConfChecked(id: string, Label: string) {
     if (this.conferenceSelections[id] == Label) {
       return "checked";
@@ -1344,7 +1422,11 @@ export class FiltersService {
     }
   }
 
-  //CHANGE THE SLIDER TOGGLE OF CONFERENCE IN TEAM SELECT GUI
+  /**
+   * CHANGE THE SLIDER TOGGLE OF CONFERENCE IN TEAM SELECT GUI
+   * @param num Attribute ID
+   * @param newConf 'NFC' or 'AFC'
+   */
   changeConference(num: string, newConf: string) {
     if (newConf == "NFC") {
       document.getElementById("switchConference" + num).style.backgroundColor =
@@ -1356,7 +1438,10 @@ export class FiltersService {
     this.conferenceSelections[num] = newConf;
   }
 
-  //RETURN THE TEAM LOGO URL FOR TEAM SELECT GUI
+  /**
+   * RETURN THE TEAM LOGO URL FOR TEAM SELECT GUI
+   * @param team the club object for getting the url
+   */
   logo(team: any) {
     var citySplit = team["ClubCityName"].split(" ");
     var city;
@@ -1373,23 +1458,39 @@ export class FiltersService {
     );
   }
 
-  //RETURN THE TEAMS THAT SHOULD BE DISPLAYED
+  /**
+   * RETURN THE TEAMS THAT SHOULD BE DISPLAYED For the Ordering of the Team select gui
+   * @param id key string values array ex.  ['Conference', 'Division']
+   * @param key string array of what those values should be
+   */
   getDisplayTeams(id: string[], key: any) {
     return this.teams.filter(x => x[id[0]] == key[0] && x[id[1]] == key[1]);
   }
 
-  //RETURN IF SOMETHING IS NOT IN THE ARRAY
-  checkNotInArray(arr: String[], numb: number) {
+  /**
+   * RETURN IF SOMETHING IS NOT IN THE ARRAY
+   * @param arr Array of string numbers
+   * @param numb number in array
+   */
+  checkNotInArray(arr: String[], numb: any) {
     return arr.indexOf(String(numb)) !== -1;
   }
 
-  //TOGGLE A TEAMS STATUS IN THE TEAM SELECT GUI
+  /**
+   * TOGGLE A TEAMS STATUS IN THE TEAM SELECT GUI
+   * @param teamI Team object to toggle in filter structure
+   * @param attID Attribute ID
+   * @param bin  Bin ID
+   */
   toggleTeam(teamI: any, attID: string, bin: string) {
     var team = document.getElementById("teamGUI" + String(teamI["SailTeamID"]));
+    //values must be passed into type0change so we are starting with an array
     var oldValue = this.form.value[attID];
     if (oldValue == null) {
       oldValue = [];
     }
+
+    //If selection is from club menu dropdown, change css and array of values selected appropriately
     if (this.router.url.includes("club")) {
       for (let club of oldValue) {
         if (String(club) != String(teamI["SailTeamID"])) {
@@ -1404,6 +1505,7 @@ export class FiltersService {
       }
     }
 
+    //check if deleting or inserting based on css of team logo
     if (team.className == "singleTeamGUI ng-star-inserted") {
       team.className = "singleTeamGUISelected ng-star-inserted";
       this.form.controls[attID].setValue(
@@ -1418,16 +1520,16 @@ export class FiltersService {
         oldValue.filter(x => x != String(teamI["SailTeamID"]))
       );
     }
-    // if (this.form.value[attID].length == 0){
-    //   this.removeExplicit(this.workingFID["-2"],"2");
-
-    // }
     this.type0change(attID, this.form.value[attID], bin);
   }
 
-  //This Function will allow for the coloring of the filter based on the BIN it falls under
-  //uses the color scheme and fact of the pattern color for determine color for each output
-  //first color is the outer, and second one is the inside one
+  /**
+   * This Function will allow for the coloring of the filter based on the BIN it falls under
+   * uses the color scheme and fact of the pattern color for determine color for each output
+   * first color is the outer, and second one is the inside one
+   * @param BID BIN ID
+   * @param pos position number for background (essentiall first and third css is same but middle is white)
+   */
   setFilterStyle(BID: string, pos: number) {
     var conversions = {
       "-1": ["Green", "white"],
@@ -1448,10 +1550,12 @@ export class FiltersService {
     return styles;
   }
 
-  //PANEL SECTION FOR FILTERPOP
-
-  //ALTER THE SELECTION VIEW OF TEH WORKING QUERY BASED ON THE
-  //TIER 1 TAB THAT WAS SELECTED
+  /**
+   * PANEL SECTION FOR FILTERPOP
+   * ALTER THE SELECTION VIEW OF TEH WORKING QUERY BASED ON THE
+   * TIER 1 TAB THAT WAS SELECTED
+   * @param id Bin ID to change the top selection to
+   */
   changelevel2(id: string) {
     //CHANGE OLD CSS
     try {
@@ -1480,7 +1584,11 @@ export class FiltersService {
     this.attributeSelected(String(Number(id) * -100));
   }
 
-  //THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
+  /**
+   * THIS OPENS UP NEW PANELS AND CONTROLS CLOSING OLD ONES UPON A CLICK
+   *
+   * @param att Atrtribute selected in the panel
+   */
   attributeSelected(att: string) {
     var newPanels = [];
 
@@ -1518,9 +1626,7 @@ export class FiltersService {
 
     //ADD TO PANEL OR SHOW THE SELECTION FORM
 
-    if (this.pullNavigationElement[att]["IsAttribute"] == true) {
-      //console.log("ATTRIBUTE IS IN THE PANELS THIS SHOULD NEVER OCCUR");
-    } else {
+    if (this.pullNavigationElement[att]["IsAttribute"] != true) {
       var old = cloneDeep(newPanels);
       newPanels.push(att);
       this.show = att;
@@ -1545,14 +1651,20 @@ export class FiltersService {
     }
   }
 
-  //This function navigates the panels and displays where the
-  //Attribute was selected from if its clicked on the right area
+  /**
+   * This function navigates the panels and displays where the
+   * Attribute was selected from if its clicked on the right area of the staged filters
+   * It works back through the parent child structure of the attributes to put together the panels
+   * @param bin
+   * @param att
+   */
   navigateToAttribute(bin: any, att: any) {
     this.changelevel2(bin);
     this.show = String(this.pullNavigation[att]["ParentItemID"]);
     var newPanels = [];
     var atRoot = false;
     var startAtt = att;
+    //keep navigating back until you hit the top
     while (!atRoot) {
       var adding = this.pullNavigation[startAtt]["ParentItemID"];
       newPanels.push(String(adding));
@@ -1562,10 +1674,12 @@ export class FiltersService {
       startAtt = adding;
     }
 
+    //get the attributes to put in the GUI area
     this.selectingAttributes = Object.keys(
       this.getPanelOptions(newPanels[0], cloneDeep(newPanels).reverse())
     ).filter(x => this.pullNavigationElement[x]["IsAttribute"]);
 
+    //remove last panel if its empty
     if (
       JSON.stringify(
         this.getPanelOptions(newPanels[0], cloneDeep(newPanels).reverse())
@@ -1576,7 +1690,10 @@ export class FiltersService {
     this.panels = cloneDeep(newPanels.reverse());
   }
 
-  //GET COLOR FOR PANELS
+  /**
+   * GET COLOR FOR PANELS and Attributes
+   * @param id Attribute
+   */
   buttonContainerColor(id: any) {
     if (this.panels.concat([String(this.show)]).indexOf(String(id)) != -1) {
       return {
@@ -1587,7 +1704,11 @@ export class FiltersService {
     }
   }
 
-  //GET PANEL OPTIONS OF THE PANEL INPUT
+  /**
+   * GET PANEL OPTIONS OF THE PANEL INPUT
+   * @param att Attribute ID
+   * @param p panels (can have it be defualt showing or if calculating can pass in dif set of panels)
+   */
   getPanelOptions(att: string, p: any = this.panels) {
     var disp = this.pullStructure;
     for (let level of p.slice(0, -1)) {
@@ -1601,8 +1722,13 @@ export class FiltersService {
     return disp;
   }
 
-  //Thisfunction creates and stores the RD URL
+  /**
+   * This function creates and stores the RD URL
+   * @param id Report ID
+   * @param count How many times its tried to create the viewing url
+   */
   createRDURL(id: any, count: any = 0) {
+    //Below is part of network issue
     this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       "http://oakcmsreports01.raiders.com/"
     );
@@ -1610,13 +1736,15 @@ export class FiltersService {
     //   "https://sailreports.raiders.com/"
     // );
 
-    if (this.reportURL) {
+    if (this.checkUploadComplete()) {
       //If Report is an excel file:
       //add this to the end of it
       var excelEnding =
         "&action=embedview&wdAllowInteractivity=True&wdbipreview=True&wdDownloadButton=True";
       try {
         var baseURL = this.reportURL[id]["ViewURL"];
+
+        //Based on how your accessing the website this will edit the url appropriately
         if (document.location.hostname.includes("sail.raiders.com")) {
           baseURL = baseURL.replace(
             "http://oakcmsreports01.raiders.com",
@@ -1634,26 +1762,31 @@ export class FiltersService {
         return cloneDeep(this.viewingURL);
       } catch (e) {}
     } else {
-      if (count <= 15) {
+      if (count <= 40) {
         setTimeout(() => {
           console.log("LOOP 13");
           return this.createRDURL(id, count + 1);
-        }, 150);
+        }, 250);
       }
     }
   }
 
-  //THIS FUNCTION UPDATES THE
-  //RD URL ON CLUB CHANGE
-  //
+  /**
+   * Since rock daisy will only refresh its view and what it pulls from the DB if the view is changed
+   * we temporarily set the viewing url to empty and then reset it so that it will reload the Rock Daisy report
+   * With the new updated information.
+   */
   updateRDURL() {
     var old = cloneDeep(this.viewingURL);
     this.viewingURL = "";
     this.viewingURL = old;
   }
 
-  //convert the db format variable to the other ones for display
-  //SET THE ACTIVE PORTAL VARIABLES AND EXTRACT OUT THE HIDDEN YEARS
+  /**
+   * convert the db format variable to the other ones for display
+   * SET THE ACTIVE PORTAL VARIABLES AND EXTRACT OUT THE YEARS TO THEIR OWN VARIABLE
+   * @param DBFormat The object to inject as the new DB format
+   */
   pushDBFormat(DBFormat: any) {
     this.clearAll();
     this.DBFormat = cloneDeep(DBFormat);
@@ -1661,7 +1794,7 @@ export class FiltersService {
       this.saveAndSend();
       return;
     }
-    if (!this.teamsMap || !this.pullValueMap || !this.pullAttribute) {
+    if (!this.checkUploadComplete()) {
       setTimeout(() => {
         console.log("LOOP 14");
         this.pushDBFormat(DBFormat);
@@ -1669,6 +1802,7 @@ export class FiltersService {
     } else {
       for (let bin in this.DBFormat) {
         for (let fid in this.DBFormat[bin]) {
+          //take out years
           if (Number(bin) == -4) {
             this.portalYearsSelected = cloneDeep(this.DBFormat[bin][fid][0]);
             this.portalYearsOnly = cloneDeep(this.DBFormat[bin][fid][0]);
@@ -1683,6 +1817,7 @@ export class FiltersService {
             } catch (e) {}
             if (this.DBFormat[bin][fid][0].length > 0) {
               currentFid[String(-1 * Number(bin))] = this.DBFormat[bin][fid][0];
+              //club handeling
               if (String(bin) == "-2") {
                 this.teamPortalActiveClubID = cloneDeep(
                   this.DBFormat[bin][fid][0][0]
@@ -1692,6 +1827,7 @@ export class FiltersService {
                   this.teamPortalActiveClubID
                 ];
               }
+              //player handeling
               if (String(bin) == "-3") {
                 this.playerPortalActivePlayerID = cloneDeep(
                   this.DBFormat[bin][fid][0][0]
@@ -1708,28 +1844,33 @@ export class FiltersService {
       }
 
       try {
-        this.sub = this.route.params.subscribe(params => {
-          if (this.reportReportsOnly && this.reportReportsStructure) {
+        if (this.checkUploadComplete()) {
+          this.updateRDURL();
+        } else {
+          setTimeout(() => {
+            console.log("LOOP 15");
             this.updateRDURL();
-          } else {
-            setTimeout(() => {
-              console.log("LOOP 15");
-              this.updateRDURL();
-            }, 500);
-          }
-        });
+          }, 500);
+        }
       } catch (e) {}
 
       this.saveAndSend();
     }
+    return true;
   }
 
-  //THIS FUNCTION WILL TAKE IN A JSON OF:
-  //[BIN, ATT ID, [VALUES]]
-  //removes content of a bin if a filter is being added
-  //removes filter content if the value is empty ex. ["-11","10092",[]]
+  /**
+   * THIS FUNCTION WILL TAKE IN A JSON OF:
+   * [BIN, ATT ID, [VALUES]]
+   * removes content of a bin if a filter is being added
+   * removes filter content if the value is empty ex. ["-11","10092",[]]
+   *  sample input [["-2","2",["1024","1026"]],["-11","10092",["10000001"]]]
+   *
+   * adds filter to staged working query then pushes
+   *
+   * @param filters Array of filters and values to insert into the strucutre
+   */
   loadJSON(filters: any) {
-    //[["-2","2",["1024","1026"]],["-11","10092",["10000001"]]]
     var tempDict = {};
 
     for (let add of filters) {
@@ -1741,17 +1882,16 @@ export class FiltersService {
         //check if the bin is the same
         if (String(this.FIDBID[active]) == String(add[0])) {
           if (this.FIDs[active][add[1]]) {
+            // check if PKID
             if (Number(add[1]) * -1 == Number(add[0])) {
               this.removeExplicit(active, add[0]);
             } else {
               this.removeAttributes(active, add[0], [add[1]]);
             }
           }
-
-          // check if attribute
-          // this.removeQuery(active);
         }
       }
+      //Year handeling
       if (Number(add[0]) == -4) {
         this.portalYearsSelected = cloneDeep(add[2]);
         this.portalYearsOnly = cloneDeep(add[2]);
@@ -1767,8 +1907,10 @@ export class FiltersService {
     return true;
   }
 
-  //CLEAN Up filters for single club
-  //go through active filters and delete if in club bin and replace with last selected club
+  /**
+   * CLEAN Up filters for single club
+   * go through active filters and delete if in club bin and replace with last selected club
+   */
   reduceFiltersSingleClub() {
     var tempDict = {};
     if (this.workingQuery["-2"]) {
@@ -1777,15 +1919,15 @@ export class FiltersService {
 
     tempDict["2"] = [cloneDeep(this.teamPortalActiveClubID)];
     var add = this.removeExplicitFilters("-2", this.teamPortalActiveClubID);
-    console.log("HERE 2");
     if (add) {
-      console.log("HERE 3");
       this.workingQuery["-2"] = tempDict;
       console.log();
     }
   }
 
-  //WHEN CLICKING ON PLAYER PAGE TAKE OUT ALL OTHER PLAYERS
+  /**
+   * WHEN CLICKING ON PLAYER PAGE TAKE OUT ALL OTHER PLAYERS
+   */
   reduceFiltersSinglePlayer() {
     var tempDict = {};
     if (this.workingQuery["-3"]) {
@@ -1799,7 +1941,11 @@ export class FiltersService {
     }
   }
 
-  //REMOVE AN EXPLICIT BASED ON THE INPUT BIN
+  /**
+   * REMOVE AN EXPLICIT BASED ON THE INPUT BIN
+   * @param bin BIN ID
+   * @param keepExplicit Which value to keep
+   */
   removeExplicitFilters(bin: any, keepExplicit: any) {
     if (!this.DBFormat[bin]) {
       return true;
@@ -1807,6 +1953,7 @@ export class FiltersService {
     var returnBool = true;
     var alteredDBFormat = cloneDeep(this.DBFormat);
     for (let fid in alteredDBFormat[bin]) {
+      //going through each fid in the bin check if the keep explicit is there and then delete or modify
       var explicits = cloneDeep(alteredDBFormat[bin][fid][0]);
       if (explicits.indexOf(keepExplicit) != -1) {
         alteredDBFormat[bin][fid][0] = [cloneDeep(keepExplicit)];
@@ -1825,9 +1972,12 @@ export class FiltersService {
         }
       }
     }
+
+    //copy old working and FID to push it back onto the variables so they dont get cleared if filtes pop is open
     var oldWorkingQuery = cloneDeep(this.workingQuery);
     var oldWorkingFID = cloneDeep(this.workingFID);
     var oldForm = cloneDeep(this.form);
+    //push modified db format to the active filters
     if (!this.checkDBFormats(alteredDBFormat, cloneDeep(this.DBFormat))) {
       this.pushDBFormat(alteredDBFormat);
     }
@@ -1838,7 +1988,11 @@ export class FiltersService {
     return returnBool;
   }
 
-  //REMOVE AN EXPLICIT FROM THE FILTER TOP
+  /**
+   * REMOVE EXPLICITS FROM THE ACTIVE FILTERS based on FID and BIN
+   * @param fid Filter ID
+   * @param bin BIN ID
+   */
   removeExplicit(fid: any, bin: any) {
     var alteredDBFormat = cloneDeep(this.DBFormat);
     alteredDBFormat[bin][fid][0] = [];
@@ -1854,19 +2008,28 @@ export class FiltersService {
         delete alteredDBFormat[bin];
       }
     }
+    //delete from working query if its being edited as well
     if (String(this.workingFID[bin]) == String(fid)) {
       oldWorkingFID[bin] = "";
       delete oldWorkingQuery[bin][String(Number(bin) * -1)];
       this.form.controls[String(Number(bin) * -1)].setValue(null);
     }
+    //push changes and reset the staged variables after being edited
     this.pushDBFormat(alteredDBFormat);
     this.workingQuery = oldWorkingQuery;
     this.workingFID = oldWorkingFID;
     this.form = oldForm;
   }
 
+  /**
+   * remove given attributes from a FID give the bin
+   * @param fid Filter ID
+   * @param bin Bin ID
+   * @param atts List of attribute ID's to delete
+   */
   removeAttributes(fid: any, bin: any, atts: any[]) {
     if (Object.keys(this.fidCashMapFIDtoID).indexOf(fid) != -1) {
+      //perform delete from cash variables if needed
       var id = this.fidCashMapFIDtoID[fid];
       this.formCash.controls[id].setValue(null);
     }
@@ -1892,6 +2055,7 @@ export class FiltersService {
     this.workingQuery = oldWorkingQuery;
     this.workingFID = oldWorkingFID;
     this.form = oldForm;
+    //reset attributes from working query
     for (let att of atts) {
       delete this.workingQuery[bin][att];
       if (this.form.value[String(att) + "search"] != null) {
@@ -1901,14 +2065,17 @@ export class FiltersService {
     }
   }
 
-  //SET THE ACTIVE CLUB BY GOING THROUGH THE DB OR SET DEFAULT
-
+  /**
+   * SET THE ACTIVE CLUB ID AND OBJECT BY SEARCHING THE FID's
+   */
   setActiveClub() {
     var notFound = true;
     try {
       for (let activeFID in this.FIDBID) {
         if (String(this.FIDBID[activeFID]) == "-2") {
+          //if BIN IS RIGHT
           if ("2" in this.FIDs[activeFID] || 2 in this.FIDs[activeFID]) {
+            //IF ATTRIBUTE IS RIGHT
             try {
               this.teamPortalActiveClubID = this.FIDs[activeFID]["2"][0];
             } catch (e) {
@@ -1921,6 +2088,7 @@ export class FiltersService {
           }
         }
       }
+      //default
       if (notFound) {
         this.teamPortalActiveClubID = "1012";
         this.teamPortalSelected = {
@@ -1935,13 +2103,17 @@ export class FiltersService {
     } catch (e) {}
   }
 
-  //SET THE ACTIVE PLAYER BY GOING THROUGH THE DB OR SET DEFAULT
+  /**
+   * SET THE ACTIVE PLAYER ID AND OBJECT BY SEARCHING THE FID's
+   */
   setActivePlayer() {
     try {
       var notFound = true;
       for (let activeFID in this.FIDBID) {
         if (String(this.FIDBID[activeFID]) == "-3") {
+          //if BIN IS RIGHT
           if ("3" in this.FIDs[activeFID] || 3 in this.FIDs[activeFID]) {
+            //IF ATTRIBUTE IS RIGHT
             try {
               this.playerPortalActivePlayerID = this.FIDs[activeFID]["3"][0];
             } catch (e) {
@@ -1954,7 +2126,7 @@ export class FiltersService {
           notFound = false;
         }
       }
-
+      //DEFAULT
       if (notFound) {
         this.playerPortalActivePlayerID = "";
         this.playerPortalSelected = {
@@ -1965,21 +2137,12 @@ export class FiltersService {
     } catch (e) {}
   }
 
-  //This function will add add the years selected to the object that will be sent up
-  //FOR THE NG_SELECT_DROPDOWN THAT PACKAGE DOESNT WORK
-  portalYearDropDownClose() {
-    var prior = cloneDeep(this.portalYearsOnly);
-    this.portalYearsOnly = [];
-    for (let yearItem in this.portalYearsSelected) {
-      this.portalYearsOnly.push(this.portalYearsSelected[yearItem]["text"]);
-    }
-    //Only update and send to DB if new list
-    if (JSON.stringify(prior) != JSON.stringify(this.portalYearsOnly)) {
-      this.saveAndSend();
-    }
-  }
-
-  //Return the string to be displayed containing the years selected
+  /**
+   * Return the string to be displayed in the html containing the years selected
+   * only does range of years
+   * gets min and max
+   * ex. selecting 2019,2020,2021 will display 2019 - 2021
+   */
   getYearDisplay() {
     if (this.portalYearsOnly.length == 1) {
       return String(this.portalYearsOnly[0]);
@@ -1992,12 +2155,14 @@ export class FiltersService {
     }
   }
 
-  //Set highlighting of the year selected
+  /**
+   * Set highlighting of the year based on selected or not
+   * @param year
+   */
   setStyleYearSelect(year: any) {
     let styles =
       this.portalYearsOnly.indexOf(year) != -1
         ? {
-            // backgroundColor: "#92A2AC",
             backgroundColor: "rgb(80, 80, 80)",
             color: "white"
           }
@@ -2008,7 +2173,10 @@ export class FiltersService {
     return styles;
   }
 
-  //ON CLOSE OF THE YEAR SELECT SEND UP
+  /**
+   * ON CLOSE OF THE YEAR SELECT SEND UP
+   * IF the years have changed then update the fitlers through save and send
+   */
   portalYearDisplayClose() {
     if (this.portalYearUpdated) {
       this.saveAndSend();
@@ -2016,7 +2184,11 @@ export class FiltersService {
     }
   }
 
-  //Toggle the years selected in the portals
+  /**
+   * Toggle the years selected in the portals
+   * Sort the years so the display function works
+   * @param year year being toggled
+   */
   toggleYearsSelected(year: any) {
     var item = document.getElementById(String(year) + "yearSelect");
     if (this.portalYearsOnly.indexOf(year) != -1) {
@@ -2036,9 +2208,14 @@ export class FiltersService {
     this.portalYearUpdated = true;
   }
 
-  //CHANGE THE TYPE 4 (MIN MAX) INPUT
-  //minMax True = min, false = max
-  //value is number input
+  /**
+   * CHANGE THE TYPE 4 (MIN MAX) INPUT
+   * minMax True = min, false = max
+   * value is number input
+   * @param attribute Attribute ID
+   * @param value Value to put in
+   * @param minMax If its inserted into min or max slot
+   */
   changeType4Input(attribute: any, value: any, minMax: boolean) {
     var bin = this.pullAttribute[attribute]["BinID"];
     var previous = [null, null];
@@ -2047,14 +2224,18 @@ export class FiltersService {
     if (JSON.stringify(value) != "") {
       tempValue = cloneDeep(value);
     }
+
+    //get previous
     if (this.workingQuery[bin][attribute]) {
       var previous = cloneDeep(this.workingQuery[bin][attribute]);
     }
+    //place in correct spot
     if (minMax) {
       returnArr = [tempValue, previous[1]];
     } else {
       returnArr = [previous[0], tempValue];
     }
+    //make sure its nulls and not empty strings
     if (JSON.stringify(returnArr[0]) == JSON.stringify("")) {
       returnArr[0] = null;
     }
@@ -2070,10 +2251,16 @@ export class FiltersService {
     }
   }
 
-  //CHANGE THE TYPE 8 (Start End) Date INPUT
-  //minMax True = min, false = max
-  //value is date input
-  //for calendar select
+  /**
+   * CHANGE THE TYPE 8 (Start End) Date INPUT
+   * minMax True = first date, false = last date
+   * value is date input
+   * for calendar select so time adjustments are made for consistency
+   * operates like max and min
+   * @param attribute
+   * @param value
+   * @param minMax
+   */
   changeType8InputStartEnd(attribute: any, value: any, minMax: boolean) {
     var bin = this.pullAttribute[attribute]["BinID"];
     var previous = [null, null];
@@ -2106,7 +2293,12 @@ export class FiltersService {
     }
   }
 
-  //handel text input
+  /**
+   * Handel text inpur converting to a date format usable in the DB
+   * @param attribute Attribute ID
+   * @param value value to change
+   * @param minMax bool to pass through for which selection it is
+   */
   changeType8InputStartEndText(attribute: any, value: any, minMax: boolean) {
     var bin = this.pullAttribute[attribute]["BinID"];
 
@@ -2125,7 +2317,11 @@ export class FiltersService {
     }
   }
 
-  //change type7 basic input
+  /**
+   * change type7 basic input
+   * @param attribute Attribute ID
+   * @param value Value to put in
+   */
   changeType7Input(attribute: any, value: any) {
     var bin = this.pullAttribute[attribute]["BinID"];
     if (value == "") {
@@ -2136,19 +2332,11 @@ export class FiltersService {
     }
   }
 
-  //change type8 date input
-  changeType8Input(attribute: any, value: any) {
-    var bin = this.pullAttribute[attribute]["BinID"];
-    var d = (value.getTime() - value.getMilliseconds()) / 1000;
-    if (value == "") {
-      this.clearSingleIDWorking(attribute, bin);
-    } else {
-      // this.form.controls[attribute].setValue([value]);
-      this.type0change(attribute, [String(d)], bin);
-    }
-  }
-
-  //Takes a hex color and percent change and returns new hex color
+  /**
+   * Take a hex color and percent change and returns new hex color
+   * @param color HEx color to alter
+   * @param percentInput Percent to alter hex color
+   */
   shadeColor(color, percentInput) {
     if (!color.includes("#")) {
       try {
@@ -2182,8 +2370,11 @@ export class FiltersService {
     return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
   }
 
-  //changes the hue value shading
-  //form hsl(222,22%,50%)
+  /**
+   * Change a color based on hue value shading
+   * @param color HUE color  form hsl(222,22%,50%)
+   * @param valuechange Percent to change along the hue
+   */
   shadeColorHue(color, valuechange) {
     var split = color.split(",");
     var color1 = Number(split[0].split("(")[1]);
@@ -2201,7 +2392,10 @@ export class FiltersService {
     );
   }
 
-  //Convert color name to hex
+  /**
+   * Convert color name to hex
+   * @param colour color name string
+   */
   colorNameToHex(colour) {
     if (typeof colours[colour.toLowerCase()] != "undefined")
       return colours[colour.toLowerCase()];
@@ -2209,7 +2403,9 @@ export class FiltersService {
     return false;
   }
 
-  //THIS FUNCTION CALLS FULL SCREEN MODE
+  /**
+   * Initiates full screen mode
+   */
   fullScreenOn() {
     try {
       document.getElementById("iframe").className = "fullScreen";
@@ -2217,14 +2413,20 @@ export class FiltersService {
       this.updateRDURL();
     } catch (e) {}
   }
-  //THIS FUNCTION EXITS FULL SCREEN MODE
+
+  /**
+   * Exits full screen mode
+   */
   fullScreenOff() {
     document.getElementById("iframe").className = "";
     this.fullScreenMode = false;
     this.updateRDURL();
   }
 
-  //GET SPINNER COLOR STYLE
+  /**
+   * Get spinner position for top club bar information (offset is based on order they are to be displayed)
+   * @param input Object for spinner on club top bar
+   */
   setStyleSpinner(input: any) {
     var offset = (Number(input["OrderID"]) - 1) * 68;
     let styles = {
@@ -2234,7 +2436,10 @@ export class FiltersService {
     return styles;
   }
 
-  //RETURN CLUB SPECIFICS  OR NUL
+  /**
+   * RETURN CLUB SPECIFICS OR NULL
+   * @param location location ID for the portal bar
+   */
   getClubSpecifics(location) {
     try {
       return this.clubSpecifics[String(location)];
@@ -2242,7 +2447,10 @@ export class FiltersService {
       return [];
     }
   }
-  //RETURN CLUB SPECIFICS  OR NUL
+  /**
+   * RETURN PLAYER SPECIFICS OR NULL
+   * @param location location ID for the portal bar
+   */
   getPlayerSpecifics(location) {
     try {
       return this.playerSpecifics[String(location)];
@@ -2251,7 +2459,10 @@ export class FiltersService {
     }
   }
 
-  //Gets the update club data to be run after save and send
+  /**
+   * Pull updated club info based on active club id
+   * construct mapping correctly of club specifics {Location:[DataObjects]}
+   */
   updateClubData() {
     this.pullData.pullClubData().subscribe(data => {
       this.clubSpecifics = {};
@@ -2265,8 +2476,10 @@ export class FiltersService {
     });
   }
 
-  //Gets the update player data to be run after save and send
-
+  /**
+   * Pull updated player info based on active player id
+   * construct mapping correctly of player specifics {Location:[DataObjects]}
+   */
   updatePlayerData() {
     if (
       JSON.stringify(this.playerPortalSelected) !=
@@ -2290,7 +2503,11 @@ export class FiltersService {
     }
   }
 
-  //RETURN "Label" from obj
+  /**
+   * To return an attribute value from an object
+   * @param obj Object
+   * @param text attribute to get
+   */
   getLabel(obj: any, text: string) {
     try {
       return obj[text];
@@ -2299,7 +2516,10 @@ export class FiltersService {
     }
   }
 
-  //Set the color style
+  /**
+   * Set the color of an object for NgStyle
+   * @param obj Object (must have attribute 'Color' otherwise color is black)
+   */
   setStyleColor(obj: any) {
     var styles = {};
     try {
@@ -2314,7 +2534,11 @@ export class FiltersService {
     return styles;
   }
 
-  //Set the color style
+  /**
+   * Set the color style and the style of the box
+   *
+   * @param obj Portal Bar object
+   */
   setGradeColor(obj: any) {
     var styles = {};
     try {
@@ -2345,7 +2569,10 @@ export class FiltersService {
     return styles;
   }
 
-  //Transform Name
+  /**
+   * Return text name from "first last" to "last, first"
+   * @param text name in from of "John Smith"
+   */
   transformName(text: string) {
     if (text.includes(" ")) {
       var split = text.split(" ");
@@ -2355,7 +2582,11 @@ export class FiltersService {
     }
   }
 
-  //return the options for type0
+  /**
+   * Get the options for an attribute type
+   * Special case for id == "3" (players)
+   * @param id Attribute ID
+   */
   type0Options(id: any) {
     if (String(id) == "3") {
       return this.playersToDisplay;
@@ -2364,8 +2595,12 @@ export class FiltersService {
     }
   }
 
-  //link to new window
+  /**
+   * Open or go to a link
+   * @param url Url string for either new tab or current tab depending on the code commented out below
+   */
   goToLink(url: string) {
+    //catch for network issue and how the application is being accessed
     if (document.location.hostname.includes("sail.raiders.com")) {
       url = url.replace(
         "http://oakcmsreports01.raiders.com:88",
@@ -2378,16 +2613,13 @@ export class FiltersService {
       );
     }
 
-    // console.log("GO TO LINK", url);
-    // console.log(document.location.hostname, this.router.url);
-
     this.globalSearchShowSuggestions = false;
 
-    //for new window
+    //for new window uncomment this line below
     var newWindow = window.open(url);
 
-    //for same window
-    // var urlAltered = url.split(".raiders.com:88")[1];
+    //for same window uncomment this code section below
+    // var urlAltered = url.split(".raiders.com:88")[1]; //may need to change this line depending on routing
     // urlAltered = urlAltered.split("%5B").join("[");
     // urlAltered = urlAltered.split("%5D").join("]");
     // urlAltered = urlAltered.split("%22").join('"');
@@ -2395,6 +2627,10 @@ export class FiltersService {
     //this.router.navigate([urlAltered]);
   }
 
+  /**
+   * For KeyValue pipe to order pairs
+   * This case they are orderd by Label (i.e. alphabetical)
+   */
   labelOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
     return a.value["Label"] < b.value["Label"]
       ? -1
@@ -2403,12 +2639,16 @@ export class FiltersService {
       : 0;
   };
 
-  //Open/Close Settings menu in top bar
+  /**
+   * Toggle open/close settings menu in top bar
+   */
   toggleTopMenuDropDown() {
     this.menuOpen = !this.menuOpen;
   }
 
-  //route to report uploader
+  /**
+   * From settings menu route to the report uploader page
+   */
   routeReportUploader() {
     this.router.navigate(["report-upload"]);
     for (let category in this.getReportHeaders(1)) {
@@ -2416,11 +2656,36 @@ export class FiltersService {
         category.toString() + "reportHighlightid"
       ).className = "sidebutton";
     }
-    var portals = ["club", "player", "cash"];
+    var portals = ["club", "player", "cash", "fa-hypo"];
 
     for (let port in portals) {
       document.getElementById(portals[port] + "id").className = "sidebutton";
     }
     this.toggleTopMenuDropDown();
   }
+
+  /**
+   * Pipe input function to return the item in the reverse order specified by the attribute "OrderID"
+   */
+  reverseKeyOrder = (
+    a: KeyValue<string, any>,
+    b: KeyValue<string, any>
+  ): number => {
+    return a.value["OrderID"] > b.value["OrderID"]
+      ? -1
+      : b.value["OrderID"] > a.value["OrderID"]
+      ? 1
+      : 0;
+  };
+
+  /**
+   * Pipe input function to return the item in the order specified by the attribute "OrderID"
+   */
+  valueOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
+    return a.value["OrderID"] < b.value["OrderID"]
+      ? -1
+      : b.value["OrderID"] < a.value["OrderID"]
+      ? 1
+      : 0;
+  };
 }

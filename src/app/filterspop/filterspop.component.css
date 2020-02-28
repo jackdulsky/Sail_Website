@@ -1,12 +1,15 @@
-::ng-deep .mat-focused .mat-form-field-label {
+::ng-deep.mat-focused .mat-form-field-label {
   /*change color of label*/
   color: black !important;
 }
-::ng-deep .mat-form-field-infix {
-  padding: 0px;
+::ng-deep.mat-form-field-infix {
+  padding: 4px !important;
 }
 ::ng-deep.mat-dialog-container {
   padding-top: 0px !important;
+}
+::ng-deep.mat-select-value {
+  color: black !important;
 }
 #FilterPopUp {
   padding-top: 0px !important;
@@ -17,6 +20,13 @@
 }
 ::ng-deep.mat-dialog-actions {
   padding: 0px !important;
+}
+::ng-deep.mat-form-field-appearance-legacy .mat-form-field-underline {
+  color: black;
+  background-color: black;
+}
+::ng-deep.mat-form-field-appearance-legacy .mat-form-field-label {
+  color: black;
 }
 ::ng-deep.mat-dialog-content {
   padding: 12px 12px 12px 12px;
@@ -42,8 +52,13 @@
 ::ng-deep.mat-calendar-body-selected {
   background-color: var(--raiders-gray);
 }
-.mat-seudo-checkbox::after {
-  color: white !important;
+::ng-deep.mat-pseudo-checkbox::after,
+::ng-deep.mat-pseudo-checkbox-checked {
+  color: #303030 !important;
+  background-color: white !important;
+}
+::ng-deep.mat-select-arrow {
+  color: black !important;
 }
 input {
   caret-color: black;
@@ -1412,6 +1427,7 @@ td {
 }
 .colorBlack {
   color: black;
+  font-size: 18px;
 }
 .timesCenterClose {
   margin-left: 5px;

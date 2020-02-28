@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FiltersService } from "../filters.service";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { BodyComponent } from "../body/body.component";
@@ -23,17 +23,30 @@ export class PlayerComponent implements OnInit {
   ) {
     document.addEventListener("click", e => this.onClick(e));
   }
-  playerSelected;
-  ClubCityName = "ClubCityName";
+  //player image url
+  baseURL =
+    "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
+  //Attribute ID for player name text input
+  playerNameInput;
+
+  //bools to show dropdowns
   showList = false;
   showYear = false;
-  id;
-  teamsDict = {};
-  playerTabSelected;
+
+  playerTabSelected; //number for tab selected
+
+  //transition states for club and year drop downs
   yearListAnimationState = "out";
   playerListAnimationState = "out";
 
-  //Turn Off the year panel on click outside, runs every click on the component
+  /**
+   * This function will take in an click event and
+   * check its target and close the drop down menus if clicked outside of it
+   *
+   *
+   *
+   * @param event click event
+   */
   onClick(event) {
     var target = event.target || event.srcElement || event.currentTarget;
     var idAttr = target.attributes.id;
@@ -50,24 +63,26 @@ export class PlayerComponent implements OnInit {
       this.displayPlayers(this.showList);
     }
   }
-  //baseURL ="https://nfl-fisa-assets.s3.amazonaws.com/images/headshots/REPLACEME_headshot.jpg";
-  baseURL =
-    "https://sail-bucket.s3-us-west-2.amazonaws.com/Player_Images/REPLACEME.png";
-  playerNameInput;
+  /**
+   * Init function!
+   */
   ngOnInit() {
-    // this.filterService.getBulkImport();
     this.cdref.detectChanges();
-
     this.initFunction();
   }
-  ngOnDestroy() {}
+  /**
+   * After init function view, call the loopable function
+   */
   ngAfterViewInit() {
     this.afterInitFunction();
     this.cdref.detectChanges();
   }
 
+  /**
+   * Change the active player object to the one selected and init the player
+   */
   afterInitFunction() {
-    if (this.filterService.pullValueMap) {
+    if (this.filterService.checkUploadComplete()) {
       if (this.filterService.playerPortalActivePlayerID != "") {
         this.filterService.playerPortalSelected = this.filterService.pullValueMap[
           "3"
@@ -81,18 +96,18 @@ export class PlayerComponent implements OnInit {
       }, 200);
     }
   }
+
+  /**
+   * Get initial tab to highlight and reroute for the router outlet to display appropriately
+   * Then highlight or subroute appropriately
+   */
   initFunction() {
     try {
       this.body.portalHighlight("player");
     } catch (e) {}
 
-    if (
-      this.filterService.reportTabs &&
-      this.filterService.reportReportsOnly &&
-      this.filterService.getReportHeaders(3) &&
-      this.filterService.pullStructure &&
-      this.filterService.pullAttribute
-    ) {
+    if (this.filterService.checkUploadComplete()) {
+      //get player name input Attribute ID
       for (let att in this.filterService.pullStructure["-3"]["300"]) {
         try {
           if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
@@ -129,9 +144,13 @@ export class PlayerComponent implements OnInit {
     }
   }
 
-  //timeout Recursive method
+  /**
+   * Time out recursive method to highlight the correct tab being displayed
+   * Highlight is called if its showing a report
+   * If it has base in url then must reroute to base report to display properly
+   */
   performHighlightOrSubRoute() {
-    if (this.filterService.getReportHeaders(3)) {
+    if (this.filterService.checkUploadComplete()) {
       if (
         Object.keys(this.filterService.getReportHeaders(3)).indexOf(
           String(this.playerTabSelected)
@@ -150,8 +169,10 @@ export class PlayerComponent implements OnInit {
     }
   }
 
-  //HIGHLIGHT A TAB, USED FOR INIT ON REPORT
-
+  /**
+   * HIGHLIGHT A TAB, USED FOR INIT ON REPORT
+   * @param name tab number to highlight
+   */
   justHighlight(name: any) {
     if (document.getElementById(name + "playerBarHighlightid")) {
       var newTab = document.getElementById(name + "playerBarHighlightid");
@@ -165,19 +186,12 @@ export class PlayerComponent implements OnInit {
     }
   }
 
-  //TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
-  extractID(data, idString: string, insertDict, keep: number = 0) {
-    for (let b in data) {
-      var id = String(data[b][idString]);
-      if (keep == 0) {
-        delete data[b][idString];
-      }
-
-      insertDict[id] = data[b];
-    }
-  }
-
-  //Return the logo url based on a team put in
+  /**
+   * Returns the logo src url to the player selection display, handel the weird cases for multiteam cities
+   * and cities with two names
+   *
+   * @param team Team Object to return the logo
+   */
   getActiveLogo(team: any) {
     var citySplit = team["ClubCityName"].split(" ");
     var city;
@@ -196,42 +210,27 @@ export class PlayerComponent implements OnInit {
     );
   }
 
-  //GET TEAM ID FROM VALUE
+  /**
+   * Get Team Object from ID
+   * @param disp object that the "Value" is the sailTeamID
+   */
   getTeamID(disp: any) {
-    try {
-      if (disp["Value"]) {
-        return this.filterService.teamsMap[disp["Value"]];
-      } else {
-        return {
-          ClubCityName: "NFL",
-          ClubNickName: ""
-        };
-      }
-    } catch (e) {
-      setTimeout(() => {
-        console.log("LOOP 33");
-        // return this.getTeamID(disp);
-      }, 300);
+    if (disp["Value"]) {
+      return this.filterService.teamsMap[disp["Value"]];
+    } else {
+      return {
+        ClubCityName: "NFL",
+        ClubNickName: ""
+      };
     }
   }
 
-  //RETURN LIST OF PLAYERS
-  getPlayers(players: any) {
-    var returnPlayers = {};
-    var i = 0;
-    for (let player in players) {
-      if (i == 15) {
-        break;
-      }
-      returnPlayers[player] = players[player];
-      i += 1;
-    }
-    return returnPlayers;
-  }
-
-  //populate display players
+  /**
+   * Populate players based on name text search
+   * @param input string of player name text to load players of
+   */
   playerSearching(input: string) {
-    var otherNameForm = this.filterService.transformName(input);
+    var otherNameForm = this.filterService.transformName(input); //incase you ever want to implement search for "john smith" and "smith, john"
 
     //get player name att ID
 
@@ -248,7 +247,10 @@ export class PlayerComponent implements OnInit {
     }
   }
 
-  //Toggle Display of Player Selection
+  /**
+   * Toggle Display of Player Selection
+   * @param onOff Current status of the player display toggle
+   */
   displayPlayers(onOff: any) {
     this.toggleShowDiv("playerList");
 
@@ -259,26 +261,37 @@ export class PlayerComponent implements OnInit {
     }
   }
 
-  //This function changes the team selected
+  /**
+   * This function changes the player selected and updates the rock daisy url
+   * @param playerID player sailID
+   * @param player player object
+   */
   changePlayer(playerID: any, player: any) {
     this.displayPlayers(1);
 
-    this.playerSelected = player;
-    this.filterService.playerPortalActivePlayerIDOLD = this.filterService.playerPortalActivePlayerID;
     this.filterService.playerPortalActivePlayerID = playerID;
     this.filterService.playerPortalSelected = player;
 
     this.initPlayer();
     this.filterService.updateRDURL();
   }
-
+  /**
+   * push changes to the database
+   * by changing the active id and object in the filterservice variables
+   * they will be put in the filter strucutre through the case of url having "player"
+   */
   initPlayer() {
     //FID is -3
     //ATT is 3
     this.filterService.pushQueryToActiveFilter("0");
   }
 
-  //This function will route to reports page or display the report
+  /**
+   * This function will route to reports page or display the report
+   * Case on what to do whether it is a list of reports or a report tab
+   *
+   * @param name tab number to route to
+   */
   subRoute(name: any) {
     //Get rid of old
     try {
@@ -324,6 +337,12 @@ export class PlayerComponent implements OnInit {
       }
     } catch (e) {}
   }
+
+  /**
+   * If control is held during click then open new tab otherwise reroute
+   * @param e click event
+   * @param name tab number clicked
+   */
   tabClicked(e: any, name: any) {
     if (e.ctrlKey) {
       var url = this.router.url.split("/");
@@ -355,8 +374,9 @@ export class PlayerComponent implements OnInit {
     }
   }
 
-  //Show The list of years to select
-
+  /**
+   * Open/close the year dropdown slect
+   */
   showYearList() {
     this.showYear = !this.showYear;
     this.toggleShowDiv("yearList");
@@ -364,6 +384,10 @@ export class PlayerComponent implements OnInit {
       this.filterService.portalYearDisplayClose();
     }
   }
+  /**
+   * Change animation state
+   * @param divName string to match up for changing animation state
+   */
   toggleShowDiv(divName: string) {
     if (divName === "yearList") {
       this.yearListAnimationState =

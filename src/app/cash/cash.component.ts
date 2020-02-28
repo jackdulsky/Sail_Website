@@ -3,16 +3,15 @@ import {
   OnInit,
   ViewEncapsulation,
   ViewChild,
-  ComponentFactoryResolver
+  
 } from "@angular/core";
 import { FiltersService } from "../filters.service";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { BodyComponent } from "../body/body.component";
-import { KeyValue } from "@angular/common";
 import { MatMenuTrigger } from "@angular/material";
-import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
+import { FormBuilder, FormControl } from "@angular/forms";
 import * as cloneDeep from "lodash/cloneDeep";
 import { SlideInOutAnimation } from "../animations";
 
@@ -38,32 +37,29 @@ export class CashComponent implements OnInit {
     document.addEventListener("click", e => this.onClick(e));
   }
 
-  cashTabSelected;
-  showYear = false;
+  
+  cashTabSelected;//Which tab is selected
+
+
   Label = "Label";
-  positonFilterID;
+
+  //The four id's associated with the filters on top
+  positionFilterID;
   agentFilterID;
   companyFilterID;
   FAStatusFilterID;
   showFilters;
-  yearListAnimationState = "out";
 
-  onClick(event) {
-    var target = event.target || event.srcElement || event.currentTarget;
-    var idAttr = target.attributes.id;
-    var value;
-    if (idAttr) {
-      value = idAttr.nodeValue;
-    } else {
-      value = "";
-    }
-    if (this.showYear && !value.toLowerCase().includes("year")) {
-      this.showYearList();
-    }
-  }
+  
+  yearListAnimationState = "out"; //State variable for transition of opening year drop down
+  showYear = false;//if the year selection drop down is open
 
+
+
+  /**
+   * Init function to get the ID's of the filters to show
+   */
   ngOnInit() {
-    // this.filterService.getBulkImport();
     this.cdref.detectChanges();
 
     this.initFunction();
@@ -73,18 +69,14 @@ export class CashComponent implements OnInit {
       this.body.portalHighlight("cash");
     } catch (e) {}
     if (
-      this.filterService.reportTabs &&
-      this.filterService.reportReportsOnly &&
-      this.filterService.getReportHeaders(4) &&
-      this.filterService.pullStructure &&
-      this.filterService.pullAttribute &&
-      this.filterService.pullValueMap &&
-      this.filterService.form
+      this.filterService.checkUploadComplete()
     ) {
+      //find the id's of the filters to show
+      //they are hard coded
       for (let att in this.filterService.pullStructure["-3"]["300"]) {
         try {
           if (this.filterService.pullAttribute[att]["Label"] == "Position") {
-            this.positonFilterID = att;
+            this.positionFilterID = att;
           }
           if (this.filterService.pullAttribute[att]["Label"] == "Agent") {
             this.agentFilterID = att;
@@ -96,21 +88,27 @@ export class CashComponent implements OnInit {
             this.FAStatusFilterID = att;
           }
         } catch (e) {}
+
+        //init the form for the cash tab
         this.filterService.formCash.addControl(att, new FormControl());
         this.filterService.formCash.addControl(
           att + "search",
           new FormControl()
         );
       }
+
       this.showFilters = [
-        this.positonFilterID,
+        this.positionFilterID,
         this.agentFilterID,
         this.companyFilterID,
         this.FAStatusFilterID
       ];
-      if (!this.filterService.fidCashMap[this.positonFilterID]) {
-        this.filterService.fidCashMap[this.positonFilterID] = "-301";
-        this.filterService.fidCashMapFIDtoID["-301"] = this.positonFilterID;
+
+      //initialize the fid mapping if there does not already exist one for these variables
+      //essentially we want to edit FID's if they have these filters associated 
+      if (!this.filterService.fidCashMap[this.positionFilterID]) {
+        this.filterService.fidCashMap[this.positionFilterID] = "-301";
+        this.filterService.fidCashMapFIDtoID["-301"] = this.positionFilterID;
       }
       if (!this.filterService.fidCashMap[this.agentFilterID]) {
         this.filterService.fidCashMap[this.agentFilterID] = "-302";
@@ -125,6 +123,7 @@ export class CashComponent implements OnInit {
         this.filterService.fidCashMap[this.FAStatusFilterID] = "-304";
       }
 
+      //get tabs and order them by Order ID, then init first one
       var tabs = this.filterService.getReportHeaders(4);
       this.cashTabSelected = Object.keys(tabs).sort(function(a, b) {
         return tabs[a]["OrderID"] < tabs[b]["OrderID"]
@@ -133,6 +132,8 @@ export class CashComponent implements OnInit {
           ? 1
           : 0;
       })[0];
+
+      //reroute appropriately
       try {
         if (this.router.url.includes("/report")) {
           document.getElementById("fullScreenButton").className = "fullScreen";
@@ -154,9 +155,14 @@ export class CashComponent implements OnInit {
     }
   }
 
-  //timeout Recursive method
+
+  /**
+   * Time out recursive method to highlight the correct tab being displayed
+   * Highlight is called if its showing a report
+   * If it has base in url then must reroute to base report to display properly
+   */
   performHighlightOrSubRoute() {
-    if (this.filterService.getReportHeaders(4)) {
+    if (this.filterService.checkUploadComplete()) {
       if (
         Object.keys(this.filterService.getReportHeaders(4)).indexOf(
           String(this.cashTabSelected)
@@ -175,7 +181,11 @@ export class CashComponent implements OnInit {
     }
   }
 
-  //HIGHLIGHT A TAB, USED FOR INIT ON REPORT
+  
+  /**
+   * HIGHLIGHT A TAB, USED FOR INIT ON REPORT
+   * @param name tab number to highlight 
+   */
   justHighlight(name: any) {
     if (document.getElementById(name + "cashBarHighlightid")) {
       var newTab = document.getElementById(name + "cashBarHighlightid");
@@ -189,8 +199,13 @@ export class CashComponent implements OnInit {
     }
   }
 
-  //This function will route to reports page or display the report
-  //This function will route to reports page or display the report
+
+/**
+ * This function will route to reports page or display the report
+ * Case on what to do whether it is a list of reports or a report tab
+ * 
+ * @param name tab number to route to
+ */
   subRoute(name: any) {
     //Get rid of old
     try {
@@ -204,7 +219,6 @@ export class CashComponent implements OnInit {
     this.cashTabSelected = name;
     //color new
     setTimeout(() => {
-      console.log("LOOP 7");
       try {
         var newTab = document.getElementById(name + "cashBarHighlightid");
         newTab.style.backgroundColor = "#f2f2f2";
@@ -234,11 +248,19 @@ export class CashComponent implements OnInit {
       }
     } catch (e) {}
   }
+
+  /**
+   * If control is held during click then open new tab otherwise reroute
+   * @param e click event
+   * @param name tab number clicked
+   */
   tabClicked(e: any, name: any) {
     if (e.ctrlKey) {
       var url = this.router.url.split("/");
       var number = name;
       var base = "";
+
+      //case for report tab or list tab
       if (this.filterService.reportTabs[name]["IsList"] == 0) {
         number = Object.keys(
           this.filterService.reportReportsStructure[name]
@@ -264,8 +286,10 @@ export class CashComponent implements OnInit {
       this.subRoute(name);
     }
   }
-
-  //Show The list of years to select
+  
+  /**
+   * Open/close the year dropdown slect
+   */
   showYearList() {
     this.showYear = !this.showYear;
     this.toggleShowDiv("yearList");
@@ -273,6 +297,10 @@ export class CashComponent implements OnInit {
       this.filterService.portalYearDisplayClose();
     }
   }
+  /**
+   * Change animation state
+   * @param divName string to match up for changing animation state
+   */
   toggleShowDiv(divName: string) {
     if (divName === "yearList") {
       this.yearListAnimationState =
@@ -280,19 +308,34 @@ export class CashComponent implements OnInit {
     }
   }
 
-  //RETURN THE ITEMS IN THE ORDER SPECIFIED
-  //FOR LABEL OF VALUES
-  valueOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
-    return a.value["OrderID"] < b.value["OrderID"]
-      ? -1
-      : b.value["OrderID"] < a.value["OrderID"]
-      ? 1
-      : 0;
-  };
+  /**
+   * This function will take in an click event and 
+   * check its target and close the year drop down if clicked out of the year box
+   * @param event click event
+   */
+  onClick(event) {
+    var target = event.target || event.srcElement || event.currentTarget;
+    var idAttr = target.attributes.id;
+    var value;
+    if (idAttr) {
+      value = idAttr.nodeValue;
+    } else {
+      value = "";
+    }
+    if (this.showYear && !value.toLowerCase().includes("year")) {
+      this.showYearList();
+    }
+  }
 
+  /**
+   * Toggle menu open for hover over Position
+   */
   openMyMenu() {
     this.trigger.toggleMenu();
   }
+  /**
+   * Close menu 
+   */
   closeMyMenu() {
     this.trigger.closeMenu();
   }
@@ -301,31 +344,43 @@ export class CashComponent implements OnInit {
   //Agent is -302
   //Company is -303
 
+  /**
+   * Push changes to filters selected to the DBFormat
+   * Similar function for filtersService but because of the mirrored filters
+   * other operations need to be done
+   * @param formKey ID of attribute
+   * @param bin Bin ID
+   */
   type0change(formKey, bin) {
     var newFIDNumber = this.filterService.fidCashMap[formKey];
     if (
       this.filterService.formCash.value[formKey] == null ||
       JSON.stringify(this.filterService.formCash.value[formKey]) == "[]"
-    ) {
+    ) {//if empty delete the fid
       this.filterService.removeQuery(newFIDNumber);
     } else {
-      var map = {};
-      map[formKey] = this.filterService.formCash.value[formKey];
+      var att = {};
+      att[formKey] = this.filterService.formCash.value[formKey];
       var oldDB = cloneDeep(this.filterService.DBFormat);
 
+      //add to order inserted
       this.filterService.FIDCreationOrder[
         bin
       ] = this.filterService.FIDCreationOrder[bin].concat([newFIDNumber]);
 
+      //init dbformat for the bin if need be
+      //push to FIDs and FIDBID
       var pkID = [];
-      this.filterService.FIDs[newFIDNumber] = Object.assign({}, cloneDeep(map));
+      this.filterService.FIDs[newFIDNumber] = Object.assign({}, cloneDeep(att));
       this.filterService.FIDBID[newFIDNumber] = bin;
       if (!this.filterService.DBFormat[bin]) {
         this.filterService.DBFormat[bin] = {};
       }
-      var att = cloneDeep(map);
+      
       var FID = [];
       this.filterService.DBFormat[bin][newFIDNumber] = [pkID, att, FID];
+
+      //IF there was a change then update the filter and then push to DB
       if (
         !this.filterService.checkDBFormats(
           oldDB,
@@ -337,7 +392,12 @@ export class CashComponent implements OnInit {
       }
     }
   }
-  //Toggle for UI TYPE 5
+  
+  /**
+   * Toggle for UI TYPE 5 (Position Select)
+   * @param id FIlter Attribute ID
+   * @param key value to insert or delete
+   */
   toggleNestedSelect(id: any, key: any) {
     var oldValue: String[] = cloneDeep(this.filterService.formCash.value[id]);
     if (oldValue == null) {
@@ -359,16 +419,5 @@ export class CashComponent implements OnInit {
     this.type0change(id, "-3");
   }
 
-  //   var oldWorking = cloneDeep(this.filterService.workingQuery);
-  //   if (input.length > 3) {
-  //     this.filterService.workingQuery["-3"][this.playerNameInput] = [
-  //       String(input)
-  //     ];
-  //     this.filterService.setPlayers(this.filterService.combinedJSONstring());
-  //     this.filterService.workingQuery = oldWorking;
-  //   } else {
-  //     delete this.filterService.workingQuery["-3"][this.playerNameInput];
-  //     this.filterService.setPlayers(this.filterService.combinedJSONstring());
-  //   }
-  // }
+
 }

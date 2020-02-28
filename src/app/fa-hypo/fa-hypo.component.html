@@ -1,7 +1,3 @@
-<!-- <div
-  style="background-image: url(../../assets/test2.png);;margin-left:300px;height:700px;width:700px"
-></div> -->
-
 <div style="overflow-y: scroll;height: 853px;">
   <div class="leftSide">
     <div class="depthchartContainer">
@@ -12,13 +8,11 @@
           [ngStyle]="depthLocationStyle(bin.id)"
         >
           <div class="posHeader" [ngStyle]="depthHeaderOrientationStyle(bin)">
-            <span class="posHeaderCount">
-              <!-- ({{ bin.players.length }}) -->
-            </span>
+            <span class="posHeaderCash"> </span>
             <span class="posHeaderLabel">
               {{ bin.label }}
             </span>
-            <span class="posHeaderCash"> ({{ bin.players.length }}) </span>
+            <span class="posHeaderCount"> ({{ bin.players.length }}) </span>
           </div>
 
           <div
@@ -35,7 +29,7 @@
               *ngFor="let player of bin.players"
               id="{{ player['PlayerID'] }}"
               cdkDrag
-              (click)="editValue($event, bin.id, player)"
+              (click)="editValue($event, player)"
             >
               <div
                 class="DepthTopHalf"
@@ -106,11 +100,6 @@
                 </span>
               </div>
             </div>
-            <!-- [innerHTML]="
-                player['DepthHTML'].replace('12px;', '12px;width:100%;') +
-                  ' ' +
-                  calcValueToUseAndDisplay(player) | safehtml
-              " -->
           </div>
         </div>
       </ng-container>
@@ -144,7 +133,10 @@
         class="capInfo"
       >
         <ng-container
-          *ngFor="let figure of calculationsValues | keyvalue: valueOrder"
+          *ngFor="
+            let figure of calculationsValues
+              | keyvalue: filterService.valueOrder
+          "
         >
           <div class="displayInfoCapLabel" *ngIf="figure.value.display == 1">
             <span class="capInfoGrid"
@@ -235,7 +227,7 @@
                 id="{{ player['PlayerID'] }}"
                 *ngFor="let player of pos.players"
                 cdkDrag
-                (click)="editValue($event, pos.id, player)"
+                (click)="editValue($event, player)"
                 [ngStyle]="CUTPlayerStyle(player)"
               >
                 <span class="UFAVal" id="{{ player['PlayerID'] }}">
@@ -266,15 +258,7 @@
                 <span class="UFAVal" id="{{ player['PlayerID'] }}">
                   {{ player.Value4 }}
                 </span>
-                <!-- <span class="UFAVal" id="{{ player['PlayerID'] }}">
-                  {{ player.Pro }}
-                </span>
-                <span class="UFAVal" id="{{ player['PlayerID'] }}">
-                  {{ player.GH }}
-                </span>
-                <span class="UFAVal" id="{{ player['PlayerID'] }}">
-                  {{ player.Gid }}
-                </span> -->
+
                 <span class="UFAVal">
                   {{
                     math.max(
@@ -293,11 +277,6 @@
                   }}
                 </span>
               </div>
-              <!-- [innerHTML]="
-                  player['UfaHTML'].replace('12px;', '12px;width:100%;') +
-                    ' ' +
-                    calcValueToUseAndDisplay(player) | safehtml
-                " -->
             </div>
           </div>
         </ng-container>
@@ -364,21 +343,9 @@
                 id="{{ player['PlayerID'] }}"
                 *ngFor="let player of pos.players"
                 cdkDrag
-                (click)="editValue($event, pos.id, player)"
+                (click)="editValue($event, player)"
                 [ngStyle]="UFAPlayerStyle(player)"
               >
-                <!-- [innerHTML]="
-                  player['LastName'] +
-                  ', ' +
-                  player['FirstName'] +
-                  ' ' +
-                  math.round(
-                    (calcValueToUseAndDisplay(player) / 1000000 +
-                      number.EPSILON) *
-                      100
-                  ) /
-                    100
-                " -->
                 <span class="UFAVal" id="{{ player['PlayerID'] }}">
                   {{ player.FirstName[0] }}.&nbsp;
 
@@ -413,11 +380,6 @@
                   {{ player.Gid }}
                 </span>
               </div>
-              <!-- [innerHTML]="
-                  player['UfaHTML'].replace('12px;', '12px;width:100%;') +
-                    ' ' +
-                    calcValueToUseAndDisplay(player) | safehtml
-                " -->
             </div>
           </div>
         </ng-container>
@@ -486,18 +448,3 @@
     <div></div>
   </div>
 </div>
-<!-- <div>
-        <div *ngFor="let operation of logOfMoves | keyvalue: valueOrder">
-          <span *ngIf="operation.value.type == 0"> Cut </span>
-          <span *ngIf="operation.value.type == 1"> Sign </span>
-          <span *ngIf="operation.value.type == 2"> Move </span>
-          <span *ngIf="operation.value.type == -1"> ERROR </span>
-          <span *ngIf="operation.value.type == 3"> Depth Change </span>
-          &nbsp;-&nbsp;
-          {{ operation.value.item["LastName"] }} ,&nbsp;{{
-            operation.value.item["FirstName"]
-          }}&nbsp;({{ cashSums[operation.value.item.BinID].label }}&nbsp;{{
-            operation.value.item.OrderID
-          }})
-        </div>
-      </div> -->

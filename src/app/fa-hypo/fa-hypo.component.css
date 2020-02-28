@@ -502,33 +502,26 @@ a,
   border-radius: 10px;
   padding-left: 1px;
 }
-.posHeaderCash {
+.posHeaderCount {
   font-size: 12px;
 }
 .posHeaderLabel {
   margin-left: 0px;
 }
-.posHeaderCount {
+.posHeaderCash {
   margin-left: 15px;
   font-size: 12px;
 }
 .capInfo {
   border: 1px solid black;
 }
-/* .capInfo:first-child {
-  border-top: none !important;
-}
-.capInfo:nth-child(2),
-.capInfo:nth-child(1) {
-  border-top: none !important;
-} */
+
 .displayInfoCapValue:nth-child(1),
 .displayInfoCapLabel:nth-child(1) {
   border-top: none !important;
 }
 .displayInfoCapValue {
   float: left;
-  /* border-left: 1px solid #bfbfbf; */
   border-top: 1px solid #bfbfbf;
   background-color: #f2f2f2;
 }

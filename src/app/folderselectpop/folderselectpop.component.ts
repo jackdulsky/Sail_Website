@@ -1,8 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatDialogRef } from "@angular/material";
 import { MAT_DIALOG_DATA } from "@angular/material";
-import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { PullDataService } from "../pull-data.service";
 
 @Component({
@@ -11,39 +9,48 @@ import { PullDataService } from "../pull-data.service";
   styleUrls: ["./folderselectpop.component.css"]
 })
 export class FolderselectpopComponent implements OnInit {
-  public form: FormGroup;
+  //map of folder id to visible name
   idToName: { [id: string]: string } = {
     "00000000-0000-0000-0000-000000000000": "root"
   };
+  // start of drop down menu
   my_menu: string[] = ["00000000-0000-0000-0000-000000000000"];
+  //parent to child map
   options: { [name: string]: string[] } = {};
+  //boolean if its visible
   visible: { [name: string]: boolean } = {
     "00000000-0000-0000-0000-000000000000": true
   };
+  //last selected folder
   justSelected: string;
   constructor(
     public pullData: PullDataService,
-    public fb: FormBuilder,
+
     public dialogRef: MatDialogRef<FolderselectpopComponent>,
 
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
-  ngOnInit() {
-    this.form = this.fb.group({});
-  }
+  ngOnInit() {}
 
-  //CLOSE MODULE
+  /**
+   * CLOSE MODULE
+   */
   close() {
     this.dialogRef.close();
   }
 
-  //CLOSE WITH SELECTION AND PASS BACK SELECTED
+  /**
+   * CLOSE WITH SELECTION AND PASS BACK SELECTED
+   */
   save() {
     this.dialogRef.close({ folderID: this.idToName[this.justSelected] });
   }
 
-  //OPEN NEW LEVEL OF FOLDERS
+  /**
+   * OPEN NEW LEVEL OF FOLDERS
+   * @param name folder id
+   */
   expand(name: string) {
     //REMOVE THE HIGHLIGHTING ON THE PREVIOUSLY SELECTED FOLDER
     document.getElementById(name).className = "itemSelected but mat-button";
@@ -90,7 +97,10 @@ export class FolderselectpopComponent implements OnInit {
     this.justSelected = name;
   }
 
-  //HIDE THE CHILDREN OF A PREVIOUSLY OPEN FOLDER
+  /**
+   * recursively set the children of a fold to closed
+   * @param name
+   */
   setChildHidden(name: string) {
     if (name in this.options) {
       for (let nameChild of this.options[name]) {
@@ -102,7 +112,10 @@ export class FolderselectpopComponent implements OnInit {
     }
   }
 
-  //GET THE NEXT LEVEL OF THE DATA AND INSERT INTO THE LOCAL STRUCUTRES
+  /**
+   * GET THE NEXT LEVEL OF THE DATA AND INSERT INTO THE LOCAL STRUCUTRES
+   * @param name folder ID to get children of
+   */
   getLevel(name: string) {
     this.pullData.getSubFolders(name).subscribe(data => {
       var nextLevel = [];
@@ -115,7 +128,7 @@ export class FolderselectpopComponent implements OnInit {
         }
         this.options[name] = nextLevel;
       } else {
-        //console.log("NO SUB FOLDERS EXIST");
+        console.log("NO SUB FOLDERS EXIST");
       }
     });
   }

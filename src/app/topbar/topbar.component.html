@@ -4,42 +4,17 @@
       class="leftBG"
       (click)="filterService.goToLink('http://oakcmsreports01.raiders.com:88')"
     ></div>
-    <!-- (click)="
-        filterService.goToLink(
-          'http://localhost:4200/loading/35B08D80-9711-CD2E-A7BE-EAC9C140A550/%5B%5B%22%2D3%22%2C%223%22%2C%5B%221002796%22%5D%5D%5D/player,report,2680'
-        )
-      " -->
-    <!-- (click)="
-        filterService.goToLink(
-      'https://sail.raiders.com/view/2680/@SAILGUID=433B57DA-23C9-D9DC-E9E7-115835FBF187/true/true/true/true'
-    )
-  " -->
-    <!-- (click)="
-    filterService.goToLink(
-      'http://localhost:4200/loading/35B08D80-9711-CD2E-A7BE-EAC9C140A550/%5B%5B%22%2D3%22%2C%223%22%2C%5B%221002796%22%5D%5D%5D/player,report,2680'
-    )
-  " -->
-    <!-- https://sail.raiders.com/view/2680/@SAILGUID=433B57DA-23C9-D9DC-E9E7-115835FBF187/true/true/true/true -->
     <div class="rightBG">
       <div style="float:right; margin-top: 7px;">
-        <!-- <i
-          class="fa colo fa-envelope fa-sm mright"
-          style="line-height: 48px;"
-        ></i> -->
-
         <div
           style="width:auto;float: right; line-height: 55px;"
           class="navheight"
         >
-          <!-- <span class="usertext mright">
-            {{ allUsers[0].firstName }} {{ allUsers[0].lastName }}
-          </span> -->
           <div class="menuButton" style="display:contents">
             <i
               class="fa fa-bars fa-lg settingsMenuDropDown"
               (click)="filterService.toggleTopMenuDropDown()"
             ></i>
-            <!-- (mouseenter)="filterService.toggleTopMenuDropDown()" -->
           </div>
         </div>
       </div>
@@ -65,46 +40,8 @@
               class="filterSearchG"
             />
           </span>
-          <!-- (input)="searching($event.target.value)" -->
         </div>
       </div>
     </div>
   </ul>
 </nav>
-
-<!-- <div class="settingsOption">
-            Report Upload
-          </div> -->
-<!-- <div
-      class="filterLabel topbuttonleft"
-      *ngIf="filterService.getNamePresent()"
-    >
-      <i class="fa fa-eye fa-md"></i>
-      Filter Name:
-      {{ filterService.getName() }}
-      <span *ngIf="filterService.modifiedStatus()"> (unsaved)</span>
-    </div> -->
-<!-- 
-          <button mat-menu-item (click)="onCreate()">
-            <i class="fa fa-youtube-play fa-sm mright"></i>
-            <span>Video Settings</span>
-          </button>
-          <button mat-menu-item (click)="onCreate()">
-            <i class="fa fa-question-circle fa-sm mright"></i>
-            <span>FAQ</span>
-          </button> -->
-<!-- <mat-menu #menu="matMenu" xPosition="before">
-              <button
-                mat-menu-item
-                (click)="openFolderSelect()"
-                disableRipple="True"
-              >
-                <i class="fa fa-gears fa-sm mright"></i>
-                <span>User Setting</span>
-              </button>
-        
-              <button mat-menu-item (click)="openReportUpload()">
-                <i class="fa fa-upload fa-sm mright"></i>
-                <span>Report Upload</span>
-              </button>
-            </mat-menu> -->

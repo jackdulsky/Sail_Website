@@ -1,18 +1,12 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy
-} from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { MatDialog, MatDialogConfig } from "@angular/material";
 import { FilterspopComponent } from "../filterspop/filterspop.component";
 import { FiltersService } from "../filters.service";
 import { FolderselectpopComponent } from "../folderselectpop/folderselectpop.component";
-import { SavedfilterspopComponent } from "../savedfilterspop/savedfilterspop.component";
 import { NameenterpopComponent } from "../nameenterpop/nameenterpop.component";
 import { PullDataService } from "../pull-data.service";
 import * as cloneDeep from "lodash/cloneDeep";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { KeyValue } from "@angular/common";
 
 @Component({
@@ -30,23 +24,23 @@ export class FilterBarComponent implements OnInit {
     public router: Router
   ) {}
 
-  //VARIABLES
+  playCount = "0"; //non funcitonal count of plays (eventually on save and send the db returns play count)
+
   location = "Folder";
-  playCount = "0";
-  noFolderAlert = false;
-  folderSelected = false;
-  filterOpen = false;
+  noFolderAlert = false; //for XOS Saving
+  folderSelected = false; //for XOS saving
+
+  filterOpen = false; //is filters pop open bool
 
   ngOnInit() {
     this.filterService.getBulkImport();
-
-    // setTimeout(() => {
-    //   console.log("LOOP 2");
-    //   this.openFilterPage("-3");
-    // }, 2000);
   }
   ngAfterInit() {}
-  //OPENS ENTIRE FILTER PAGE CLEAN
+
+  /**
+   * Open entire filter page (if open then change bin)
+   * @param selected selected is bin to open up the filters pop with
+   */
   openFilterPage(selected: string) {
     if (!this.filterOpen) {
       this.filterService.setPlayers();
@@ -71,29 +65,29 @@ export class FilterBarComponent implements OnInit {
       const dialogRef = this.dialog.open(FilterspopComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(result => {
         this.filterOpen = false;
-        if (
-          this.router.url.includes("club") ||
-          this.router.url.includes("player") ||
-          this.router.url.includes("cash")
-        ) {
-          this.filterService.pushQueryToActiveFilter("0");
-        } else {
-          // this.filterService.pushQueryToActiveFilter("0", false);
-          this.filterService.pushQueryToActiveFilter("0");
-        }
+
+        this.filterService.pushQueryToActiveFilter("0");
       });
     } else {
+      //change the bin selected
       this.filterService.changelevel2(selected);
     }
   }
 
-  //check if one fid in a bin
+  /**
+   * used to check if one fid in a bin for how to display the filter
+   * @param key check if there is only one key
+   */
   checkKeys(key: any) {
     return Object.keys(key.value).length == 1;
   }
 
+  /**
+   *
+   * @param element id of attribute to get the label of
+   */
   getNavElLabel(element: any) {
-    if (this.filterService.pullNavigationElement) {
+    if (this.filterService.checkUploadComplete()) {
       try {
         return this.filterService.pullNavigationElement[element]["Label"];
       } catch (e) {}
@@ -105,12 +99,12 @@ export class FilterBarComponent implements OnInit {
     }
   }
 
-  //Check if the explicits are empty
-
-  //THIS OPENS A SINGLE QUERY IN THE FILTER PAGE
-  //INPUTS-
-  //  FID- the FID number as a string
-  //  QUERY- the dictionary of Atributes to selected values (all strings)
+  /**
+   * THIS OPENS A SINGLE QUERY IN THE FILTER PAGE
+   *
+   * @param fid  FID number as a string
+   * @param query the dictionary of attributes to selected values (all strings)
+   */
   singleOpen(fid: string, query: any) {
     //SET WORKING DICTIONARY, WORKINGBIN, AND WORKINGFID
     var bin = cloneDeep(this.filterService.FIDBID[fid]);
@@ -126,15 +120,9 @@ export class FilterBarComponent implements OnInit {
 
     //SET THE FORM CONTROL
     for (let id in this.filterService.workingQuery[bin]) {
-      // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
-      //   this.filterService.form.controls[id].setValue(
-      //     new Date(this.filterService.workingQuery[bin][id][0] * 1000)
-      //   );
-      // } else {
       this.filterService.form.controls[id].setValue(
         this.filterService.workingQuery[bin][id]
       );
-      //}
     }
 
     //IF FILTER PAGE IS OPEN ALREADY SWITCH THE DISPLAY
@@ -155,6 +143,13 @@ export class FilterBarComponent implements OnInit {
     this.filterService.setPlayers(this.filterService.combinedJSONstring());
   }
 
+  /**
+   * This is for clicking on an explicit filter in the top bar
+   * It will load the fid and navigate to it appropriately
+   * @param fid Filter ID
+   * @param query clicking on exlicit opens filters pop
+   * @param bin Bin ID
+   */
   singleOpenExp(fid: any, query: any, bin: any) {
     if (this.filterOpen) {
       this.filterService.changelevel2(String(bin));
@@ -167,22 +162,23 @@ export class FilterBarComponent implements OnInit {
 
       //SET THE FORM CONTROL
       for (let id in this.filterService.workingQuery[bin]) {
-        // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
-        //   this.filterService.form.controls[id].setValue(
-        //     new Date(this.filterService.workingQuery[bin][id][0] * 1000)
-        //   );
-        // } else {
         this.filterService.form.controls[id].setValue(
           this.filterService.workingQuery[bin][id]
         );
-        // }
       }
       this.filterService.setPlayers(this.filterService.combinedJSONstring());
     } else {
       this.singleOpen(fid, query);
     }
   }
-  //OPEN SINGLE PANEL
+
+  /**
+   * OPEN SINGLE PANEL
+   * @param fid Filter ID
+   * @param query query to be added to working
+   * @param att attribute ID
+   * @param bin Bin ID
+   */
   singleOpenAtt(fid: any, query: any, att: any, bin: any) {
     if (this.filterOpen) {
       for (let id in this.filterService.workingQuery[bin]) {
@@ -194,15 +190,9 @@ export class FilterBarComponent implements OnInit {
 
       //SET THE FORM CONTROL
       for (let id in this.filterService.workingQuery[bin]) {
-        // if (Number(this.filterService.pullAttribute[id]["UITypeID"]) == 8) {
-        //   this.filterService.form.controls[id].setValue(
-        //     new Date(this.filterService.workingQuery[bin][id][0] * 1000)
-        //   );
-        // } else {
         this.filterService.form.controls[id].setValue(
           this.filterService.workingQuery[bin][id]
         );
-        //  }
       }
       this.filterService.setPlayers(this.filterService.combinedJSONstring());
     } else {
@@ -211,7 +201,11 @@ export class FilterBarComponent implements OnInit {
     this.filterService.navigateToAttribute(bin, String(att));
   }
 
-  //OPEN DIALOG FOR SELECTING THE FOLDER TO SAVE AN XOS EDIT
+  /**
+   * Function for opening the select xos folder pop up module
+   * This is not fully implemented yet and there currently exists not call to this function
+   * this call will open the module correctly yet the selecting in the pop up is not 100% working
+   */
   selectFolderXos() {
     //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
 
@@ -234,48 +228,18 @@ export class FilterBarComponent implements OnInit {
     });
   }
 
-  //IMPORT A FILTER POP UP MODAL
-  selectSavedFilter() {
-    //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "80%";
-    dialogConfig.height = "calc(80%-150px)";
-    dialogConfig.autoFocus = true;
-    dialogConfig.position = { top: "152px" };
-    dialogConfig.data = {};
-
-    //OPEN WINDOW
-    const dialogRef = this.dialog.open(SavedfilterspopComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(data => {
-      if (data != undefined) {
-        // this.location = data.folderID;
-        // this.folderSelected = true;
-        // document.getElementById("xosIco").className = "fa fa-close space";
-      }
-    });
-  }
-
-  //SEND THE FOLDER ID TO EXPORT
-  //IF NO FOLDER SELECTED SHOW THE ERROR MESSAGE (RELATIVE POSITION)
-  XOSExport() {
-    if (!this.folderSelected) {
-      this.noFolderAlert = true;
-      setTimeout(() => {
-        console.log("LOOP 1");
-        this.noFolderAlert = false;
-      }, 2000);
-    } else {
-      this.filterService.XOSExport(this.location);
-    }
-  }
-
-  //CLEAR ALL QUERIES
+  /**
+   * Clear all filter information and queries
+   */
   clearAll() {
     this.filterService.clearAll();
   }
 
-  //SAVE FILTER / OPEN UP NAME POP UP MODAL
+  /**
+   * SAVE FILTER / OPEN UP NAME POP UP MODAL
+   * After close will save the filter to DB with name and desc
+   * will set active name being used now
+   */
   saveFilter() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "80%";
@@ -292,74 +256,16 @@ export class FilterBarComponent implements OnInit {
       if (data != undefined) {
         console.log("Saving", data.name, data.description);
         this.filterService.saveFilter(data.name, data.description);
-        //this.filterService.setName(data.name);
+        this.filterService.setName(data.name);
       }
     });
   }
 
-  //THIS CREATES THE DISPLAY STRING
-  //RESTRICTS MAX LENGTH TO 100 CHARS
-  //WIDTH OF THE ITEM SET BY THE CSS OF THE ELEMENT
-  //MAY HAVE TO TAILER THIS FOR EACH PKID
-  //RIGHT NOW IT SHOWS PKID's AND ATTRIBUTES OF NON PKID's
-  createFilterDisplayString(fid: string, value: any) {
-    if (!this.filterService.FIDBID[fid]) {
-      setTimeout(() => {
-        console.log("LOOP 3");
-        this.createFilterDisplayString(fid, value);
-      }, 100);
-    } else {
-      var BID = this.filterService.FIDBID[fid];
-      var dispName = "";
-      var tempFilter = { ...value };
-      try {
-        if (value[String(Number(BID) * -1)]) {
-          for (let val in value[String(Number(BID) * -1)]) {
-            dispName +=
-              ", " +
-              this.returnlabel(
-                this.filterService.pullValueMap[String(Number(BID) * -1)][
-                  value[String(Number(BID) * -1)][val]
-                ]
-              );
-            if (dispName.length > 100) {
-              break;
-            }
-          }
-        }
-        if (dispName.charAt(0) == ",") {
-          dispName = dispName.substr(1);
-        }
-        delete tempFilter[String(Number(BID) * -1)];
-
-        for (let att in tempFilter) {
-          dispName +=
-            ", " + this.returnlabel(this.filterService.pullAttribute[att]);
-          if (dispName.length > 100) {
-            break;
-          }
-        }
-        while (dispName.charAt(0) == ",") {
-          dispName = dispName.substr(2);
-        }
-      } catch (e) {
-        null;
-      }
-      return dispName;
-    }
-  }
-
-  createFilterTopDisplayString(fid: string, value: any) {
-    //MULTIPLE CASE
-    var BID = this.filterService.FIDBID[fid];
-    return (
-      String(this.filterService.pullNavigationElement[BID]["Label"]) +
-      " : " +
-      String(fid)
-    );
-  }
-
-  //Return the panel to att mapping for a single query in a bin
+  /**
+   * Return the panel to att mapping for a single query in a bin
+   * this way we can show panels on top with attributes in the middle when only one fid in a bin
+   * @param attsMap mapping of attributes to value list
+   */
   createSingleQueryPanelAttributeMap(attsMap: any) {
     var panelMap = {};
     try {
@@ -375,7 +281,12 @@ export class FilterBarComponent implements OnInit {
     return panelMap;
   }
 
-  //GET EXPLICIT VALUES String Labels
+  /**
+   * GET EXPLICIT VALUES String Labels
+   * limit length 100,
+   * @param values list of explicit ID's
+   * @param bin Bin ID
+   */
   getExplicitValues(values: any, bin: any) {
     var dispName = "";
     try {
@@ -394,7 +305,11 @@ export class FilterBarComponent implements OnInit {
     return dispName;
   }
 
-  //GET NON EXPLICIT VALUES String Labels, panels or Atts
+  /**
+   * GET NON EXPLICIT VALUES String Labels, panels or Atts
+   * return label of navigation elements
+   * @param values list of id's in the filter strucutre that are panels or attributes
+   */
   getAttOrPanelStringsValues(values: any) {
     var dispName = "";
     try {
@@ -412,6 +327,11 @@ export class FilterBarComponent implements OnInit {
     return dispName;
   }
 
+  /**
+   * Get bottom of combined explicit labels and panels/attributes
+   * @param fid Filter ID
+   * @param contents mapping of attributes to values (comes from db format {bin:{fid: content}})
+   */
   getMultipleQueryBottomString(fid: any, contents: any) {
     var dispName = "";
     try {
@@ -434,17 +354,28 @@ export class FilterBarComponent implements OnInit {
     return dispName;
   }
 
-  //RETURN THE STRING LABEL OF THE OBJECT PASSED IN
-  //ONLY USED BECAUSE OF BINDING ACCESS OF STRING EVALUATION
+  /**
+   * RETURN THE STRING LABEL OF THE OBJECT PASSED IN
+   * ONLY USED BECAUSE OF BINDING ACCESS OF STRING EVALUATION
+   *
+   * @param obj Object with Label attribute
+   */
   returnlabel(obj: any) {
     return obj["Label"];
   }
-  //REMOVE A SINGLE QUERY BY HITTING X
+
+  /**
+   * REMOVE A SINGLE QUERY BY HITTING X
+   * @param fid Filter ID
+   */
   removeQuery(fid: string) {
     this.filterService.removeQuery(fid);
   }
 
-  //ORDER SIDE BUTTONS ON THEIR ORDER ID
+  /**
+   * ORDER SIDE BUTTONS ON THEIR ORDER ID
+   * Use fid creation order
+   */
   valueOrderFIDs = (
     a: KeyValue<string, any>,
     b: KeyValue<string, any>

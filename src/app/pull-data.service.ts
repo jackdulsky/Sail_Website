@@ -2,27 +2,30 @@ import {
   Injectable,
   ɵclearResolutionOfComponentResourcesQueue
 } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { catchError, map, tap } from "rxjs/operators";
-import { Observable, of, Subscribable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+
 import "rxjs/add/operator/map";
-import { identifierModuleUrl, TypeScriptEmitter } from "@angular/compiler";
-import { RequestOptions } from "@angular/http";
+
 import { UUID } from "angular2-uuid";
-import { dependenciesFromGlobalMetadata } from "@angular/compiler/src/render3/r3_factory";
 
 @Injectable({
   providedIn: "root"
 })
+/**
+ * This service is solely responsible for holding the functions to get specific data sets from the database through the api
+ * There are secure and non-secure variables for the url of the api
+ * Eventually the secure one will only be used but for now until certificate and network issues are fixed
+ * the non-secure will be used primarily and the website must be accessed through the vpn if not in house
+ */
 export class PullDataService {
   //UTILITY SERVER URL
   serverURLSecure = "https://oaksvr06.raiders.com/";
   serverURLNotSecure = "http://oaksvr06.raiders.com/";
+
   GUID;
   constructor(private http: HttpClient) {}
-  //RETURN ALL THE INFOR RELATED TO TEAMS FROM THE DATA BASE
 
-  //Tries both secure and non-secure api links
+  //Try both secure and non-secure api links (eventually this will be depricated or need to be changed)
   postQuery(queryString: string) {
     try {
       return this.http.post(this.serverURLNotSecure + "db/query", {
@@ -33,22 +36,19 @@ export class PullDataService {
       query: queryString
     });
   }
-  getTeams() {
+  
+  /**
+   * RETURN ALL THE INFO RELATED TO TEAMS FROM THE DATA BASE
+  */
+ getTeams() {
     var query =
       "select SailTeamID,TeamCode,Conference,Division,ClubCityName, ClubNickName from SaildB.org.TeamSeason where LeagueType = 'NFL' and Season  = '2020'";
     return this.postQuery(query);
   }
 
-  //SEND UP THE XOS INFORMATION
-  //NOT FUNCTIONAL
-  XOSExport(folder: string, filterID: string, filters: any) {
-    //console.log("Sending to folder: ", folder);
-    //console.log("Sending filterID ", filterID);
-    //console.log("Sending Filters: ", filters);
-  }
+
 
   //RETURNS THE SAVED FILTERS FROM THE DATA BASE
-  //NOT FUNCTIONAL
   getSavedFilters() {
     var query = "Select * from SailDB.filter.Saved Order by DateAdded desc";
     return this.postQuery(query);
@@ -76,11 +76,10 @@ export class PullDataService {
   }
 
   //SAVE THE FILTER SET IN THE DB
-  //NOT FUNCTIONAL
   saveFilter(
     name: string,
     filters: any,
-    filterID: string,
+ 
     description: string
   ) {
     var query =
@@ -95,16 +94,6 @@ export class PullDataService {
     return this.postQuery(query);
   }
 
-  //A SLOW QUERY TO TEST THE PLAY COUNT PART
-  testSlowQuery(game: number) {
-    // var query =
-    //   "SELECT * FROM (SELECT g.GSISGamekey, y.GSISPlayID, r.GSISPlayerID, p.SideOfBall, p.SpecialTeamsUnit, s.PlayStatType, s.PlayStatValue FROM saildb.stat.PlayerPlay p LEFT JOIN saildb.stat.Game g ON p.SailGameKey = g.SailGameKey LEFT JOIN saildb.stat.Play y ON p.SailPlayID = y.SailPlayID LEFT JOIN saildb.org.Player r ON p.SailID = r.SailID LEFT JOIN saildb.stat.PlayerPlayStats s ON s.PFFPlayID = y.PFFPlayID AND s.GSISPlayerID = r.GSISPlayerID WHERE s.PlayStatType IN ('pff_POSITION','pff_ROLE')) AS p PIVOT (MAX(PlayStatValue) FOR PlayStatType IN ([pff_ROLE],[pff_POSITION])) AS p Where GSISGamekey =" +
-    //   String(game);
-    var query =
-      "SELECT * FROM (SELECT g.GSISGamekey, y.GSISPlayID, r.GSISPlayerID, p.SideOfBall, p.SpecialTeamsUnit FROM saildb.stat.PlayerPlay p LEFT JOIN saildb.stat.Game g ON p.SailGameKey = g.SailGameKey LEFT JOIN saildb.stat.Play y ON p.SailPlayID = y.SailPlayID LEFT JOIN saildb.org.Player r ON p.SailID = r.SailID) AS p Where GSISGamekey =" +
-      String(game);
-    return this.postQuery(query);
-  }
 
   //PULL THE DATATYPE FROM THE DB
   pullDataType() {
@@ -167,8 +156,6 @@ export class PullDataService {
   //SEND THE DATA BACK UP TO THE DB
   // INSERT THE GUI AND FILTERS SELECTED
   constructAndSendFilters(filter) {
-    // console.log("PUSHING", JSON.stringify(filter));
-
     var query =
       "exec SailDB.filter.spSAIL_StoreUpdateFilter N'" +
       this.GUID +
@@ -178,7 +165,6 @@ export class PullDataService {
 
     return this.postQuery(query);
 
-    //
   }
 
   //SET THE GUI FOR THE WINDOW
@@ -236,8 +222,7 @@ export class PullDataService {
 
   //PULL PLAYER DATA
   pullPlayersToDisplay(sendString: String) {
-    // var query =
-    //   "exec [SaildB].[filter].[spGetPlayersList] N'" + this.GUID + "'";
+
     var query =
       "exec [SaildB].[filter].[spGetPlayersList] N'" + sendString + "'";
     return this.postQuery(query);
@@ -257,6 +242,15 @@ export class PullDataService {
     return this.postQuery(query);
   }
 
+  /**
+   * Here the api is called to get the search options
+   * Output is the list of serach options
+   * Currently on one search option is returned form the api function
+   * @param input  = text string that is being searched
+   * 
+   * There is a try except shell for the http /https issue and the inside try/except is
+   *  if the search api instance is down do the slow method which goes through a file
+   */
   pullSearchOptions(input: string) {
     try {
       try {
@@ -269,6 +263,8 @@ export class PullDataService {
           { responseType: "text" }
         );
       } catch (e) {
+          //api local host instance down
+
         return this.http.post(
           this.serverURLSecure + "execute/file/bodyinput/search_tool",
           {
@@ -279,6 +275,7 @@ export class PullDataService {
         );
       }
     } catch (e) {
+      //Error with secure api link
       try {
         return this.http.post(
           this.serverURLNotSecure + "search",
@@ -289,6 +286,7 @@ export class PullDataService {
           { responseType: "text" }
         );
       } catch (e) {
+        //api local host instance down
         return this.http.post(
           this.serverURLNotSecure + "execute/file/bodyinput/search_tool",
           {
@@ -300,37 +298,49 @@ export class PullDataService {
       }
     }
   }
+  /**
+   * Pulls the player URL: array of objects that have 
+   * SailID, and PlayerImageUrl
+   */
   pullPlayerURL() {
     var query =
       "Select p.SailID, PlayerImageUrl from ContractsDB..Player join saildb.org.Player p on player.PlayerId = p.GSISPlayerID where p.CurrentPlayerLevel = 'NFL'";
     return this.postQuery(query);
   }
-  pullfahypo() {
-    var query =
-      "EXEC	[SaildB].[Reports].[spRD_Player_Position_Stats] N'ce9df573-eea4-3ff6-fb8d-6ccabb606ee5'";
-    return this.postQuery(query);
-  }
-  pullUFABoard() {
-    var query =
-      "EXEC	[SaildB].[Reports].[spRD_Market_FreeAgentBoard] N'972c1675-43af-5ec6-1658-c1260d0976ab'";
-    return this.postQuery(query);
-  }
+
+/**
+ * Pull all the players and their locations / information to be displayed on their cards
+ * 
+ * @param scenario The number corresponding to a unique set of player locations
+ * 
+ * default scenario is 0 (base scenario)
+ */
   pullHypoPlayers(scenario: number = 0) {
-    // console.log("PULLING SCENARIO HYPO ", scenario);
     var query = "Exec FreeAgency.FA20.spScenario_Get " + scenario;
     return this.postQuery(query);
   }
+
+  /**
+   * Pull information on the bins for the FA Hypo portal
+   */
   pullHypoBins() {
     var query = "select * from [FreeAgency].[FA20].[Hypo_Bins]";
     return this.postQuery(query);
   }
 
+  /**
+   * Get a list of scenarios from the DB for the FA Hypo portal
+   */
   pullHypoScenario() {
     var query =
       "SELECT * FROM [FreeAgency].[FA20].[Hypo_Scenarios] Order By ScenarioID";
     return this.postQuery(query);
   }
 
+  /**
+   * Call stored procedure to execute the inserting of a new scenario
+   * @param jsonData the object that includes the name, description, and list of player objects that are to be writen down
+   */
   insertHypoScenarioData(jsonData: String) {
     var query =
       "Exec [FreeAgency].[FA20].[spScenario_Write] '" + jsonData + "'";

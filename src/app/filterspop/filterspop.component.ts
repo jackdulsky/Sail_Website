@@ -1,26 +1,15 @@
 import { Component, OnInit, Inject, ɵConsole, ViewChild } from "@angular/core";
 import { MatDialog, MatDialogRef, MatDialogConfig } from "@angular/material";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MAT_DIALOG_DATA } from "@angular/material";
-import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { FiltersService } from "../filters.service";
 import { PullDataService } from "../pull-data.service";
-import { Options } from "selenium-webdriver/safari";
-import {
-  BrowserModule,
-  ɵELEMENT_PROBE_PROVIDERS__POST_R3__
-} from "@angular/platform-browser";
-import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
-import { SafeHtmlPipe } from "../safe.pipe";
-import { TEMPORARY_NAME } from "@angular/compiler/src/render3/view/util";
 import { KeyValue } from "@angular/common";
 import * as cloneDeep from "lodash/cloneDeep";
 import { MatMenuTrigger } from "@angular/material";
-import { ChangeDetectorRef, ChangeDetectionStrategy } from "@angular/core";
-// import { AdalService } from 'adal-angular4';
-import { MsAdalAngular6Module } from "microsoft-adal-angular6";
-import { stringify } from "querystring";
+import { ChangeDetectorRef } from "@angular/core";
+
 import { SavedfilterspopComponent } from "../savedfilterspop/savedfilterspop.component";
 
 @Component({
@@ -84,32 +73,40 @@ export class FilterspopComponent implements OnInit {
   ) {
     this.title = data.title;
     this.filterService.filterBinSelected = data.selected;
-    // this.cdref.detach();
   }
 
   ngOnInit() {
-    this.form = this.fb.group({});
-    this.formG = this.fb.group({});
-    this.filterService.setPlayers();
+    this.filterService.setPlayers(); // get the players to display
+    //This function below will need to be run on a change to the position hierarchy
     // this.createPosMenus();
     this.cdref.detectChanges();
-    this.filterService.conferenceSelections["2"] = "AFC";
+    this.filterService.conferenceSelections["2"] = "AFC"; //initial conference to show on the team select gui
     setTimeout(() => {
+      //wait till the elements are rendered then navigate to the bin selected
       console.log("LOOP 24");
       this.changeLevel2(this.filterService.filterBinSelected);
     }, 1);
 
+    //init panel
     this.filterService.panels = [
       cloneDeep(this.filterService.filterBinSelected)
     ];
     this.cdref.detectChanges();
   }
-  //RETURN LABEL OF OBJECT
+
+  /**
+   * RETURN LABEL OF OBJECT
+   * @param obj Object with "Label" as an attribute
+   */
   returnlabel(obj: any) {
     return obj["Label"];
   }
 
-  //SEND TYPE0CHANGE TO FILTER SERVICE WITH VALUES OF SET AND filterBinSelected
+  /**
+   * SEND TYPE0CHANGE TO FILTER SERVICE WITH VALUES OF SET AND filterBinSelected
+   * @param formKey attribute ID
+   * @param bin bin ID
+   */
   type0change(formKey, bin) {
     this.filterService.type0change(
       formKey,
@@ -118,17 +115,25 @@ export class FilterspopComponent implements OnInit {
     );
   }
 
-  //CLEAR A SINGLE FILTER IN THE WORKING QUERY
+  /**
+   * CLEAR A SINGLE FILTER IN THE WORKING QUERY
+   * @param id attribute ID
+   * @param bin Bin ID
+   */
   clearSingle(id: string, bin: string) {
     this.filterService.clearSingleIDWorking(id, bin);
   }
 
-  //DELETE ENTIRE WORKING QUERY
+  /**
+   * DELETE ENTIRE WORKING QUERY
+   */
   clearWorkingQuery() {
     this.filterService.clearWorking();
   }
 
-  //SEND THE WORKING QUERY TO THE FILTER TOP BAR
+  /**
+   * SEND THE WORKING QUERY TO THE FILTER TOP BAR
+   */
   pushWorkingQuery() {
     this.filterService.pushQueryToActiveFilter(
       this.filterService.filterBinSelected
@@ -136,6 +141,12 @@ export class FilterspopComponent implements OnInit {
   }
 
   //FUNCTION TO SORT THE TIER 1 BUTTONS BY THE ORDER SENT IN
+  /**
+   * Value order for tier 1 bins
+   * This is needed instead of using filterservice.value order
+   * since we do not have the entire objects in the filters structure
+   * since its just ID's
+   */
   valueOrderT1 = (
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
@@ -149,22 +160,9 @@ export class FilterspopComponent implements OnInit {
       : 0;
   };
 
-  //ORDER OPTIONS
-  //***NOT IMPLEMENTED IN THE HTML PIPE YET *****/
-  valueOrderOptions = (
-    a: KeyValue<string, any>,
-    b: KeyValue<string, any>
-  ): number => {
-    return this.filterService.pullValueMap[a.key]["OrderID"] <
-      this.filterService.pullValueMap[b.key]["OrderID"]
-      ? -1
-      : this.filterService.pullValueMap[b.key]["OrderID"] <
-        this.filterService.pullValueMap[a.key]["OrderID"]
-      ? 1
-      : 0;
-  };
-
-  //ORDER SIDE BUTTONS ON THEIR ORDER ID
+  /**
+   * Order the panel side buttons by their order ID
+   */
   valueOrderSideButtons = (
     a: KeyValue<string, any>,
     b: KeyValue<string, any>
@@ -179,26 +177,19 @@ export class FilterspopComponent implements OnInit {
       : 0;
   };
 
-  //RETURN THE ITEMS IN THE ORDER SPECIFIED
-  //FOR LABEL OF VALUES
-  valueOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
-    return a.value["OrderID"] < b.value["OrderID"]
-      ? -1
-      : b.value["OrderID"] < a.value["OrderID"]
-      ? 1
-      : 0;
-  };
-  //CLOSE THE DIALOG
+  /**
+   * Close the dialog pop up
+   */
   close() {
     this.dialogRef.close();
   }
 
-  //CLOSE THE DIALOG
-  save() {
-    this.close();
-  }
-
-  //TOGGLE THE SHOW SELECTIONS IF THE GLOBAL SEARCH BOX IS NOT NULL
+  /**
+   * TOGGLE THE SHOW SELECTIONS IF THE GLOBAL SEARCH BOX IS NOT NULL
+   * Outcome is nothing from this since the variable is not attached to anything
+   * and nothing is performed on the input
+   * @param input string from search box
+   */
   searching(input: string) {
     if (input.length > 0) {
       this.showSuggestions = true;
@@ -208,9 +199,15 @@ export class FilterspopComponent implements OnInit {
 
     this.searchGlobalText = input;
   }
-  //TOGGLE ALL FILTER SELECTIONS THEN CALL TYPE0CHANGE ON THE FORM VALUES
+
+  /**
+   * TOGGLE ALL FILTER SELECTIONS THEN CALL TYPE0CHANGE ON THE FORM VALUES
+   * @param id Attribute ID
+   * @param tf bool whether to select or deselect all
+   * @param bin Bin ID
+   */
   toggleAllSelections(id: string, tf: boolean, bin: string) {
-    if (tf && String(id) != "3") {
+    if (tf) {
       this.filterService.form.controls[id].setValue(
         Object.keys(this.filterService.pullValueMap[id])
       );
@@ -220,43 +217,11 @@ export class FilterspopComponent implements OnInit {
     this.type0change(id, bin);
   }
 
-  //This function navigates the panels and displays where the
-  //Attribute was selected from if its clicked on the right area
-  navigateToAttribute(bin: any, att: any) {
-    this.changeLevel2(bin);
-    var newPanels = [];
-    var atRoot = false;
-    var startAtt = att;
-    while (!atRoot) {
-      var adding = this.filterService.pullNavigation[startAtt]["ParentItemID"];
-      newPanels.push(adding);
-      if (Number(adding) <= 0) {
-        atRoot = true;
-      }
-      startAtt = adding;
-    }
-
-    this.filterService.selectingAttributes = Object.keys(
-      this.filterService.getPanelOptions(
-        newPanels[0],
-        cloneDeep(newPanels).reverse()
-      )
-    ).filter(x => this.filterService.pullNavigationElement[x]["IsAttribute"]);
-    if (
-      JSON.stringify(
-        this.filterService.getPanelOptions(
-          newPanels[0],
-          cloneDeep(newPanels).reverse()
-        )
-      ) == "{}"
-    ) {
-      newPanels = newPanels.slice(1);
-    }
-
-    this.filterService.panels = cloneDeep(newPanels.reverse());
-  }
-
-  //GET INIT VALUES MIN MAX
+  /**
+   * GET INIT VALUES MIN MAX
+   * @param id Attribte ID
+   * @param minmax number Min is 0, max is 1
+   */
   getInitValuesMinMax(id: any, minmax: any) {
     if (this.filterService.form.value[id] != null) {
       return cloneDeep(this.filterService.form.value[id][minmax]);
@@ -264,7 +229,11 @@ export class FilterspopComponent implements OnInit {
       return null;
     }
   }
-  //Get init values Type7 Basic Input
+
+  /**
+   * Get init values Type7 Basic Input
+   * @param id attribute ID
+   */
   getInitValuesType7(id: any) {
     if (this.filterService.form.value[id] != null) {
       return cloneDeep(this.filterService.form.value[id][0]);
@@ -272,6 +241,11 @@ export class FilterspopComponent implements OnInit {
       return null;
     }
   }
+  /**
+   * Get init values Type 8 Input
+   * @param id Attirbute ID
+   * @param startEnd 0 for beginning date and 1 for end
+   */
   getInitValuesType8StartEnd(id: any, startEnd: any) {
     if (
       this.filterService.form.value[id] != null &&
@@ -285,6 +259,10 @@ export class FilterspopComponent implements OnInit {
     }
   }
 
+  /**
+   * return init string for where slide will go
+   * @param val number 0 off, 1 on
+   */
   getType3Display(val: any) {
     if (String(val) == "0") {
       return "OFF";
@@ -293,14 +271,25 @@ export class FilterspopComponent implements OnInit {
       return "ON";
     }
   }
+  /**
+   * trigger for hover over drop down position
+   */
   openMyMenu() {
     this.trigger.toggleMenu();
   }
+  /**
+   * trigger for closing pos drop down
+   */
   closeMyMenu() {
     this.trigger.closeMenu();
   }
 
-  //Creates the menu html to copy and past in html file
+  /**
+   * This function will create the html string to insert into the position type
+   * UI for the menus
+   * I tried creating this to be automatic but because of the package it was not taking
+   * copy this output and past into the html file and then in cash html
+   */
   createPosMenus() {
     var template01 = "<mat-menu #"; //menuname
     var template02 = '="matMenu">';
@@ -340,11 +329,13 @@ export class FilterspopComponent implements OnInit {
       overallString += template30;
     }
     console.log("OVR STRING", overallString);
-    //this.posHTML = overallString;
-    //return this.sanitizer.bypassSecurityTrustHtml(overallString);
   }
 
-  //Toggle for UI TYPE 5
+  /**
+   * Toggle on off for a position ID
+   * @param id attribute ID
+   * @param key Value ID
+   */
   toggleNestedSelect(id: any, key: any) {
     var oldValue: String[] = cloneDeep(this.filterService.form.value[id]);
     if (oldValue == null) {
@@ -370,8 +361,10 @@ export class FilterspopComponent implements OnInit {
     );
   }
 
-  //InsertDate
-  //time in utc seconds
+  /**
+   * InsertDate in normal readable format
+   * @param time time in utc
+   */
   displayType8(time: any) {
     var date = new Date(time * 1000);
     var f =
@@ -383,17 +376,18 @@ export class FilterspopComponent implements OnInit {
     return f;
   }
 
-  //getminmax type8
-  getminmaxString(id: any, minmax: string) {
-    // console.log("FOR", String(id) + minmax);
-    return String(id) + minmax;
+  /**
+   * Select an item in the panel and open up next level
+   * @param itemID Panel Item ID
+   */
+  changeLevel2(itemID: string) {
+    this.filterService.changelevel2(itemID);
   }
 
-  changeLevel2(att: string) {
-    this.filterService.changelevel2(att);
-  }
-
-  //IMPORT A FILTER POP UP MODAL
+  /**
+   * Clicking on the save button (with icon that looks like a folder)
+   * Will open module to select saved filters
+   */
   selectSavedFilter() {
     //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
 
@@ -403,8 +397,6 @@ export class FilterspopComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.position = { top: "160px", left: "15%" };
     dialogConfig.data = {};
-    // dialogConfig.marginTop = "158px";
-    // dialogConfig.marginLeft = "10%";
 
     //OPEN WINDOW
     const dialogRef = this.dialog.open(SavedfilterspopComponent, dialogConfig);
@@ -412,220 +404,5 @@ export class FilterspopComponent implements OnInit {
       if (data != undefined) {
       }
     });
-  }
-
-  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
-  toggleWeek(type: string, week: string, event: any) {
-    // var id = type + week;
-    // if (event.buttons == 1) {
-    //   //toggle
-    //   if (
-    //     document.getElementById(id).style.backgroundColor != "gray" &&
-    //     this.highlighting &&
-    //     this.yearsSelected.length > 0
-    //   ) {
-    //     document.getElementById(id).style.backgroundColor = "gray";
-    //     for (let i = 0; i < this.yearsSelected.length; i++) {
-    //       this.filterService.testSetSeasonWeek(
-    //         "200",
-    //         this.yearsSelected[i],
-    //         type,
-    //         week
-    //       );
-    //     }
-    //   } else {
-    //     if (
-    //       !this.highlighting &&
-    //       document.getElementById(id).style.backgroundColor == "gray"
-    //     ) {
-    //       document.getElementById(id).style.backgroundColor = "white";
-    //       for (let i = 0; i < this.yearsSelected.length; i++) {
-    //         this.filterService.testRemoveSeasonWeek(
-    //           "200",
-    //           this.yearsSelected[i],
-    //           type,
-    //           week
-    //         );
-    //       }
-    //     }
-    //   }
-    // }
-  }
-
-  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
-  toggleWeekHighlight(type: string, week: string) {
-    // var id = type + week;
-    // if (
-    //   document.getElementById(id).style.backgroundColor != "gray" &&
-    //   this.yearsSelected.length > 0
-    // ) {
-    //   this.highlighting = true;
-    //   document.getElementById(id).style.backgroundColor = "gray";
-    //   for (let i = 0; i < this.yearsSelected.length; i++) {
-    //     this.filterService.testSetSeasonWeek(
-    //       "200",
-    //       this.yearsSelected[i],
-    //       type,
-    //       week
-    //     );
-    //   }
-    // } else {
-    //   this.highlighting = false;
-    //   document.getElementById(id).style.backgroundColor = "white";
-    //   for (let i = 0; i < this.yearsSelected.length; i++) {
-    //     this.filterService.testRemoveSeasonWeek(
-    //       "200",
-    //       this.yearsSelected[i],
-    //       type,
-    //       week
-    //     );
-    //   }
-    // }
-  }
-
-  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
-  toggleYear(year: string, event: any) {
-    // if (event.buttons == 1) {
-    //   //toggle
-    //   if (
-    //     document.getElementById(year).style.backgroundColor != "gray" &&
-    //     this.highlighting
-    //   ) {
-    //     document.getElementById(year).style.backgroundColor = "gray";
-    //     if (this.yearsSelected.indexOf(year) == -1) {
-    //       this.yearsSelected.push(year);
-    //     }
-    //   } else {
-    //     if (
-    //       !this.highlighting &&
-    //       document.getElementById(year).style.backgroundColor == "gray"
-    //     ) {
-    //       document.getElementById(year).style.backgroundColor = "white";
-    //       this.yearsSelected = this.yearsSelected.filter(x => x != year);
-    //     }
-    //   }
-    // }
-  }
-
-  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
-  toggleYearHighlight(year: string) {
-    // if (document.getElementById(year).style.backgroundColor != "gray") {
-    //   this.highlighting = true;
-    //   document.getElementById(year).style.backgroundColor = "gray";
-    //   if (this.yearsSelected.indexOf(year) == -1) {
-    //     this.yearsSelected.push(year);
-    //   }
-    // } else {
-    //   this.highlighting = false;
-    //   document.getElementById(year).style.backgroundColor = "white";
-    //   this.yearsSelected = this.yearsSelected.filter(x => x != year);
-    // }
-  }
-
-  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
-  checkIfSelected(type: string, week: string) {
-    // for (let i = 0; i < this.yearsSelected.length; i++) {
-    //   try {
-    //     if (
-    //       !this.filterService.testFilters["200"][this.yearsSelected[i]][
-    //         type
-    //       ].some(x => x === week)
-    //     ) {
-    //       return false;
-    //     }
-    //   } catch {
-    //     return false;
-    //   }
-    // }
-    // if (this.yearsSelected.length == 0) {
-    //   return false;
-    // }
-    // return true;
-  }
-
-  //*******THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE*********
-  selectAllSeasonWeek(yearOrWeekSet: string) {
-    // if (yearOrWeekSet == "year") {
-    //   if (this.years.length == this.yearsSelected.length) {
-    //     for (let year of this.years) {
-    //       this.highlighting = false;
-    //       document.getElementById(year).style.backgroundColor = "white";
-    //       this.yearsSelected = this.yearsSelected.filter(x => x != year);
-    //     }
-    //   } else {
-    //     for (let year of this.years) {
-    //       this.highlighting = true;
-    //       document.getElementById(year).style.backgroundColor = "gray";
-    //       if (this.yearsSelected.indexOf(year) == -1) {
-    //         this.yearsSelected.push(year);
-    //       }
-    //     }
-    //   }
-    // } else {
-    //   var toToggle = this.weeks[yearOrWeekSet];
-    //   var turned = true;
-    //   for (let week of toToggle) {
-    //     if (
-    //       document.getElementById(yearOrWeekSet + week).style.backgroundColor ==
-    //       "white"
-    //     ) {
-    //       turned = false;
-    //       document.getElementById(yearOrWeekSet + week).style.backgroundColor =
-    //         "gray";
-    //       this.highlighting = true;
-    //       for (let i = 0; i < this.yearsSelected.length; i++) {
-    //         this.filterService.testSetSeasonWeek(
-    //           "200",
-    //           this.yearsSelected[i],
-    //           yearOrWeekSet,
-    //           week
-    //         );
-    //       }
-    //     }
-    //   }
-    //   if (turned) {
-    //     this.highlighting = false;
-    //     for (let week of toToggle) {
-    //       document.getElementById(yearOrWeekSet + week).style.backgroundColor =
-    //         "white";
-    //       for (let i = 0; i < this.yearsSelected.length; i++) {
-    //         this.filterService.testRemoveSeasonWeek(
-    //           "200",
-    //           this.yearsSelected[i],
-    //           yearOrWeekSet,
-    //           week
-    //         );
-    //       }
-    //     }
-    //   }
-    // }
-  }
-
-  //THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE
-  //UPON SELECTING AN ITEM FROM THE GLOBAL SEARCH LIST PULL IT UP
-  resultSelected(id: any) {
-    // var path = this.reverse[Number(id.key)];
-    // this.changeLevel2(String(path[0]));
-    // if (path.length >= 2) {
-    //   this.changelevel3(String(path[1]));
-    //   if (path.length >= 3) {
-    //   }
-    // } else {
-    //   this.level2Selected = Number(id.key);
-    // }
-    // (<HTMLInputElement>document.getElementById("searchGlobalText")).value = "";
-    // this.showSuggestions = false;
-  }
-
-  //THIS NEEDS TO BE MOVED TO THE FILTERSERVICE FILE
-  //INPUT THE TEXT FOR AN ATTRIBUTTE AND SAVE THAT AS THE VALUE
-  enterInput(id: string, condition: string) {
-    // if (condition != "") {
-    //   this.form.controls[Number(id)].setValue([condition]);
-    //   this.filterService.testSet(id, this.form.value[id]);
-    // } else {
-    //   this.form.controls[Number(id)].setValue([]);
-    //   this.filterService.testDelete(id);
-    // }
   }
 }

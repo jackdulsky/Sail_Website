@@ -1,8 +1,7 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatDialogRef } from "@angular/material";
 import { MAT_DIALOG_DATA } from "@angular/material";
-import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { PullDataService } from "../pull-data.service";
 import { FiltersService } from "../filters.service";
 
@@ -14,8 +13,6 @@ import { FiltersService } from "../filters.service";
 export class SavedfilterspopComponent implements OnInit {
   public form: FormGroup;
   savedOptions;
-  options: { [name: string]: string } = {};
-  visible: { [name: string]: boolean } = { USERS: true };
   justSelected: string;
   constructor(
     public filterService: FiltersService,
@@ -26,44 +23,41 @@ export class SavedfilterspopComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
+  /**
+   * Init filters that are saved and the form
+   */
   ngOnInit() {
     this.form = this.fb.group({});
     this.pullSavedList();
   }
+  /**
+   * Get the most recent saved filters
+   */
   pullSavedList() {
     this.pullData.getSavedFilters().subscribe(data => {
       this.savedOptions = data;
     });
   }
 
-  //CLOSE WITH SELECTED PASSED BACK
+  /**
+   * CLOSE WITH SELECTED PASSED BACK
+   */
   close() {
     this.dialogRef.close({ folderID: this.justSelected });
   }
 
-  //CLOSE THE DIALOG BUT UPLOAD THE SAVED FILTERS SELECTED
-  //uploadSavedFilter IS NOT FUNCTIONAL
-  save() {
-    // this.filterService.uploadSavedFilter(
-    //   this.justSelected,
-    //   this.savedOptions[this.justSelected]["name"],
-    //   this.savedOptions[this.justSelected]["filters"]
-    // );
-
-    this.dialogRef.close();
-  }
-
-  //NO RECURSIVE DATA STRUCTURE
-  selectFilter(name: string) {
-    this.justSelected = name;
-    document.getElementById(name).className = "itemSelected but mat-button";
-    document.getElementById(name + "ico").className = "space fa fa-folder-open";
-  }
-
+  /**
+   * Upload the filters to the current filter set
+   * @param filter JSON string in dbformat structure
+   */
   pushDBFormat(filter: string) {
     this.filterService.pushDBFormat(JSON.parse(filter));
     this.dialogRef.close();
   }
+  /**
+   * Convert UTC string to dispaly string
+   * @param date date in UTC string form
+   */
   convertSQLDateStringtoDisplayFormat(date: string) {
     if (date == null) {
       return "";

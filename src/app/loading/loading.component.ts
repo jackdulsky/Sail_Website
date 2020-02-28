@@ -19,22 +19,28 @@ export class LoadingComponent implements OnInit {
     public route: ActivatedRoute,
     public pullData: PullDataService
   ) {}
-  private sub: any;
 
-  private sub2: any;
-  loadGUID;
+  loadGUID; //loading guid to import filters from
   guidExists = true;
-  doneloading = 0;
+
+  //booleans for tracking timing of operations
+  doneloading: boolean;
+  donePushing: boolean;
   doneChecking = true;
+
+  //filters to load
   loadJSON;
   jsonExists = true;
+
+  //redirection
   redirectDestination;
   reroutExists = true;
 
+  /**
+   * Get all the parameters and then start downloading and injecting
+   */
   ngOnInit() {
-    // this.filterService.getBulkImport();
-
-    this.sub = this.route.params.subscribe(params => {
+    this.route.params.subscribe(params => {
       this.loadGUID = String(params["guid"]);
       if (String(this.loadGUID) == "undefined") {
         this.guidExists = false;
@@ -50,102 +56,126 @@ export class LoadingComponent implements OnInit {
         this.reroutExists = false;
       }
 
-      this.injectGUID(this.loadGUID, this.loadJSON);
+      this.injectGUID(this.loadGUID);
     });
   }
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-    this.sub2.unsubscribe();
+
+  /**
+   * Download the GUID filters and call insert function
+   * @param guid GUID TO EXTRACT THE FILTERS FROM IN THE DB
+   */
+  injectGUID(guid: string) {
+    this.pullData.loadFilterFromGUID(guid).subscribe(filter => {
+      this.injectGUIDSubscribe(filter);
+    });
   }
 
-  //INSERT GUID FILTERS FROM DATABASE
-  //CALL INSERTING JSON AFTER
-  injectGUID(guid: string, filtersAdded: any) {
-    var insertFilter;
-    this.sub2 = this.pullData.loadFilterFromGUID(guid).subscribe(filter => {
+  /**
+   * Function for looping until all information is uploaded
+   * @param filter Object [{JSON:string}]
+   */
+  injectGUIDSubscribe(filter: any) {
+    if (this.filterService.checkUploadComplete()) {
+      var insertFilter;
+
+      try {
+        insertFilter = JSON.parse(filter[0]["JSON"]);
+
+        this.donePushing = this.filterService.pushDBFormat(insertFilter);
+      } catch (e) {
+        console.log("INVALID GUID");
+        this.donePushing = false;
+      }
+      this.injectFilters();
+    } else {
       setTimeout(() => {
         console.log("LOOP 26");
-        try {
-          insertFilter = JSON.parse(filter[0]["JSON"]);
 
-          this.filterService.pushDBFormat(insertFilter);
-        } catch (e) {
-          //console.log("INVALID GUID");
-        }
-
-        this.injectFilters();
-      }, 1500);
-    });
+        this.injectGUIDSubscribe(filter);
+      }, 500);
+    }
   }
 
-  //UPLOAD JSON TO FILTER STRUCUTRE
-  //CALL ROUTE AFTER
+  /**
+   * UPLOAD FILTERS THROUGH THE LOADING URL VARIABLE
+   * CALL REROUTE AFTER
+   */
   injectFilters() {
-    setTimeout(() => {
+    //check if its done uploading
+    if (this.donePushing == true) {
       if (this.jsonExists) {
         var filters = this.loadJSON;
         try {
-          this.filterService.loadJSON(JSON.parse(decodeURIComponent(filters)));
+          this.doneloading = this.filterService.loadJSON(
+            JSON.parse(decodeURIComponent(filters))
+          );
         } catch (e) {
           console.log("COULD NOT ADD FILTERS");
-        }
-        for (let query in this.filterService.FIDBID) {
-          this.doneloading += 1;
-          this.doneChecking = false;
+          this.doneloading = false;
         }
       }
       this.filterService.setActiveClub();
       this.filterService.setActivePlayer();
       this.rerouteAfterUpload();
-    }, 50);
+    } else {
+      if (this.donePushing == false) {
+        this.rerouteAfterUpload();
+      } else {
+        setTimeout(() => {
+          console.log("LOOP 37");
+          this.injectFilters();
+        }, 200);
+      }
+    }
   }
 
-  //ROUTE TO APPROPRIATE PLACE
+  /**
+   * ROUTE TO APPROPRIATE PLACE
+   * Update the RD URL after 1.5 seconds
+   * If there is an error then go to the default base reports route
+   */
   rerouteAfterUpload() {
-    if (this.reroutExists) {
-      if (
-        this.doneChecking ||
-        this.doneloading != Object.keys(this.filterService.FIDBID).length
-      ) {
+    if (this.doneloading == true) {
+      try {
+        this.router.navigate([
+          "/" +
+            this.redirectDestination
+              .split(",")
+              .join("/")
+              .toLowerCase()
+        ]);
         setTimeout(() => {
-          console.log("LOOP 27");
-          this.rerouteAfterUpload();
-        }, 100);
-      } else {
+          this.filterService.updateRDURL();
+        }, 1500);
+      } catch (e) {
+        this.router.navigate([""]);
+      }
+    } else {
+      if (this.doneloading == false) {
         try {
-          this.router.navigate([
-            "/" +
-              this.redirectDestination
-                .split(",")
-                .join("/")
-                .toLowerCase()
-          ]);
-          setTimeout(() => {
-            this.filterService.updateRDURL();
-          }, 1500);
+          this.router.navigate(["/base-report"]);
         } catch (e) {
           this.router.navigate([""]);
         }
-      }
-    } else {
-      try {
-        this.router.navigate(["/base-report"]);
-      } catch (e) {
-        this.router.navigate([""]);
+      } else {
+        setTimeout(() => {
+          console.log("LOOP 36");
+          this.rerouteAfterUpload();
+        }, 200);
       }
     }
   }
 }
-//C18400E2-DE4E-A997-A09E-6D9B2F53E113
-//http://localhost:4200/loading/1A7C11F8-3CBB-95FE-27F5-5B70834093DB/%5B%5B%22-2%22,%222%22,%5B%221012%22,%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
-//http://localhost:4200/loading/C18400E2-DE4E-A997-A09E-6D9B2F53E113/%5B%5B%22-2%22,%222%22,%5B%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46
-//94A6AFBD-7FAD-8F71-AD16-34930D667AC4
-//http://localhost:4200/loading/94A6AFBD-7FAD-8F71-AD16-34930D667AC4/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
-//http://localhost:4200/loading/C18400E2-DE4E-A997-A09E-6D9B2F53E113/%5B%5B%22-2%22,%222%22,%5B%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5B%22-4%22,%224%22,%5B%222014%22%5D%5D%5D%5D/club,report,46
-//http://localhost:4200/loading/C18400E2-DE4E-A997-A09E-6D9B2F53E113/[["-2","2",["1024","1026"]],["-11","10092",["10000001"]],["-4","4",["2014"]]]/club,report,46
-//upload years guid testing 717FBBBF-DE7C-25AE-24D3-0004E04396B6
+
+//SOME GUIDS FOR TESTING
+//http://localhost:4200/loading/GUID/%5B%5B%22-2%22,%222%22,%5B%221012%22,%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
+//http://localhost:4200/loading/GUID/%5B%5B%22-2%22,%222%22,%5B%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/club,report,46
+
+//http://localhost:4200/loading/GUID/%5B%5B%22-2%22,%222%22,%5B%221024%22,%221026%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5D%5D/1
+//http://localhost:4200/loading/GUID/%5B%5B%22-2%22,%222%22,%5B%221013%22%5D%5D,%5B%22-11%22,%2210092%22,%5B%2210000001%22%5D%5B%22-4%22,%224%22,%5B%222014%22%5D%5D%5D%5D/club,report,46
+//http://localhost:4200/loading/GUID/[["-2","2",["1024","1026"]],["-11","10092",["10000001"]],["-4","4",["2014"]]]/club,report,46
 
 //two filters:
-//http://localhost:4200/home/ab717eac-a5dc-3442-44c5-2d1771b46c95/loading/ab717eac-a5dc-3442-44c5-2d1771b46c95/%5b%5b%22-3%22,%223%22,%5b%221001058%22%5d%5d,%5b%22-1%22,%221%22,%5b%221%22%5d%5d%5d/home
-//http://localhost:4200/loading/ab717eac-a5dc-3442-44c5-2d1771b46c95/%5b%5b%22-3%22,%223%22,%5b%221001058%22%5d%5d,%5b%22-1%22,%221%22,%5b%221%22%5d%5d%5d/home
-//http://localhost:4200/loading/ab717eac-a5dc-3442-44c5-2d1771b46c95/%5b%5b%22-3%22,%22100055%22,%5b%5d%5d%5d/home
+//http://localhost:4200/home/GUID/loading/GUID/%5b%5b%22-3%22,%223%22,%5b%221001058%22%5d%5d,%5b%22-1%22,%221%22,%5b%221%22%5d%5d%5d/home
+//http://localhost:4200/loading/GUID/%5b%5b%22-3%22,%223%22,%5b%221001058%22%5d%5d,%5b%22-1%22,%221%22,%5b%221%22%5d%5d%5d/home
+//http://localhost:4200/loading/GUID/%5b%5b%22-3%22,%22100055%22,%5b%5d%5d%5d/home

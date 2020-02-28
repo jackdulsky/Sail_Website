@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { FiltersService } from "../filters.service";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { BodyComponent } from "../body/body.component";
@@ -25,19 +25,29 @@ export class ClubComponent implements OnInit {
     document.addEventListener("click", e => this.onClick(e));
   }
 
-  teamSelected;
+  //html work around definition
   ClubCityName = "ClubCityName";
   ClubNickName = "ClubNickName";
-  showList = false;
-  id;
-  teamsDict = {};
-  clubTabSelected;
-  showYear = false;
-  yearListAnimationState = "out";
 
+  //number for tab selected
+  clubTabSelected;
+
+  //bools to show dropdowns
+  showList = false;
+  showYear = false;
+
+  //transition states for club and year drop downs
+  yearListAnimationState = "out";
   teamListAnimationState = "out";
 
-  //Turn Off the year panel on click outside, runs every click on the component
+  /**
+   * This function will take in an click event and
+   * check its target and close the drop down menus if clicked outside of it
+   *
+   *
+   *
+   * @param event click event
+   */
   onClick(event) {
     var target = event.target || event.srcElement || event.currentTarget;
     var idAttr = target.attributes.id;
@@ -54,24 +64,33 @@ export class ClubComponent implements OnInit {
       this.displayTeams(this.showList);
     }
   }
+
+  /**
+   * Init function!
+   */
   ngOnInit() {
-    // this.filterService.getBulkImport();
     this.cdref.detectChanges();
 
     this.initFunction();
   }
-  ngOnDestroy() {}
+
+  /**
+   * After init function view, call the loopable function
+   */
   ngAfterViewInit() {
     this.afterInitFunction();
     this.cdref.detectChanges();
   }
+  /**
+   * Change the active team object to the one selected and init the team
+   */
   afterInitFunction() {
-    if (this.filterService.teamsMap) {
+    if (this.filterService.checkUploadComplete()) {
       this.filterService.teamPortalSelected = this.filterService.teamsMap[
         this.filterService.teamPortalActiveClubID
       ];
 
-      this.initTeam(this.filterService.teamPortalSelected);
+      this.initTeam();
     } else {
       setTimeout(() => {
         console.log("LOOP 19");
@@ -80,15 +99,15 @@ export class ClubComponent implements OnInit {
     }
   }
 
+  /**
+   * Get initial tab to highlight and reroute for the router outlet to display appropriately
+   * Then highlight or subroute appropriately
+   */
   initFunction() {
-    try {
-      this.body.portalHighlight("club");
-    } catch (e) {}
-    if (
-      this.filterService.reportTabs &&
-      this.filterService.reportReportsOnly &&
-      this.filterService.getReportHeaders(2)
-    ) {
+    if (this.filterService.checkUploadComplete()) {
+      try {
+        this.body.portalHighlight("club");
+      } catch (e) {}
       var tabs = this.filterService.getReportHeaders(2);
       this.clubTabSelected = Object.keys(tabs).sort(function(a, b) {
         return tabs[a]["OrderID"] < tabs[b]["OrderID"]
@@ -117,9 +136,13 @@ export class ClubComponent implements OnInit {
     }
   }
 
-  //timeout Recursive method
+  /**
+   * Time out recursive method to highlight the correct tab being displayed
+   * Highlight is called if its showing a report
+   * If it has base in url then must reroute to base report to display properly
+   */
   performHighlightOrSubRoute() {
-    if (this.filterService.getReportHeaders(2)) {
+    if (this.filterService.checkUploadComplete()) {
       if (
         Object.keys(this.filterService.getReportHeaders(2)).indexOf(
           String(this.clubTabSelected)
@@ -138,7 +161,10 @@ export class ClubComponent implements OnInit {
     }
   }
 
-  //HIGHLIGHT A TAB, USED FOR INIT ON REPORT
+  /**
+   * HIGHLIGHT A TAB, USED FOR INIT ON REPORT
+   * @param name tab number to highlight
+   */
   justHighlight(name: any) {
     if (document.getElementById(name + "clubBarHighlightid")) {
       var newTab = document.getElementById(name + "clubBarHighlightid");
@@ -152,19 +178,12 @@ export class ClubComponent implements OnInit {
     }
   }
 
-  //TURN AN ARRAY OF DICTIONARIES INTO A DICTIONARY WITH KEY AS IDSTRING SPECIFIED THROUGH PULLING IT OUT TO BE THE KEY
-  extractID(data, idString: string, insertDict, keep: number = 0) {
-    for (let b in data) {
-      var id = String(data[b][idString]);
-      if (keep == 0) {
-        delete data[b][idString];
-      }
-
-      insertDict[id] = data[b];
-    }
-  }
-
-  //Returns the logo src url to the club selection display
+  /**
+   * Returns the logo src url to the club selection display, handel the weird cases for multiteam cities
+   * and cities with two names
+   *
+   * @param team Team Object to return the logo
+   */
   getActiveLogo(team: any) {
     try {
       var citySplit = team["ClubCityName"].split(" ");
@@ -187,7 +206,10 @@ export class ClubComponent implements OnInit {
     }
   }
 
-  //Retuns proper city name
+  /**
+   * Retuns proper city name
+   * @param team Team Object
+   */
   getCityName(team: any) {
     var citySplit = team["ClubCityName"].split(" ");
     if (citySplit.length > 1) {
@@ -196,7 +218,11 @@ export class ClubComponent implements OnInit {
       return citySplit[0];
     }
   }
-  //Toggle Display of Teams Selection
+
+  /**
+   * Toggle Display of Teams Selection
+   * @param onOff Current status of the team display toggle
+   */
   displayTeams(onOff: any) {
     this.toggleShowDiv("teamList");
     if (!onOff) {
@@ -206,24 +232,33 @@ export class ClubComponent implements OnInit {
     }
   }
 
-  //This function changes the team selected
+  /**
+   * This function changes the team selected and updates the rock daisy url
+   * @param team Team Object
+   */
   changeTeam(team: any) {
     this.displayTeams(1);
-
-    this.teamSelected = team;
     this.filterService.teamPortalActiveClubID = String(team["SailTeamID"]);
     this.filterService.teamPortalSelected = team;
-    this.initTeam(this.filterService.teamPortalSelected);
+    this.initTeam();
     this.filterService.updateRDURL();
   }
-  initTeam(team: any) {
-    //FID is -2
-    //ATT is 2
 
+  /**
+   * push changes to the database
+   * by changing the active id and object in the filterservice variables
+   * they will be put in the filter strucutre through the case of url having "club"
+   */
+  initTeam() {
     this.filterService.pushQueryToActiveFilter("0");
   }
 
-  //This function will route to reports page or display the report
+  /**
+   * This function will route to reports page or display the report
+   * Case on what to do whether it is a list of reports or a report tab
+   *
+   * @param name tab number to route to
+   */
   subRoute(name: any) {
     //Get rid of old
     try {
@@ -238,7 +273,6 @@ export class ClubComponent implements OnInit {
 
     //color new
     setTimeout(() => {
-      console.log("LOOP 23");
       var newTab = document.getElementById(name + "clubBarHighlightid");
       try {
         newTab.style.backgroundColor = "#f2f2f2";
@@ -270,6 +304,11 @@ export class ClubComponent implements OnInit {
       }
     } catch (e) {}
   }
+  /**
+   * If control is held during click then open new tab otherwise reroute
+   * @param e click event
+   * @param name tab number clicked
+   */
   tabClicked(e: any, name: any) {
     if (e.ctrlKey) {
       var url = this.router.url.split("/");
@@ -301,8 +340,9 @@ export class ClubComponent implements OnInit {
     }
   }
 
-  //Show The list of years to select
-
+  /**
+   * Open/close the year dropdown slect
+   */
   showYearList() {
     this.showYear = !this.showYear;
     this.toggleShowDiv("yearList");
@@ -310,6 +350,11 @@ export class ClubComponent implements OnInit {
       this.filterService.portalYearDisplayClose();
     }
   }
+
+  /**
+   * Change animation state
+   * @param divName string to match up for changing animation state
+   */
   toggleShowDiv(divName: string) {
     if (divName === "yearList") {
       this.yearListAnimationState =

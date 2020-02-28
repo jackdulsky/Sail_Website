@@ -37,17 +37,6 @@
               />
             </span>
           </div>
-          <!-- <div class="suggestionList" *ngIf="showSuggestions">
-            <div
-              *ngFor="
-                let result of reverse | keyvalue | filter: searchGlobalText
-              "
-              (click)="resultSelected(result)"
-              class="gSearchBlock"
-            >
-              {{ idToString[result.key] }}
-            </div>
-          </div> -->
         </div>
       </div>
       <div style="float:right" class="exit" >
@@ -429,7 +418,7 @@
               <mat-option
                 *ngFor="
                   let cat of filterService.type0Options(id)
-                    | keyvalue: valueOrder
+                    | keyvalue: filterService.valueOrder
                     | filterSearch: filterService.form.value[id + 'search']:id
                 "
                 [value]="cat.key"
@@ -1151,31 +1140,12 @@
                     style="caret-color: white !important;"
                     ></ngx-mat-select-search>
                   </mat-option>
-                  <mat-option disabled>
-                    <button
-                    id="{{ id }}all"
-                    mat-button
-                    (click)="
-                      toggleAllSelections(id, true, filterService.filterBinSelected)
-                      "
-                  >
-                  Select All
-                </button>
-                <button
-                id="{{ id }}none"
-                (click)="
-                toggleAllSelections(id, false, filterService.filterBinSelected)
-                "
-                mat-button
-                >
-                Deselect All
-              </button>
-            </mat-option>
+                 
             
             <mat-option
             *ngFor="
             let cat of  filterService.type0Options(id)
-            | keyvalue: valueOrder
+            | keyvalue: filterService.valueOrder
             | filterSearch: filterService.form.value[id + 'search']:id
             "
             [value]="cat.key"
@@ -1218,7 +1188,7 @@
                   <table class="fullWidth" cellspacing="0">
                     <tr>
                       <div style="width: 110px ; float: left;font-size: 14px;">
-                        <mat-form-field style="width: 239px; top: -9px">
+                        <mat-form-field style="width: 239px; top: 0px">
                           <input
                           class="colorBlack"
                           id="type7Input{{ id }}"
@@ -1250,54 +1220,7 @@
           </div>
 
 
-          <!-- <div class="form-group">
-            <table class="fullWidth" cellspacing="0">
-              <tr>
-                  <div style="width: 70px ;margin-right:20px; float: right;font-size: 14px;">
-                    <mat-form-field class="minMaxWidth">
-                      <input
-                        class="colorBlack"
-                        id="type4InputMax{{ id }}"
-                        name="type4InputMax{{ id }}"
-                        [value]="getInitValuesMinMax(id, 1)"
-                        matInput
-                        type="number"
-                        maxlength="5"
-                        placeholder="Max"
-                        (input)="
-                          filterService.changeType4Input(
-                            id,
-                            $event.target.value,
-                            false
-                          )
-                        "
-                      />
-                    </mat-form-field>
-                  </div>
-                <div style="width: 70px ;margin-right:20px; float: right;font-size: 14px;">
-                  <mat-form-field class="minMaxWidth">
-                    <input
-                      class="colorBlack"
-                      id="type4InputMin{{ id }}"
-                      name="type4InputMin{{ id }}"
-                      [value]="getInitValuesMinMax(id, 0)"
-                      matInput
-                      type="number"
-                      maxlength="5"
-                      placeholder="Min"
-                      (input)="
-                        filterService.changeType4Input(
-                          id,
-                          $event.target.value,
-                          true
-                        )
-                      "
-                    />
-                  </mat-form-field>
-                </div>
-              </tr>
-            </table>
-          </div> -->
+     
 
           <div>
 
@@ -1345,29 +1268,9 @@
         
     </mat-form-field>
 
-        <!-- <mat-form-field
-        id="tier3TabMax{{ id2 }}"
-        style="width:45%; padding-right:5%; color:black;font-size: 14px;
-          margin-top: 12px;"
-        >
         
-        
-        <input matInput [matDatepicker]="max" placeholder="End"  
-        (dateChange)="filterService.changeType8Input(id2,this.filterService.form.value[id2])"
-        >
-        <mat-datepicker-toggle matSuffix [for]="max"></mat-datepicker-toggle>
-        <mat-datepicker #max></mat-datepicker> 
-        
-        
-      </mat-form-field> -->
     </div>
-      <!-- <input matInput [matDatepicker]="getminmaxString(i,'mina')" placeholder="Choose Date" [formControl]="filterService.form.controls[id2]"  
-        (dateChange)="filterService.changeType8Input(id2,this.filterService.form.value[id2])"
-        >
-        <mat-datepicker-toggle matSuffix [for]="getminmaxString(i,'minb')"></mat-datepicker-toggle>
-        <mat-datepicker [id]="getminmaxString(i,'minc')"></mat-datepicker>
--->
-          <!-- [formControl]="filterService.form.controls[id2]" -->
+    
         </div>
       </ng-template>
       <ng-template #type9Selection let-id="id" let-values="values">
@@ -1406,86 +1309,6 @@
           </div>
     </ng-template>
     </div>
-
-    <!--     
-  
-          <div class="suggestionList" *ngIf="showSuggestions">
-            <div
-              *ngFor="
-                let result of reverse | keyvalue | filter: searchGlobalText
-              "
-              (click)="resultSelected(result)"
-              class="gSearchBlock"
-            >
-              {{ idToString[result.key] }}
-            </div>
-          </div>
-        </div>
-
-
-
-      </div>
-      <div class="tier3">
-        <div>
-          <H2 class="l2Title">{{ netIDToString[level2Selected] }} Filters</H2>
-        </div>
-
-        <div *ngIf="level2Selected == 200" class="seasonWeek">
-          <div
-            style="display: flex; border-bottom: 1px solid var(--darker-gray); padding-bottom:10px;"
-          >
-            <div class="typeButton" (click)="selectAllSeasonWeek('year')">
-              Years:
-            </div>
-            <div *ngFor="let year of years">
-              <span
-                class="swSelection yearSelection"
-                (mouseenter)="toggleYear(year, $event)"
-                id="{{ year }}"
-                (mousedown)="toggleYearHighlight(year)"
-              >
-                {{ year }}
-              </span>
-            </div>
-            <div class="commonNote">
-              note: you are only viewing common weeks selected for each year
-            </div>
-          </div>
-          <div
-            *ngFor="let weekSet of ['PRE', 'REG', 'POST']"
-            style="display: flex; margin-top: 20px;"
-          >
-            <div class="typeButton" (click)="selectAllSeasonWeek(weekSet)">
-              {{ weekSet }}:
-            </div>
-            <div *ngFor="let week of weeks[weekSet]">
-              <span
-                (mouseenter)="toggleWeek(weekSet, week, $event)"
-                id="{{ weekSet }}{{ week }}"
-                (mousedown)="toggleWeekHighlight(weekSet, week)"
-                *ngIf="checkIfSelected(weekSet, week)"
-                style="background-color: gray"
-                class="swSelection weekSelection"
-              >
-                {{ week }}
-              </span>
-              <span
-                (mouseenter)="toggleWeek(weekSet, week, $event)"
-                id="{{ weekSet }}{{ week }}"
-                (mousedown)="toggleWeekHighlight(weekSet, week)"
-                *ngIf="!checkIfSelected(weekSet, week)"
-                style="background-color: white"
-                class="swSelection weekSelection"
-              >
-                {{ week }}
-              </span>
-            </div>
-          </div>
-        </div>
-        
-
-    
-    </div> -->
   </Div>
 </mat-dialog-content>
 <mat-dialog-actions style="min-height: 0px !important; padding:0px !important;"> </mat-dialog-actions>

@@ -13,10 +13,16 @@ export class ExcelComponent implements OnInit {
 
   ngOnInit() {}
 
+  //Variables for reading and storing a static document
   data: AOA = [[], []];
   wopts: XLSX.WritingOptions = { bookType: "xlsx", type: "array" };
-  fileName: string = "SheetJS.xlsx";
+  fileName: string = "SheetJS.xlsx"; //download data file name
 
+  /**
+   * Upload data from file selected to the data variable to be displayed
+   * only reads from file
+   * @param evt file selected from computer to upload
+   */
   onFileChange(evt: any) {
     /* wire up file reader */
     const target: DataTransfer = <DataTransfer>evt.target;
@@ -37,6 +43,10 @@ export class ExcelComponent implements OnInit {
     reader.readAsBinaryString(target.files[0]);
   }
 
+  /**
+   * Saves the file as a new workbook with the file name
+   * Not called in html or component
+   */
   export(): void {
     /* generate worksheet */
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(this.data);

@@ -256,7 +256,7 @@
     <div
       class="topLink"
       *ngFor="
-        let cat of filterService.getReportHeaders(2) | keyvalue: body.valueOrder
+        let cat of filterService.getReportHeaders(2) | keyvalue: filterService.valueOrder
       "
       id="{{ cat.key }}clubBarHighlightid"
       (click)="tabClicked($event, cat.key)"

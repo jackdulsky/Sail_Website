@@ -31,9 +31,6 @@
                     "Label"
                   )
                 }}
-                <!-- <span id="player" style="font-size:19px"
-                  >&nbsp;{{ "\u25BD" }}</span
-                > -->
 
                 <i
                   id="player"
@@ -266,7 +263,8 @@
     <div
       class="topLink"
       *ngFor="
-        let cat of filterService.getReportHeaders(3) | keyvalue: body.valueOrder
+        let cat of filterService.getReportHeaders(3)
+          | keyvalue: filterService.valueOrder
       "
       id="{{ cat.key }}playerBarHighlightid"
       (click)="tabClicked($event, cat.key)"

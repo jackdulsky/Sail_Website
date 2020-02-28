@@ -4,6 +4,9 @@ import { filter } from "minimatch";
 @Pipe({
   name: "Sort"
 })
+/**
+ * Sort an array of objects by a field property 
+ */
 export class SortPipe implements PipeTransform {
   transform(array: any, field: string): any[] {
     if (!Array.isArray(array)) {

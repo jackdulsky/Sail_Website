@@ -9,14 +9,14 @@
       <div
         class="category"
         routerLink="../base-reports"
-        (click)="reportsRehighlight()"
+        (click)="toggleContents(0)"
       >
         REPORTS
       </div>
 
       <div
         *ngFor="
-          let cat of filterService.getReportHeaders(1) | keyvalue: valueOrder
+          let cat of filterService.getReportHeaders(1) | keyvalue: filterService.valueOrder
         "
         class="sidebutton"
         id="{{ cat.key }}reportHighlightid"
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div class="XOSSection">
+    <div class="portalSection">
       <div class="group">
         <div class="category" style="padding-top: 20px;">
           PORTALS
@@ -48,26 +48,3 @@
 
   <router-outlet style="float:left"></router-outlet>
 </div>
-<!-- <div class="XOSSection">
-        <div class="group">
-          <div class="category">
-            Tools
-          </div>
-          <div (click)="XOSExport()" class="sidebutton">
-            XOS Export
-          </div>
-          <div class="searching" *ngIf="noFolderAlert">
-            <div class="alert">
-              <i class="fa fa-exclamation-triangle fa-sm"></i>
-              Select Folder Please!
-            </div>
-          </div>
-          <div (click)="selectFolderXos()" class="sidebutton">
-            {{ location }}
-            <i id="xosIco" class="fa fa-search space"></i>
-          </div>
-          <div (click)="selectSavedFilter()" class="sidebutton">
-            Import Filter
-          </div>
-        </div>
-      </div> -->

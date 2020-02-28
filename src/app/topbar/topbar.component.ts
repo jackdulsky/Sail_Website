@@ -1,10 +1,7 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { MatDialog, MatDialogConfig } from "@angular/material";
-import { FolderselectpopComponent } from "../folderselectpop/folderselectpop.component";
-
+import { Component, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material";
 import { FiltersService } from "../filters.service";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { PullDataService } from "../pull-data.service";
 import * as cloneDeep from "lodash/cloneDeep";
 
@@ -19,31 +16,24 @@ export class TopbarComponent implements OnInit {
   constructor(
     public filterService: FiltersService,
 
-    private modalService: NgbModal,
     public dialog: MatDialog,
     public route: ActivatedRoute,
     public router: Router,
     public pullData: PullDataService
   ) {}
-
+  /**
+   * Init component, call function in filter Service to get all the data from the DB
+   */
   ngOnInit() {
     this.filterService.getBulkImport();
   }
 
-  openFolderSelect() {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "60%";
-    dialogConfig.autoFocus = true;
-    // dialogConfig.position ={'top': '0', 'left':'0'};
-    const dialogRef = this.dialog.open(FolderselectpopComponent, dialogConfig);
-  }
-  openReportUpload() {
-    this.router.navigate(["../../report-upload"]);
-  }
-  openSettingsMenu() {
-    //console.log("OPENING SETTINGS MENU");
-  }
-
+  /**
+   * Take in the string of text typed into top search bar
+   * send it to pulldata to then the API and take the response and automatically open up new tab with fist
+   * and only response from the search tool Taimoor wrote.
+   * @param input string text to search
+   */
   searching(input: string) {
     if (input.length > 3) {
       this.timeSent = cloneDeep(Date.now());
@@ -53,16 +43,16 @@ export class TopbarComponent implements OnInit {
         if (loopStartTime - this.timeSent == 0) {
           this.pullData.pullSearchOptions(input).subscribe(data => {
             if (loopStartTime - this.timeSent == 0) {
-              this.filterService.temp = JSON.parse(
+              this.filterService.globalSearchResults = JSON.parse(
                 String(data)
                   .split("'")
                   .join('"')
               )[0];
               this.filterService.globalSearchShowSuggestions = true;
               //code to automatically go to new url
-              //comment out to not route
-              var urlFirst = this.filterService.temp[
-                Object.keys(this.filterService.temp)[0]
+
+              var urlFirst = this.filterService.globalSearchResults[
+                Object.keys(this.filterService.globalSearchResults)[0]
               ];
               this.filterService.goToLink(
                 "http://oakcmsreports01.raiders.com:88" + urlFirst
@@ -72,7 +62,8 @@ export class TopbarComponent implements OnInit {
         }
       }, 100);
     } else {
-      this.filterService.temp = {};
+      //set variables to empty and dont show
+      this.filterService.globalSearchResults = {};
       this.filterService.globalSearchShowSuggestions = false;
     }
   }

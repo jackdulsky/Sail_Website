@@ -3,15 +3,18 @@
     <div
       *ngFor="
         let repo of filterService.reportReportsStructure[reportList]
-          | keyvalue: body.valueOrder
+          | keyvalue: filterService.valueOrder
       "
     >
+    <!-- The reports are arranged in a grid with icons set to look like large iphone apps
+        The background of upshaw is placed at the rop right of the component area
+    -->
       <div
         class="grid-itemGen"
         (click)="reportClicked($event, repo.key)"
-        [ngStyle]="body.setIconStyle(repo.value)"
+        [ngStyle]="setIconStyle(repo.value)"
       >
-        <div [ngStyle]="body.setIconImageStyle(repo.value)"></div>
+        <div [ngStyle]="setIconImageStyle(repo.value)"></div>
       </div>
       <div class="labelText">
         {{ repo.value.Label }}
@@ -19,4 +22,3 @@
     </div>
   </div>
 </Div>
-<!-- routerLink="../report" -->

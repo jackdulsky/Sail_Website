@@ -1,9 +1,7 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatDialogRef } from "@angular/material";
 import { MAT_DIALOG_DATA } from "@angular/material";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
-import { PullDataService } from "../pull-data.service";
 import { FiltersService } from "../filters.service";
 
 @Component({
@@ -17,12 +15,14 @@ export class SavingFAHYPOComponent implements OnInit {
     public filterService: FiltersService,
     public fb: FormBuilder,
     public dialogRef: MatDialogRef<SavingFAHYPOComponent>,
+    //take in any data passed to dialog as variable called data
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
+  /**
+   * Init form parts and import a name if it exists
+   */
   ngOnInit() {
-    this.filterService.getBulkImport();
-
     this.form = this.fb.group({});
     this.form.addControl("name", new FormControl());
 
@@ -34,11 +34,15 @@ export class SavingFAHYPOComponent implements OnInit {
       this.form.controls["description"].setValue(this.data.previousName);
     }
   }
-  //CLOSE MODULE
+  /**
+   * Close Module
+   */
   close() {
     this.dialogRef.close();
   }
-  //RETURN NAME ON CLOSE
+  /**
+   * Return name and description on save & close
+   */
   save() {
     this.dialogRef.close({
       name: this.form.value.name,

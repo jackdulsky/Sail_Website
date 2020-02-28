@@ -16,7 +16,7 @@ export class FilterReportListsPipe implements PipeTransform {
       try {
         return (
           String(it.value.LocationID) == String(searchText) &&
-          String(it.value.IsList)
+          Boolean(it.value.IsList)
         );
       } catch {
         return false;

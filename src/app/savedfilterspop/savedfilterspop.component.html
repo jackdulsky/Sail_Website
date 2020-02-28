@@ -8,7 +8,6 @@
       ><i class="fa fa-close" (click)="close()"></i
     ></span>
   </div>
-
   <div class="header">
     <span style="display:flex;"> </span>
     <span>
@@ -43,42 +42,7 @@
       <i class="fa fa-close"></i>
     </span>
   </div>
-  <!-- <div>
-    <button class="mat-raised-button mat-primary save" (click)="save()">
-      Upload
-    </button>
-  </div> -->
   <div style="height: 10px;"></div>
 </mat-dialog-content>
-<mat-dialog-actions style="min-height: 0px !important; padding:0px !important;"> </mat-dialog-actions>
-
-<!-- <button mat-raised-button matDialogClose>Close</button> -->
-<!-- <mat-dialog-content [formGroup]="form" style="background-color:white">
-  <ng-template #recursiveList let-list>
-    <div *ngFor="let item of list" class="padTop">
-      <button
-        mat-button
-        id="{{ item }}"
-        class="item but"
-        (click)="selectFilter(item)"
-      >
-        <span>{{ item }}</span>
-        <i id="{{ item }}ico" class="space fa fa-folder-o"></i>
-      </button>
-
-      <div class="indent" *ngIf="visible[item]">
-        <ng-container
-          *ngTemplateOutlet="
-            recursiveList;
-            context: { $implicit: options[item] }
-          "
-        ></ng-container>
-      </div>
-    </div>
-  </ng-template>
-  <div style="height: 10px;"></div>
-  <ng-container
-    *ngTemplateOutlet="recursiveList; context: { $implicit: my_menu }"
-  ></ng-container>
-  <div style="height: 10px;"></div>
-</mat-dialog-content> -->
+<mat-dialog-actions style="min-height: 0px !important; padding:0px !important;">
+</mat-dialog-actions>

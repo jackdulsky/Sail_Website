@@ -1,8 +1,7 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatDialogRef } from "@angular/material";
 import { MAT_DIALOG_DATA } from "@angular/material";
-import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { PullDataService } from "../pull-data.service";
 import { FiltersService } from "../filters.service";
 import * as cloneDeep from "lodash/cloneDeep";
@@ -15,9 +14,6 @@ import * as cloneDeep from "lodash/cloneDeep";
 export class UploadFAHYPOComponent implements OnInit {
   public form: FormGroup;
   savedOptions;
-  options: { [name: string]: string } = {};
-  visible: { [name: string]: boolean } = { USERS: true };
-
   constructor(
     public filterService: FiltersService,
     public pullData: PullDataService,
@@ -27,26 +23,40 @@ export class UploadFAHYPOComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
+  /**
+   * Init the form and pull the most recent scenarios saved
+   */
   ngOnInit() {
     this.form = this.fb.group({});
     this.pullSavedList();
   }
 
+  /**
+   * pull saved scenarios
+   */
   pullSavedList() {
     this.pullData.pullHypoScenario().subscribe(data => {
       this.filterService.faHypoScenarios = cloneDeep(data);
       this.savedOptions = cloneDeep(data);
     });
   }
+  /**
+   * close the pop up
+   */
   close() {
     this.dialogRef.close({ scenario: 0 });
   }
+  /**
+   * close the pop up
+   */
   save() {
     this.dialogRef.close({ scenario: 0 });
   }
 
-  //NO RECURSIVE DATA STRUCTURE
-
+  /**
+   * Selecting a scenario will call this function to set the name and description of currently editing.
+   * @param item Object scenario to upload
+   */
   pushScenario(item: any) {
     this.dialogRef.close({
       scenario: item.ScenarioID,
@@ -57,6 +67,10 @@ export class UploadFAHYPOComponent implements OnInit {
       Budget_Replacements: item.Budget_Replacements
     });
   }
+  /**
+   * Change DB data string to nice visible format
+   * @param date utc string
+   */
   convertSQLDateStringtoDisplayFormat(date: string) {
     if (date == null) {
       return "";

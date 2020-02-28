@@ -4,7 +4,7 @@ import * as cloneDeep from "lodash/cloneDeep";
 import { PullDataService } from "../pull-data.service";
 import { MatDialog, MatDialogConfig } from "@angular/material";
 import { SavingFAHYPOComponent } from "../saving-fahypo/saving-fahypo.component";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { BodyComponent } from "../body/body.component";
 
 import { UploadFAHYPOComponent } from "../upload-fahypo/upload-fahypo.component";
@@ -14,12 +14,6 @@ import {
   moveItemInArray,
   transferArrayItem
 } from "@angular/cdk/drag-drop";
-import {
-  DomSanitizer,
-  SafeUrl,
-  ɵELEMENT_PROBE_PROVIDERS__POST_R3__
-} from "@angular/platform-browser";
-import { catchError } from "rxjs/operators";
 
 @Component({
   selector: "app-fa-hypo",
@@ -27,6 +21,7 @@ import { catchError } from "rxjs/operators";
   styleUrls: ["./fa-hypo.component.css"]
 })
 export class FaHypoComponent implements OnInit {
+  //location in the div to put them (based of a div area that is 1104px wide)
   locationDepth = {
     1: { BinLabel: "QB", Top: 625, Left: 475 },
     2: { BinLabel: "LT", Top: 400, Left: 205 },
@@ -55,34 +50,46 @@ export class FaHypoComponent implements OnInit {
     25: { BinLabel: "ST", Top: 662, Left: 10 }
   };
 
-  math;
-  number;
-  connectedPositionLists = [];
-  allBins = [];
-  uploadingScenario = true;
-  ufaViewing = -1;
-  cashSums = {};
-  emptySums = {};
-  cap = 0;
+  math; //for built in math class
+  number; //for built in number class
+
+  connectedPositionLists = []; //list of names of bins to connect for cdkdragdrop package
+  allBins = []; //structure for bins
+
+  uploadingScenario = true; //bool for showing grey loading circle overlay
+
+  ufaViewing = -1; //default view QB's in ufa's, indicates which ufa bin to view
+
+  cashSums = {}; // sum of every bin except for UFA (i.e. bin >= 0)
+  emptySums = {}; //structure with total set to 0 so perform calculations can reset all the totals
+
   logOfMoves = {};
-  connectedBinMapping = {};
+
+  //Original bin and order in default mapping to check if difference in current location
   originalBinMapping = {};
   originalOrderMapping = {};
-  originalValueMapping = {};
-  editValueDisplay = false;
-  editingValue = "0.0";
-  editingPlayer;
-  editCapInfoDisplay = false;
-  editingCapInfo = "0.0";
-  editingCap: string;
+
+  //Variables for editing pop up div
+  editValueDisplay = false; //editing or not
+  editingValue = "0.0"; //val to change
+  editingPlayer; //item to edit
+  editCapInfoDisplay = false; //editing or not
+  editingCapInfo = "0.0"; //val to change
+  editingCap: string; //item name to edit
+
+  //the editable numbers for the spending (and the default values)
   capInfoOriginal = { CT: 230000000, PTCS: 12500000, IRRIM: 12500000 };
+
+  //boolean to make sure the original mappings are only created once
   initMappings = false;
+
+  //name and description and scenario ID of what we are currently editing
   name: string;
   description: string;
   scenarioID: any = null;
   playerCount = 0;
-  draftp5 = 0;
-  draftsb = 0;
+
+  //Draft pick data structure in case want to play around with less or more draft picks / cash
   draftPicks = {
     1: {
       signing: 11000000,
@@ -134,6 +141,10 @@ export class FaHypoComponent implements OnInit {
       origin: "OAK"
     }
   };
+  draftp5 = 0;
+  draftsb = 0;
+
+  //These are the numbers seen in the top right, and the numbers we care about for spending
   calculationsValues = {
     CT: {
       Label: "Cash Target:",
@@ -215,11 +226,16 @@ export class FaHypoComponent implements OnInit {
     public body: BodyComponent,
     public dialog: MatDialog
   ) {
+    //Add listeners for clicks and keypress
     document.addEventListener("keypress", e => this.onKeyPress(e));
     document.addEventListener("click", e => this.onClick(e));
     this.number = Number;
     this.math = Math;
   }
+  /**
+   * If clicked not on editing box then close it (for cap and market editing)
+   * @param event click event
+   */
   onClick(event) {
     if (this.editValueDisplay && event.target.id == "") {
       this.clearPlayerValue();
@@ -228,6 +244,10 @@ export class FaHypoComponent implements OnInit {
       this.clearEditCap();
     }
   }
+  /**
+   * pressing enter will close the editing boxes if they are open
+   * @param event keypress event
+   */
   onKeyPress(event) {
     if (event.key == "Enter" && this.editValueDisplay) {
       this.clearPlayerValue();
@@ -236,11 +256,18 @@ export class FaHypoComponent implements OnInit {
       this.clearEditCap();
     }
   }
+
+  /**
+   * Reset the editing info
+   */
   clearEditCap() {
     this.editCapInfoDisplay = false;
     this.editingCap = null;
     this.editingCapInfo = "0.0";
   }
+  /**
+   * Reset the editing info
+   */
   clearPlayerValue() {
     this.editValueDisplay = false;
     this.editingPlayer = null;
@@ -248,40 +275,40 @@ export class FaHypoComponent implements OnInit {
   }
 
   ngOnInit() {
-    //This commented code will perform the function on a change to the data
+    //This commented code will perform the function on a change to the variable subscribed to
     // this.filterService.timeLastUFAPull.subscribe(data => {
-    //   console.log("CHANGE", data);
     //   this.initUFABoard();
     // });
 
     this.body.portalHighlight("fa-hypo");
     this.initArraysRaiders();
   }
-
+  /**
+   * Initial function when new data or portal open occurs
+   */
   initArraysRaiders() {
-    if (this.filterService.faHypo && this.filterService.faHypoBins) {
+    if (this.filterService.checkUploadComplete()) {
+      //Reset all the variables
       this.connectedPositionLists = [];
       this.allBins = [];
-
       this.ufaViewing = -1;
       this.cashSums = {};
       this.emptySums = {};
-      this.cap = 0;
       this.logOfMoves = {};
-      this.editValueDisplay = false;
-      this.editingValue = "0.0";
-      this.editingPlayer = null;
-
+      this.clearEditCap();
+      this.clearPlayerValue();
+      //create bin mappings
       this.createBinMappings();
 
       for (let group of this.filterService.faHypoBins) {
+        //go through the bins and create the cash sum with 0 total to become empty sums
         if (group["BinID"] >= 0) {
           this.cashSums[group["BinID"]] = {
             label: group["BinLabel"],
             total: 0
           };
         }
-
+        //add the list object to the bins variable structure with the correct players
         this.allBins.push({
           id: group["BinID"],
           label: group["BinLabel"],
@@ -300,27 +327,16 @@ export class FaHypoComponent implements OnInit {
       }, 100);
     }
   }
+
+  /**
+   * Get the original bin location and order for each player
+   * Only run once
+   */
   createBinMappings() {
     if (this.initMappings) {
       return null;
     } else {
-      for (let group of this.filterService.faHypoBins) {
-        this.connectedBinMapping[group["BinID"]] == [];
-        if (group["BinID"] >= 0) {
-          for (let group2 of this.filterService.faHypoBins) {
-            if (group2["BinID"] >= 0) {
-              this.connectedBinMapping[group["BinID"]] += [group2["BinID"]];
-            }
-          }
-        }
-        if (group["BinID"] < 0) {
-          for (let group2 of this.filterService.faHypoBins) {
-            if (group2["BinID"] > 0) {
-              this.connectedBinMapping[group["BinID"]] += [group2["BinID"]];
-            }
-          }
-        }
-      }
+      //run through players make original bin and order mappings
       for (let player of this.filterService.faHypo) {
         this.originalBinMapping[player["PlayerID"]] = cloneDeep(
           player["BinID"]
@@ -333,13 +349,18 @@ export class FaHypoComponent implements OnInit {
       this.initMappings = true;
     }
   }
+
+  /**
+   * Run through each bin and add up the players
+   * Then perform the calculations on the cash spending
+   */
   performCalculations() {
     this.cashSums = cloneDeep(this.emptySums);
 
     this.calculationsValues["CTZ"].Value = 0;
-    var sumAdd = 0;
-    this.playerCount = Object.keys(this.draftPicks).length;
-    var DeadMoney = 0;
+    var sumAdd = 0; //total value of contracts and tenders of players in the depth
+    this.playerCount = Object.keys(this.draftPicks).length; //base player count is draft picks
+    var DeadMoney = 0; //dead money for players in bin 0 (aka cut)
     for (let bin of this.allBins) {
       var binAdd = 0;
 
@@ -350,8 +371,8 @@ export class FaHypoComponent implements OnInit {
           this.playerCount += 1;
         }
         if (bin.id == 0) {
-          (binAdd += this.calcValueToUseAndDisplay(player) - player.DeadMoney),
-            (DeadMoney += player.DeadMoney);
+          binAdd += this.calcValueToUseAndDisplay(player) - player.DeadMoney;
+          DeadMoney += player.DeadMoney;
         }
       }
 
@@ -365,7 +386,10 @@ export class FaHypoComponent implements OnInit {
       1000000 * (53 - this.playerCount),
       510000 * (53 - this.playerCount));
     this.calculationsValues.PA.Value = -1 * this.cashSums[0].total;
-    this.calculationsValues["CTZ"].Value = sumAdd;
+    this.calculationsValues["CTZ"].Value = sumAdd; //Contracts and Tenders
+
+    //Formula given
+    //must subtract dead money (which is negative) to tie out
     this.calculationsValues.SAWOA.Value =
       this.calculationsValues.CT.Value -
       this.calculationsValues.CTZ.Value -
@@ -376,6 +400,11 @@ export class FaHypoComponent implements OnInit {
       this.calculationsValues.RC.Value -
       DeadMoney;
   }
+
+  /**
+   * This will sum the draft pick info
+   * currently unused because of the choice to not allow draft picks to be edited
+   */
   sumDraft() {
     for (let pick in this.draftPicks) {
       this.draftp5 += this.draftPicks[pick].p5;
@@ -383,17 +412,25 @@ export class FaHypoComponent implements OnInit {
     }
   }
 
+  /**
+   * Go through the lists that were altered and then update the orderID varibale accordingly
+   * Track the move
+   * index of the two lists correspond
+   * @param lists list of player objects
+   * @param ids list of bin ID's
+   */
   update(lists: any[], ids: any[]) {
     for (let index = 0; index < lists.length; index++) {
       var pos = lists[index];
-      var bin = ids[index];
+      var bin = Number(ids[index]);
 
       for (let i = 0; i < pos.length; i++) {
-        var lenMoves = Object.keys(this.logOfMoves).length;
+        //for each player
+        var lenMoves = Object.keys(this.logOfMoves).length; //get length of moves to add to next one if change
 
-        pos[i]["OrderID"] = 1 + i;
+        pos[i]["OrderID"] = 1 + i; //indexing from 0
 
-        pos[i]["BinID"] = Number(ids[index]);
+        pos[i]["BinID"] = bin;
         var player = cloneDeep(pos[i]);
         var SailID = player["PlayerID"];
         if (
@@ -401,6 +438,7 @@ export class FaHypoComponent implements OnInit {
             player["BinID"] != this.originalBinMapping[SailID]) &&
           player["BinID"] >= 0
         ) {
+          //change so add to moves log
           this.logOfMoves[SailID] = {
             item: player,
             newBin: player["BinID"],
@@ -419,19 +457,16 @@ export class FaHypoComponent implements OnInit {
         }
       }
     }
-
+    //update calculations
     this.performCalculations();
   }
-  compareOrders(a, b) {
-    if (a.OrderID < b.OrderID) {
-      return -1;
-    }
-    if (a.OrderID > b.OrderID) {
-      return 1;
-    }
-    return 0;
-  }
 
+  /**
+   * return a list of player objects that have the bin number
+   *
+   * @param data list of player object
+   * @param position bin number
+   */
   filterPlayers(data: any, position: number) {
     try {
       var returnPlayer = [];
@@ -448,9 +483,16 @@ export class FaHypoComponent implements OnInit {
       return [];
     }
   }
+
+  /**
+   * Based on which input positon bin, determine position styling
+   * from the locationsDepth variable
+   *
+   * @param binID position Bin ID, binID >0
+   */
   depthLocationStyle(binID: number) {
     // areaWidth: height: calc(100vh - 128px);
-    // width: 64%
+    // width: 64% of fa-hypo div area
     // based off 1104
     return {
       position: "fixed",
@@ -462,10 +504,19 @@ export class FaHypoComponent implements OnInit {
       border: "1px solid #ececec"
     };
   }
+
+  /**
+   * Clicking a position tab will use this to change which list of players is viewed
+   * @param newPos binID to view UFA's in, newPos <0
+   */
   changeView(newPos: number) {
     this.ufaViewing = newPos;
   }
 
+  /**
+   * Get sttyling of the bin tab for UFA's
+   * @param id binID (id <0)
+   */
   highlightOrNot(id: number) {
     if (id == this.ufaViewing) {
       return {
@@ -481,36 +532,21 @@ export class FaHypoComponent implements OnInit {
     }
   }
 
-  //RETURN THE ITEMS IN THE ORDER SPECIFIED
-
-  valueOrder = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
-    return a.value["OrderID"] < b.value["OrderID"]
-      ? -1
-      : b.value["OrderID"] < a.value["OrderID"]
-      ? 1
-      : 0;
-  };
-
-  //RETURN THE ITEMS IN THE REVERSE OF THE ORDER SdPECIFIED
-
-  reverseValueOrder = (
-    a: KeyValue<string, any>,
-    b: KeyValue<string, any>
-  ): number => {
-    return a.value["OrderID"] > b.value["OrderID"]
-      ? -1
-      : b.value["OrderID"] > a.value["OrderID"]
-      ? 1
-      : 0;
-  };
-
+  /**
+   * Take the event of a drop
+   * check if its putting in a new list or not
+   * Condition if its allowed based on original bins of the item and target bin
+   * @param event drop event for cdkdragdrop lists
+   */
   drop(event: CdkDragDrop<string[]>) {
     var previousID = Number(event.previousContainer.id);
     var newID = Number(event.container.id);
     var sailID = event.previousContainer.data[event.previousIndex]["PlayerID"];
     var newIndex = event.currentIndex;
 
+    //same list depth change
     if (event.previousContainer === event.container) {
+      //Flip the coordinate of change based on inverted defense position or not
       if (13 <= newID && newID <= 24) {
         newIndex = event.container.data.length - 1 - event.currentIndex;
       }
@@ -518,14 +554,17 @@ export class FaHypoComponent implements OnInit {
 
       this.update([event.container.data], [event.container.id]);
     } else {
+      //between lists
       if (
         (newID == 0 && this.originalBinMapping[sailID] > 0) ||
         newID > 0 ||
         (newID < 0 && this.originalBinMapping[sailID] < 0)
       ) {
         if (13 <= newID && newID <= 24) {
+          //update index if inverted
           newIndex = event.container.data.length - event.currentIndex;
         }
+        //built in function of package
         transferArrayItem(
           event.previousContainer.data,
           event.container.data,
@@ -539,6 +578,11 @@ export class FaHypoComponent implements OnInit {
       }
     }
   }
+  /**
+   * Based on bins determine signing
+   * @param originalID Bin ID
+   * @param newID Bin ID
+   */
   getType(originalID: Number, newID: number) {
     //cut 0
     //sign 1
@@ -556,12 +600,21 @@ export class FaHypoComponent implements OnInit {
     //invalid move
     return -1;
   }
-  editValue(event: any, pos: any, player: any) {
+  /**
+   *
+   * @param event click event
+   * @param player player object to alter
+   */
+  editValue(event: any, player: any) {
     this.editValueDisplay = true;
     this.editingPlayer = player;
 
+    //convert to millions from raw
     this.editingValue = String(this.calcValueToUseAndDisplay(player) / 1000000);
+
+    //let it render first
     setTimeout(() => {
+      //sets the box offset [262,36] from click
       var box = <HTMLInputElement>document.getElementById("editValueBox");
       box.style.left =
         String(this.math.min(event.clientX, window.innerWidth - 262)) + "px";
@@ -569,6 +622,11 @@ export class FaHypoComponent implements OnInit {
       document.getElementById("editValueInput").focus();
     }, 1);
   }
+  /**
+   * open box and init values and location
+   * @param event click even
+   * @param category string name of editing value
+   */
   editCapInfo(event: any, category: string) {
     this.editCapInfoDisplay = true;
 
@@ -585,27 +643,35 @@ export class FaHypoComponent implements OnInit {
       document.getElementById("editCapInfoInput").focus();
     }, 1);
   }
+
+  /**
+   * value to override market value
+   * @param newVal number in millions
+   */
   overrideValue(newVal: any) {
     this.editingPlayer.CustomAmt = Number(newVal) * 1000000;
     this.performCalculations();
   }
 
+  /**
+   * Number to override cap info
+   * @param newVal number in millions
+   */
   overrideCapInfo(newVal: any) {
-    // this.editingCapInfo.CustomAmt = Number(newVal) * 1000000;
     this.calculationsValues[this.editingCap].Value = Number(newVal) * 1000000;
     this.performCalculations();
   }
 
+  /**
+   * Generate the sending up format of a combines list of players
+   *
+   */
   save() {
     var savingList = [];
     for (let bin of this.allBins) {
       for (let player in bin.players) {
         var returnPlayer = cloneDeep(bin.players[player]);
-        if (
-          returnPlayer.BinID > 0 &&
-          this.originalBinMapping[returnPlayer.PlayerID] < 0
-        ) {
-        }
+        //only add info that could change
         savingList.push({
           BinID: returnPlayer.BinID,
           OrderID: returnPlayer.OrderID,
@@ -615,6 +681,7 @@ export class FaHypoComponent implements OnInit {
       }
     }
 
+    //send down names, description,data, and cap numbers that could change
     this.pullData
       .insertHypoScenarioData(
         JSON.stringify({
@@ -632,10 +699,12 @@ export class FaHypoComponent implements OnInit {
           this.scenarioID = data[0][""];
         } catch (e) {}
       });
-
-    // });
   }
-  //SAVE FILTER / OPEN UP NAME POP UP MODAL
+
+  /**
+   * SAVE FILTER OR OPEN UP NAME POP UP MODAL TO SAVE IF NEW SCENARIO
+   * @param saveAs number indicating which button was clicked (1 is saveas, 0 is save)
+   */
   saveScenario(saveAs: number = 1) {
     if (saveAs == 0 && this.scenarioID != null) {
       this.save();
@@ -658,7 +727,11 @@ export class FaHypoComponent implements OnInit {
       });
     }
   }
-  //IMPORT A Scenario POP UP MODAL
+
+  /**
+   * Open up upload scenario pop up
+   * on close then initialize based on new data for players and cap info
+   */
   uploadScenario() {
     //SET THE CONFIGURATION OF THE FILTER OPEN WINDOW
 
@@ -693,7 +766,9 @@ export class FaHypoComponent implements OnInit {
     });
   }
 
-  //Reset to original starting scenario
+  /**
+   * Reset to original starting scenario
+   */
   resetScenario() {
     this.uploadingScenario = true;
     this.pullData.pullHypoPlayers(0).subscribe(dataPlayers => {
@@ -709,11 +784,16 @@ export class FaHypoComponent implements OnInit {
     });
   }
 
-  //change player to stop using input value
+  /**
+   * change player to stop using input value and go back to market value
+   */
   resetInputValueNull() {
     this.editingPlayer.CustomAmt = null;
     this.performCalculations();
   }
+  /**
+   * Reset the cap info if it was changed
+   */
   resetInputCapInfoNull() {
     this.calculationsValues[this.editingCap].Value = this.capInfoOriginal[
       this.editingCap
@@ -721,7 +801,11 @@ export class FaHypoComponent implements OnInit {
     this.performCalculations();
   }
 
-  //Return the value of the player
+  /**
+   * Return the value of the player
+   * It is the custom input or market value if not
+   * @param player player object
+   */
   calcValueToUseAndDisplay(player) {
     if (player.CustomAmt != null) {
       return player.CustomAmt;
@@ -731,21 +815,30 @@ export class FaHypoComponent implements OnInit {
     }
     return 0;
   }
-  createUFAHTML(player) {
-    var inner;
-  }
+  /**
+   * UFA styling
+   * @param player playerObject
+   */
   UFAPlayerStyle(player: any) {
     return {
       backgroundColor: String(player.HexColor),
       color: String(player.TextColor)
     };
   }
+  /**
+   * Cut styling
+   * @param player playerObject
+   */
   CUTPlayerStyle(player: any) {
     return {
       backgroundColor: "lightgrey",
       color: "black"
     };
   }
+  /**
+   * player card styling for value
+   * @param player playerObject
+   */
   depthBorderInsideTop(player: any) {
     if (this.originalBinMapping[player.PlayerID] < 0) {
       return {
@@ -766,28 +859,30 @@ export class FaHypoComponent implements OnInit {
       marginLeft: "-2px"
     };
   }
+
+  /**
+   * for bottom left dead money styling
+   * @param player playerObject
+   */
   depthBorderInsideBottom(player: any) {
     return {
       borderRight: "1px solid white"
     };
   }
-  depthBorderOutside(player: any) {
-    return {
-      // borderLeft: "1px solid black",
-      // borderTop: "1px solid black"
-    };
-  }
-  depthBorderOutsideBottom(player: any) {
-    return {
-      // borderBottom: "1px solid black",
-      // borderLeft: "1px solid black"
-    };
-  }
+
+  /**
+   * for bottom right corner styling
+   * @param player playerObject
+   */
   depthBorderRightBlack(player: any) {
     return {
       borderRight: "1px solid black"
     };
   }
+  /**
+   * for name styling
+   * @param player playerObject
+   */
   depthBorderRightBlackBottomColor(player: any) {
     return {
       borderRight: "1px solid black",
@@ -797,22 +892,34 @@ export class FaHypoComponent implements OnInit {
       textOverflow: "ellipsis"
     };
   }
+  /**
+   * top half styling
+   * condition based on if signing or not
+
+   * @param player playerObject
+   */
   DepthPlayerStyleTop(player: any) {
     if (this.originalBinMapping[player.PlayerID] >= 0) {
-      // return { backgroundColor: "#868287" };
       return { backgroundColor: "white", color: "black" };
-      // return { backgroundColor: "#EOEOEO", color: "black" };
     }
     return { backgroundColor: "#179c25" };
   }
+  /**
+   * for bottom half styling
+   * condition based on if signing or not
+   * @param player playerObject
+   */
   DepthPlayerStyleBottom(player: any) {
     if (this.originalBinMapping[player.PlayerID] >= 0) {
-      // return { backgroundColor: "#5E5B5E" };
       return { backgroundColor: "#EAEAEA", color: "black" };
-      // return { backgroundColor: "#9C9C9C" };
     }
     return { backgroundColor: "#6CDE77", color: "black" };
   }
+
+  /**
+   * Flip orientation if its defense
+   * @param bin Bin ID
+   */
   depthOrientationStyle(bin) {
     if (13 <= bin.id && bin.id <= 24) {
       return {
@@ -828,6 +935,11 @@ export class FaHypoComponent implements OnInit {
       minHeight: "150px"
     };
   }
+
+  /**
+   * flip header position if its defense
+   * @param bin bin ID
+   */
   depthHeaderOrientationStyle(bin) {
     if (13 <= bin.id && bin.id <= 24) {
       return {
@@ -843,6 +955,11 @@ export class FaHypoComponent implements OnInit {
     }
     return { marginBottom: "3px" };
   }
+
+  /**
+   * return red color style if number is negative
+   * @param val
+   */
   colorTextRedIfNegative(val: Number) {
     if (val < 0) {
       return { color: "Red" };
