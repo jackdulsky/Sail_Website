@@ -170,12 +170,4 @@ export class BodyComponent implements OnInit {
     //close the menu if its open
     this.filterService.menuOpen = false;
   }
-
-
-
-
- 
-  
-
-
 }

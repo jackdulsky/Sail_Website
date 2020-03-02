@@ -418,6 +418,4 @@ export class CashComponent implements OnInit {
     }
     this.type0change(id, "-3");
   }
-
-
 }
