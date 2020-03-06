@@ -150,40 +150,6 @@ export class TradeToolComponent implements OnInit {
    * Init the draft pick information
    */
   ngOnInit() {
-    // var over = Date.now();
-    // this.permutations = [];
-    // for (var i = 0; i <= 18; i++) {
-    //   this.permutationsAll[i] = [];
-    // }
-
-    // this.generatePermutations(18, [], 0);
-
-    // this.permutations = [];
-    // var end = Date.now();
-    // console.log("FINAL ", (end - over) / 1000);
-
-    // this.genperms2(23);
-    // for (var i = 1; i <= 20; i++) {
-    //   var start = Date.now();
-
-    //   console.log("PERMUATION ", i);
-    //   if (i > 1) {
-    //     this.permutationsAll[i - 1].forEach(element => {
-    //       this.generatePermutations(i, element, i - 1);
-    //     });
-    //   } else {
-    //     this.generatePermutations(i, [], 0);
-    //   }
-    //   this.permutationsAll[i] = cloneDeep(this.permutations);
-    //   var end = Date.now();
-    //   console.log(
-    //     this.permutationsAll[i].length,
-    //     (end - start) / 1000,
-    //     (end - over) / 1000
-    //   );
-
-    //   this.permutations = [];
-    // }
     this.pullData.pullDraftPicksInfo().subscribe(data => {
       this.draftPicksRaw = data;
       //set the overall picks correctly since there were two nulls
@@ -217,7 +183,8 @@ export class TradeToolComponent implements OnInit {
   }
 
   /**
-   *
+   *Fast way to generate the permutations
+   it is an n x n^2 2d array (inverted), each entry is a column not a combinations
    * @param n length of picks
    */
   genperms2(n: number) {
@@ -240,14 +207,6 @@ export class TradeToolComponent implements OnInit {
 
       overall.push(column);
     }
-    var end1 = Date.now();
-    // overall = this.transpose(overall);
-    // for (var i = 0; i < 2 ** n - n; i++) {
-    //   overall.push([]);
-    // }
-    // overall = overall.map((col, i) => overall.map(row => row[i]));
-
-    // overall = this.TwoDimensional(overall, 2 ** n, n);
     var end = Date.now();
     console.log(
       "Time to Generate Permutations (Inverted) = ",
@@ -256,26 +215,6 @@ export class TradeToolComponent implements OnInit {
     this.permutationsAllSaved[n] = cloneDeep(overall);
     this.permutations = overall;
   }
-  /**
-   * convert row to columns
-   * @param a array
-   */
-  // transpose(a) {
-  //   for (var i = 0; i < a.length; i++) {
-  //     for (var j = 0; j < i; j++) {
-  //       const tmp = a[i][j];
-  //       a[i][j] = a[j][i];
-  //       a[j][i] = tmp;
-  //     }
-  //   }
-  //   return a;
-  // }
-  //   return Object.keys(a[0]).map(function(c) {
-  //     return a.map(function(r) {
-  //       return r[c];
-  //     });
-  //   });
-  // }
 
   /**
    * Returns the logo src url to the club selection display, handel the weird cases for multiteam cities
@@ -383,24 +322,28 @@ export class TradeToolComponent implements OnInit {
    * clear potential trades with previous team
    */
   changeTradeTeam(team: any) {
-    this.tradeTeam = team;
-    this.displayTeams(this.showList);
-    Object.keys(this.pickInvolved).forEach(element => {
-      this.pickInvolved[element] = 0;
-      if (this.pickIDToPick[element]["ConditionalPick"] == 1) {
-        this.pickInvolved[element] = "-1";
-      } else {
-        this.pickInvolved[element] = "0";
-      }
-    });
-    this.yearTrade = cloneDeep(this.year);
-    this.picks_M = [];
-    this.pickOrderToPickID = [];
-    this.permutations = [];
-    this.tradeOptions = [];
-    this.tradeSendingPicks["raiders"] = [];
-    this.tradeSendingPicks["tradeTeam"] = [];
-    this.tradeToSend = false;
+    if (this.tradeTeam.SailTeamID != team.SailTeamID) {
+      this.tradeTeam = team;
+      this.displayTeams(this.showList);
+      Object.keys(this.pickInvolved).forEach(element => {
+        this.pickInvolved[element] = 0;
+        if (this.pickIDToPick[element]["ConditionalPick"] == 1) {
+          this.pickInvolved[element] = "-1";
+        } else {
+          this.pickInvolved[element] = "0";
+        }
+      });
+      this.yearTrade = cloneDeep(this.year);
+      this.picks_M = [];
+      this.pickOrderToPickID = [];
+      this.permutations = [];
+      this.tradeOptions = [];
+      this.tradeSendingPicks["raiders"] = [];
+      this.tradeSendingPicks["tradeTeam"] = [];
+      this.tradeToSend = false;
+      this.yearRaiders = cloneDeep(this.year);
+      this.yearTrade = cloneDeep(this.year);
+    }
   }
 
   /**
@@ -483,11 +426,6 @@ export class TradeToolComponent implements OnInit {
    *                Point differential for value, pick quantity change, simplicity (# picks invovled)
    */
   performTradeGenerations() {
-    try {
-      var picksInvolvedBefore = cloneDeep(this.picks_M.length);
-    } catch (e) {
-      var picksInvolvedBefore = 0;
-    }
     this.picks_M = [];
     this.pickOrderToPickID = [];
     this.tradeOptions = [];
@@ -583,47 +521,7 @@ export class TradeToolComponent implements OnInit {
         }
       }
 
-      // this.permutationsAll[this.picks_M.length].forEach(permutation => {
-      //   var valid = true;
-      //   var value = 0;
-      //   var pickChange = 0;
-      //   var pickQuantity = 0;
-      //   for (var slot = 0; slot < this.picks_M.length; slot++) {
-      //     if (
-      //       this.pickInvolved[this.pickOrderToPickID[slot]] == 1 &&
-      //       permutation[slot] != 1
-      //     ) {
-      //       valid = false;
-      //       break;
-      //     }
-      //     if (permutation[slot]) {
-      //       value += this.picks_M[slot][0];
-      //       pickChange += this.picks_M[slot][1];
-      //       pickQuantity += 1;
-      //     }
-      //   }
-      //   if (valid == false) {
-      //     return;
-      //   }
-      //   //Sort on the custom input values
-      //   if (
-      //     value >= this.minTradeValueDif &&
-      //     value <= this.maxTradeValueDif &&
-      //     pickChange <= this.maxTradePickDif &&
-      //     pickChange >= this.minTradePickDif &&
-      //     pickQuantity <= this.tradePicksQuantity &&
-      //     pickQuantity >= 2
-      //   ) {
-      //     this.tradeOptions.push([
-      //       value,
-      //       pickChange,
-      //       pickQuantity,
-      //       permutation
-      //     ]);
-      //   }
-      // });
-
-      //remove first all 0's and sort based on value, then pick dif, then overall picks
+      //sort based on value, then pick dif, then overall picks
       this.tradeOptions = this.tradeOptions.sort((a, b) => {
         if (a[0] < b[0]) return 1;
         else if (a[0] > b[0]) return -1;

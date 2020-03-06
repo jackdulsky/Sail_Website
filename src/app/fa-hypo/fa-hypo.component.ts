@@ -389,7 +389,7 @@ export class FaHypoComponent implements OnInit {
     this.calculationsValues.RC.Value =
       (this.playerCount <= 53,
       1000000 * (53 - this.playerCount),
-      510000 * (53 - this.playerCount));
+      610000 * (53 - this.playerCount));
     this.calculationsValues.PA.Value = -1 * this.cashSums[0].total;
     this.calculationsValues["CTZ"].Value = sumAdd; //Contracts and Tenders
 
