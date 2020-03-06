@@ -78,7 +78,12 @@ export class FaHypoComponent implements OnInit {
   editingCap: string; //item name to edit
 
   //the editable numbers for the spending (and the default values)
-  capInfoOriginal = { CT: 230000000, PTCS: 12500000, IRRIM: 12500000 };
+  capInfoOriginal = {
+    CT: 230000000,
+    PTCS: 12500000,
+    IRRIM: 12500000,
+    PSOM: 500000
+  };
 
   //boolean to make sure the original mappings are only created once
   initMappings = false;
@@ -93,49 +98,49 @@ export class FaHypoComponent implements OnInit {
   draftPicks = {
     1: {
       signing: 11000000,
-      p5: 510000,
+      p5: 610000,
       rount: 1,
       pick: 12,
       origin: "OAK"
     },
     2: {
       signing: 8000000,
-      p5: 510000,
+      p5: 610000,
       rount: 1,
       pick: 19,
       origin: "CHI"
     },
     3: {
       signing: 1200000,
-      p5: 510000,
+      p5: 610000,
       rount: 3,
       pick: 12,
       origin: "OAK"
     },
     4: {
       signing: 1100000,
-      p5: 510000,
+      p5: 610000,
       rount: 3,
       pick: 19,
       origin: "CHI"
     },
     5: {
       signing: 1000000,
-      p5: 510000,
+      p5: 610000,
       rount: 3,
       pick: 26,
       origin: "SEA"
     },
     6: {
       signing: 815000,
-      p5: 510000,
+      p5: 610000,
       rount: 4,
       pick: 12,
       origin: "OAK"
     },
     7: {
       signing: 345000,
-      p5: 510000,
+      p5: 610000,
       rount: 5,
       pick: 12,
       origin: "OAK"
@@ -184,13 +189,13 @@ export class FaHypoComponent implements OnInit {
     PSOM: {
       Label: "Practice Squad Over Minimum:",
       Value: 500000,
-      calc: 1,
+      calc: 0,
       display: 1,
       OrderID: 7
     },
     DS: {
       Label: "2020 Draft Selections:",
-      Value: 27030000,
+      Value: 27730000,
       calc: 1,
       display: 1,
       OrderID: 6
@@ -514,7 +519,7 @@ export class FaHypoComponent implements OnInit {
   }
 
   /**
-   * Get sttyling of the bin tab for UFA's
+   * Get styling of the bin tab for UFA's
    * @param id binID (id <0)
    */
   highlightOrNot(id: number) {
@@ -691,7 +696,8 @@ export class FaHypoComponent implements OnInit {
           data: savingList,
           Budget_Target: this.calculationsValues["CT"].Value,
           Budget_Signings: this.calculationsValues["PTCS"].Value,
-          Budget_Replacements: this.calculationsValues["IRRIM"].Value
+          Budget_Replacements: this.calculationsValues["IRRIM"].Value,
+          Budget_PSquad: this.calculationsValues["PSOM"].Value
         })
       )
       .subscribe(data => {
@@ -756,7 +762,7 @@ export class FaHypoComponent implements OnInit {
               this.name = data.name;
               this.description = data.desc;
               this.calculationsValues["CT"].Value = data.Budget_Target;
-
+              this.calculationsValues["PSOM"].Value = data.Budget_PSquad;
               this.calculationsValues["IRRIM"].Value = data.Budget_Replacements;
               this.calculationsValues["PTCS"].Value = data.Budget_Signings;
               this.initArraysRaiders();
@@ -777,7 +783,7 @@ export class FaHypoComponent implements OnInit {
       this.name = null;
       this.description = null;
       this.calculationsValues["CT"].Value = this.capInfoOriginal.CT;
-
+      this.calculationsValues["PSOM"].Value = this.capInfoOriginal.PSOM;
       this.calculationsValues["IRRIM"].Value = this.capInfoOriginal.IRRIM;
       this.calculationsValues["PTCS"].Value = this.capInfoOriginal.PTCS;
       this.initArraysRaiders();

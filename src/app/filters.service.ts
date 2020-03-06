@@ -15,6 +15,9 @@ export class FiltersService {
   //variable to only perform bulk import once
   bulkImported = false;
 
+  //sentToDBYet
+  filterInDB = false;
+
   //This is the db format to check if no other edits were made after a timeout to send up the data.
   tryingToSendDBFormat: string;
 
@@ -428,6 +431,9 @@ export class FiltersService {
   getBulkImport() {
     if (!this.bulkImported) {
       this.pullData.setGUID(); //set guid
+      this.pullData.constructAndSendFilters({
+        "-4": { "4": [["2019"], {}, []] }
+      });
 
       //Pull structure (1 is for NFL)
       this.pullData.pullStructure("1").subscribe(data => {
@@ -1142,6 +1148,7 @@ export class FiltersService {
               this.updatePlayerData();
               this.updateClubData();
               this.updateCashFilters();
+              this.filterInDB = true;
             });
           this.setActiveClub();
           this.setActivePlayer();
@@ -1728,6 +1735,13 @@ export class FiltersService {
    * @param count How many times its tried to create the viewing url
    */
   createRDURL(id: any, count: any = 0) {
+    if (this.filterInDB == false) {
+      this.pullData
+        .constructAndSendFilters({ "-4": { "4": [["2019"], {}, []] } })
+        .subscribe(() => {
+          this.filterInDB = true;
+        });
+    }
     //Below is part of network issue
     this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       "http://oakcmsreports01.raiders.com/"
@@ -1735,8 +1749,11 @@ export class FiltersService {
     // this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
     //   "https://sailreports.raiders.com/"
     // );
+    if (Number(id) < 0) {
+      return this.viewingURL;
+    }
 
-    if (this.checkUploadComplete()) {
+    if (this.checkUploadComplete() && this.filterInDB == true) {
       //If Report is an excel file:
       //add this to the end of it
       var excelEnding =

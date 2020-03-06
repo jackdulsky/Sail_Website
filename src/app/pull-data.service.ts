@@ -36,17 +36,15 @@ export class PullDataService {
       query: queryString
     });
   }
-  
+
   /**
    * RETURN ALL THE INFO RELATED TO TEAMS FROM THE DATA BASE
-  */
- getTeams() {
+   */
+  getTeams() {
     var query =
       "select SailTeamID,TeamCode,Conference,Division,ClubCityName, ClubNickName from SaildB.org.TeamSeason where LeagueType = 'NFL' and Season  = '2020'";
     return this.postQuery(query);
   }
-
-
 
   //RETURNS THE SAVED FILTERS FROM THE DATA BASE
   getSavedFilters() {
@@ -79,7 +77,7 @@ export class PullDataService {
   saveFilter(
     name: string,
     filters: any,
- 
+
     description: string
   ) {
     var query =
@@ -93,7 +91,6 @@ export class PullDataService {
 
     return this.postQuery(query);
   }
-
 
   //PULL THE DATATYPE FROM THE DB
   pullDataType() {
@@ -164,7 +161,6 @@ export class PullDataService {
       "'";
 
     return this.postQuery(query);
-
   }
 
   //SET THE GUI FOR THE WINDOW
@@ -222,7 +218,6 @@ export class PullDataService {
 
   //PULL PLAYER DATA
   pullPlayersToDisplay(sendString: String) {
-
     var query =
       "exec [SaildB].[filter].[spGetPlayersList] N'" + sendString + "'";
     return this.postQuery(query);
@@ -247,7 +242,7 @@ export class PullDataService {
    * Output is the list of serach options
    * Currently on one search option is returned form the api function
    * @param input  = text string that is being searched
-   * 
+   *
    * There is a try except shell for the http /https issue and the inside try/except is
    *  if the search api instance is down do the slow method which goes through a file
    */
@@ -263,7 +258,7 @@ export class PullDataService {
           { responseType: "text" }
         );
       } catch (e) {
-          //api local host instance down
+        //api local host instance down
 
         return this.http.post(
           this.serverURLSecure + "execute/file/bodyinput/search_tool",
@@ -299,7 +294,7 @@ export class PullDataService {
     }
   }
   /**
-   * Pulls the player URL: array of objects that have 
+   * Pulls the player URL: array of objects that have
    * SailID, and PlayerImageUrl
    */
   pullPlayerURL() {
@@ -308,13 +303,13 @@ export class PullDataService {
     return this.postQuery(query);
   }
 
-/**
- * Pull all the players and their locations / information to be displayed on their cards
- * 
- * @param scenario The number corresponding to a unique set of player locations
- * 
- * default scenario is 0 (base scenario)
- */
+  /**
+   * Pull all the players and their locations / information to be displayed on their cards
+   *
+   * @param scenario The number corresponding to a unique set of player locations
+   *
+   * default scenario is 0 (base scenario)
+   */
   pullHypoPlayers(scenario: number = 0) {
     var query = "Exec FreeAgency.FA20.spScenario_Get " + scenario;
     return this.postQuery(query);
@@ -334,6 +329,7 @@ export class PullDataService {
   pullHypoScenario() {
     var query =
       "SELECT * FROM [FreeAgency].[FA20].[Hypo_Scenarios] Order By ScenarioID";
+
     return this.postQuery(query);
   }
 
@@ -345,6 +341,15 @@ export class PullDataService {
     var query =
       "Exec [FreeAgency].[FA20].[spScenario_Write] '" + jsonData + "'";
 
+    return this.postQuery(query);
+  }
+  /**
+   * This will get the draft picks info
+   * currently only set to 2019 but this will change
+   */
+  pullDraftPicksInfo() {
+    var query =
+      "select * From Draft.Draft20.ClubDraftPick order by 'Round', 'Overall'";
     return this.postQuery(query);
   }
 }

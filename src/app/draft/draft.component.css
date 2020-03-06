@@ -1,0 +1,46 @@
+.topLink {
+  padding: 0px 5px;
+  height: 25px;
+  margin-left: 5px;
+  line-height: 25px;
+  width: auto;
+  display: table;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  font-size: 15px;
+  font-family: "DIN-Regular", "DIN-Regular";
+  border-bottom: 4px solid white;
+  width: -webkit-fill-available;
+  min-width: 120px;
+}
+.topLink:hover {
+  background-color: #f2f2f2 !important;
+  border-bottom: 4px solid lightskyblue !important;
+  cursor: pointer;
+}
+.linkBar {
+  display: flex;
+  float: left;
+  width: calc(100vw - 250px);
+}
+.fullScreen {
+  width: 50px;
+  text-align: center;
+  float: right;
+  line-height: 29px;
+  border-left: 1px solid lightblue;
+}
+.fullScreen:hover {
+  background-color: var(--light-blue);
+  cursor: pointer;
+}
+.fullScreenInactive {
+  width: 50px;
+  text-align: center;
+  float: right;
+  line-height: 29px;
+  color: lightgray;
+  border-left: 1px solid lightblue;
+}

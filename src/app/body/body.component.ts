@@ -1,10 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { FiltersService } from "../filters.service";
-import { MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material";
 import { PullDataService } from "../pull-data.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { ChangeDetectorRef } from "@angular/core";
-
 
 @Component({
   selector: "app-body",
@@ -21,10 +20,9 @@ export class BodyComponent implements OnInit {
     public cdref: ChangeDetectorRef
   ) {}
 
-  //portals to list on the left side, you can be dveloping a tab and its still accessible through the 
+  //portals to list on the left side, you can be dveloping a tab and its still accessible through the
   //top route but will not be navigatable to from the website
-  portals = ["club", "player", "cash", "fa-hypo"]; //, "excel"];
-
+  portals = ["club", "player", "cash", "fa-hypo", "draft"]; //, "excel"];
 
   ngOnInit() {
     //ON INIT SET THE SELECTED TAB ON THE LEFT TO GENERAL / CHANGE CSS
@@ -69,10 +67,9 @@ export class BodyComponent implements OnInit {
     }
   }
 
-  
   /**
    * THIS UPDATES THE REPORT TO VIEW FROM CLICK on base-reports
-   * 
+   *
    * @param newNumb Report number to view
    */
   changeReportType(newNumb: number) {
@@ -88,7 +85,6 @@ export class BodyComponent implements OnInit {
     }
     this.filterService.menuOpen = false;
   }
-
 
   /**
    * CHANGE DISPLAY REPORTS BASED ON CLICKED REPORT
@@ -136,8 +132,6 @@ export class BodyComponent implements OnInit {
     this.filterService.menuOpen = false;
   }
 
-
-  
   /**
    * Highlight the portal selected and unhighlight the reports
    * @param name string of the portal name selected (limited to the variables in portals)
@@ -166,7 +160,7 @@ export class BodyComponent implements OnInit {
         relativeTo: this.route //reference to the level in the routing
       });
     }
-    
+
     //close the menu if its open
     this.filterService.menuOpen = false;
   }

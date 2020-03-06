@@ -14,6 +14,8 @@ import { NewpageComponent } from "./newpage/newpage.component";
 import { ExtraOptions } from "@angular/router";
 import { ExcelComponent } from "./excel/excel.component";
 import { FaHypoComponent } from "./fa-hypo/fa-hypo.component";
+import { DraftComponent } from "./draft/draft.component";
+import { TradeToolComponent } from "./trade-tool/trade-tool.component";
 export const routingConfiguration: ExtraOptions = {
   paramsInheritanceStrategy: "always"
 };
@@ -31,7 +33,7 @@ export const routes: Routes = [
     children: [
       {
         path: "",
-        redirectTo: "club",
+        redirectTo: "cash",
         pathMatch: "full"
       },
 
@@ -74,6 +76,27 @@ export const routes: Routes = [
         ]
       },
       {
+        path: "draft",
+        component: DraftComponent,
+        children: [
+          { path: "report/:reportid", component: ReportComponent },
+          {
+            path: "base-reports/:base-reportsid",
+            component: BaseReportsComponent
+          },
+          {
+            path: "trade-tool",
+            component: TradeToolComponent
+          },
+          {
+            path: "",
+            // 2679 is the default club home main page report view ID for Rockdaisy
+            redirectTo: "base-reports/17",
+            pathMatch: "full"
+          }
+        ]
+      },
+      {
         path: "player",
         component: PlayerComponent,
         children: [
@@ -109,7 +132,7 @@ export const routes: Routes = [
           },
           {
             path: "",
-            redirectTo: "base-reports/11",
+            redirectTo: "report/2702",
             pathMatch: "full"
           }
         ]

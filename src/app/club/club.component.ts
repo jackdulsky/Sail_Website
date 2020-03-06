@@ -118,7 +118,10 @@ export class ClubComponent implements OnInit {
       })[0];
       try {
         if (this.router.url.includes("/report")) {
-          document.getElementById("fullScreenButton").className = "fullScreen";
+          if (Number(name) > 0) {
+            document.getElementById("fullScreenButton").className =
+              "fullScreen";
+          }
           this.clubTabSelected = this.filterService.reportReportsOnly[
             this.router.url.split("/report/")[1]
           ]["TabID"];
@@ -290,8 +293,9 @@ export class ClubComponent implements OnInit {
         this.router.navigate(["./report", String(reportID)], {
           relativeTo: this.route
         });
-        document.getElementById("fullScreenButton").className = "fullScreen";
-        // this.router.navigate([newRoute + "/report/" + String(reportID)]);
+        if (Number(name) > 0) {
+          document.getElementById("fullScreenButton").className = "fullScreen";
+        } // this.router.navigate([newRoute + "/report/" + String(reportID)]);
       } else {
         this.filterService.selected = name;
 

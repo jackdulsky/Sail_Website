@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="reportID > 0">
   <iframe
     id="iframe"
     [src]="filterService.viewingURL"
@@ -7,6 +7,7 @@
     [ngStyle]="setIFrameStyle()"
   ></iframe>
 </div>
+<app-trade-tool *ngIf="reportID == -1"></app-trade-tool>
 <div
   id="fullScreenClose"
   style="position: absolute;

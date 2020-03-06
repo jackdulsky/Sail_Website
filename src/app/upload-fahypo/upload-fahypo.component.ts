@@ -62,9 +62,10 @@ export class UploadFAHYPOComponent implements OnInit {
       scenario: item.ScenarioID,
       name: item.Label,
       desc: item.ScenarioDesc,
-      Budget_Target: item.Budget_Target,
-      Budget_Signings: item.Budget_Signings,
-      Budget_Replacements: item.Budget_Replacements
+      Budget_Target: Number(item.Budget_Target),
+      Budget_Signings: Number(item.Budget_Signings),
+      Budget_Replacements: Number(item.Budget_Replacements),
+      Budget_PSquad: Number(item.Budget_PSquad)
     });
   }
   /**

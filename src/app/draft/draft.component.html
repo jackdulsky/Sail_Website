@@ -1,0 +1,26 @@
+<div
+  style="display: flex; border-bottom: 1px solid black; border-top: 1px solid black;"
+>
+  <div class="linkBar">
+    <div
+      class="topLink"
+      *ngFor="
+        let cat of filterService.getReportHeaders(5)
+          | keyvalue: filterService.valueOrder
+      "
+      id="{{ cat.key }}draftBarHighlightid"
+      (click)="tabClicked($event, cat.key)"
+    >
+      {{ cat.value.Label }}
+    </div>
+  </div>
+  <div
+    class="fullScreenInactive"
+    id="fullScreenButton"
+    (click)="filterService.fullScreenOn()"
+  >
+    <i class="fa fa-window-maximize fa-sm"></i>
+  </div>
+</div>
+
+<router-outlet></router-outlet>

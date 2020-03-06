@@ -10,7 +10,7 @@ import { ChangeDetectorRef } from "@angular/core";
   styleUrls: ["./report.component.css"]
 })
 export class ReportComponent implements OnInit {
-  typeID: number;
+  reportID: number;
   temp: string;
   sourceURL: string = "http://oakcmsreports01.raiders.com/view/";
   constructor(
@@ -31,6 +31,7 @@ export class ReportComponent implements OnInit {
    */
   ngAfterViewInit() {
     this.route.params.subscribe(params => {
+      this.reportID = params["reportid"];
       this.filterService.createRDURL(String(params["reportid"]));
       this.cdref.detectChanges();
       this.filterService.updateRDURL();
