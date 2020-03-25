@@ -764,4 +764,21 @@ export class TradeToolComponent implements OnInit {
     this.tradeSendingPicks["raiders"] = [];
     this.tradeSendingPicks["tradeTeam"] = [];
   }
+
+  /**
+   * Returns appropriate line height of actual trade box if trades are >4
+   * @param len number of picks
+   */
+  lineHeightFromPickNumber(picks: any) {
+    var count = 0;
+    for (let pick of picks) {
+      if (this.pickInvolved[pick] == 1) {
+        count += 1;
+      }
+    }
+    if (count > 4) {
+      return { lineHeight: "25px" };
+    }
+    return { lineHeight: "50px" };
+  }
 }

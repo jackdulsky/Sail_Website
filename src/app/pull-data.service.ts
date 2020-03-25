@@ -349,7 +349,7 @@ export class PullDataService {
    */
   pullDraftPicksInfo() {
     var query =
-      "select * From Draft.Draft20.ClubDraftPick order by 'Round', 'Overall'";
+      "select * From Draft.Draft20.ClubDraftPick order by 'Season', 'Round', 'Overall'";
     return this.postQuery(query);
   }
 }

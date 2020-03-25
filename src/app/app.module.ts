@@ -70,6 +70,7 @@ import { UploadFAHYPOComponent } from "./upload-fahypo/upload-fahypo.component";
 import { MinusSignToParensPipe } from "./minus-sign-to-parens.pipe";
 import { DraftComponent } from './draft/draft.component';
 import { TradeToolComponent } from './trade-tool/trade-tool.component';
+import { TradeHistoryComponent } from './trade-history/trade-history.component';
 /**
  * This is where you will import all your modules, components, pipes and services
  * As long as you know the location of the item you added it will be need to be placed appropriately
@@ -107,7 +108,8 @@ import { TradeToolComponent } from './trade-tool/trade-tool.component';
     UploadFAHYPOComponent,
     MinusSignToParensPipe,
     DraftComponent,
-    TradeToolComponent
+    TradeToolComponent,
+    TradeHistoryComponent
   ],
   imports: [
     NgCircleProgressModule.forRoot({

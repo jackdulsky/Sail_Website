@@ -1,0 +1,128 @@
+.rightSide,
+.leftSide {
+  padding: 10px;
+  border: 1px solid black;
+}
+.activeTradesContainer,
+.tradeHistoryContainer,
+.activeTradeContainer,
+.highTradeContainer,
+.lowTradeContainer,
+.mediumTradeContainer {
+  padding: 0px 10px;
+  margin: 10px;
+  border: 1px solid black;
+  min-height: 145px;
+}
+.overallContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 10px;
+  margin: 10px;
+}
+
+.activeTradesContainer {
+  max-height: 350px;
+  min-height: 350px;
+  overflow: auto;
+  margin-top: 0px;
+  padding-top: 10px;
+}
+.tradeHistoryContainer {
+  max-height: 275px;
+  overflow-y: auto;
+  min-height: 275px;
+  margin-top: 0px;
+}
+
+.tradeOption {
+  display: grid;
+  grid-template-columns: 35% 35% 10% 10% 10%;
+  border-bottom: 2px solid black;
+}
+.tradeOptionLabels {
+  display: grid;
+  grid-template-columns: 35% 35% 10% 10% 10%;
+  background-color: #5c5c5c;
+  color: white;
+  margin: 0px 10px;
+}
+.raidersTrading {
+  padding-left: 5px;
+}
+.raidersReceiving {
+  padding-left: 5px;
+  border-left: 1px solid black;
+}
+
+.numberTrade {
+  text-align: center;
+  border-left: 1px solid black;
+}
+.numberTradeHeader {
+  text-align: center;
+  line-height: 55px;
+}
+.imageContainer,
+.tradeNegotiationOfferTextContainer {
+  text-align: center;
+  display: flex;
+}
+.tradeImage {
+  max-height: 51px;
+  max-width: 51px;
+
+  z-index: 2;
+  margin: auto;
+}
+.tradeNegotiationOfferText {
+  margin: auto 0px;
+  text-align: left;
+}
+.negotiation {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 55px;
+  max-height: 55px;
+  border-radius: 10px;
+  background-color: #abc2d0;
+  margin-bottom: 10px;
+}
+.negotiation:hover {
+  cursor: pointer;
+  background-color: var(--raiders-gray);
+}
+
+.bgGrey {
+  background-color: #e3e3e3;
+}
+.bgRed {
+  background-color: #ffe1e1;
+}
+.bgGreen {
+  background-color: #ebffeb;
+}
+.singleOffer {
+  padding: 10px;
+  border-radius: 10px;
+  background-color: var(--raiders-gray);
+  margin: 10px 0px;
+}
+.singleOffer:hover {
+  background-color: #e1e1e1;
+  cursor: pointer;
+}
+
+.header {
+  text-align: center;
+  background-color: #000;
+  color: #fff;
+  width: calc(100% - 20px);
+  margin: 0px 10px;
+}
+
+.tradeOfferHistoryHeader {
+  font-size: 36px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}

@@ -1,0 +1,223 @@
+<div class="overallContainer">
+  <div class="leftSide">
+    <div class="header tradeOfferHistoryHeader">Offer</div>
+
+    <div class="activeTradeContainer" style="min-height: 100px;">
+      {{ viewingOffer }}
+      <ng-container *ngIf="viewingOffer.length >= 1">
+        {{ fake_O_Map[viewingOffer]["TradeText"] }},{{
+          fake_O_Map[viewingOffer]["Main_Pick_Raiders"]
+        }},{{ fake_O_Map[viewingOffer]["Main_Pick_Trade"] }}
+      </ng-container>
+    </div>
+    <div class="header tradeOfferHistoryHeader">Suggested Counters</div>
+    <div class="tradeOptionLabels">
+      <div class="imageContainer">
+        <img
+          id=""
+          [src]="tradeTool.getActiveLogo(tradeTool.raiders)"
+          class="tradeImage"
+        />
+      </div>
+      <div class="imageContainer">
+        <img
+          id=""
+          [src]="tradeTool.getActiveLogo(tradeTool.tradeTeam)"
+          class="tradeImage"
+        />
+      </div>
+      <div class="numberTradeHeader">Value&nbsp;&Delta;</div>
+      <div class="numberTradeHeader">+/-</div>
+      <div class="numberTradeHeader">#</div>
+    </div>
+    <div class="highTradeContainer bgGreen">
+      <div class="tradeOption " id="option" *ngIf="highTrade != null">
+        <!-- (click)="tradeOptionClicked($event, trade, 0)" -->
+        <div id="option" class="raidersTrading">
+          <span id="option" *ngFor="let picked of highTrade[3]; let i = index">
+            <ng-container
+              *ngIf="
+                tradeTool.teamToPickIDs[
+                  tradeTool.raiders['SailTeamID']
+                ].indexOf(tradeTool.pickOrderToPickID[i]) != -1 && picked == 1
+              "
+            >
+              {{
+                tradeTool.pickIDToPick[tradeTool.pickOrderToPickID[i]][
+                  "PickLabel"
+                ]
+              }}
+
+              &nbsp;&nbsp;
+            </ng-container>
+          </span>
+        </div>
+        <div id="option" class="raidersReceiving">
+          <span id="option" *ngFor="let picked of highTrade[3]; let i = index">
+            <ng-container
+              *ngIf="
+                tradeTool.teamToPickIDs[
+                  tradeTool.tradeTeam['SailTeamID']
+                ].indexOf(tradeTool.pickOrderToPickID[i]) != -1 && picked == 1
+              "
+            >
+              {{
+                tradeTool.pickIDToPick[tradeTool.pickOrderToPickID[i]][
+                  "PickLabel"
+                ]
+              }}
+              &nbsp;&nbsp;
+            </ng-container>
+          </span>
+        </div>
+        <div id="option" class="numberTrade">{{ highTrade[0] }}</div>
+        <div id="option" class="numberTrade">{{ highTrade[1] }}</div>
+        <div id="option" class="numberTrade">{{ highTrade[2] }}</div>
+      </div>
+    </div>
+    <div class="mediumTradeContainer bgGrey">
+      <div class="tradeOption" id="option" *ngIf="mediumTrade != null">
+        <!-- (click)="tradeOptionClicked($event, trade, 0)" -->
+        <div id="option" class="raidersTrading">
+          <span
+            id="option"
+            *ngFor="let picked of mediumTrade[3]; let i = index"
+          >
+            <ng-container
+              *ngIf="
+                tradeTool.teamToPickIDs[
+                  tradeTool.raiders['SailTeamID']
+                ].indexOf(tradeTool.pickOrderToPickID[i]) != -1 && picked == 1
+              "
+            >
+              {{
+                tradeTool.pickIDToPick[tradeTool.pickOrderToPickID[i]][
+                  "PickLabel"
+                ]
+              }}
+
+              &nbsp;&nbsp;
+            </ng-container>
+          </span>
+        </div>
+        <div id="option" class="raidersReceiving">
+          <span
+            id="option"
+            *ngFor="let picked of mediumTrade[3]; let i = index"
+          >
+            <ng-container
+              *ngIf="
+                tradeTool.teamToPickIDs[
+                  tradeTool.tradeTeam['SailTeamID']
+                ].indexOf(tradeTool.pickOrderToPickID[i]) != -1 && picked == 1
+              "
+            >
+              {{
+                tradeTool.pickIDToPick[tradeTool.pickOrderToPickID[i]][
+                  "PickLabel"
+                ]
+              }}
+              &nbsp;&nbsp;
+            </ng-container>
+          </span>
+        </div>
+        <div id="option" class="numberTrade">{{ mediumTrade[0] }}</div>
+        <div id="option" class="numberTrade">{{ mediumTrade[1] }}</div>
+        <div id="option" class="numberTrade">{{ mediumTrade[2] }}</div>
+      </div>
+    </div>
+    <div class="lowTradeContainer bgRed">
+      <div class="tradeOption " id="option" *ngIf="lowTrade != null">
+        <!-- (click)="tradeOptionClicked($event, trade, 0)" -->
+        <div id="option" class="raidersTrading">
+          <span id="option" *ngFor="let picked of lowTrade[3]; let i = index">
+            <ng-container
+              *ngIf="
+                tradeTool.teamToPickIDs[
+                  tradeTool.raiders['SailTeamID']
+                ].indexOf(tradeTool.pickOrderToPickID[i]) != -1 && picked == 1
+              "
+            >
+              {{
+                tradeTool.pickIDToPick[tradeTool.pickOrderToPickID[i]][
+                  "PickLabel"
+                ]
+              }}
+
+              &nbsp;&nbsp;
+            </ng-container>
+          </span>
+        </div>
+        <div id="option" class="raidersReceiving">
+          <span id="option" *ngFor="let picked of lowTrade[3]; let i = index">
+            <ng-container
+              *ngIf="
+                tradeTool.teamToPickIDs[
+                  tradeTool.tradeTeam['SailTeamID']
+                ].indexOf(tradeTool.pickOrderToPickID[i]) != -1 && picked == 1
+              "
+            >
+              {{
+                tradeTool.pickIDToPick[tradeTool.pickOrderToPickID[i]][
+                  "PickLabel"
+                ]
+              }}
+              &nbsp;&nbsp;
+            </ng-container>
+          </span>
+        </div>
+        <div id="option" class="numberTrade">{{ lowTrade[0] }}</div>
+        <div id="option" class="numberTrade">{{ lowTrade[1] }}</div>
+        <div id="option" class="numberTrade">{{ lowTrade[2] }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="rightSide">
+    <div class="header tradeOfferHistoryHeader">Active Offers</div>
+    <div class="activeTradesContainer">
+      <div
+        *ngFor="
+          let negotiation of fake_N_Map | keyvalue: filterService.valueOrder
+        "
+        class="negotiation"
+        (click)="
+          selectNegotiation(
+            negotiation.key,
+            getActiveOffer(negotiation.key).OfferID
+          )
+        "
+      >
+        <div class="imageContainer">
+          <img
+            id=""
+            [src]="
+              tradeTool.getActiveLogo(
+                filterService.teamsMap[negotiation.value['TradeTeamID']]
+              )
+            "
+            class="tradeImage"
+          />
+        </div>
+        <div class="tradeNegotiationOfferTextContainer">
+          <div class="tradeNegotiationOfferText">
+            {{ getActiveOffer(negotiation.key).TradeText }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header tradeOfferHistoryHeader">Negotiation History</div>
+    <div class="tradeHistoryContainer">
+      <ng-container
+        *ngFor="let offer of fake_O_Map | keyvalue: filterService.valueOrder"
+        (click)="selectOffer(offer.key)"
+      >
+        <div
+          class="singleOffer"
+          *ngIf="offer.value.NegotiationID == clickedNegotiation"
+        >
+          {{ offer.value["TradeText"] }}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

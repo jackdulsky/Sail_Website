@@ -299,7 +299,13 @@
         (click)="tradeOptionClicked($event, {}, 1)"
         id="option"
       >
-        <div id="option" class="raidersTradingExact">
+        <div
+          id="option"
+          class="raidersTradingExact"
+          [ngStyle]="
+            lineHeightFromPickNumber(teamToPickIDs[raiders['SailTeamID']])
+          "
+        >
           <span
             id="option"
             *ngFor="let pick of teamToPickIDs[raiders['SailTeamID']]"
@@ -310,7 +316,13 @@
             </ng-container>
           </span>
         </div>
-        <div id="option" class="raidersReceivingExact">
+        <div
+          id="option"
+          class="raidersReceivingExact"
+          [ngStyle]="
+            lineHeightFromPickNumber(teamToPickIDs[tradeTeam['SailTeamID']])
+          "
+        >
           <span
             id="option"
             *ngFor="let pick of teamToPickIDs[tradeTeam['SailTeamID']]"
