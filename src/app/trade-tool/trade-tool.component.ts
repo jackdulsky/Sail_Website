@@ -48,9 +48,6 @@ export class TradeToolComponent implements OnInit {
   //results matrix
   tradeOptions = [];
 
-  //picks matrix [value, gain/loss, ispick]
-  picks_M;
-
   //PickLabel
   pickLabel = "Pick Label";
 
@@ -111,8 +108,8 @@ export class TradeToolComponent implements OnInit {
   };
 
   //team to trade with and show draft picks
-  tradeTeam = {
-    SailTeamID: 1000,
+  tradeTeamDefault = {
+    SailTeamID: "1000",
     TeamCode: "ATL",
     Conference: "NFC",
     Division: "South",
@@ -122,7 +119,7 @@ export class TradeToolComponent implements OnInit {
 
   //Raiders
   raiders = {
-    SailTeamID: 1012,
+    SailTeamID: "1012",
     TeamCode: "LV",
     Conference: "AFC",
     Division: "West",
@@ -134,6 +131,9 @@ export class TradeToolComponent implements OnInit {
   teamToPickIDs = {};
   //pick ID  to draft object from database
   pickIDToPick = {};
+
+  //tradeSelectedArray
+  tradeSelectedArray;
   constructor(
     public pullData: PullDataService,
     public filterService: FiltersService,
@@ -179,7 +179,29 @@ export class TradeToolComponent implements OnInit {
       }
 
       this.uploadingPicks = false;
+
+      if (
+        this.filterService.teamPortalActiveClubID ==
+        String(this.raiders.SailTeamID)
+      ) {
+        this.filterService.teamPortalSelected = this.tradeTeamDefault;
+      }
+      this.setTeam();
     });
+  }
+
+  /**
+   * Sets the team in the DB
+   * @param team
+   */
+  setTeam() {
+    if (this.filterService.checkUploadComplete()) {
+      this.filterService.pushQueryToActiveFilter("0");
+    } else {
+      setTimeout(() => {
+        this.setTeam();
+      }, 100);
+    }
   }
 
   /**
@@ -208,12 +230,12 @@ export class TradeToolComponent implements OnInit {
       overall.push(column);
     }
     var end = Date.now();
-    console.log(
-      "Time to Generate Permutations (Inverted) = ",
-      (end - start) / 1000
-    );
+    // console.log(
+    //   "Time to Generate Permutations (Inverted) = ",
+    //   (end - start) / 1000
+    // );
     this.permutationsAllSaved[n] = cloneDeep(overall);
-    this.permutations = overall;
+    return overall;
   }
 
   /**
@@ -322,8 +344,9 @@ export class TradeToolComponent implements OnInit {
    * clear potential trades with previous team
    */
   changeTradeTeam(team: any) {
-    if (this.tradeTeam.SailTeamID != team.SailTeamID) {
-      this.tradeTeam = team;
+    if (this.filterService.teamPortalActiveClubID != team.SailTeamID) {
+      this.filterService.teamPortalSelected = team;
+      this.filterService.teamPortalActiveClubID = team.SailTeamID;
       this.displayTeams(this.showList);
       Object.keys(this.pickInvolved).forEach(element => {
         this.pickInvolved[element] = 0;
@@ -334,15 +357,14 @@ export class TradeToolComponent implements OnInit {
         }
       });
       this.yearTrade = cloneDeep(this.year);
-      this.picks_M = [];
       this.pickOrderToPickID = [];
-      this.permutations = [];
       this.tradeOptions = [];
       this.tradeSendingPicks["raiders"] = [];
       this.tradeSendingPicks["tradeTeam"] = [];
       this.tradeToSend = false;
       this.yearRaiders = cloneDeep(this.year);
       this.yearTrade = cloneDeep(this.year);
+      this.setTeam();
     }
   }
 
@@ -407,11 +429,36 @@ export class TradeToolComponent implements OnInit {
         this.pickInvolved[pick] = toLabel;
         //updateTrades
 
-        this.performTradeGenerations();
+        var output = this.performTradeGenerations(
+          this.pickInvolved,
+          this.minTradeValueDif,
+          this.maxTradeValueDif,
+          this.maxTradePickDif,
+          this.minTradePickDif,
+          this.tradePicksQuantity
+        );
+        this.tradeOptions = output["tradeOptions"];
+        this.pickOrderToPickID = output["pickOrderToPickID"];
       } else {
         this.pickInvolved[pick] = toLabel;
       }
     }
+  }
+
+  /**
+   * on Param change perform generation
+   */
+  inputChange() {
+    var output = this.performTradeGenerations(
+      this.pickInvolved,
+      this.minTradeValueDif,
+      this.maxTradeValueDif,
+      this.maxTradePickDif,
+      this.minTradePickDif,
+      this.tradePicksQuantity
+    );
+    this.tradeOptions = output["tradeOptions"];
+    this.pickOrderToPickID = output["pickOrderToPickID"];
   }
 
   /**
@@ -425,83 +472,103 @@ export class TradeToolComponent implements OnInit {
    *      Combinationsx x 3 =
    *                Point differential for value, pick quantity change, simplicity (# picks invovled)
    */
-  performTradeGenerations() {
-    this.picks_M = [];
-    this.pickOrderToPickID = [];
-    this.tradeOptions = [];
+  performTradeGenerations(
+    involvedPicks,
+    minTradeValueDif,
+    maxTradeValueDif,
+    maxTradePickDif,
+    minTradePickDif,
+    tradePicksQuantity
+  ) {
+    var pMatrix = [];
+    var pOrderToPickID = [];
+    var tOptions = [];
+    var perms;
 
     for (let raidersPick of this.teamToPickIDs[this.raiders["SailTeamID"]]) {
       if (
-        (this.pickInvolved[raidersPick] != -1 &&
+        (involvedPicks[raidersPick] != -1 &&
           this.pickIDToPick[raidersPick]["Season"] == this.year) ||
-        this.pickInvolved[raidersPick] == 1
+        involvedPicks[raidersPick] == 1
       ) {
-        if (this.picks_M.length < 15) {
-          this.picks_M.push([
-            -1 * this.pickIDToPick[raidersPick]["Points"],
-            -1,
-            1
-          ]);
-
-          this.pickOrderToPickID.push(raidersPick);
+        if (pMatrix.length < 10) {
+          pMatrix.push([-1 * this.pickIDToPick[raidersPick]["Points"], -1, 1]);
+          pOrderToPickID.push(raidersPick);
         }
       }
     }
     for (let tradeTeamPick of this.teamToPickIDs[
-      this.tradeTeam["SailTeamID"]
+      this.filterService.teamPortalActiveClubID
     ]) {
       if (
-        (this.pickInvolved[tradeTeamPick] != -1 &&
+        (involvedPicks[tradeTeamPick] != -1 &&
           this.pickIDToPick[tradeTeamPick]["Season"] == this.year) ||
-        this.pickInvolved[tradeTeamPick] == 1
+        involvedPicks[tradeTeamPick] == 1
       ) {
-        if (this.picks_M.length < 15) {
-          this.picks_M.push([this.pickIDToPick[tradeTeamPick]["Points"], 1, 1]);
-          this.pickOrderToPickID.push(tradeTeamPick);
+        if (pMatrix.length < 20) {
+          pMatrix.push([this.pickIDToPick[tradeTeamPick]["Points"], 1, 1]);
+          pOrderToPickID.push(tradeTeamPick);
         }
       }
     }
-    if (!this.permutationsAllSaved[this.picks_M.length]) {
-      this.permutations = [];
-
-      this.genperms2(this.picks_M.length);
+    if (!this.permutationsAllSaved[pMatrix.length]) {
+      perms = this.genperms2(pMatrix.length);
     } else {
-      this.permutations = this.permutationsAllSaved[this.picks_M.length];
+      perms = this.permutationsAllSaved[pMatrix.length];
     }
-    this.computeTradeOptions();
+
+    tOptions = this.computeTradeOptions(
+      pMatrix,
+      pOrderToPickID,
+      perms,
+      involvedPicks,
+      minTradeValueDif,
+      maxTradeValueDif,
+      maxTradePickDif,
+      minTradePickDif,
+      tradePicksQuantity
+    );
+    return { pickOrderToPickID: pOrderToPickID, tradeOptions: tOptions };
   }
 
   /**
    * From the permutations and picks matrix generate the trade package values
    */
-  computeTradeOptions() {
-    this.tradeOptions = [];
+  computeTradeOptions(
+    pMatrix,
+    pOrderToPickID,
+    perms,
+    involvedPicks,
+    minTradeValueDif,
+    maxTradeValueDif,
+    maxTradePickDif,
+    minTradePickDif,
+    tradePicksQuantity
+  ) {
+    var options = [];
     try {
       //go through permutations and compute the three values for the trades
       //i is the permutation
       //slot is the pick
       //inverted access
-      for (var i = 0; i < 2 ** this.picks_M.length; i++) {
+      for (var i = 0; i < 2 ** pMatrix.length; i++) {
         var valid = true;
         var value = 0;
         var pickChange = 0;
         var pickQuantity = 0;
         var count = 0;
         var perm = [];
-        for (var slot = 0; slot < this.picks_M.length; slot++) {
-          perm.push(this.permutations[slot][i]);
-          count += this.permutations[slot][i];
+        for (var slot = 0; slot < pMatrix.length; slot++) {
+          perm.push(perms[slot][i]);
+          count += perms[slot][i];
 
-          if (
-            this.pickInvolved[this.pickOrderToPickID[slot]] == 1 &&
-            this.permutations[slot][i] != 1
-          ) {
+          if (involvedPicks[pOrderToPickID[slot]] == 1 && perms[slot][i] != 1) {
             valid = false;
             continue;
           }
-          if (this.permutations[slot][i]) {
-            value += this.picks_M[slot][0];
-            pickChange += this.picks_M[slot][1];
+          if (perms[slot][i]) {
+            value += pMatrix[slot][0];
+            pickChange += pMatrix[slot][1];
             pickQuantity += 1;
           }
         }
@@ -510,19 +577,19 @@ export class TradeToolComponent implements OnInit {
         //Sort on the custom input values
         if (
           valid == true &&
-          value >= this.minTradeValueDif &&
-          value <= this.maxTradeValueDif &&
-          pickChange <= this.maxTradePickDif &&
-          pickChange >= this.minTradePickDif &&
-          pickQuantity <= this.tradePicksQuantity &&
+          value >= minTradeValueDif &&
+          value <= maxTradeValueDif &&
+          pickChange <= maxTradePickDif &&
+          pickChange >= minTradePickDif &&
+          pickQuantity <= tradePicksQuantity &&
           pickQuantity >= 2
         ) {
-          this.tradeOptions.push([value, pickChange, pickQuantity, perm]);
+          options.push([value, pickChange, pickQuantity, perm]);
         }
       }
 
       //sort based on value, then pick dif, then overall picks
-      this.tradeOptions = this.tradeOptions.sort((a, b) => {
+      options = options.sort((a, b) => {
         if (a[0] < b[0]) return 1;
         else if (a[0] > b[0]) return -1;
         else if (a[1] < b[1]) return 1;
@@ -534,50 +601,9 @@ export class TradeToolComponent implements OnInit {
     } catch (e) {
       console.log(e);
     }
+    return options;
   }
-  /**
-   * generate all permuations for given input length
-   * @param length number of picks potentially involved
-   * @param arrayRep array of permutations being build
-   * @param position index in array to recurse on
-   */
-  generatePermutations2(length: number, arrayRep: any, position: number) {
-    this.permutationsAll[position].push(cloneDeep(arrayRep));
-    if (position < length) {
-      //If the pick is definitely involved dont recurse down the scenario when its not in
-      if (this.pickInvolved[this.pickOrderToPickID[position]] != 1) {
-        arrayRep.push(0);
-        var newArr = cloneDeep(arrayRep);
-        this.generatePermutations(length, newArr, position + 1);
-      }
 
-      //recurse down scenario if the pick is involved
-      arrayRep[position] = 1;
-      this.generatePermutations(length, arrayRep, position + 1);
-    }
-  }
-  /**
-   * generate all permuations for a single length
-   * @param length number of picks potentially involved
-   * @param arrayRep array of permutations being build
-   * @param position index in array to recurse on
-   */
-  generatePermutations(length: number, arrayRep: any, position: number) {
-    if (position == length) {
-      this.permutations.push(arrayRep);
-    } else {
-      //If the pick is definitely involved dont recurse down the scenario when its not in
-      if (this.pickInvolved[this.pickOrderToPickID[position]] != 1) {
-        arrayRep.push(0);
-        var newArr = cloneDeep(arrayRep);
-        this.generatePermutations(length, newArr, position + 1);
-      }
-
-      //recurse down scenario if the pick is involved
-      arrayRep[position] = 1;
-      this.generatePermutations(length, arrayRep, position + 1);
-    }
-  }
   /**
    * Get the exact net value of picks selected
    */
@@ -589,11 +615,13 @@ export class TradeToolComponent implements OnInit {
           net -= this.pickIDToPick[element]["Points"];
         }
       });
-      this.teamToPickIDs[this.tradeTeam["SailTeamID"]].forEach(element => {
-        if (this.pickInvolved[element] == 1) {
-          net += this.pickIDToPick[element]["Points"];
+      this.teamToPickIDs[this.filterService.teamPortalActiveClubID].forEach(
+        element => {
+          if (this.pickInvolved[element] == 1) {
+            net += this.pickIDToPick[element]["Points"];
+          }
         }
-      });
+      );
     } catch (e) {}
     return net;
   }
@@ -608,11 +636,13 @@ export class TradeToolComponent implements OnInit {
           net -= 1;
         }
       });
-      this.teamToPickIDs[this.tradeTeam["SailTeamID"]].forEach(element => {
-        if (this.pickInvolved[element] == 1) {
-          net += 1;
+      this.teamToPickIDs[this.filterService.teamPortalActiveClubID].forEach(
+        element => {
+          if (this.pickInvolved[element] == 1) {
+            net += 1;
+          }
         }
-      });
+      );
     } catch (e) {}
     return net;
   }
@@ -627,11 +657,13 @@ export class TradeToolComponent implements OnInit {
           net += 1;
         }
       });
-      this.teamToPickIDs[this.tradeTeam["SailTeamID"]].forEach(element => {
-        if (this.pickInvolved[element] == 1) {
-          net += 1;
+      this.teamToPickIDs[this.filterService.teamPortalActiveClubID].forEach(
+        element => {
+          if (this.pickInvolved[element] == 1) {
+            net += 1;
+          }
         }
-      });
+      );
     } catch (e) {}
     return net;
   }
@@ -693,18 +725,20 @@ export class TradeToolComponent implements OnInit {
   tradeOptionClicked(event: any, trade: any, exact: number) {
     this.tradeSendingPicks["raiders"] = [];
     this.tradeSendingPicks["tradeTeam"] = [];
-
+    this.tradeSelectedArray = trade[3];
     if (exact == 1) {
       this.teamToPickIDs[this.raiders["SailTeamID"]].forEach(element => {
         if (this.pickInvolved[element] == 1) {
           this.tradeSendingPicks["raiders"].push(element);
         }
       });
-      this.teamToPickIDs[this.tradeTeam["SailTeamID"]].forEach(element => {
-        if (this.pickInvolved[element] == 1) {
-          this.tradeSendingPicks["tradeTeam"].push(element);
+      this.teamToPickIDs[this.filterService.teamPortalActiveClubID].forEach(
+        element => {
+          if (this.pickInvolved[element] == 1) {
+            this.tradeSendingPicks["tradeTeam"].push(element);
+          }
         }
-      });
+      );
     } else {
       for (var slot = 0; slot < trade[3].length; slot++) {
         if (trade[3][slot] == 1) {
@@ -718,9 +752,9 @@ export class TradeToolComponent implements OnInit {
             );
           }
           if (
-            this.teamToPickIDs[this.tradeTeam["SailTeamID"]].indexOf(
-              this.pickOrderToPickID[slot]
-            ) != -1
+            this.teamToPickIDs[
+              this.filterService.teamPortalActiveClubID
+            ].indexOf(this.pickOrderToPickID[slot]) != -1
           ) {
             this.tradeSendingPicks["tradeTeam"].push(
               this.pickOrderToPickID[slot]
@@ -755,11 +789,87 @@ export class TradeToolComponent implements OnInit {
   }
 
   /**
-   * Function to send list of picks involved in a trade to the DB
+   * Take 0, 1's array of picks and convert them to a list of Pick ID's to send down
+   * @param arr array of only 0's and 1's, 1's correspond to involved in the trade
    */
-  sendTradeToDB() {
+  convertPickArrayBinaryToArrayOfPickIDs(arr, pickOrderToPickID) {
+    var picks = [];
+    for (var slot = 0; slot < arr.length; slot++) {
+      if (arr[slot] == 1) {
+        picks.push(pickOrderToPickID[slot]);
+      }
+    }
+    return picks;
+  }
+
+  /**
+   * Function to send list of picks involved in a trade to the DB
+   * @param whoSent 1 raiders sent, 0 away team sent
+   */
+
+  sendTradeToDB(whoSent: Number) {
     console.log("SENDING Trade");
-    console.log(cloneDeep(this.tradeSendingPicks));
+    var pickInvolved = {};
+    Object.keys(this.pickInvolved).forEach(element => {
+      if (this.pickIDToPick[element]["ConditionalPick"] == 1) {
+        pickInvolved[element] = "-1";
+      } else {
+        pickInvolved[element] = "0";
+      }
+    });
+
+    pickInvolved[this.filterService.draftActiveNegotiation["LVPick"]] = "1";
+    pickInvolved[this.filterService.draftActiveNegotiation["TradeClubPick"]] =
+      "1";
+    var output = this.performTradeGenerations(
+      pickInvolved,
+      this.filterService.draftActiveNegotiation["mnValDif"],
+      this.filterService.draftActiveNegotiation["mxValDif"],
+      this.filterService.draftActiveNegotiation["mxPickDif"],
+      this.filterService.draftActiveNegotiation["mnPickDif"],
+      this.filterService.draftActiveNegotiation["NumPicks"]
+    );
+    var tradeOptions = output["tradeOptions"];
+    var pickOrderToPickID = output["pickOrderToPickID"];
+    var highTrade = tradeOptions[0];
+    if (tradeOptions.length > 0) {
+      var mediumTrade = tradeOptions.reduce(function(prev, curr) {
+        return Math.abs(prev[0]) < Math.abs(curr[0]) ? prev : curr;
+      });
+    }
+    var lowTrade = tradeOptions[tradeOptions.length - 1];
+    var sendingOffer = {
+      NegotiationID: this.filterService.draftActiveNegotiation.NegotiationID,
+      SailTeamID: this.filterService.teamPortalActiveClubID,
+      RaidersOffered: whoSent,
+      PickArray: this.convertPickArrayBinaryToArrayOfPickIDs(
+        this.tradeSelectedArray,
+        this.pickOrderToPickID
+      ),
+      High:
+        highTrade == null
+          ? []
+          : this.convertPickArrayBinaryToArrayOfPickIDs(
+              highTrade[3],
+              pickOrderToPickID
+            ),
+      Medium:
+        mediumTrade == null
+          ? []
+          : this.convertPickArrayBinaryToArrayOfPickIDs(
+              mediumTrade[3],
+              pickOrderToPickID
+            ),
+      Low:
+        lowTrade == null
+          ? []
+          : this.convertPickArrayBinaryToArrayOfPickIDs(
+              lowTrade[3],
+              pickOrderToPickID
+            )
+    };
+    this.pullData.sendOffer(JSON.stringify(sendingOffer));
+
     this.tradeToSend = false;
     this.tradeSendingPicks["raiders"] = [];
     this.tradeSendingPicks["tradeTeam"] = [];

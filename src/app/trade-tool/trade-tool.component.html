@@ -4,7 +4,7 @@
     <div class="teamSplit">
       <div class="raidersPicksBox">
         <div class="raidersTeamBox">
-          <div style="" id="raiders">
+          <div class="imageContainer" id="raiders">
             <img id="team" [src]="getActiveLogo(raiders)" class="tradeImage" />
           </div>
           <div id="team" class="tradeTeamName">
@@ -32,74 +32,79 @@
               Involved
             </div>
           </div>
-          <ng-container
-            *ngFor="let pick of teamToPickIDs[raiders['SailTeamID']]"
-          >
-            <div
-              *ngIf="pickIDToPick[pick]['Season'] == yearRaiders"
-              [ngStyle]="
-                checkConditional(pickIDToPick[pick]['ConditionalPick'])
-              "
-              class="pick"
+          <div class="picksDisplayed">
+            <ng-container
+              *ngFor="let pick of teamToPickIDs[raiders['SailTeamID']]"
             >
-              <div>
-                {{ pickIDToPick[pick]["PickLabel"] }}
-              </div>
+              <div
+                *ngIf="pickIDToPick[pick]['Season'] == yearRaiders"
+                [ngStyle]="
+                  checkConditional(pickIDToPick[pick]['ConditionalPick'])
+                "
+                class="pick"
+              >
+                <div>
+                  {{ pickIDToPick[pick]["PickLabel"] }}
+                </div>
 
-              <div class="switch-toggle switch-3 switch-candy">
-                <input
-                  id="off{{ pick }}"
-                  name="state-d{{ pick }}"
-                  type="radio"
-                  [checked]="checkTypePickToggleChecked(pick, -1)"
-                  [disabled]="pickIDToPick[pick]['ConditionalPick']"
-                />
-                <label
-                  for="off{{ pick }}"
-                  (click)="changeToggleValue(pick, -1)"
-                  >{{ "\u2717" }}</label
-                >
-                <input
-                  id="na{{ pick }}"
-                  name="state-d{{ pick }}"
-                  type="radio"
-                  [checked]="checkTypePickToggleChecked(pick, 0)"
-                  [disabled]="pickIDToPick[pick]['ConditionalPick']"
-                />
-                <label for="na{{ pick }}" (click)="changeToggleValue(pick, 0)"
-                  >&nbsp;</label
-                >
-                <input
-                  id="on{{ pick }}"
-                  name="state-d{{ pick }}"
-                  type="radio"
-                  [checked]="checkTypePickToggleChecked(pick, 1)"
-                  [disabled]="pickIDToPick[pick]['ConditionalPick']"
-                />
-                <label
-                  for="on{{ pick }}"
-                  (click)="changeToggleValue(pick, 1)"
-                  >{{ "\u2713" }}</label
-                >
+                <div class="switch-toggle switch-3 switch-candy">
+                  <input
+                    id="off{{ pick }}"
+                    name="state-d{{ pick }}"
+                    type="radio"
+                    [checked]="checkTypePickToggleChecked(pick, -1)"
+                    [disabled]="pickIDToPick[pick]['ConditionalPick']"
+                  />
+                  <label
+                    for="off{{ pick }}"
+                    (click)="changeToggleValue(pick, -1)"
+                    >{{ "\u2717" }}</label
+                  >
+                  <input
+                    id="na{{ pick }}"
+                    name="state-d{{ pick }}"
+                    type="radio"
+                    [checked]="checkTypePickToggleChecked(pick, 0)"
+                    [disabled]="pickIDToPick[pick]['ConditionalPick']"
+                  />
+                  <label for="na{{ pick }}" (click)="changeToggleValue(pick, 0)"
+                    >&nbsp;</label
+                  >
+                  <input
+                    id="on{{ pick }}"
+                    name="state-d{{ pick }}"
+                    type="radio"
+                    [checked]="checkTypePickToggleChecked(pick, 1)"
+                    [disabled]="pickIDToPick[pick]['ConditionalPick']"
+                  />
+                  <label
+                    for="on{{ pick }}"
+                    (click)="changeToggleValue(pick, 1)"
+                    >{{ "\u2713" }}</label
+                  >
 
-                <a id="type3Switch{{ pick }}" style="border-radius: 40px;"></a>
+                  <a
+                    id="type3Switch{{ pick }}"
+                    style="border-radius: 40px;"
+                  ></a>
+                </div>
               </div>
-            </div>
-          </ng-container>
+            </ng-container>
+          </div>
         </div>
       </div>
       <div class="tradeTeamContainer">
         <div class="tradeTeamBox" id="team">
-          <div style="" id="team">
+          <div class="imageContainer" id="team">
             <img
               id="team"
-              [src]="getActiveLogo(tradeTeam)"
+              [src]="getActiveLogo(filterService.teamPortalSelected)"
               class="tradeImage"
               (click)="displayTeams(showList)"
             />
           </div>
           <div id="team" class="tradeTeamName" (click)="displayTeams(showList)">
-            &nbsp;{{ getCityName(tradeTeam) }}
+            &nbsp;{{ getCityName(filterService.teamPortalSelected) }}
           </div>
           <div id="team" (click)="displayTeams(showList)">
             <i id="team" class="downArrow fa fa-angle-down fa-lg"></i>
@@ -151,59 +156,69 @@
               Involved
             </div>
           </div>
-          <ng-container
-            *ngFor="let pick of teamToPickIDs[tradeTeam['SailTeamID']]"
+          <div
+            class="picksDisplayed"
+            *ngIf="filterService.teamPortalActiveClubID != '1012'"
           >
-            <div
-              *ngIf="pickIDToPick[pick]['Season'] == yearTrade"
-              [ngStyle]="
-                checkConditional(pickIDToPick[pick]['ConditionalPick'])
+            <ng-container
+              *ngFor="
+                let pick of teamToPickIDs[filterService.teamPortalActiveClubID]
               "
-              class="pick"
             >
-              <div>
-                {{ pickIDToPick[pick]["PickLabel"] }}
-              </div>
-              <div class="switch-toggle switch-3 switch-candy">
-                <input
-                  id="off{{ pick }}"
-                  name="state-d{{ pick }}"
-                  type="radio"
-                  [disabled]="pickIDToPick[pick]['ConditionalPick']"
-                  [checked]="checkTypePickToggleChecked(pick, -1)"
-                />
-                <label
-                  for="off{{ pick }}"
-                  (click)="changeToggleValue(pick, -1)"
-                  >{{ "\u2717" }}</label
-                >
-                <input
-                  id="na{{ pick }}"
-                  name="state-d{{ pick }}"
-                  type="radio"
-                  [checked]="checkTypePickToggleChecked(pick, 0)"
-                  [disabled]="pickIDToPick[pick]['ConditionalPick']"
-                />
-                <label for="na{{ pick }}" (click)="changeToggleValue(pick, 0)"
-                  >&nbsp;</label
-                >
-                <input
-                  id="on{{ pick }}"
-                  name="state-d{{ pick }}"
-                  type="radio"
-                  [checked]="checkTypePickToggleChecked(pick, 1)"
-                  [disabled]="pickIDToPick[pick]['ConditionalPick']"
-                />
-                <label
-                  for="on{{ pick }}"
-                  (click)="changeToggleValue(pick, 1)"
-                  >{{ "\u2713" }}</label
-                >
+              <div
+                *ngIf="pickIDToPick[pick]['Season'] == yearTrade"
+                [ngStyle]="
+                  checkConditional(pickIDToPick[pick]['ConditionalPick'])
+                "
+                class="pick"
+              >
+                <div>
+                  {{ pickIDToPick[pick]["PickLabel"] }}
+                </div>
+                <div class="switch-toggle switch-3 switch-candy">
+                  <input
+                    id="off{{ pick }}"
+                    name="state-d{{ pick }}"
+                    type="radio"
+                    [disabled]="pickIDToPick[pick]['ConditionalPick']"
+                    [checked]="checkTypePickToggleChecked(pick, -1)"
+                  />
+                  <label
+                    for="off{{ pick }}"
+                    (click)="changeToggleValue(pick, -1)"
+                    >{{ "\u2717" }}</label
+                  >
+                  <input
+                    id="na{{ pick }}"
+                    name="state-d{{ pick }}"
+                    type="radio"
+                    [checked]="checkTypePickToggleChecked(pick, 0)"
+                    [disabled]="pickIDToPick[pick]['ConditionalPick']"
+                  />
+                  <label for="na{{ pick }}" (click)="changeToggleValue(pick, 0)"
+                    >&nbsp;</label
+                  >
+                  <input
+                    id="on{{ pick }}"
+                    name="state-d{{ pick }}"
+                    type="radio"
+                    [checked]="checkTypePickToggleChecked(pick, 1)"
+                    [disabled]="pickIDToPick[pick]['ConditionalPick']"
+                  />
+                  <label
+                    for="on{{ pick }}"
+                    (click)="changeToggleValue(pick, 1)"
+                    >{{ "\u2713" }}</label
+                  >
 
-                <a id="type3Switch{{ pick }}" style="border-radius: 40px;"></a>
+                  <a
+                    id="type3Switch{{ pick }}"
+                    style="border-radius: 40px;"
+                  ></a>
+                </div>
               </div>
-            </div>
-          </ng-container>
+            </ng-container>
+          </div>
         </div>
       </div>
     </div>
@@ -221,7 +236,7 @@
             type="text"
             id="minTradeValue"
             [(ngModel)]="minTradeValueDif"
-            (input)="computeTradeOptions()"
+            (input)="inputChange()"
             autocomplete="off"
             class="input"
           />
@@ -230,7 +245,7 @@
             type="text"
             id="maxTradeValue"
             [(ngModel)]="maxTradeValueDif"
-            (input)="computeTradeOptions()"
+            (input)="inputChange()"
             autocomplete="off"
             class="input"
           />
@@ -246,7 +261,7 @@
             type="text"
             id="minTradePick"
             [(ngModel)]="minTradePickDif"
-            (input)="computeTradeOptions()"
+            (input)="inputChange()"
             autocomplete="off"
             class="input"
           />
@@ -256,7 +271,7 @@
             type="text"
             id="maxTradePick"
             [(ngModel)]="maxTradePickDif"
-            (input)="computeTradeOptions()"
+            (input)="inputChange()"
             autocomplete="off"
             class="input"
           />
@@ -272,7 +287,7 @@
             type="text"
             id="tradePicksQuantity"
             [(ngModel)]="tradePicksQuantity"
-            (input)="computeTradeOptions()"
+            (input)="inputChange()"
             autocomplete="off"
             class="input"
           />
@@ -288,7 +303,11 @@
           <img id="" [src]="getActiveLogo(raiders)" class="tradeImage" />
         </div>
         <div class="imageContainer">
-          <img id="" [src]="getActiveLogo(tradeTeam)" class="tradeImage" />
+          <img
+            id=""
+            [src]="getActiveLogo(filterService.teamPortalSelected)"
+            class="tradeImage"
+          />
         </div>
         <div class="numberTradeHeader">Value&nbsp;&Delta;</div>
         <div class="numberTradeHeader">+/-</div>
@@ -320,12 +339,16 @@
           id="option"
           class="raidersReceivingExact"
           [ngStyle]="
-            lineHeightFromPickNumber(teamToPickIDs[tradeTeam['SailTeamID']])
+            lineHeightFromPickNumber(
+              teamToPickIDs[filterService.teamPortalActiveClubID]
+            )
           "
         >
           <span
             id="option"
-            *ngFor="let pick of teamToPickIDs[tradeTeam['SailTeamID']]"
+            *ngFor="
+              let pick of teamToPickIDs[filterService.teamPortalActiveClubID]
+            "
           >
             <ng-container *ngIf="pickInvolved[pick] == 1">
               {{ pickIDToPick[pick]["PickLabel"] }}
@@ -371,7 +394,7 @@
             <span id="option" *ngFor="let picked of trade[3]; let i = index">
               <ng-container
                 *ngIf="
-                  teamToPickIDs[tradeTeam['SailTeamID']].indexOf(
+                  teamToPickIDs[filterService.teamPortalActiveClubID].indexOf(
                     pickOrderToPickID[i]
                   ) != -1 && picked == 1
                 "
@@ -403,7 +426,8 @@
 
 <div id="sendingTradeBox" *ngIf="tradeToSend" class="tradeToSendBox">
   <div class="tradeToSendTop" id="send">
-    &nbsp;&nbsp;&nbsp;Confirm Trade Offer
+    &nbsp;Confirm Trade Offer
+    <span style="float: right;margin-right: 6px;">Offered By</span>
   </div>
   <div class="tradeToSendBottom" id="send">
     <div class="bottomGrid" id="send">
@@ -417,7 +441,7 @@
         >
       </div>
       <div class="teamPicksSending" id="send">
-        {{ tradeTeam["ClubNickName"] }}:
+        {{ filterService.teamPortalSelected["ClubNickName"] }}:
         <span
           style="margin-right:5px;"
           id="send"
@@ -426,8 +450,22 @@
         >
       </div>
     </div>
-    <div class="tradeToSendGo" id="send" (click)="sendTradeToDB()">
-      &#10004;
+    <div class="sendButtons">
+      <div class="tradeToSendGoRaiders" id="send" (click)="sendTradeToDB(1)">
+        <div class="imageContainer">
+          <img id="" [src]="getActiveLogo(raiders)" class="tradeImageSend" />
+        </div>
+      </div>
+
+      <div class="tradeToSendGoAway" id="send" (click)="sendTradeToDB(0)">
+        <div class="imageContainer">
+          <img
+            id=""
+            [src]="getActiveLogo(filterService.teamPortalSelected)"
+            class="tradeImageSend"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </div>

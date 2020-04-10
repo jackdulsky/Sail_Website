@@ -132,6 +132,8 @@ export class FiltersService {
   };
   playerPortalActivePlayerID = "";
 
+  //negotiationID for Draft tradetool
+  draftActiveNegotiation;
   //imported static map for name to hex
   colours = colours;
 
@@ -855,7 +857,10 @@ export class FiltersService {
     } else {
       var oldDB = cloneDeep(this.DBFormat);
       //only allow one club or player if on that portal
-      if (this.router.url.includes("club/")) {
+      if (
+        this.router.url.includes("club/") ||
+        this.router.url.includes("draft/")
+      ) {
         this.reduceFiltersSingleClub();
       }
       if (
@@ -1153,10 +1158,12 @@ export class FiltersService {
           this.setActiveClub();
           this.setActivePlayer();
           this.updateRDURL();
+
           setTimeout(() => {
             //wait for the DB to take and insert to make the call
             console.log("LOOP 12");
             this.setPlayers();
+            this.setNegotiation();
           }, 200);
         }
       }, 500);
@@ -1164,6 +1171,32 @@ export class FiltersService {
       setTimeout(() => {
         this.saveAndSend();
       }, 100);
+    }
+  }
+
+  /**
+   * after sending filters down to database check if on the draft tab and get the negotiation ID
+   */
+  setNegotiation() {
+    if (this.router.url.includes("draft")) {
+      this.pullData.getNegotiation().subscribe(data => {
+        try {
+          console.log("Neogitation Object", data);
+          this.draftActiveNegotiation = data[0];
+        } catch (e) {
+          this.draftActiveNegotiation = {
+            NegotiationID: Math.floor(Math.random() * -100 - 1),
+            TradeClub: 2,
+            TradeClubPick: 54,
+            LVPick: 12,
+            mnValDif: -20,
+            mxValDif: 20,
+            mnPickDif: -2,
+            mxPickDif: 2,
+            NumPicks: 6
+          };
+        }
+      });
     }
   }
 

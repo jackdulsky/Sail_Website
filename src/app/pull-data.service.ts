@@ -352,4 +352,40 @@ export class PullDataService {
       "select * From Draft.Draft20.ClubDraftPick order by 'Season', 'Round', 'Overall'";
     return this.postQuery(query);
   }
+
+  /**
+   * From GUID get negotiation details
+   */
+  getNegotiation() {
+    var query =
+      "Exec Draft.Draft20.spInitializeNegotiation '" + this.GUID + "'";
+    return this.postQuery(query);
+  }
+
+  /**
+   *
+   * @param jsonData json string of data to send down of an offer input
+   */
+  sendOffer(jsonData: String) {
+    console.log("Sent: ", jsonData);
+    var query = "Exec Draft.Draft20.InitializeOffer `" + jsonData + "'";
+    return this.postQuery(query);
+  }
+
+  /**
+   * get the negotiations
+   */
+  pullDraftNegotiations() {
+    var query =
+      "select * FROM Draft.Draft20.Negotiation order by NegotiationID desc";
+    return this.postQuery(query);
+  }
+
+  /**
+   * get the negotiations
+   */
+  pullDraftOffers() {
+    var query = "select * FROM Draft.Draft20.Offer order by NegotiationID desc";
+    return this.postQuery(query);
+  }
 }

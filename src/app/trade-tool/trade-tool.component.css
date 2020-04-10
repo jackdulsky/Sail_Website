@@ -154,10 +154,14 @@
 .pickRegion {
   float: left;
   width: -webkit-fill-available;
+}
+.picksDisplayed {
   overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 432px;
 }
 .pick {
-  width: 100%px;
+  width: 100%;
   text-align: center;
   height: 32px;
   padding: 2px;
@@ -190,6 +194,8 @@
 }
 .imageContainer {
   text-align: center;
+  display: flex;
+  height: 100%;
 }
 .tradeOptionsDisplay {
   width: 100%;
@@ -725,7 +731,7 @@
 }
 
 .tradeToSendBox {
-  height: 75px;
+  height: 130px;
   width: 450px;
   border: 1px solid grey;
   box-shadow: 1px 1px 1px grey;
@@ -746,7 +752,7 @@
   margin-top: 5px;
 }
 .tradeToSendTop {
-  height: 45%;
+  height: 30%;
   background-color: #ececec;
   line-height: 35px;
   border-top-right-radius: 5px;
@@ -754,28 +760,52 @@
 }
 .tradeToSendBottom {
   display: flex;
-  height: 55%;
+  height: 70%;
 }
-.tradeToSendGo {
-  background-image: linear-gradient(#46a4d8, #3d77b9);
+.tradeToSendGoAway,
+.tradeToSendGoRaiders {
+  /* background-image: linear-gradient(#46a4d8, #3d77b9); */
+  background-color: var(--raiders-gray);
   color: white;
   width: 44px;
-  height: 31px;
-  display: inline-block;
-  text-align: center;
-  margin-top: 5px;
+  height: 40px;
+
   border-radius: 5px;
   margin-left: 7px;
   line-height: 31px;
+}
+.sendButtons {
   position: absolute;
   right: 0;
+  margin-top: 3px;
+  display: inline-block;
+  text-align: center;
+}
+.tradeToSendGoRaiders {
+  margin-right: 20px;
+  margin-bottom: 3px;
+}
+.tradeToSendGoAway {
   margin-right: 5px;
 }
-.tradeToSendGo:hover {
+.tradeImageSend {
+  max-height: 40px;
+  max-width: 40px;
+
+  z-index: 2;
+  margin: auto;
+}
+
+.tradeToSendGoRaiders:hover,
+.tradeToSendGoAway:hover {
   cursor: pointer;
+  background-color: var(--darker-gray);
 }
 .bottomGrid {
 }
 .teamPicksSending {
   margin-left: 5px;
+  height: 50%;
+  line-height: 45px;
+  font-size: 18px;
 }
