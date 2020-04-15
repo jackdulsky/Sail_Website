@@ -8,12 +8,19 @@
 .activeTradeContainer,
 .highTradeContainer,
 .lowTradeContainer,
-.mediumTradeContainer {
+.mediumTradeContainer,
+.tradeContainer {
   padding: 0px 10px;
   margin: 10px;
   border: 1px solid black;
   min-height: 75px;
 }
+.lowTradeContainer,
+.mediumTradeContainer,
+.highTradeContainer {
+  line-height: 75px;
+}
+
 .overallContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -133,7 +140,6 @@
 .teamsPicksContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-column-gap: 10px;
   border: 1px solid black;
   margin: 0px 10px;
   min-height: 375px;

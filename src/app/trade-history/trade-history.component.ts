@@ -16,30 +16,24 @@ export class TradeHistoryComponent implements OnInit {
   ) {
     this.tradeTool.ngOnInit();
   }
-  fake_N = [];
-  fake_O = [];
-  fake_N_Map = {};
-  fake_O_Map = {};
+
   offers;
   offersMap = {};
   negotiations;
   negotiationsMap = {};
-
-  viewingOffer = "";
+  displayingOffers = {};
   clickedNegotiation = -1;
-  highTrade;
-  mediumTrade;
-  lowTrade;
+  highTrade = "";
+  mediumTrade = "";
+  lowTrade = "";
   pickOrderToPickID;
   firstSelectionMade = false;
   ngOnInit() {
     this.filterService.pullData.pullDraftOffers().subscribe(data => {
       this.offers = data;
-      console.log("OFFERS", this.offers);
     });
     this.filterService.pullData.pullDraftNegotiations().subscribe(data => {
       this.negotiations = data;
-      console.log("Negotiations", this.negotiations);
     });
     this.init();
   }
@@ -50,54 +44,10 @@ export class TradeHistoryComponent implements OnInit {
       this.offers == null
     ) {
       setTimeout(() => {
-        console.log("LOOP 51");
+        console.log("LOOP 52");
         this.init();
       }, 100);
     } else {
-      console.log("HERE2");
-      // for (var i = 0; i < 10; i++) {
-      //   this.fake_N.push({
-      //     NegotiationID: i,
-      //     TradeTeamID: 1014 + i,
-      //     Active: i % 2,
-      //     OrderID: 10 - i,
-      //     Main_Pick_Raiders: this.tradeTool.teamToPickIDs[String(1014 + i)][0],
-      //     Main_Pick_Trade: this.tradeTool.teamToPickIDs["1012"][0]
-      //   });
-      //   for (var j = 0; j < 5; j++) {
-      //     this.fake_O.push({
-      //       OfferID: i + "_" + j,
-      //       OrderID: j,
-      //       NegotiationID: i,
-      //       RaidersOffered: j % 2,
-      //       TradeText: "TRADE OFFER " + String(i) + "_" + String(j),
-      //       Active: j == 0 ? 1 : 0
-      //     });
-      //   }
-      // }
-
-      // this.fake_N.forEach(element => {
-      //   element["TradeTeamID"] = this.tradeTool.clubIDToSailID[
-      //     element["TradeClub"]
-      //   ];
-      //   this.fake_N_Map[element["NegotiationID"]] = element;
-      // });
-      console.log("NEGOTIATION", this.negotiations);
-      this.negotiations.forEach(element => {
-        element["TradeTeamID"] = this.tradeTool.clubIDToSailID[
-          element["TradeClub"]
-        ];
-        element["Main_Pick_Raiders"] = element["LVPick"];
-        element["Main_Pick_Trade"] = element["TradeClubPick"];
-        element["OrderID"] = element["NegotiationID"];
-
-        this.negotiationsMap[element["NegotiationID"]] = element;
-      });
-
-      // this.fake_O.forEach(element => {
-      //   this.fake_O_Map[element["OfferID"]] = element;
-      // });
-
       this.offers.forEach(element => {
         element["OfferTeamID"] = this.tradeTool.clubIDToSailID[
           element["OfferClubID"]
@@ -106,10 +56,24 @@ export class TradeHistoryComponent implements OnInit {
 
         this.offersMap[element["OfferID"]] = element;
       });
-      console.log("HERE!");
-      console.log("Offers", this.offersMap);
-      console.log("Negotiations", this.negotiationsMap);
+      this.negotiations.forEach(element => {
+        element["TradeTeamID"] = this.tradeTool.clubIDToSailID[
+          element["TradeClub"]
+        ];
+        element["Main_Pick_Raiders"] = element["LVPick"];
+        element["Main_Pick_Trade"] = element["TradeClubPick"];
+        element["OrderID"] = element["NegotiationID"];
+        if (element.TradeClub != null) {
+          var active = this.getActiveOffer(element["NegotiationID"]);
+          element["ActiveOfferID"] =
+            active.OfferCode != 0 ? active["OfferID"] : 0;
+          console.log("TradeText", active.TradeText);
+          this.negotiationsMap[element["NegotiationID"]] = element;
+        }
+      });
     }
+    // console.log("offers", this.offersMap);
+    // console.log("negotiations", this.negotiationsMap);
   }
 
   /**
@@ -127,29 +91,12 @@ export class TradeHistoryComponent implements OnInit {
         this.getActiveOffer(negotiation);
       }, 100);
     } else {
-      var offer = { OfferCode: 0 };
-      // Object.keys(this.fake_O_Map).forEach(offerID => {
-      //   if (
-      //     this.fake_O_Map[offerID].NegotiationID == negotiation &&
-      //     this.fake_O_Map[offerID].Active
-      //   ) {
-      //     offer = this.fake_O_Map[offerID];
-      //   }
-      // });
-
-      // offer = Object.keys(this.offersMap).reduce(function(prev, curr) {
-      //   return this.offersMap[curr]["OfferCode"] > 0 &&
-      //     this.offersMap[curr]["OfferCode"] == negotiation &&
-      //     this.offersMap[curr]["OfferCode"] > this.offersMap[prev]["OfferCode"]
-      //     ? this.offersMap[curr]
-      //     : this.offersMap[prev];
-      // });
-
+      var offer = { OfferCode: 0, TradeText: "", OfferID: 0 };
       Object.keys(this.offersMap).forEach(offerID => {
         if (
           this.offersMap[offerID].OfferCode > 0 &&
           this.offersMap[offerID].NegotiationID == negotiation &&
-          this.offersMap[offerID].OfferCode > offer.OfferCode
+          this.offersMap[offerID].OfferID > offer.OfferID
         ) {
           offer = this.offersMap[offerID];
         }
@@ -165,57 +112,18 @@ export class TradeHistoryComponent implements OnInit {
    * @param negotiation Negotiation ID number
    * @param offerID Offer ID number
    */
-  selectNegotiation(negotiation: number, offerID: any) {
+  selectNegotiation(negotiation: number) {
     this.clickedNegotiation = negotiation;
-    // this.filterService.teamPortalSelected = this.filterService.teamsMap[
-    //   this.fake_N_Map[negotiation].TradeTeamID
-    // ];
-    // this.filterService.teamPortalActiveClubID = this.fake_N_Map[
-    //   negotiation
-    // ].TradeTeamID;
     this.filterService.teamPortalSelected = this.filterService.teamsMap[
       this.negotiationsMap[negotiation].TradeTeamID
     ];
     this.filterService.teamPortalActiveClubID = this.negotiationsMap[
       negotiation
     ].TradeTeamID;
-
-    this.highTrade = null;
-    this.mediumTrade = null;
-    this.lowTrade = null;
-    this.viewingOffer = String(offerID);
-
-    //calculate the high mid low offers
-
-    //reset picks
-    var pickInvolved = {};
-    Object.keys(this.tradeTool.pickInvolved).forEach(element => {
-      if (this.tradeTool.pickIDToPick[element]["ConditionalPick"] == 1) {
-        pickInvolved[element] = "-1";
-      } else {
-        pickInvolved[element] = "0";
-      }
-    });
-
-    pickInvolved[this.negotiationsMap[negotiation].Main_Pick_Raiders] = "1";
-    pickInvolved[this.negotiationsMap[negotiation].Main_Pick_Trade] = "1";
-    var output = this.tradeTool.performTradeGenerations(
-      pickInvolved,
-      this.tradeTool.minTradeValueDif,
-      this.tradeTool.maxTradeValueDif,
-      this.tradeTool.maxTradePickDif,
-      this.tradeTool.minTradePickDif,
-      this.tradeTool.tradePicksQuantity
-    );
-    var tradeOptions = output["tradeOptions"];
-    this.pickOrderToPickID = output["pickOrderToPickID"];
-    this.highTrade = tradeOptions[0];
-    if (tradeOptions.length > 0) {
-      this.mediumTrade = tradeOptions.reduce(function(prev, curr) {
-        return Math.abs(prev[0]) < Math.abs(curr[0]) ? prev : curr;
-      });
-    }
-    this.lowTrade = tradeOptions[tradeOptions.length - 1];
+    this.highTrade = this.getCounters(-3);
+    this.mediumTrade = this.getCounters(-2);
+    this.lowTrade = this.getCounters(-1);
+    this.displayingOffers = this.getOffers(this.clickedNegotiation);
     this.firstSelectionMade = true;
   }
 
@@ -245,11 +153,15 @@ export class TradeHistoryComponent implements OnInit {
   /**
    * get offers from clicked negotiation
    */
-  getOffers() {
+  getOffers(negotiation) {
     var offers = {};
-    Object.keys(this.offersMap).forEach(key => {
+    var keys = Object.keys(this.offersMap);
+    if (keys.length == 0) {
+      return {};
+    }
+    keys.forEach(key => {
       if (
-        this.offersMap[key].NegotiationID == this.clickedNegotiation &&
+        this.offersMap[key].NegotiationID == negotiation &&
         this.offersMap[key].OfferCode > 0
       ) {
         offers[key] = this.offersMap[key];
@@ -261,16 +173,24 @@ export class TradeHistoryComponent implements OnInit {
   /**
    * get high medium and low offers
    */
-  getCounters() {
-    var offers = {};
-    Object.keys(this.offersMap).forEach(key => {
+  getCounters(option: number) {
+    var keys = Object.keys(this.offersMap);
+    if (keys.length == 0) {
+      return "";
+    }
+    var text = "";
+    keys.forEach(key => {
       if (
         this.offersMap[key].NegotiationID == this.clickedNegotiation &&
-        this.offersMap[key].OfferCode < 0
+        this.offersMap[key].OfferCode == option
       ) {
-        offers[key] = this.offersMap[key];
+        text = this.offersMap[key].TradeText;
       }
     });
-    return offers;
+    return text;
   }
+
+  /**
+   * get the background color based on index for the
+   */
 }

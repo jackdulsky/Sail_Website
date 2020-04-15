@@ -41,8 +41,7 @@ export class PullDataService {
    * RETURN ALL THE INFO RELATED TO TEAMS FROM THE DATA BASE
    */
   getTeams() {
-    var query =
-      "select SailTeamID,TeamCode,Conference,Division,ClubCityName, ClubNickName from SaildB.org.TeamSeason where LeagueType = 'NFL' and Season  = '2020'";
+    var query = "select * from SaildB.org.tblClub where LeagueType = 'NFL'";
     return this.postQuery(query);
   }
 
@@ -367,8 +366,8 @@ export class PullDataService {
    * @param jsonData json string of data to send down of an offer input
    */
   sendOffer(jsonData: String) {
-    console.log("Sent: ", jsonData);
-    var query = "Exec Draft.Draft20.InitializeOffer `" + jsonData + "'";
+    var query = "Exec Draft.Draft20.InitializeOffer '" + jsonData + "'";
+    console.log(query);
     return this.postQuery(query);
   }
 
@@ -386,6 +385,16 @@ export class PullDataService {
    */
   pullDraftOffers() {
     var query = "select * FROM Draft.Draft20.Offer order by NegotiationID desc";
+    return this.postQuery(query);
+  }
+
+  /**
+   * override a trade suggestion
+   * @param jsonData json string containing NegotiationID and OfferCode, and PickArray
+   */
+  pushDraftOfferSuggestion(jsonData: String) {
+    var query = "Exec Draft.Draft20.spUpdateOfferMinMax '" + jsonData + "'";
+    console.log(query);
     return this.postQuery(query);
   }
 }

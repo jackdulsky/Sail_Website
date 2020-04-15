@@ -118,15 +118,31 @@ export class FiltersService {
 
   //default player club information
   //might make sense to move this to a flag in the teams seciton passed down
-  teamPortalActiveClubID = "1012";
-  teamPortalSelected = {
+  teamPortalActiveClubID;
+  teamPortalSelected;
+  defaultTeamCode = "1012";
+  defaultTeam = {
     SailTeamID: "1012",
+    GSISClubID: "13",
+    GSISClubKey: "5092",
+    NCAAID: null,
+    Season: "2020",
     TeamCode: "LV",
+    LeagueType: "NFL",
     Conference: "AFC",
     Division: "West",
-    ClubCityName: "NFL",
-    ClubNickName: ""
+    ClubCityName: "Las Vegas",
+    ClubNickName: "Raiders",
+    SchemeOffense: null,
+    SchemeDefense: "43",
+    ClubColor1: "#000000",
+    ClubColor2: "#BCC4CB",
+    ClubColor3: "#a3a3b5",
+    ClubImageURL:
+      "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/Oakland_Raiders.png?",
+    StadiumID: null
   };
+
   playerPortalSelected = {
     Label: "Player Select"
   };
@@ -432,6 +448,8 @@ export class FiltersService {
    */
   getBulkImport() {
     if (!this.bulkImported) {
+      this.teamPortalSelected = this.defaultTeam;
+      this.teamPortalActiveClubID = this.defaultTeamCode;
       this.pullData.setGUID(); //set guid
       this.pullData.constructAndSendFilters({
         "-4": { "4": [["2019"], {}, []] }
@@ -1184,17 +1202,7 @@ export class FiltersService {
           console.log("Neogitation Object", data);
           this.draftActiveNegotiation = data[0];
         } catch (e) {
-          this.draftActiveNegotiation = {
-            NegotiationID: Math.floor(Math.random() * -100 - 1),
-            TradeClub: 2,
-            TradeClubPick: 54,
-            LVPick: 12,
-            mnValDif: -20,
-            mxValDif: 20,
-            mnPickDif: -2,
-            mxPickDif: 2,
-            NumPicks: 6
-          };
+          console.log("ERROR GETTING NEGOTIATION", data);
         }
       });
     }
@@ -2140,15 +2148,8 @@ export class FiltersService {
       }
       //default
       if (notFound) {
-        this.teamPortalActiveClubID = "1012";
-        this.teamPortalSelected = {
-          SailTeamID: "1012",
-          TeamCode: "LV",
-          Conference: "AFC",
-          Division: "West",
-          ClubCityName: "NFL",
-          ClubNickName: ""
-        };
+        this.teamPortalActiveClubID = this.defaultTeamCode;
+        this.teamPortalSelected = this.defaultTeam;
       }
     } catch (e) {}
   }
