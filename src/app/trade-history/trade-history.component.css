@@ -1,3 +1,6 @@
+.fontDIN {
+  font-family: "DIN-Regular";
+}
 .rightSide,
 .leftSide {
   padding: 10px;
@@ -12,7 +15,7 @@
 .tradeContainer {
   padding: 0px 10px;
   margin: 10px;
-  border: 1px solid black;
+  border: 4px solid #e5e5e5;
   min-height: 75px;
 }
 .lowTradeContainer,
@@ -20,7 +23,11 @@
 .highTradeContainer {
   line-height: 75px;
 }
-
+.countersContainer {
+  margin: 0px 10px 10px 10px;
+  border: 4px solid #e5e5e5;
+  padding: 0px 10px 24px 10px;
+}
 .overallContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -80,16 +87,48 @@
 }
 .tradeImage {
   max-height: 51px;
-  max-width: 51px;
 
   z-index: 2;
   margin: auto;
 }
-.tradeNegotiationOfferText {
+.negotiationMainText {
+  margin: auto 0px;
+  font-size: 30px;
+}
+.negotiationInfoText,
+.offerInfoText {
+  margin: auto 0px;
+}
+.offerPointText {
+  margin: auto 0px;
+
+  font-size: 30px;
+}
+.counterInfoText {
+  background-color: #e5e5e5;
+  font-size: 21px;
   margin: auto 0px;
   text-align: left;
+  min-height: 55px;
+  display: grid;
+
+  padding-left: 15px;
+  border-radius: 0px 10px 10px 0px;
+}
+.offerTextContainer {
+  display: grid;
+  grid-template-columns: 88% 12%;
+}
+.tradeNegotiationOfferText {
+  width: 100%;
+  font-size: 21px;
+  margin: auto 0px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 35% 65%;
 }
 .negotiation {
+  border: 3px solid black;
   display: grid;
   grid-template-columns: 0.3fr 1.5fr;
   background-color: #e1e1e1;
@@ -97,10 +136,12 @@
   max-height: 55px;
   border-radius: 10px;
   margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 24px;
+  font-family: "DIN-Regular";
 }
 .negotiation:hover {
   cursor: pointer;
-  background-color: #c2f1bc !important;
 }
 .activeOffer {
   background-color: #5fb1e3;
@@ -116,20 +157,39 @@
   background-color: #ebffeb;
 }
 .singleOffer {
-  padding: 10px;
+  padding: 5px;
   border-radius: 10px;
   margin: 10px 0px;
+  display: grid;
+  grid-template-columns: 0.3fr 1.5fr;
   background-color: #e1e1e1;
+  min-height: 55px;
+  max-height: 55px;
+  font-weight: bold;
+  font-size: 21px;
+  font-family: "DIN-Regular";
+}
+.counterOffer {
+  padding: 5px;
+  margin: 10px 0px;
+  display: grid;
+  grid-template-columns: 0.3fr 1.5fr;
+  min-height: 55px;
+  max-height: 55px;
+  font-weight: bold;
+  font-size: 21px;
+  font-family: "DIN-Regular";
 }
 .singleOffer:hover {
 }
 
 .header {
   text-align: center;
-  background-color: #000;
-  color: #fff;
+  background-color: #e5e5e5;
+  color: black;
   width: calc(100% - 20px);
   margin: 0px 10px;
+  font-weight: bold;
 }
 
 .tradeOfferHistoryHeader {
@@ -140,17 +200,62 @@
 .teamsPicksContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border: 1px solid black;
+  border: 4px solid #e5e5e5;
   margin: 0px 10px;
+  grid-column-gap: 5px;
   min-height: 375px;
+}
+.teamPickContainer {
+  margin: 10px 20px;
 }
 .teamHeader {
   background-color: grey;
+  min-height: 40px;
+}
+.teamHeaderText {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 40px;
 }
 .picksContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
   /* border: 1px solid black; */
+}
+.singlePick {
+  border-radius: 4px;
+  text-align: left;
+  margin-left: 5px;
+}
+.pickValue {
+  background-color: rgba(80, 80, 80, 0.65);
+  text-align: center;
+  color: #fff;
+  border-radius: 0px 5px 5px 0px;
+}
+.counterValue {
+  margin: auto 0px;
+  font-size: 30px;
+  text-align: center;
+  color: white;
+  min-height: 55px;
+  border-radius: 10px 0px 0px 10px;
+  background-color: black;
+  line-height: 55px;
+}
+.pick {
+  font-size: 18px;
+}
+.pick {
+  text-align: center;
+  height: 28px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  line-height: 28px;
+  background-color: #f0f2f5;
+  border-radius: 5px;
+  margin: 5px;
 }
 .pickSingle {
   width: 100%;
@@ -171,4 +276,5 @@
   max-height: 292px;
   overflow-y: auto;
   overflow-x: hidden;
+  padding: 0px 20px;
 }

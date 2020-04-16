@@ -375,8 +375,7 @@ export class PullDataService {
    * get the negotiations
    */
   pullDraftNegotiations() {
-    var query =
-      "select * FROM Draft.Draft20.Negotiation order by NegotiationID desc";
+    var query = "select * FROM Draft.Draft20.ActiveTrade";
     return this.postQuery(query);
   }
 

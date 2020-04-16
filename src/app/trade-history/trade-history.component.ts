@@ -23,17 +23,22 @@ export class TradeHistoryComponent implements OnInit {
   negotiationsMap = {};
   displayingOffers = {};
   clickedNegotiation = -1;
-  highTrade = "";
-  mediumTrade = "";
-  lowTrade = "";
+  highTrade;
+  mediumTrade;
+  lowTrade;
+  defaultCounter = { TradeText: "", PointDiff: "" };
   pickOrderToPickID;
   firstSelectionMade = false;
   ngOnInit() {
+    this.highTrade = this.defaultCounter;
+    this.mediumTrade = this.defaultCounter;
+    this.lowTrade = this.defaultCounter;
     this.filterService.pullData.pullDraftOffers().subscribe(data => {
       this.offers = data;
     });
     this.filterService.pullData.pullDraftNegotiations().subscribe(data => {
       this.negotiations = data;
+      // console.log("RAW", data);
     });
     this.init();
   }
@@ -49,31 +54,18 @@ export class TradeHistoryComponent implements OnInit {
       }, 100);
     } else {
       this.offers.forEach(element => {
-        element["OfferTeamID"] = this.tradeTool.clubIDToSailID[
-          element["OfferClubID"]
-        ];
         element["OrderID"] = element["OfferID"];
-
+        element["OfferedClubURL"] =
+          element["OfferClubID"] == 13
+            ? this.tradeTool.raiders.ClubImageURL
+            : element.ClubImageURL;
         this.offersMap[element["OfferID"]] = element;
       });
       this.negotiations.forEach(element => {
-        element["TradeTeamID"] = this.tradeTool.clubIDToSailID[
-          element["TradeClub"]
-        ];
-        element["Main_Pick_Raiders"] = element["LVPick"];
-        element["Main_Pick_Trade"] = element["TradeClubPick"];
-        element["OrderID"] = element["NegotiationID"];
-        if (element.TradeClub != null) {
-          var active = this.getActiveOffer(element["NegotiationID"]);
-          element["ActiveOfferID"] =
-            active.OfferCode != 0 ? active["OfferID"] : 0;
-          console.log("TradeText", active.TradeText);
-          this.negotiationsMap[element["NegotiationID"]] = element;
-        }
+        element["OrderID"] = element["OfferID"];
+        this.negotiationsMap[element["NegotiationID"]] = element;
       });
     }
-    // console.log("offers", this.offersMap);
-    // console.log("negotiations", this.negotiationsMap);
   }
 
   /**
@@ -113,13 +105,11 @@ export class TradeHistoryComponent implements OnInit {
    * @param offerID Offer ID number
    */
   selectNegotiation(negotiation: number) {
+    this.highTrade = this.defaultCounter;
+    this.mediumTrade = this.defaultCounter;
+    this.lowTrade = this.defaultCounter;
     this.clickedNegotiation = negotiation;
-    this.filterService.teamPortalSelected = this.filterService.teamsMap[
-      this.negotiationsMap[negotiation].TradeTeamID
-    ];
-    this.filterService.teamPortalActiveClubID = this.negotiationsMap[
-      negotiation
-    ].TradeTeamID;
+
     this.highTrade = this.getCounters(-3);
     this.mediumTrade = this.getCounters(-2);
     this.lowTrade = this.getCounters(-1);
@@ -133,21 +123,90 @@ export class TradeHistoryComponent implements OnInit {
    */
   getActiveBackground(active: boolean) {
     if (active) {
-      return { backgroundColor: "#5fb1e3" };
+      return this.getNegotiationBackground(this.clickedNegotiation);
     } else {
-      return { backgroundColor: "#e1e1e1" };
+      return { backgroundColor: "grey" };
     }
   }
+
   /**
-   * Return the offer color for which one is active
-   * @param active 1 == on 0 == off
+   * if active do checking
+   * @param active bool if active offer
    */
-  getNegotiationBackground(negotiation: number) {
-    if (negotiation == this.clickedNegotiation) {
-      return { backgroundColor: "#71d28d" };
+  getOfferTextColor(active) {
+    if (active) {
+      return this.getNegotiationTextColor(this.clickedNegotiation);
     } else {
+      return { color: "white" };
+    }
+  }
+
+  getBG(team) {
+    try {
+      return { backgroundColor: team.ClubColor1 };
+    } catch (e) {
       return {};
     }
+  }
+
+  getTextInvert(team) {
+    var styles = {};
+    try {
+      var bgCol = team.ClubColor1;
+
+      var c = bgCol.substring(1); // strip #
+      var rgb = parseInt(c, 16); // convert rrggbb to decimal
+      var r = (rgb >> 16) & 0xff; // extract red
+      var g = (rgb >> 8) & 0xff; // extract green
+      var b = (rgb >> 0) & 0xff; // extract blue
+
+      var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+      if (luma < 65) {
+        //Threshold of 65 was chosen, you cn see how otehr cutoffs work by playing around on the report uploader where its the same threshold
+        // pick a different colour
+        styles["filter"] = "invert(1)";
+      }
+    } catch (e) {}
+    return styles;
+  }
+
+  /**
+   * Return the color of the team if selected
+   * @param negotiation
+   */
+  getNegotiationBackground(negotiation: number) {
+    var styles = {};
+    if (negotiation == this.clickedNegotiation) {
+      var bgCol = this.negotiationsMap[this.clickedNegotiation].ClubColor1;
+      styles["backgroundColor"] = bgCol;
+    }
+
+    return styles;
+  }
+
+  /**
+   * invert text color if needed
+   * @param negotiation negotiation ID
+   */
+  getNegotiationTextColor(negotiation: number) {
+    var styles = {};
+    if (negotiation == this.clickedNegotiation) {
+      var bgCol = this.negotiationsMap[this.clickedNegotiation].ClubColor1;
+
+      var c = bgCol.substring(1); // strip #
+      var rgb = parseInt(c, 16); // convert rrggbb to decimal
+      var r = (rgb >> 16) & 0xff; // extract red
+      var g = (rgb >> 8) & 0xff; // extract green
+      var b = (rgb >> 0) & 0xff; // extract blue
+
+      var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+      if (luma < 65) {
+        //Threshold of 65 was chosen, you cn see how otehr cutoffs work by playing around on the report uploader where its the same threshold
+        // pick a different colour
+        styles["filter"] = "invert(1)";
+      }
+    }
+    return styles;
   }
 
   /**
@@ -178,16 +237,16 @@ export class TradeHistoryComponent implements OnInit {
     if (keys.length == 0) {
       return "";
     }
-    var text = "";
+    var offer = { TradeText: "", PointDiff: "" };
     keys.forEach(key => {
       if (
         this.offersMap[key].NegotiationID == this.clickedNegotiation &&
         this.offersMap[key].OfferCode == option
       ) {
-        text = this.offersMap[key].TradeText;
+        offer = this.offersMap[key];
       }
     });
-    return text;
+    return offer;
   }
 
   /**
