@@ -8,7 +8,7 @@ import { ChangeDetectorRef } from "@angular/core";
 import { transition } from "@angular/animations";
 import { ɵELEMENT_PROBE_PROVIDERS__POST_R3__ } from "@angular/platform-browser";
 import { Variable } from "@angular/compiler/src/render3/r3_ast";
-
+import { DraftComponent } from "../draft/draft.component";
 @Component({
   selector: "app-trade-tool",
   templateUrl: "./trade-tool.component.html",
@@ -54,10 +54,6 @@ export class TradeToolComponent implements OnInit {
 
   //need to keep pick order to overall when computing trades
   pickOrderToPickID = [];
-
-  //keep track of which year the pick belongs to
-  //0 current year, 1 future year
-  pickOrderToYear = [];
 
   //pickInvolved? map pick number to yes or no
   pickInvolved = {};
@@ -141,10 +137,13 @@ export class TradeToolComponent implements OnInit {
 
   //tradeSelectedArray
   tradeSelectedArray;
+
+  firstFalseReload = false;
   constructor(
     public pullData: PullDataService,
     public filterService: FiltersService,
-    public cdRef: ChangeDetectorRef
+    public cdRef: ChangeDetectorRef,
+    public draft: DraftComponent
   ) {
     this.math = Math;
     document.addEventListener("click", e => this.onClick(e));
@@ -158,45 +157,95 @@ export class TradeToolComponent implements OnInit {
    */
   ngOnInit() {
     this.raiders = this.filterService.defaultTeam;
+    this.pullDraftPicks();
+
+    this.draft.currentPick.subscribe(value => {
+      if (value != 0) {
+        if (this.firstFalseReload == true) {
+          console.log("PICK CHANGE TO ", value);
+          this.pullData.pullDraftFlushProc().subscribe(data => {
+            this.pullDraftPicks(true);
+          });
+        } else {
+          this.firstFalseReload = true;
+        }
+      }
+    });
+  }
+  pullDraftPicks(reload = false) {
     this.pullData.pullDraftPicksInfo().subscribe(data => {
       this.draftPicksRaw = data;
-      //set the overall picks correctly since there were two nulls
-      //Add in sailID to each pick of origin team
-      //Create mapping of team to picks
-      for (var i = 0; i < this.draftPicksRaw.length; i++) {
-        var sailID = this.clubIDToSailID[this.draftPicksRaw[i]["ClubID"]];
-        var pickID = this.draftPicksRaw[i]["PickID"];
+      this.initDraftPicks(reload);
+    });
+  }
+  initDraftPicks(reload = false) {
+    //set the overall picks correctly since there were two nulls
+    //Add in sailID to each pick of origin team
+    //Create mapping of team to picks
+    if (reload) {
+      var old_pickInvoled = cloneDeep(this.pickInvolved);
+      var old_teamToPickIDs = cloneDeep(this.teamToPickIDs);
+    }
+    this.pickInvolved = {};
+    this.teamToPickIDs = {};
 
-        if (this.draftPicksRaw[i]["ConditionalPick"] == 1) {
-          this.pickInvolved[pickID] = "-1";
-        } else {
-          this.pickInvolved[pickID] = "0";
-        }
+    for (var i = 0; i < this.draftPicksRaw.length; i++) {
+      var sailID = this.clubIDToSailID[this.draftPicksRaw[i]["ClubID"]];
+      var pickID = this.draftPicksRaw[i]["PickID"];
 
-        this.cdRef.detectChanges();
+      if (this.draftPicksRaw[i]["ConditionalPick"] == 1) {
+        this.pickInvolved[pickID] = "-1";
+      } else {
+        this.pickInvolved[pickID] = "0";
+      }
+      if (
+        reload &&
+        (old_teamToPickIDs[this.raiders.SailTeamID].includes(pickID) ||
+          old_teamToPickIDs[
+            this.filterService.teamPortalSelected.SailTeamID
+          ].includes(pickID))
+      ) {
+        this.pickInvolved[pickID] = old_pickInvoled[pickID];
+      }
 
-        this.draftPicksRaw[i]["SailID"] = sailID;
-        this.pickIDToPick[pickID] = this.draftPicksRaw[i];
-        if (this.teamToPickIDs[sailID]) {
+      this.cdRef.detectChanges();
+
+      this.draftPicksRaw[i]["SailID"] = sailID;
+      this.pickIDToPick[pickID] = this.draftPicksRaw[i];
+      if (this.teamToPickIDs[sailID]) {
+        if (!this.teamToPickIDs[sailID].includes(pickID)) {
           this.teamToPickIDs[sailID] = this.teamToPickIDs[sailID].concat([
             pickID
           ]);
-        } else {
-          this.teamToPickIDs[sailID] = [pickID];
         }
+      } else {
+        this.teamToPickIDs[sailID] = [pickID];
       }
+    }
 
-      this.uploadingPicks = false;
+    this.uploadingPicks = false;
 
-      if (
-        this.filterService.teamPortalActiveClubID ==
-        String(this.raiders.SailTeamID)
-      ) {
-        this.filterService.teamPortalSelected = this.tradeTeamDefault;
-      }
+    if (
+      this.filterService.teamPortalActiveClubID ==
+      String(this.raiders.SailTeamID)
+    ) {
+      this.filterService.teamPortalSelected = this.tradeTeamDefault;
+    }
+    if (reload == false) {
       this.setParams(-1);
       this.setTeam();
-    });
+    } else {
+      var output = this.performTradeGenerations(
+        this.pickInvolved,
+        this.minTradeValueDif,
+        this.maxTradeValueDif,
+        this.maxTradePickDif,
+        this.minTradePickDif,
+        this.tradePicksQuantity
+      );
+      this.tradeOptions = output["tradeOptions"];
+      this.pickOrderToPickID = output["pickOrderToPickID"];
+    }
   }
 
   /**
@@ -216,10 +265,10 @@ export class TradeToolComponent implements OnInit {
     } else {
       setTimeout(() => {
         console.log("LOOP 54");
-        if (count < 40) {
+        if (count < 50) {
           this.setParams(oldNegotiationID, count + 1);
         }
-      }, 300);
+      }, 500);
     }
   }
 
@@ -899,8 +948,9 @@ export class TradeToolComponent implements OnInit {
             String(this.math.min(event.clientX, window.innerWidth - 452)) +
             "px";
           box.style.top =
-            String(this.math.min(window.innerHeight - 77, event.clientY - 47)) +
-            "px";
+            String(
+              this.math.min(window.innerHeight - 186, event.clientY - 47)
+            ) + "px";
         }, 1);
       }, 1);
     } else {
@@ -951,12 +1001,12 @@ export class TradeToolComponent implements OnInit {
     var tradeOptions = output["tradeOptions"];
     var pickOrderToPickID = output["pickOrderToPickID"];
     var highTrade = tradeOptions[0];
-    var mediumTrade;
-    if (tradeOptions.length > 0) {
-      mediumTrade = tradeOptions.reduce(function(prev, curr) {
-        return Math.abs(prev[0]) < Math.abs(curr[0]) ? prev : curr;
-      });
-    }
+    var mediumTrade = tradeOptions[Math.floor(tradeOptions.length / 2.0)];
+    // if (tradeOptions.length > 0) {
+    //   mediumTrade = tradeOptions.reduce(function(prev, curr) {
+    //     return Math.abs(prev[0]) < Math.abs(curr[0]) ? prev : curr;
+    //   });
+    // }
     var lowTrade = tradeOptions[tradeOptions.length - 1];
     var sendingOffer = {
       NegotiationID: this.filterService.draftActiveNegotiation.NegotiationID,
@@ -1017,10 +1067,14 @@ export class TradeToolComponent implements OnInit {
    */
   lineHeightFromPickNumber(picks: any) {
     var count = 0;
-    for (let pick of picks) {
-      if (this.pickInvolved[pick] == 1) {
-        count += 1;
+    try {
+      for (let pick of picks) {
+        if (this.pickInvolved[pick] == 1) {
+          count += 1;
+        }
       }
+    } catch {
+      return { lineHeight: "25px" };
     }
     if (count > 4) {
       return { lineHeight: "25px" };

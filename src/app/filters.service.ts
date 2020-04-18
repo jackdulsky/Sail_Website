@@ -1199,7 +1199,7 @@ export class FiltersService {
     if (this.router.url.includes("draft")) {
       this.pullData.getNegotiation().subscribe(data => {
         try {
-          console.log("Neogitation Object", data);
+          console.log("Neogitation Object", data[0]);
           this.draftActiveNegotiation = data[0];
         } catch (e) {
           console.log("ERROR GETTING NEGOTIATION", data);

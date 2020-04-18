@@ -318,7 +318,7 @@ export class PullDataService {
    * Pull information on the bins for the FA Hypo portal
    */
   pullHypoBins() {
-    var query = "select * from [FreeAgency].[FA20].[Hypo_Bins]";
+    var query = "select * from [FreeAgency].[FA20].[Hypo_Bins] (nolock)";
     return this.postQuery(query);
   }
 
@@ -327,7 +327,7 @@ export class PullDataService {
    */
   pullHypoScenario() {
     var query =
-      "SELECT * FROM [FreeAgency].[FA20].[Hypo_Scenarios] Order By ScenarioID";
+      "SELECT * FROM [FreeAgency].[FA20].[Hypo_Scenarios] (nolock) Order By ScenarioID";
 
     return this.postQuery(query);
   }
@@ -348,7 +348,7 @@ export class PullDataService {
    */
   pullDraftPicksInfo() {
     var query =
-      "select * From Draft.Draft20.ClubDraftPick order by 'Season', 'Round', 'Overall'";
+      "select * From Draft.Draft20.ClubDraftPick (nolock) order by 'Season', 'Round', 'Overall'";
     return this.postQuery(query);
   }
 
@@ -375,7 +375,7 @@ export class PullDataService {
    * get the negotiations
    */
   pullDraftNegotiations() {
-    var query = "select * FROM Draft.Draft20.ActiveTrade";
+    var query = "select * FROM Draft.Draft20.ActiveTrade (nolock)";
     return this.postQuery(query);
   }
 
@@ -383,7 +383,8 @@ export class PullDataService {
    * get the negotiations
    */
   pullDraftOffers() {
-    var query = "select * FROM Draft.Draft20.Offer order by NegotiationID desc";
+    var query =
+      "select * FROM Draft.Draft20.Offer (nolock) order by NegotiationID desc";
     return this.postQuery(query);
   }
 
@@ -394,6 +395,28 @@ export class PullDataService {
   pushDraftOfferSuggestion(jsonData: String) {
     var query = "Exec Draft.Draft20.spUpdateOfferMinMax '" + jsonData + "'";
     console.log(query);
+    return this.postQuery(query);
+  }
+
+  /**
+   * get Active Pick from db
+   */
+  pullActivePick() {
+    var query = "SELECT * FROM Draft.Draft20.CurrentPick (nolock)";
+    return this.postQuery(query);
+  }
+
+  /**call flush proc for offers and pick change */
+  pullDraftFlushProc() {
+    var query = "Draft.Draft20.spFlushNegotiations";
+    return this.postQuery(query);
+  }
+
+  /**
+   * get subset of offers table to check ID's for difference
+   */
+  pullCurrentOffersForDifference() {
+    var query = "SELECT * FROM Draft.Draft20.vwCurrentOffer (nolock)";
     return this.postQuery(query);
   }
 }

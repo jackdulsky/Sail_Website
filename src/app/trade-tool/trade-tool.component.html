@@ -395,9 +395,11 @@
             >
               <span
                 *ngIf="
+                  teamToPickIDs[raiders['SailTeamID']] &&
                   teamToPickIDs[raiders['SailTeamID']].indexOf(
                     pickOrderToPickID[i]
-                  ) != -1 && picked == 1
+                  ) != -1 &&
+                  picked == 1
                 "
                 style="display: block; float: left;"
               >
@@ -414,9 +416,11 @@
             >
               <span
                 *ngIf="
+                  teamToPickIDs[filterService.teamPortalActiveClubID] &&
                   teamToPickIDs[filterService.teamPortalActiveClubID].indexOf(
                     pickOrderToPickID[i]
-                  ) != -1 && picked == 1
+                  ) != -1 &&
+                  picked == 1
                 "
                 style="display: block; float: left;"
               >

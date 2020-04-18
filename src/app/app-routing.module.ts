@@ -33,7 +33,7 @@ export const routes: Routes = [
     children: [
       {
         path: "",
-        redirectTo: "cash",
+        redirectTo: "draft",
         pathMatch: "full"
       },
 
@@ -91,7 +91,7 @@ export const routes: Routes = [
           {
             path: "",
             // 2679 is the default club home main page report view ID for Rockdaisy
-            redirectTo: "base-reports/17",
+            redirectTo: "report/2716",
             pathMatch: "full"
           }
         ]

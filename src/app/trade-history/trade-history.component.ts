@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { TradeToolComponent } from "../trade-tool/trade-tool.component";
 import { fadeInItems } from "@angular/material";
 import { FiltersService } from "../filters.service";
+import { DraftComponent } from "../draft/draft.component";
 
 @Component({
   selector: "app-trade-history",
@@ -12,7 +13,8 @@ import { FiltersService } from "../filters.service";
 export class TradeHistoryComponent implements OnInit {
   constructor(
     public tradeTool: TradeToolComponent,
-    public filterService: FiltersService
+    public filterService: FiltersService,
+    public draft: DraftComponent
   ) {
     this.tradeTool.ngOnInit();
   }
@@ -29,43 +31,44 @@ export class TradeHistoryComponent implements OnInit {
   defaultCounter = { TradeText: "", PointDiff: "" };
   pickOrderToPickID;
   firstSelectionMade = false;
+  firstFalseReload = false;
   ngOnInit() {
     this.highTrade = this.defaultCounter;
     this.mediumTrade = this.defaultCounter;
     this.lowTrade = this.defaultCounter;
+    this.pullOffersAndNeogiations();
+    // this.init();
+    this.draft.currentOffers.subscribe(value => {
+      console.log("OFFERS LOADED");
+      if (value != "") {
+        if (this.firstFalseReload == true) {
+          this.pullOffersAndNeogiations(true);
+        } else {
+          this.firstFalseReload = true;
+        }
+      }
+    });
+  }
+
+  pullOffersAndNeogiations(reload = false) {
     this.filterService.pullData.pullDraftOffers().subscribe(data => {
       this.offers = data;
+      this.offersMap = {};
+      this.offers.forEach(element => {
+        element["OrderID"] = element["OfferID"];
+        this.offersMap[element["OfferID"]] = element;
+      });
+      if (reload) {
+        this.selectNegotiation(this.clickedNegotiation);
+      }
     });
     this.filterService.pullData.pullDraftNegotiations().subscribe(data => {
       this.negotiations = data;
-      // console.log("RAW", data);
-    });
-    this.init();
-  }
-  init() {
-    if (
-      this.tradeTool.uploadingPicks ||
-      this.negotiations == null ||
-      this.offers == null
-    ) {
-      setTimeout(() => {
-        console.log("LOOP 52");
-        this.init();
-      }, 100);
-    } else {
-      this.offers.forEach(element => {
-        element["OrderID"] = element["OfferID"];
-        element["OfferedClubURL"] =
-          element["OfferClubID"] == 13
-            ? this.tradeTool.raiders.ClubImageURL
-            : element.ClubImageURL;
-        this.offersMap[element["OfferID"]] = element;
-      });
+      this.negotiationsMap = {};
       this.negotiations.forEach(element => {
-        element["OrderID"] = element["OfferID"];
         this.negotiationsMap[element["NegotiationID"]] = element;
       });
-    }
+    });
   }
 
   /**
@@ -84,15 +87,17 @@ export class TradeHistoryComponent implements OnInit {
       }, 100);
     } else {
       var offer = { OfferCode: 0, TradeText: "", OfferID: 0 };
-      Object.keys(this.offersMap).forEach(offerID => {
-        if (
-          this.offersMap[offerID].OfferCode > 0 &&
-          this.offersMap[offerID].NegotiationID == negotiation &&
-          this.offersMap[offerID].OfferID > offer.OfferID
-        ) {
-          offer = this.offersMap[offerID];
-        }
-      });
+      try {
+        Object.keys(this.offersMap).forEach(offerID => {
+          if (
+            this.offersMap[offerID].OfferCode > 0 &&
+            this.offersMap[offerID].NegotiationID == negotiation &&
+            this.offersMap[offerID].OfferID > offer.OfferID
+          ) {
+            offer = this.offersMap[offerID];
+          }
+        });
+      } catch (e) {}
 
       return offer;
     }
@@ -120,12 +125,15 @@ export class TradeHistoryComponent implements OnInit {
   /**
    * Return the offer color for which one is active
    * @param active 1 == on 0 == off
+   * @offer offer object
    */
-  getActiveBackground(active: boolean) {
+  getActiveBackground(active: boolean, offer) {
     if (active) {
-      return this.getNegotiationBackground(this.clickedNegotiation);
+      return offer["OfferClubID"] != 13
+        ? this.getNegotiationBackground(this.clickedNegotiation)
+        : { backgroundColor: "#333333" };
     } else {
-      return { backgroundColor: "grey" };
+      return { backgroundColor: "#a09e9e" };
     }
   }
 
@@ -135,9 +143,10 @@ export class TradeHistoryComponent implements OnInit {
    */
   getOfferTextColor(active) {
     if (active) {
-      return this.getNegotiationTextColor(this.clickedNegotiation);
-    } else {
       return { color: "white" };
+      // return this.getNegotiationTextColor(this.clickedNegotiation);
+    } else {
+      return { color: "black" };
     }
   }
 
@@ -151,22 +160,9 @@ export class TradeHistoryComponent implements OnInit {
 
   getTextInvert(team) {
     var styles = {};
-    try {
-      var bgCol = team.ClubColor1;
 
-      var c = bgCol.substring(1); // strip #
-      var rgb = parseInt(c, 16); // convert rrggbb to decimal
-      var r = (rgb >> 16) & 0xff; // extract red
-      var g = (rgb >> 8) & 0xff; // extract green
-      var b = (rgb >> 0) & 0xff; // extract blue
+    styles["filter"] = "invert(1)";
 
-      var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-      if (luma < 65) {
-        //Threshold of 65 was chosen, you cn see how otehr cutoffs work by playing around on the report uploader where its the same threshold
-        // pick a different colour
-        styles["filter"] = "invert(1)";
-      }
-    } catch (e) {}
     return styles;
   }
 
@@ -176,9 +172,16 @@ export class TradeHistoryComponent implements OnInit {
    */
   getNegotiationBackground(negotiation: number) {
     var styles = {};
-    if (negotiation == this.clickedNegotiation) {
-      var bgCol = this.negotiationsMap[this.clickedNegotiation].ClubColor1;
-      styles["backgroundColor"] = bgCol;
+    if (negotiation < 0) {
+      return { backgroundColor: "#F0F2F5" };
+    }
+    try {
+      if (negotiation == this.clickedNegotiation) {
+        var bgCol = this.negotiationsMap[this.clickedNegotiation].ClubColor1;
+        styles["backgroundColor"] = bgCol;
+      }
+    } catch (e) {
+      return { backgroundColor: "#F0F2F5" };
     }
 
     return styles;
@@ -191,20 +194,7 @@ export class TradeHistoryComponent implements OnInit {
   getNegotiationTextColor(negotiation: number) {
     var styles = {};
     if (negotiation == this.clickedNegotiation) {
-      var bgCol = this.negotiationsMap[this.clickedNegotiation].ClubColor1;
-
-      var c = bgCol.substring(1); // strip #
-      var rgb = parseInt(c, 16); // convert rrggbb to decimal
-      var r = (rgb >> 16) & 0xff; // extract red
-      var g = (rgb >> 8) & 0xff; // extract green
-      var b = (rgb >> 0) & 0xff; // extract blue
-
-      var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-      if (luma < 65) {
-        //Threshold of 65 was chosen, you cn see how otehr cutoffs work by playing around on the report uploader where its the same threshold
-        // pick a different colour
-        styles["filter"] = "invert(1)";
-      }
+      styles["filter"] = "invert(1)";
     }
     return styles;
   }
@@ -238,18 +228,44 @@ export class TradeHistoryComponent implements OnInit {
       return "";
     }
     var offer = { TradeText: "", PointDiff: "" };
-    keys.forEach(key => {
-      if (
-        this.offersMap[key].NegotiationID == this.clickedNegotiation &&
-        this.offersMap[key].OfferCode == option
-      ) {
-        offer = this.offersMap[key];
-      }
-    });
+    try {
+      keys.forEach(key => {
+        if (
+          this.offersMap[key].NegotiationID == this.clickedNegotiation &&
+          this.offersMap[key].OfferCode == option
+        ) {
+          offer = this.offersMap[key];
+        }
+      });
+    } catch (e) {}
     return offer;
   }
 
   /**
-   * get the background color based on index for the
+   * get the text and its correct direction for the title bar top right
+   *  for main pick direction
    */
+  getTextForTitleBar() {
+    if (!this.firstSelectionMade) {
+      return "";
+    }
+    try {
+      var direction = "";
+      var raidersPickText = this.negotiationsMap[this.clickedNegotiation][
+        "LVPickText"
+      ];
+      var tradePickText = this.negotiationsMap[this.clickedNegotiation][
+        "TradeClubPickText"
+      ];
+
+      var direction =
+        this.negotiationsMap[this.clickedNegotiation]["TradeDirection"] == 1
+          ? "up"
+          : "down";
+
+      return raidersPickText + " " + direction + " to " + tradePickText;
+    } catch (e) {
+      return "";
+    }
+  }
 }

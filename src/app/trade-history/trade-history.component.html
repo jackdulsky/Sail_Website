@@ -1,3 +1,37 @@
+<div class="titleBarContainer">
+  <div
+    class="negotiationTitleBar"
+    [ngStyle]="getNegotiationBackground(clickedNegotiation)"
+  >
+    <div class="imageContainer" style="max-height: 37px !important;">
+      <span *ngIf="firstSelectionMade && negotiationsMap[clickedNegotiation]">
+        <img
+          id=""
+          [src]="negotiationsMap[clickedNegotiation]['ClubImageURL']"
+          class="tradeImage"
+        />
+      </span>
+    </div>
+    <div class="titleBarTradeTeamName">
+      <span *ngIf="firstSelectionMade && negotiationsMap[clickedNegotiation]">
+        {{ negotiationsMap[clickedNegotiation]["ClubFullName"] }}:&nbsp;{{
+          getTextForTitleBar()
+        }}
+      </span>
+    </div>
+    <div class="titleBarNegotiationInfo">
+      <span *ngIf="firstSelectionMade">
+        <div
+          class="mainPickValueDiff"
+          *ngIf="negotiationsMap[clickedNegotiation]"
+        >
+          POINT&nbsp;DIFFERENCE:&nbsp;
+          {{ negotiationsMap[clickedNegotiation]["TradePointDiffText"] }}
+        </div>
+      </span>
+    </div>
+  </div>
+</div>
 <div class="overallContainer fontDIN">
   <div class="leftSide">
     <div class="header tradeOfferHistoryHeader">POTENTIAL COUNTERS</div>
@@ -5,19 +39,23 @@
     <div class="countersContainer">
       <div class="counterOffer">
         <div class="counterValue">
-          <ng-container *ngIf="lowTrade.PointDiff != null">
-            <span *ngIf="lowTrade.PointDiff > 0">+</span
-            >{{ lowTrade.PointDiff }}
+          <ng-container *ngIf="highTrade.PointDiff != null">
+            <span *ngIf="highTrade.PointDiff > 0">+</span
+            >{{ highTrade.PointDiff }}
           </ng-container>
         </div>
 
         <div class="counterInfoText">
           <ng-container
-            *ngIf="lowTrade.TradeText != '' && lowTrade.TradeText != null"
+            *ngIf="
+              highTrade &&
+              highTrade.TradeText != '' &&
+              highTrade.TradeText != null
+            "
           >
             <div
               class="offerInfoText"
-              *ngFor="let text of lowTrade.TradeText.split('. ')"
+              *ngFor="let text of highTrade.TradeText.split('. ')"
             >
               •&nbsp;&nbsp;{{ text }}
             </div>
@@ -35,9 +73,16 @@
 
         <div class="counterInfoText">
           <ng-container
-            *ngIf="mediumTrade.TradeText != '' && mediumTrade.TradeText != null"
+            *ngIf="
+              mediumTrade &&
+              mediumTrade.TradeText != '' &&
+              mediumTrade.TradeText != null
+            "
           >
-            <div *ngFor="let text of mediumTrade.TradeText.split('. ')">
+            <div
+              class="offerInfoText"
+              *ngFor="let text of mediumTrade.TradeText.split('. ')"
+            >
               •&nbsp;&nbsp;{{ text }}
             </div>
           </ng-container>
@@ -45,19 +90,21 @@
       </div>
       <div class="counterOffer">
         <div class="counterValue">
-          <ng-container *ngIf="highTrade.PointDiff != null">
-            <span *ngIf="highTrade.PointDiff > 0">+</span
-            >{{ highTrade.PointDiff }}
+          <ng-container *ngIf="lowTrade.PointDiff != null">
+            <span *ngIf="lowTrade.PointDiff > 0">+</span
+            >{{ lowTrade.PointDiff }}
           </ng-container>
         </div>
 
         <div class="counterInfoText">
           <ng-container
-            *ngIf="highTrade.TradeText != '' && highTrade.TradeText != null"
+            *ngIf="
+              lowTrade && lowTrade.TradeText != '' && lowTrade.TradeText != null
+            "
           >
             <div
               class="offerInfoText"
-              *ngFor="let text of highTrade.TradeText.split('. ')"
+              *ngFor="let text of lowTrade.TradeText.split('. ')"
             >
               •&nbsp;&nbsp;{{ text }}
             </div>
@@ -73,6 +120,7 @@
         <div class="teamHeader" [ngStyle]="getBG(this.tradeTool.raiders)">
           <div
             class="teamHeaderText"
+            *ngIf="negotiationsMap[clickedNegotiation]"
             [ngStyle]="getTextInvert(this.tradeTool.raiders)"
           >
             {{ tradeTool.raiders.ClubCityName }}
@@ -165,7 +213,7 @@
           <div
             class="teamHeaderText"
             [ngStyle]="getTextInvert(negotiationsMap[clickedNegotiation])"
-            *ngIf="firstSelectionMade"
+            *ngIf="firstSelectionMade && negotiationsMap[clickedNegotiation]"
           >
             {{ negotiationsMap[clickedNegotiation].ClubCityName }}
           </div>
@@ -177,6 +225,7 @@
               class="pickDivs"
               *ngIf="
                 firstSelectionMade &&
+                negotiationsMap[clickedNegotiation] &&
                 negotiationsMap[clickedNegotiation].TradeSailTeamID != '1012'
               "
             >
@@ -217,6 +266,7 @@
               class="pickDivs"
               *ngIf="
                 firstSelectionMade &&
+                negotiationsMap[clickedNegotiation] &&
                 negotiationsMap[clickedNegotiation].TradeSailTeamID != '1012'
               "
             >
@@ -273,7 +323,10 @@
           first as isFirst
         "
       >
-        <div class="singleOffer" [ngStyle]="getActiveBackground(isFirst)">
+        <div
+          class="singleOffer"
+          [ngStyle]="getActiveBackground(isFirst, offer.value)"
+        >
           <div class="imageContainer">
             <img
               id=""
@@ -282,12 +335,14 @@
                   ? tradeTool.raiders.ClubImageURL
                   : negotiationsMap[clickedNegotiation]['ClubImageURL']
               "
+              *ngIf="negotiationsMap[clickedNegotiation]"
               class="tradeImage"
             />
           </div>
           <div
             class="offerTextContainer"
             [ngStyle]="getOfferTextColor(isFirst)"
+            *ngIf="offer.value"
           >
             <div class="offerInfoText">
               <div *ngFor="let text of offer.value.TradeText.split('. ')">
@@ -320,6 +375,7 @@
               id=""
               [src]="negotiation.value['ClubImageURL']"
               class="tradeImage"
+              *ngIf="negotiation.value"
             />
           </div>
           <div class="tradeNegotiationOfferTextContainer">
@@ -332,7 +388,10 @@
                   negotiation.value.OfferPointDiffText
                 }}
               </div>
-              <div class="negotiationInfoText">
+              <div
+                class="negotiationInfoText"
+                *ngIf="negotiation.value && negotiation.value.TradeText != null"
+              >
                 <div
                   *ngFor="let text of negotiation.value.TradeText.split('. ')"
                 >

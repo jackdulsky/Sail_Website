@@ -233,6 +233,12 @@
   grid-template-columns: 35% 35% 10% 10% 10%;
   border-bottom: 2px solid black;
 }
+.tradeOption:hover,
+.tradeOptionExact:hover {
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+}
 .tradeOptionExact {
   height: 44px;
   display: grid;

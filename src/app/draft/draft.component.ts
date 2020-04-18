@@ -5,6 +5,7 @@ import { PullDataService } from "../pull-data.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { BodyComponent } from "../body/body.component";
 import { SlideInOutAnimation } from "../animations";
+import { Observable, of, BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "app-draft",
@@ -24,15 +25,52 @@ export class DraftComponent implements OnInit {
   //number for tab selected
   draftTabSelected;
 
+  draftPickDataRaw;
+  currentPick = new BehaviorSubject<Number>(0);
+  currentOffers = new BehaviorSubject<any>("");
+  timeoutPickFlushLoop = 30000;
+  timeoutOfferLoop = 3000;
   /**
    * Init function!
    */
   ngOnInit() {
     this.cdref.detectChanges();
-
+    this.loopActivePick();
+    this.loopActiveOffers();
     this.initFunction();
   }
+  convertToListOfAttributes(listOfObjects, attribute) {
+    var l = [];
+    listOfObjects.forEach(element => {
+      l.push(element[attribute]);
+    });
+    return l;
+  }
+  loopActivePick() {
+    this.pullData.pullActivePick().subscribe(data => {
+      if (this.currentPick.getValue() != data[0]["Overall"]) {
+        this.currentPick.next(data[0]["Overall"]);
+      }
+      setTimeout(() => {
+        this.loopActivePick();
+      }, this.timeoutPickFlushLoop);
+    });
+  }
 
+  loopActiveOffers() {
+    this.pullData.pullCurrentOffersForDifference().subscribe(data => {
+      var incomingList = this.convertToListOfAttributes(data, "OfferID");
+      if (
+        JSON.stringify(this.currentOffers.getValue()) !=
+        JSON.stringify(incomingList)
+      ) {
+        this.currentOffers.next(incomingList);
+      }
+      setTimeout(() => {
+        this.loopActiveOffers();
+      }, this.timeoutOfferLoop);
+    });
+  }
   /**
    * After init function
    */
