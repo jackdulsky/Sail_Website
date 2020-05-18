@@ -36,15 +36,14 @@ export class TradeHistoryComponent implements OnInit {
     this.highTrade = this.defaultCounter;
     this.mediumTrade = this.defaultCounter;
     this.lowTrade = this.defaultCounter;
-    this.pullOffersAndNeogiations();
-    // this.init();
     this.draft.currentOffers.subscribe(value => {
-      console.log("OFFERS LOADED");
       if (value != "") {
+        console.log("OFFERS LOADED");
         if (this.firstFalseReload == true) {
           this.pullOffersAndNeogiations(true);
         } else {
           this.firstFalseReload = true;
+          this.pullOffersAndNeogiations();
         }
       }
     });

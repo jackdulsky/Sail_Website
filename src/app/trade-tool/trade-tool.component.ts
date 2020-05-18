@@ -157,7 +157,6 @@ export class TradeToolComponent implements OnInit {
    */
   ngOnInit() {
     this.raiders = this.filterService.defaultTeam;
-    this.pullDraftPicks();
 
     this.draft.currentPick.subscribe(value => {
       if (value != 0) {
@@ -165,13 +164,19 @@ export class TradeToolComponent implements OnInit {
           console.log("PICK CHANGE TO ", value);
           this.pullData.pullDraftFlushProc().subscribe(data => {
             this.pullDraftPicks(true);
+            this.filterService.setNegotiation();
           });
         } else {
           this.firstFalseReload = true;
+          this.pullDraftPicks();
         }
       }
     });
   }
+  /**
+   * pull Draft Picks and init
+   * @param reload if its a reload or first time
+   */
   pullDraftPicks(reload = false) {
     this.pullData.pullDraftPicksInfo().subscribe(data => {
       this.draftPicksRaw = data;

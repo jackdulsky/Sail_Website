@@ -564,6 +564,7 @@ export class FiltersService {
       this.pullData.pullReportTabs().subscribe(data => {
         this.reportTabs = {};
         this.extractID(data, "TabID", this.reportTabs);
+        console.log("reportTabs", this.reportTabs);
       });
 
       //Report Tab Infomation Location

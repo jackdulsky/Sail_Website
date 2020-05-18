@@ -38,13 +38,14 @@
 
     <div class="countersContainer">
       <div class="counterOffer">
-        <div class="counterValue">
-          <ng-container *ngIf="highTrade.PointDiff != null">
-            <span *ngIf="highTrade.PointDiff > 0">+</span
-            >{{ highTrade.PointDiff }}
-          </ng-container>
+        <div class="counterValueContainer">
+          <div class="counterValue">
+            <ng-container *ngIf="highTrade.PointDiff != null">
+              <span *ngIf="highTrade.PointDiff > 0">+</span
+              >{{ highTrade.PointDiff }}
+            </ng-container>
+          </div>
         </div>
-
         <div class="counterInfoText">
           <ng-container
             *ngIf="
@@ -63,12 +64,14 @@
         </div>
       </div>
       <div class="counterOffer">
-        <div class="counterValue">
-          <ng-container *ngIf="mediumTrade.PointDiff != null">
-            <span class="offerInfoText" *ngIf="mediumTrade.PointDiff > 0"
-              >+</span
-            >{{ mediumTrade.PointDiff }}
-          </ng-container>
+        <div class="counterValueContainer">
+          <div class="counterValue">
+            <ng-container *ngIf="mediumTrade.PointDiff != null">
+              <span class="offerInfoText" *ngIf="mediumTrade.PointDiff > 0"
+                >+</span
+              >{{ mediumTrade.PointDiff }}
+            </ng-container>
+          </div>
         </div>
 
         <div class="counterInfoText">
@@ -89,11 +92,13 @@
         </div>
       </div>
       <div class="counterOffer">
-        <div class="counterValue">
-          <ng-container *ngIf="lowTrade.PointDiff != null">
-            <span *ngIf="lowTrade.PointDiff > 0">+</span
-            >{{ lowTrade.PointDiff }}
-          </ng-container>
+        <div class="counterValueContainer">
+          <div class="counterValue">
+            <ng-container *ngIf="lowTrade.PointDiff != null">
+              <span *ngIf="lowTrade.PointDiff > 0">+</span
+              >{{ lowTrade.PointDiff }}
+            </ng-container>
+          </div>
         </div>
 
         <div class="counterInfoText">

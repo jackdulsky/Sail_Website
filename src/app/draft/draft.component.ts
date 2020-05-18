@@ -28,15 +28,16 @@ export class DraftComponent implements OnInit {
   draftPickDataRaw;
   currentPick = new BehaviorSubject<Number>(0);
   currentOffers = new BehaviorSubject<any>("");
-  timeoutPickFlushLoop = 30000;
+  timeoutPickFlushLoop = 10000;
   timeoutOfferLoop = 3000;
   /**
    * Init function!
    */
   ngOnInit() {
     this.cdref.detectChanges();
-    this.loopActivePick();
-    this.loopActiveOffers();
+    //TURN THESE TWO LOOPS ON FOR THE DRAFT
+    // this.loopActivePick();
+    // this.loopActiveOffers();
     this.initFunction();
   }
   convertToListOfAttributes(listOfObjects, attribute) {
@@ -48,12 +49,14 @@ export class DraftComponent implements OnInit {
   }
   loopActivePick() {
     this.pullData.pullActivePick().subscribe(data => {
-      if (this.currentPick.getValue() != data[0]["Overall"]) {
-        this.currentPick.next(data[0]["Overall"]);
-      }
-      setTimeout(() => {
-        this.loopActivePick();
-      }, this.timeoutPickFlushLoop);
+      try {
+        if (this.currentPick.getValue() != data[0]["Overall"]) {
+          this.currentPick.next(data[0]["Overall"]);
+        }
+        setTimeout(() => {
+          this.loopActivePick();
+        }, this.timeoutPickFlushLoop);
+      } catch (e) {}
     });
   }
 

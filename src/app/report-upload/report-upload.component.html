@@ -73,6 +73,7 @@
         [(ngModel)]="report.LocationID"
         name="location"
         #location="ngModel"
+        (change)="report.ParentTabID = -1"
       >
         <option
           *ngFor="let loc of filterService.reportTabLocation | keyvalue"
@@ -91,15 +92,19 @@
         name="tabSelect"
         #tabSelect="ngModel"
       >
-        <option
-          *ngFor="
-            let loc of filterService.reportTabs
-              | keyvalue
-              | filterReportLists: report.LocationID
-          "
-          [value]="loc.key"
-          >{{ loc.value.Label }}</option
-        >
+        <option [value]="-1" disabled>Select...</option>
+        <ng-container *ngFor="let loc of filterService.reportTabs | keyvalue">
+          <!-- | filterReportLists: report.LocationID -->
+
+          <option
+            *ngIf="
+              loc.value.LocationID == report.LocationID && loc.value.IsList
+            "
+            [value]="loc.key"
+          >
+            {{ loc.value.Label }} (Tab ID: {{ loc.key }} )
+          </option>
+        </ng-container>
       </select>
     </div>
 

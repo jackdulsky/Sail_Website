@@ -18,7 +18,7 @@ export class ReportUploadComponent implements OnInit {
     IsList: 0,
     LocationID: 1,
 
-    ParentTabID: 0,
+    ParentTabID: -1,
     ViewID: "",
     IconUrl:
       "https://sail-bucket.s3-us-west-2.amazonaws.com/SAIL_Icons/Chart1.png",
@@ -58,9 +58,11 @@ export class ReportUploadComponent implements OnInit {
    * Push the upload to the database and on refresh will show up in the correct place
    */
   onSubmit() {
-    this.pullData
-      .pushNewReport(JSON.stringify(this.report))
-      .subscribe(data => {});
+    this.pullData.pushNewReport(JSON.stringify(this.report)).subscribe(data => {
+      console.log("UPLOADED REPORT");
+      console.log(JSON.stringify(this.report));
+      console.log("DB RESPONSE: ", data);
+    });
   }
   /**
    * clear any input from the template
