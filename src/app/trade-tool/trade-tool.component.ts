@@ -13,7 +13,7 @@ import { DraftComponent } from "../draft/draft.component";
   selector: "app-trade-tool",
   templateUrl: "./trade-tool.component.html",
   styleUrls: ["./trade-tool.component.css"],
-  animations: [SlideInOutAnimation]
+  animations: [SlideInOutAnimation],
 })
 export class TradeToolComponent implements OnInit {
   date = new Date();
@@ -101,7 +101,7 @@ export class TradeToolComponent implements OnInit {
     32: 1028,
     33: 1029,
     36: 1030,
-    39: 1031
+    39: 1031,
   };
 
   //team to trade with and show draft picks
@@ -124,7 +124,7 @@ export class TradeToolComponent implements OnInit {
     ClubColor3: "#BBC3CA",
     ClubImageURL:
       "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/Atlanta_Falcons.png?",
-    StadiumID: null
+    StadiumID: null,
   };
 
   //Raiders
@@ -146,7 +146,7 @@ export class TradeToolComponent implements OnInit {
     public draft: DraftComponent
   ) {
     this.math = Math;
-    document.addEventListener("click", e => this.onClick(e));
+    document.addEventListener("click", (e) => this.onClick(e));
   }
   ngAfterViewInit() {
     this.cdRef.detectChanges();
@@ -158,11 +158,11 @@ export class TradeToolComponent implements OnInit {
   ngOnInit() {
     this.raiders = this.filterService.defaultTeam;
 
-    this.draft.currentPick.subscribe(value => {
+    this.draft.currentPick.subscribe((value) => {
       if (value != 0) {
         if (this.firstFalseReload == true) {
           console.log("PICK CHANGE TO ", value);
-          this.pullData.pullDraftFlushProc().subscribe(data => {
+          this.pullData.pullDraftFlushProc().subscribe((data) => {
             this.pullDraftPicks(true);
             this.filterService.setNegotiation();
           });
@@ -178,7 +178,7 @@ export class TradeToolComponent implements OnInit {
    * @param reload if its a reload or first time
    */
   pullDraftPicks(reload = false) {
-    this.pullData.pullDraftPicksInfo().subscribe(data => {
+    this.pullData.pullDraftPicksInfo().subscribe((data) => {
       this.draftPicksRaw = data;
       this.initDraftPicks(reload);
     });
@@ -220,7 +220,7 @@ export class TradeToolComponent implements OnInit {
       if (this.teamToPickIDs[sailID]) {
         if (!this.teamToPickIDs[sailID].includes(pickID)) {
           this.teamToPickIDs[sailID] = this.teamToPickIDs[sailID].concat([
-            pickID
+            pickID,
           ]);
         }
       } else {
@@ -441,7 +441,7 @@ export class TradeToolComponent implements OnInit {
       this.filterService.teamPortalSelected = team;
       this.filterService.teamPortalActiveClubID = team.SailTeamID;
       this.displayTeams(this.showList);
-      Object.keys(this.pickInvolved).forEach(element => {
+      Object.keys(this.pickInvolved).forEach((element) => {
         this.pickInvolved[element] = 0;
         if (this.pickIDToPick[element]["ConditionalPick"] == 1) {
           this.pickInvolved[element] = "-1";
@@ -761,13 +761,13 @@ export class TradeToolComponent implements OnInit {
   calcExactVal() {
     var net = 0;
     try {
-      this.teamToPickIDs[this.raiders["SailTeamID"]].forEach(element => {
+      this.teamToPickIDs[this.raiders["SailTeamID"]].forEach((element) => {
         if (this.pickInvolved[element] == 1) {
           net -= this.pickIDToPick[element]["Points"];
         }
       });
       this.teamToPickIDs[this.filterService.teamPortalActiveClubID].forEach(
-        element => {
+        (element) => {
           if (this.pickInvolved[element] == 1) {
             net += this.pickIDToPick[element]["Points"];
           }
@@ -782,13 +782,13 @@ export class TradeToolComponent implements OnInit {
   calcExactPicksGained() {
     var net = 0;
     try {
-      this.teamToPickIDs[this.raiders["SailTeamID"]].forEach(element => {
+      this.teamToPickIDs[this.raiders["SailTeamID"]].forEach((element) => {
         if (this.pickInvolved[element] == 1) {
           net -= 1;
         }
       });
       this.teamToPickIDs[this.filterService.teamPortalActiveClubID].forEach(
-        element => {
+        (element) => {
           if (this.pickInvolved[element] == 1) {
             net += 1;
           }
@@ -803,13 +803,13 @@ export class TradeToolComponent implements OnInit {
   calcExactPicksInvolved() {
     var net = 0;
     try {
-      this.teamToPickIDs[this.raiders["SailTeamID"]].forEach(element => {
+      this.teamToPickIDs[this.raiders["SailTeamID"]].forEach((element) => {
         if (this.pickInvolved[element] == 1) {
           net += 1;
         }
       });
       this.teamToPickIDs[this.filterService.teamPortalActiveClubID].forEach(
-        element => {
+        (element) => {
           if (this.pickInvolved[element] == 1) {
             net += 1;
           }
@@ -835,7 +835,7 @@ export class TradeToolComponent implements OnInit {
         borderLeft: "0px",
         borderTop: "0px",
         borderRight: "0px",
-        borderBottom: "3px solid rgb(66, 197, 245)"
+        borderBottom: "3px solid rgb(66, 197, 245)",
       };
     } else {
       return {};
@@ -894,14 +894,14 @@ export class TradeToolComponent implements OnInit {
     if (exact == 1) {
       this.tradeSelectedArray = [];
 
-      this.teamToPickIDs[this.raiders["SailTeamID"]].forEach(element => {
+      this.teamToPickIDs[this.raiders["SailTeamID"]].forEach((element) => {
         if (this.pickInvolved[element] == 1) {
           this.tradeSendingPicks["raiders"].push(element);
           this.tradeSelectedArray.push(element);
         }
       });
       this.teamToPickIDs[this.filterService.teamPortalActiveClubID].forEach(
-        element => {
+        (element) => {
           if (this.pickInvolved[element] == 1) {
             this.tradeSendingPicks["tradeTeam"].push(element);
             this.tradeSelectedArray.push(element);
@@ -984,7 +984,7 @@ export class TradeToolComponent implements OnInit {
 
   sendTradeToDB(whoSent: Number) {
     var pickInvolved = {};
-    Object.keys(this.pickInvolved).forEach(element => {
+    Object.keys(this.pickInvolved).forEach((element) => {
       if (this.pickIDToPick[element]["ConditionalPick"] == 1) {
         pickInvolved[element] = "-1";
       } else {
@@ -1038,9 +1038,11 @@ export class TradeToolComponent implements OnInit {
           : this.convertPickArrayBinaryToArrayOfPickIDs(
               lowTrade[3],
               pickOrderToPickID
-            )
+            ),
     };
-    this.pullData.sendOffer(JSON.stringify(sendingOffer)).subscribe(data => {});
+    this.pullData
+      .sendOffer(JSON.stringify(sendingOffer))
+      .subscribe((data) => {});
 
     this.tradeToSend = false;
     this.tradeSendingPicks["raiders"] = [];
@@ -1055,11 +1057,11 @@ export class TradeToolComponent implements OnInit {
     var sendingOffer = {
       NegotiationID: this.filterService.draftActiveNegotiation.NegotiationID,
       OfferCode: OfferCode,
-      PickArray: this.tradeSelectedArray
+      PickArray: this.tradeSelectedArray,
     };
     this.pullData
       .pushDraftOfferSuggestion(JSON.stringify(sendingOffer))
-      .subscribe(data => {});
+      .subscribe((data) => {});
 
     this.tradeToSend = false;
     this.tradeSendingPicks["raiders"] = [];

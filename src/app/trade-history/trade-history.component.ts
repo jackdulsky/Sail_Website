@@ -8,7 +8,7 @@ import { DraftComponent } from "../draft/draft.component";
   selector: "app-trade-history",
   templateUrl: "./trade-history.component.html",
   styleUrls: ["./trade-history.component.css"],
-  providers: [TradeToolComponent]
+  providers: [TradeToolComponent],
 })
 export class TradeHistoryComponent implements OnInit {
   constructor(
@@ -36,8 +36,9 @@ export class TradeHistoryComponent implements OnInit {
     this.highTrade = this.defaultCounter;
     this.mediumTrade = this.defaultCounter;
     this.lowTrade = this.defaultCounter;
-    this.draft.currentOffers.subscribe(value => {
+    this.draft.currentOffers.subscribe((value) => {
       if (value != "") {
+        //avoid first init value
         console.log("OFFERS LOADED");
         if (this.firstFalseReload == true) {
           this.pullOffersAndNeogiations(true);
@@ -50,10 +51,10 @@ export class TradeHistoryComponent implements OnInit {
   }
 
   pullOffersAndNeogiations(reload = false) {
-    this.filterService.pullData.pullDraftOffers().subscribe(data => {
+    this.filterService.pullData.pullDraftOffers().subscribe((data) => {
       this.offers = data;
       this.offersMap = {};
-      this.offers.forEach(element => {
+      this.offers.forEach((element) => {
         element["OrderID"] = element["OfferID"];
         this.offersMap[element["OfferID"]] = element;
       });
@@ -61,10 +62,10 @@ export class TradeHistoryComponent implements OnInit {
         this.selectNegotiation(this.clickedNegotiation);
       }
     });
-    this.filterService.pullData.pullDraftNegotiations().subscribe(data => {
+    this.filterService.pullData.pullDraftNegotiations().subscribe((data) => {
       this.negotiations = data;
       this.negotiationsMap = {};
-      this.negotiations.forEach(element => {
+      this.negotiations.forEach((element) => {
         this.negotiationsMap[element["NegotiationID"]] = element;
       });
     });
@@ -87,7 +88,7 @@ export class TradeHistoryComponent implements OnInit {
     } else {
       var offer = { OfferCode: 0, TradeText: "", OfferID: 0 };
       try {
-        Object.keys(this.offersMap).forEach(offerID => {
+        Object.keys(this.offersMap).forEach((offerID) => {
           if (
             this.offersMap[offerID].OfferCode > 0 &&
             this.offersMap[offerID].NegotiationID == negotiation &&
@@ -207,7 +208,7 @@ export class TradeHistoryComponent implements OnInit {
     if (keys.length == 0) {
       return {};
     }
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (
         this.offersMap[key].NegotiationID == negotiation &&
         this.offersMap[key].OfferCode > 0
@@ -228,7 +229,7 @@ export class TradeHistoryComponent implements OnInit {
     }
     var offer = { TradeText: "", PointDiff: "" };
     try {
-      keys.forEach(key => {
+      keys.forEach((key) => {
         if (
           this.offersMap[key].NegotiationID == this.clickedNegotiation &&
           this.offersMap[key].OfferCode == option

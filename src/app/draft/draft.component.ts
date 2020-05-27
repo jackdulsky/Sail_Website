@@ -10,7 +10,7 @@ import { Observable, of, BehaviorSubject } from "rxjs";
 @Component({
   selector: "app-draft",
   templateUrl: "./draft.component.html",
-  styleUrls: ["./draft.component.css"]
+  styleUrls: ["./draft.component.css"],
 })
 export class DraftComponent implements OnInit {
   constructor(
@@ -42,13 +42,17 @@ export class DraftComponent implements OnInit {
   }
   convertToListOfAttributes(listOfObjects, attribute) {
     var l = [];
-    listOfObjects.forEach(element => {
+    listOfObjects.forEach((element) => {
       l.push(element[attribute]);
     });
     return l;
   }
+
+  /**
+   * Pull from db the active pick detail and if changed perform updates
+   */
   loopActivePick() {
-    this.pullData.pullActivePick().subscribe(data => {
+    this.pullData.pullActivePick().subscribe((data) => {
       try {
         if (this.currentPick.getValue() != data[0]["Overall"]) {
           this.currentPick.next(data[0]["Overall"]);
@@ -60,8 +64,11 @@ export class DraftComponent implements OnInit {
     });
   }
 
+  /**
+   * Pull trade offers from db and update accordingly
+   */
   loopActiveOffers() {
-    this.pullData.pullCurrentOffersForDifference().subscribe(data => {
+    this.pullData.pullCurrentOffersForDifference().subscribe((data) => {
       var incomingList = this.convertToListOfAttributes(data, "OfferID");
       if (
         JSON.stringify(this.currentOffers.getValue()) !=
@@ -91,7 +98,7 @@ export class DraftComponent implements OnInit {
         this.body.portalHighlight("draft");
       } catch (e) {}
       var tabs = this.filterService.getReportHeaders(2);
-      this.draftTabSelected = Object.keys(tabs).sort(function(a, b) {
+      this.draftTabSelected = Object.keys(tabs).sort(function (a, b) {
         return tabs[a]["OrderID"] < tabs[b]["OrderID"]
           ? -1
           : tabs[b]["OrderID"] < tabs[a]["OrderID"]
@@ -198,7 +205,7 @@ export class DraftComponent implements OnInit {
         )[0];
 
         this.router.navigate(["./report", String(reportID)], {
-          relativeTo: this.route
+          relativeTo: this.route,
         });
         if (Number(name) > 0) {
           document.getElementById("fullScreenButton").className = "fullScreen";
@@ -208,7 +215,7 @@ export class DraftComponent implements OnInit {
         this.filterService.selected = name;
 
         this.router.navigate(["./base-reports", String(name)], {
-          relativeTo: this.route
+          relativeTo: this.route,
         });
 
         document.getElementById("fullScreenButton").className =
