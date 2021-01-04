@@ -19,11 +19,12 @@ import { UUID } from "angular2-uuid";
  */
 export class PullDataService {
   //UTILITY SERVER URL
-  serverURLSecure = "https://oaksvr06.raiders.com/";
-  serverURLNotSecure = "http://oaksvr06.raiders.com/";
+  baseURL = "raiddev01.raiders.com/"
+  serverURLSecure = "https://" + this.baseURL;
+  serverURLNotSecure = "http://" + this.baseURL;
 
   GUID;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   //Try both secure and non-secure api links (eventually this will be depricated or need to be changed)
   postQuery(queryString: string) {
@@ -31,7 +32,7 @@ export class PullDataService {
       return this.http.post(this.serverURLNotSecure + "db/query", {
         query: queryString
       });
-    } catch (e) {}
+    } catch (e) { }
     return this.http.post(this.serverURLSecure + "db/query", {
       query: queryString
     });
@@ -63,11 +64,11 @@ export class PullDataService {
   getSubFolders(name: string) {
     try {
       return this.http.get(
-        "http://oaksvr06.raiders.com/api/xos/subfolders/" + name
+        this.serverURLNotSecure + "api/xos/subfolders/" + name
       );
     } catch (e) {
       return this.http.get(
-        "https://oaksvr06.raiders.com/api/xos/subfolders/" + name
+        this.serverURLSecure + "api/xos/subfolders/" + name
       );
     }
   }

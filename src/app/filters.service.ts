@@ -163,9 +163,10 @@ export class FiltersService {
 
   //THIS SECTION IS COMMENTED OUT AND WILL BE THE EVENTUAL CODE IN PRODUCTION
   //AFTER THE NETWORK ISSUE IS RESOLVED
-  // viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+  // viewingURL = this.sanitizer.bypassSecurityTrustResngourceUrl(
   //   "https://sailreports.raiders.com/"
   // );
+  //This below is the Rock Daisy base url
   viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
     "http://oakcmsreports01.raiders.com/"
   );
@@ -174,6 +175,7 @@ export class FiltersService {
   //portalYearsOnly is the variable that will be added to DBFormat and sent to the DB
   portalYearsSelected: String[] = [];
   portalYearsList = [
+    "2022",
     "2021",
     "2020",
     "2019",
@@ -227,7 +229,7 @@ export class FiltersService {
     public fb: FormBuilder,
     public route: ActivatedRoute,
     public router: Router
-  ) {}
+  ) { }
 
   /**
    * This function returns the list of reports based on the location id
@@ -242,7 +244,7 @@ export class FiltersService {
           .filter(([k, v]) => v["LocationID"] == location)
           .map(([k, v]) => ({ [k]: v }))
       );
-    } catch (e) {}
+    } catch (e) { }
     return tabs;
   }
 
@@ -1247,7 +1249,7 @@ export class FiltersService {
         if (
           fids1[i] != fids2[i] ||
           JSON.stringify(structure1[bin][fids1[i]]) !=
-            JSON.stringify(structure2[bin][fids2[i]])
+          JSON.stringify(structure2[bin][fids2[i]])
         ) {
           return false;
         }
@@ -1307,9 +1309,9 @@ export class FiltersService {
     //check if its a special value for min max or string to clear entire attribute
     if (
       JSON.stringify(this.workingQuery[bin][att]) ==
-        JSON.stringify([String(val)]) ||
+      JSON.stringify([String(val)]) ||
       JSON.stringify(this.workingQuery[bin][att]) ==
-        JSON.stringify([val, null]) ||
+      JSON.stringify([val, null]) ||
       JSON.stringify(this.workingQuery[bin][att]) == JSON.stringify([null, val])
     ) {
       this.clearSingleIDWorking(att, bin, false);
@@ -1343,17 +1345,17 @@ export class FiltersService {
     let styles =
       obj["Label"] == "NFL"
         ? {
-            width: "90%",
-            height: "100%",
-            "margin-top": "0%",
-            "margin-left": "5%"
-          }
+          width: "90%",
+          height: "100%",
+          "margin-top": "0%",
+          "margin-left": "5%"
+        }
         : {
-            width: "100%",
-            height: "90%",
-            "margin-top": "5%",
-            "margin-left": "0%"
-          };
+          width: "100%",
+          height: "90%",
+          "margin-top": "5%",
+          "margin-left": "0%"
+        };
     return styles;
   }
 
@@ -1546,7 +1548,7 @@ export class FiltersService {
           try {
             var oldClub = document.getElementById("teamGUI" + String(club));
             oldClub.className = "singleTeamGUI ng-star-inserted";
-          } catch (e) {}
+          } catch (e) { }
 
           oldValue = oldValue.filter(x => x != club);
           this.form.controls[attID].setValue(oldValue);
@@ -1595,7 +1597,7 @@ export class FiltersService {
         color: conversions[BID][(pos + 1) % 2],
         border: "1px solid " + conversions[BID][0]
       };
-    } catch (e) {}
+    } catch (e) { }
     return styles;
   }
 
@@ -1611,7 +1613,7 @@ export class FiltersService {
       var old = document.getElementById("tier1Tab" + this.filterBinSelected);
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
-    } catch (e) {}
+    } catch (e) { }
 
     //SET THE LEVEL SELECTED
     this.filterBinSelected = id;
@@ -1629,7 +1631,7 @@ export class FiltersService {
       var newTab = document.getElementById("tier1Tab" + id);
       // newTab.style.backgroundColor = "#f2f2f2";
       newTab.style.borderBottom = "4px solid lightskyblue";
-    } catch (e) {}
+    } catch (e) { }
     this.attributeSelected(String(Number(id) * -100));
   }
 
@@ -1819,7 +1821,7 @@ export class FiltersService {
           baseURL.replace("[GUID]", this.pullData.GUID.toUpperCase())
         );
         return cloneDeep(this.viewingURL);
-      } catch (e) {}
+      } catch (e) { }
     } else {
       if (count <= 40) {
         setTimeout(() => {
@@ -1873,7 +1875,7 @@ export class FiltersService {
               this.FIDCreationOrder[bin] = this.FIDCreationOrder[bin].concat([
                 fid
               ]);
-            } catch (e) {}
+            } catch (e) { }
             if (this.DBFormat[bin][fid][0].length > 0) {
               currentFid[String(-1 * Number(bin))] = this.DBFormat[bin][fid][0];
               //club handeling
@@ -1911,7 +1913,7 @@ export class FiltersService {
             this.updateRDURL();
           }, 500);
         }
-      } catch (e) {}
+      } catch (e) { }
 
       this.saveAndSend();
     }
@@ -2152,7 +2154,7 @@ export class FiltersService {
         this.teamPortalActiveClubID = this.defaultTeamCode;
         this.teamPortalSelected = this.defaultTeam;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   /**
@@ -2186,7 +2188,7 @@ export class FiltersService {
         };
       } else {
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   /**
@@ -2215,13 +2217,13 @@ export class FiltersService {
     let styles =
       this.portalYearsOnly.indexOf(year) != -1
         ? {
-            backgroundColor: "rgb(80, 80, 80)",
-            color: "white"
-          }
+          backgroundColor: "rgb(80, 80, 80)",
+          color: "white"
+        }
         : {
-            backgroundColor: "white",
-            color: "black"
-          };
+          backgroundColor: "white",
+          color: "black"
+        };
     return styles;
   }
 
@@ -2393,7 +2395,7 @@ export class FiltersService {
     if (!color.includes("#")) {
       try {
         color = this.colorNameToHex(color);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     var usePound = false;
@@ -2463,7 +2465,7 @@ export class FiltersService {
       document.getElementById("iframe").className = "fullScreen";
       this.fullScreenMode = true;
       this.updateRDURL();
-    } catch (e) {}
+    } catch (e) { }
   }
 
   /**
@@ -2687,8 +2689,8 @@ export class FiltersService {
     return a.value["Label"] < b.value["Label"]
       ? -1
       : b.value["Label"] < a.value["Label"]
-      ? 1
-      : 0;
+        ? 1
+        : 0;
   };
 
   /**
@@ -2726,8 +2728,8 @@ export class FiltersService {
     return a.value["OrderID"] > b.value["OrderID"]
       ? -1
       : b.value["OrderID"] > a.value["OrderID"]
-      ? 1
-      : 0;
+        ? 1
+        : 0;
   };
 
   /**
@@ -2737,7 +2739,7 @@ export class FiltersService {
     return a.value["OrderID"] < b.value["OrderID"]
       ? -1
       : b.value["OrderID"] < a.value["OrderID"]
-      ? 1
-      : 0;
+        ? 1
+        : 0;
   };
 }
