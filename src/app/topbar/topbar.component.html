@@ -1,44 +1,21 @@
 <nav class="navbar navbar-fixed-top top" routerLinkActive="active">
   <ul class="nav navbar-nav navheight">
-    <div
-      class="leftBG"
-      (click)="filterService.goToLink('http://oakcmsreports01.raiders.com:88')"
-    ></div>
+    <div class="leftBG" (click)="filterService.goToLink(filterService.onSiteAccessURL)"></div>
     <div class="rightBG">
       <div style="float:right; margin-top: 7px;">
-        <div
-          style="width:auto;float: right; line-height: 55px;"
-          class="navheight"
-        >
+        <div style="width:auto;float: right; line-height: 55px;" class="navheight">
           <div class="menuButton" style="display:contents">
-            <i
-              class="fa fa-bars fa-lg settingsMenuDropDown"
-              (click)="filterService.toggleTopMenuDropDown()"
-            ></i>
+            <i class="fa fa-bars fa-lg settingsMenuDropDown" (click)="filterService.toggleTopMenuDropDown()"></i>
           </div>
         </div>
       </div>
-      <div
-        class="searchingTop"
-        style="width:275px; float:right;margin-right: 10px; "
-      >
+      <div class="searchingTop" style="width:275px; float:right;margin-right: 10px; ">
         <div>
-          <span
-            style="position: absolute;
-          top: -1px !important;"
-          >
-            <i
-              class="sicon fa fa-search fa-sm"
-              style="color:black;margin-left:5%;"
-            ></i>
-            <input
-              type="text"
-              id="searchGlobalText"
-              placeholder="  Search"
-              autocomplete="off"
-              (keyup.enter)="searching($event.target.value)"
-              class="filterSearchG"
-            />
+          <span style="position: absolute;
+          top: -1px !important;">
+            <i class="sicon fa fa-search fa-sm" style="color:black;margin-left:5%;"></i>
+            <input type="text" id="searchGlobalText" placeholder="  Search" autocomplete="off"
+              (keyup.enter)="searching($event.target.value)" class="filterSearchG" />
           </span>
         </div>
       </div>

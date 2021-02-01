@@ -23,7 +23,7 @@ export class FilterspopComponent implements OnInit {
   public formG: FormGroup;
   title: string;
   gamesLevel2From1: number[] = [100, 200, 300, 400, 500];
-  years = ["2019", "2018", "2017", "2016", "2015"];
+  years = [this.filterService.leagueYear.toString(), (this.filterService.leagueYear - 1).toString(), (this.filterService.leagueYear - 2).toString(), (this.filterService.leagueYear - 3).toString(), (this.filterService.leagueYear - 4).toString(), (this.filterService.leagueYear - 5).toString()];
   weeks = {
     PRE: ["1", "2", "3", "4", "5"],
     REG: [
@@ -156,8 +156,8 @@ export class FilterspopComponent implements OnInit {
       ? -1
       : this.filterService.pullBin[b.key]["OrderID"] <
         this.filterService.pullBin[a.key]["OrderID"]
-      ? 1
-      : 0;
+        ? 1
+        : 0;
   };
 
   /**
@@ -173,8 +173,8 @@ export class FilterspopComponent implements OnInit {
       ? -1
       : this.filterService.pullNavigation[b.key]["OrderID"] <
         this.filterService.pullNavigation[a.key]["OrderID"]
-      ? 1
-      : 0;
+        ? 1
+        : 0;
   };
 
   /**

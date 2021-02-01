@@ -107,14 +107,14 @@ export class ClubComponent implements OnInit {
     if (this.filterService.checkUploadComplete()) {
       try {
         this.body.portalHighlight("club");
-      } catch (e) {}
+      } catch (e) { }
       var tabs = this.filterService.getReportHeaders(2);
-      this.clubTabSelected = Object.keys(tabs).sort(function(a, b) {
+      this.clubTabSelected = Object.keys(tabs).sort(function (a, b) {
         return tabs[a]["OrderID"] < tabs[b]["OrderID"]
           ? -1
           : tabs[b]["OrderID"] < tabs[a]["OrderID"]
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       })[0];
       try {
         if (this.router.url.includes("/report")) {
@@ -129,7 +129,7 @@ export class ClubComponent implements OnInit {
         if (this.router.url.includes("/base-reports")) {
           this.clubTabSelected = this.router.url.split("/base-reports/")[1];
         }
-      } catch (e) {}
+      } catch (e) { }
       this.performHighlightOrSubRoute();
     } else {
       setTimeout(() => {
@@ -270,7 +270,7 @@ export class ClubComponent implements OnInit {
       );
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
-    } catch (e) {}
+    } catch (e) { }
 
     this.clubTabSelected = name;
 
@@ -280,7 +280,7 @@ export class ClubComponent implements OnInit {
       try {
         newTab.style.backgroundColor = "#f2f2f2";
         newTab.style.borderBottom = "4px solid lightskyblue";
-      } catch (e) {}
+      } catch (e) { }
     }, 1);
 
     //Route Appropriately
@@ -306,7 +306,7 @@ export class ClubComponent implements OnInit {
           "fullScreenInactive";
         // this.router.navigate([newRoute + "/base-reports/" + String(name)]);
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   /**
    * If control is held during click then open new tab otherwise reroute
@@ -327,17 +327,17 @@ export class ClubComponent implements OnInit {
         base = "base-reports";
       }
       this.filterService.goToLink(
-        "http://oakcmsreports01.raiders.com:88" +
-          "/" +
-          url[1] +
-          "/" +
-          url[2] +
-          "/" +
-          url[3] +
-          "/" +
-          base +
-          "/" +
-          number
+        this.filterService.onSiteAccessURL +
+        "/" +
+        url[1] +
+        "/" +
+        url[2] +
+        "/" +
+        url[3] +
+        "/" +
+        base +
+        "/" +
+        number
       );
     } else {
       this.subRoute(name);

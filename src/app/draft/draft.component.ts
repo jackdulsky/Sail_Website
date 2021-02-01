@@ -20,7 +20,7 @@ export class DraftComponent implements OnInit {
     public router: Router,
     public body: BodyComponent,
     public cdref: ChangeDetectorRef
-  ) {}
+  ) { }
 
   //number for tab selected
   draftTabSelected;
@@ -60,7 +60,7 @@ export class DraftComponent implements OnInit {
         setTimeout(() => {
           this.loopActivePick();
         }, this.timeoutPickFlushLoop);
-      } catch (e) {}
+      } catch (e) { }
     });
   }
 
@@ -96,14 +96,14 @@ export class DraftComponent implements OnInit {
     if (this.filterService.checkUploadComplete()) {
       try {
         this.body.portalHighlight("draft");
-      } catch (e) {}
+      } catch (e) { }
       var tabs = this.filterService.getReportHeaders(2);
       this.draftTabSelected = Object.keys(tabs).sort(function (a, b) {
         return tabs[a]["OrderID"] < tabs[b]["OrderID"]
           ? -1
           : tabs[b]["OrderID"] < tabs[a]["OrderID"]
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       })[0];
       try {
         if (this.router.url.includes("/report")) {
@@ -118,7 +118,7 @@ export class DraftComponent implements OnInit {
         if (this.router.url.includes("/base-reports")) {
           this.draftTabSelected = this.router.url.split("/base-reports/")[1];
         }
-      } catch (e) {}
+      } catch (e) { }
       this.performHighlightOrSubRoute();
     } else {
       setTimeout(() => {
@@ -183,7 +183,7 @@ export class DraftComponent implements OnInit {
       );
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
-    } catch (e) {}
+    } catch (e) { }
 
     this.draftTabSelected = name;
 
@@ -193,7 +193,7 @@ export class DraftComponent implements OnInit {
       try {
         newTab.style.backgroundColor = "#f2f2f2";
         newTab.style.borderBottom = "4px solid lightskyblue";
-      } catch (e) {}
+      } catch (e) { }
     }, 1);
 
     //Route Appropriately
@@ -223,7 +223,7 @@ export class DraftComponent implements OnInit {
 
         // this.router.navigate([newRoute + "/base-reports/" + String(name)]);
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   /**
    * If control is held during click then open new tab otherwise reroute
@@ -244,17 +244,17 @@ export class DraftComponent implements OnInit {
         base = "base-reports";
       }
       this.filterService.goToLink(
-        "http://oakcmsreports01.raiders.com:88" +
-          "/" +
-          url[1] +
-          "/" +
-          url[2] +
-          "/" +
-          url[3] +
-          "/" +
-          base +
-          "/" +
-          number
+        this.filterService.onSiteAccessURL +
+        "/" +
+        url[1] +
+        "/" +
+        url[2] +
+        "/" +
+        url[3] +
+        "/" +
+        base +
+        "/" +
+        number
       );
     } else {
       this.subRoute(name);

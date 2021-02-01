@@ -12,18 +12,18 @@ import { ChangeDetectorRef } from "@angular/core";
 export class ReportComponent implements OnInit {
   reportID: number;
   temp: string;
-  sourceURL: string = "http://oakcmsreports01.raiders.com/view/";
+  sourceURL: string = this.filterService.onSiteAccessProtocol + this.filterService.onSiteAccessURLDomainBase + "/view/";
   constructor(
     public sanitizer: DomSanitizer,
     public filterService: FiltersService,
     public route: ActivatedRoute,
     public router: Router,
     public cdref: ChangeDetectorRef
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
   /**
    * Get the report to show
    * update the variables for creating the report url

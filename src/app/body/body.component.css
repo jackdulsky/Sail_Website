@@ -49,7 +49,7 @@
 }
 .sidenav {
   width: 200px;
-  height: -webkit-fill-available;
+  height: 100vh;
   float: left;
   display: flex;
   flex-direction: column;

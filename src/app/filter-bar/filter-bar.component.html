@@ -1,7 +1,4 @@
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 <div class="filterBar">
   <div class="insideGrid-containerFilt titleFilter topleftFloat">
     <div class="btn2" (click)="openFilterPage('-1')">
@@ -18,40 +15,25 @@
   </div>
   <!-- This is the menu settings element -->
   <div class="shadow menuSettings" *ngIf="filterService.menuOpen">
-    <div
-      class="menuSettingsOption"
-      (click)="filterService.routeReportUploader()"
-    >
+    <div class="menuSettingsOption" (click)="filterService.routeReportUploader()">
       📲 Report Upload
     </div>
     <div class="menuSettingsOption">
       🎬 XOS Export
     </div>
-    <div
-      class="menuSettingsOption"
-      (click)="
+    <div class="menuSettingsOption" (click)="
         filterService.goToLink(
-          'http://oaksvr06.raiders.com/execute/file/norm/AutomatedContractPull'
+          'http://raiddev01.raiders.com/execute/file/norm/AutomatedContractPull'
         )
-      "
-    >
+      ">
       📮 Upload New Contracts
     </div>
   </div>
   <!-- This is the search suggestions list that currently will not be shown -->
-  <div
-    class="suggestionListG"
-    *ngIf="filterService.globalSearchShowSuggestions"
-  >
-    <div
-      *ngFor="let result of filterService.globalSearchResults | keyvalue"
-      class="gSearchBlockG"
-      (click)="
-        filterService.goToLink(
-          'http://oakcmsreports01.raiders.com:88' + result.value
-        )
-      "
-    >
+  <div class="suggestionListG" *ngIf="filterService.globalSearchShowSuggestions">
+    <div *ngFor="let result of filterService.globalSearchResults | keyvalue" class="gSearchBlockG" (click)="
+        filterService.goToLink(filterService.onSiteAccessURL + result.value)
+      ">
       {{ result.key }}
     </div>
   </div>
@@ -65,87 +47,56 @@
     <ng-container *ngFor="let fid of bin.value | keyvalue: valueOrderFIDs">
       <!-- if only one fid per bin -->
       <ng-container *ngIf="checkKeys(bin)">
-        <div
-          *ngIf="fid.value[0].length != 0"
-          class="ovrSingleFilter insideGrid-container3"
-        >
-          <div
-            class="filterLeftBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
-          ></div>
-          <div
-            class="filterMiddleBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
-            (click)="
+        <div *ngIf="fid.value[0].length != 0" class="ovrSingleFilter insideGrid-container3">
+          <div class="filterLeftBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 0)"></div>
+          <div class="filterMiddleBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 1)" (click)="
               singleOpenExp(fid.key, filterService.FIDs[fid.key], bin.key)
-            "
-          >
+            ">
             <div style="position: relative; top: -10px; font-size: 12px;">
               &nbsp;
               {{ getNavElLabel(bin.key) }}
               &nbsp;
             </div>
-            <div
-              style="top: -29px;
-    position: relative;"
-            >
+            <div style="top: -29px;
+    position: relative;">
               &nbsp;&nbsp;&nbsp;{{
-                getExplicitValues(fid.value[0], bin.key)
+              getExplicitValues(fid.value[0], bin.key)
               }}&nbsp;&nbsp;&nbsp;
             </div>
           </div>
-          <div
-            class="filterRightBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
-            (click)="filterService.removeExplicit(fid.key, bin.key)"
-          >
+          <div class="filterRightBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
+            (click)="filterService.removeExplicit(fid.key, bin.key)">
             <i class="fa fa-times timesCenterClose"></i>
           </div>
         </div>
-        <div
-          *ngFor="
+        <div *ngFor="
             let panel of createSingleQueryPanelAttributeMap(fid.value[1])
               | keyvalue
-          "
-          class="ovrSingleFilter insideGrid-container3"
-        >
-          <div
-            class="filterLeftBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
-          ></div>
-          <div
-            class="filterMiddleBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
-            (click)="
+          " class="ovrSingleFilter insideGrid-container3">
+          <div class="filterLeftBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 0)"></div>
+          <div class="filterMiddleBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 1)" (click)="
               singleOpenAtt(
                 fid.key,
                 filterService.FIDs[fid.key],
                 panel.value[0],
                 bin.key
               )
-            "
-          >
+            ">
             <div style="position: relative; top: -10px; font-size: 12px;">
               &nbsp;
               {{ getNavElLabel(panel.key) }}
               &nbsp;
             </div>
-            <div
-              style="top: -29px;
-  position: relative;"
-            >
+            <div style="top: -29px;
+  position: relative;">
               &nbsp;&nbsp;&nbsp;{{
-                getAttOrPanelStringsValues(panel.value)
+              getAttOrPanelStringsValues(panel.value)
               }}&nbsp;&nbsp;&nbsp;
             </div>
           </div>
-          <div
-            class="filterRightBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
-            (click)="
+          <div class="filterRightBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 2)" (click)="
               filterService.removeAttributes(fid.key, bin.key, panel.value)
-            "
-          >
+            ">
             <i class="fa fa-times timesCenterClose"></i>
           </div>
         </div>
@@ -153,37 +104,25 @@
       <!-- if mulitple fids in the bin -->
       <ng-container *ngIf="!checkKeys(bin)">
         <div class="ovrSingleFilter insideGrid-container3">
-          <div
-            class="filterLeftBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 0)"
-          ></div>
-          <div
-            class="filterMiddleBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 1)"
-            (click)="
+          <div class="filterLeftBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 0)"></div>
+          <div class="filterMiddleBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 1)" (click)="
               singleOpenExp(fid.key, filterService.FIDs[fid.key], bin.key)
-            "
-          >
+            ">
             <div style="position: relative; top: -10px; font-size: 12px;">
               &nbsp;
               {{ getNavElLabel(bin.key) }}
               {{ filterService.FIDCreationOrder[bin.key].indexOf(fid.key) + 1 }}
               &nbsp;
             </div>
-            <div
-              style="top: -29px;
-  position: relative;"
-            >
+            <div style="top: -29px;
+  position: relative;">
               &nbsp;&nbsp;&nbsp;{{
-                getMultipleQueryBottomString(fid.key, fid.value)
+              getMultipleQueryBottomString(fid.key, fid.value)
               }}&nbsp;&nbsp;&nbsp;
             </div>
           </div>
-          <div
-            class="filterRightBorder"
-            [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
-            (click)="removeQuery(fid.key)"
-          >
+          <div class="filterRightBorder" [ngStyle]="filterService.setFilterStyle(bin.key, 2)"
+            (click)="removeQuery(fid.key)">
             <i class="fa fa-times timesCenterClose"></i>
           </div>
         </div>

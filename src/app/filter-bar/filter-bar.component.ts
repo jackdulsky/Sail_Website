@@ -22,7 +22,7 @@ export class FilterBarComponent implements OnInit {
     public cdref: ChangeDetectorRef,
     public route: ActivatedRoute,
     public router: Router
-  ) {}
+  ) { }
 
   playCount = "0"; //non funcitonal count of plays (eventually on save and send the db returns play count)
 
@@ -35,7 +35,7 @@ export class FilterBarComponent implements OnInit {
   ngOnInit() {
     this.filterService.getBulkImport();
   }
-  ngAfterInit() {}
+  ngAfterInit() { }
 
   /**
    * Open entire filter page (if open then change bin)
@@ -90,7 +90,7 @@ export class FilterBarComponent implements OnInit {
     if (this.filterService.checkUploadComplete()) {
       try {
         return this.filterService.pullNavigationElement[element]["Label"];
-      } catch (e) {}
+      } catch (e) { }
     } else {
       setTimeout(() => {
         console.log("LOOP 50");
@@ -277,7 +277,7 @@ export class FilterBarComponent implements OnInit {
           panelMap[panel] = [att];
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     return panelMap;
   }
 
@@ -301,7 +301,7 @@ export class FilterBarComponent implements OnInit {
       while (dispName.charAt(0) == ",") {
         dispName = dispName.substr(2);
       }
-    } catch (e) {}
+    } catch (e) { }
     return dispName;
   }
 
@@ -323,7 +323,7 @@ export class FilterBarComponent implements OnInit {
       while (dispName.charAt(0) == ",") {
         dispName = dispName.substr(2);
       }
-    } catch (e) {}
+    } catch (e) { }
     return dispName;
   }
 
@@ -350,7 +350,7 @@ export class FilterBarComponent implements OnInit {
       while (dispName.charAt(0) == ",") {
         dispName = dispName.substr(2);
       }
-    } catch (e) {}
+    } catch (e) { }
     return dispName;
   }
 
@@ -386,7 +386,7 @@ export class FilterBarComponent implements OnInit {
       ? -1
       : this.filterService.FIDCreationOrder[bin].indexOf(b.key) <
         this.filterService.FIDCreationOrder[bin].indexOf(a.key)
-      ? 1
-      : 0;
+        ? 1
+        : 0;
   };
 }

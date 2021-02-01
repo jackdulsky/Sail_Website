@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
 import { OAuthService } from "angular-oauth2-oidc";
+import { FiltersService } from "./filters.service";
 
 @Component({
   selector: "app-root",
@@ -22,10 +23,12 @@ export class AppComponent implements OnInit {
   }
 
   constructor(
+    public filterService: FiltersService,
     private cookieService: CookieService,
     private oauthService: OAuthService
-  ) {}
+  ) { }
   async ngOnInit() {
+    this.filterService.getLeagueYear();
     this.cookieService.set("Test", "Hello World");
     this.cookieValue = this.cookieService.get("Test");
     // await this.ConfigureAuth();

@@ -110,7 +110,7 @@ export class TradeToolComponent implements OnInit {
     GSISClubID: "1",
     GSISClubKey: "5080",
     NCAAID: null,
-    Season: "2020",
+    Season: this.filterService.leagueYear.toString(),
     TeamCode: "ATL",
     LeagueType: "NFL",
     Conference: "NFC",
@@ -260,7 +260,7 @@ export class TradeToolComponent implements OnInit {
     if (
       this.filterService.draftActiveNegotiation &&
       this.filterService.draftActiveNegotiation.NegotiationID !=
-        oldNegotiationID
+      oldNegotiationID
     ) {
       this.minTradeValueDif = this.filterService.draftActiveNegotiation.mnValDif;
       this.maxTradeValueDif = this.filterService.draftActiveNegotiation.mxValDif;
@@ -773,7 +773,7 @@ export class TradeToolComponent implements OnInit {
           }
         }
       );
-    } catch (e) {}
+    } catch (e) { }
     return net;
   }
   /**
@@ -794,7 +794,7 @@ export class TradeToolComponent implements OnInit {
           }
         }
       );
-    } catch (e) {}
+    } catch (e) { }
     return net;
   }
   /**
@@ -815,7 +815,7 @@ export class TradeToolComponent implements OnInit {
           }
         }
       );
-    } catch (e) {}
+    } catch (e) { }
     return net;
   }
 
@@ -1022,27 +1022,27 @@ export class TradeToolComponent implements OnInit {
         highTrade == null
           ? []
           : this.convertPickArrayBinaryToArrayOfPickIDs(
-              highTrade[3],
-              pickOrderToPickID
-            ),
+            highTrade[3],
+            pickOrderToPickID
+          ),
       Medium:
         mediumTrade == null
           ? []
           : this.convertPickArrayBinaryToArrayOfPickIDs(
-              mediumTrade[3],
-              pickOrderToPickID
-            ),
+            mediumTrade[3],
+            pickOrderToPickID
+          ),
       Low:
         lowTrade == null
           ? []
           : this.convertPickArrayBinaryToArrayOfPickIDs(
-              lowTrade[3],
-              pickOrderToPickID
-            ),
+            lowTrade[3],
+            pickOrderToPickID
+          ),
     };
     this.pullData
       .sendOffer(JSON.stringify(sendingOffer))
-      .subscribe((data) => {});
+      .subscribe((data) => { });
 
     this.tradeToSend = false;
     this.tradeSendingPicks["raiders"] = [];
@@ -1061,7 +1061,7 @@ export class TradeToolComponent implements OnInit {
     };
     this.pullData
       .pushDraftOfferSuggestion(JSON.stringify(sendingOffer))
-      .subscribe((data) => {});
+      .subscribe((data) => { });
 
     this.tradeToSend = false;
     this.tradeSendingPicks["raiders"] = [];

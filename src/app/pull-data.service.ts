@@ -22,10 +22,21 @@ export class PullDataService {
   baseURL = "raiddev01.raiders.com/"
   serverURLSecure = "https://" + this.baseURL;
   serverURLNotSecure = "http://" + this.baseURL;
-
+  leagueYear = new Date().getFullYear();
   GUID;
   constructor(private http: HttpClient) { }
 
+
+  /**
+   * Set League year
+   * @param year league year to use as number
+   */
+  setLeagueYear(year: number) {
+    this.leagueYear = year;
+  }
+  getYearAbbr() {
+    return this.leagueYear.toString().substring(2);
+  }
   //Try both secure and non-secure api links (eventually this will be depricated or need to be changed)
   postQuery(queryString: string) {
     try {
@@ -311,7 +322,7 @@ export class PullDataService {
    * default scenario is 0 (base scenario)
    */
   pullHypoPlayers(scenario: number = 0) {
-    var query = "Exec FreeAgency.FA20.spScenario_Get " + scenario;
+    var query = "Exec FreeAgency.FA" + this.getYearAbbr() + ".spScenario_Get " + scenario;
     return this.postQuery(query);
   }
 
@@ -319,7 +330,7 @@ export class PullDataService {
    * Pull information on the bins for the FA Hypo portal
    */
   pullHypoBins() {
-    var query = "select * from [FreeAgency].[FA20].[Hypo_Bins] (nolock)";
+    var query = "select * from [FreeAgency].[FA" + this.getYearAbbr() + "].[Hypo_Bins] (nolock)";
     return this.postQuery(query);
   }
 
@@ -328,7 +339,7 @@ export class PullDataService {
    */
   pullHypoScenario() {
     var query =
-      "SELECT * FROM [FreeAgency].[FA20].[Hypo_Scenarios] (nolock) Order By ScenarioID";
+      "SELECT * FROM [FreeAgency].[FA" + this.getYearAbbr() + "].[Hypo_Scenarios] (nolock) Order By ScenarioID";
 
     return this.postQuery(query);
   }
@@ -339,7 +350,7 @@ export class PullDataService {
    */
   insertHypoScenarioData(jsonData: String) {
     var query =
-      "Exec [FreeAgency].[FA20].[spScenario_Write] '" + jsonData + "'";
+      "Exec [FreeAgency].[FA" + this.getYearAbbr() + "].[spScenario_Write] '" + jsonData + "'";
 
     return this.postQuery(query);
   }
@@ -349,7 +360,7 @@ export class PullDataService {
    */
   pullDraftPicksInfo() {
     var query =
-      "select * From Draft.Draft20.ClubDraftPick (nolock) order by 'Season', 'Round', 'Overall'";
+      "select * From Draft.Draft" + this.getYearAbbr() + ".ClubDraftPick (nolock) order by 'Season', 'Round', 'Overall'";
     return this.postQuery(query);
   }
 
@@ -358,7 +369,7 @@ export class PullDataService {
    */
   getNegotiation() {
     var query =
-      "Exec Draft.Draft20.spInitializeNegotiation '" + this.GUID + "'";
+      "Exec Draft.Draft" + this.getYearAbbr() + ".spInitializeNegotiation '" + this.GUID + "'";
     return this.postQuery(query);
   }
 
@@ -367,7 +378,7 @@ export class PullDataService {
    * @param jsonData json string of data to send down of an offer input
    */
   sendOffer(jsonData: String) {
-    var query = "Exec Draft.Draft20.InitializeOffer '" + jsonData + "'";
+    var query = "Exec Draft.Draft" + this.getYearAbbr() + ".InitializeOffer '" + jsonData + "'";
     console.log(query);
     return this.postQuery(query);
   }
@@ -376,7 +387,7 @@ export class PullDataService {
    * get the negotiations
    */
   pullDraftNegotiations() {
-    var query = "select * FROM Draft.Draft20.ActiveTrade (nolock)";
+    var query = "select * FROM Draft.Draft" + this.getYearAbbr() + ".ActiveTrade (nolock)";
     return this.postQuery(query);
   }
 
@@ -385,7 +396,7 @@ export class PullDataService {
    */
   pullDraftOffers() {
     var query =
-      "select * FROM Draft.Draft20.Offer (nolock) order by NegotiationID desc";
+      "select * FROM Draft.Draft" + this.getYearAbbr() + ".Offer (nolock) order by NegotiationID desc";
     return this.postQuery(query);
   }
 
@@ -394,7 +405,7 @@ export class PullDataService {
    * @param jsonData json string containing NegotiationID and OfferCode, and PickArray
    */
   pushDraftOfferSuggestion(jsonData: String) {
-    var query = "Exec Draft.Draft20.spUpdateOfferMinMax '" + jsonData + "'";
+    var query = "Exec Draft.Draft" + this.getYearAbbr() + ".spUpdateOfferMinMax '" + jsonData + "'";
     console.log(query);
     return this.postQuery(query);
   }
@@ -403,13 +414,13 @@ export class PullDataService {
    * get Active Pick from db
    */
   pullActivePick() {
-    var query = "SELECT * FROM Draft.Draft20.CurrentPick (nolock)";
+    var query = "SELECT * FROM Draft.Draft" + this.getYearAbbr() + ".CurrentPick (nolock)";
     return this.postQuery(query);
   }
 
   /**call flush proc for offers and pick change */
   pullDraftFlushProc() {
-    var query = "Draft.Draft20.spFlushNegotiations";
+    var query = "Draft.Draft" + this.getYearAbbr() + ".spFlushNegotiations";
     return this.postQuery(query);
   }
 
@@ -417,7 +428,15 @@ export class PullDataService {
    * get subset of offers table to check ID's for difference
    */
   pullCurrentOffersForDifference() {
-    var query = "SELECT * FROM Draft.Draft20.vwCurrentOffer (nolock)";
+    var query = "SELECT * FROM Draft.Draft" + this.getYearAbbr() + ".vwCurrentOffer (nolock)";
+    return this.postQuery(query);
+  }
+
+  /**
+   * Pull Defualt league year from DB
+   */
+  pullDefaultLeagueYear() {
+    var query = "Select SaildB.[SAILSITE].[DefaultLeagueYear]()"
     return this.postQuery(query);
   }
 }

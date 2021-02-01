@@ -1,7 +1,9 @@
-<div>
-  <app-topbar></app-topbar>
-</div>
-<div style="position: relative; top:52px;">
-  <app-filter-bar></app-filter-bar>
-  <app-body></app-body>
+<div *ngIf="filterService.leagueYearSet && filterService.bulkImported">
+  <div>
+    <app-topbar></app-topbar>
+  </div>
+  <div style="position: relative; top:52px;">
+    <app-filter-bar></app-filter-bar>
+    <app-body></app-body>
+  </div>
 </div>

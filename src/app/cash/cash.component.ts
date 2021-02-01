@@ -3,7 +3,7 @@ import {
   OnInit,
   ViewEncapsulation,
   ViewChild,
-  
+
 } from "@angular/core";
 import { FiltersService } from "../filters.service";
 import { Router, ActivatedRoute } from "@angular/router";
@@ -37,7 +37,7 @@ export class CashComponent implements OnInit {
     document.addEventListener("click", e => this.onClick(e));
   }
 
-  
+
   cashTabSelected;//Which tab is selected
 
 
@@ -50,7 +50,7 @@ export class CashComponent implements OnInit {
   FAStatusFilterID;
   showFilters;
 
-  
+
   yearListAnimationState = "out"; //State variable for transition of opening year drop down
   showYear = false;//if the year selection drop down is open
 
@@ -67,7 +67,7 @@ export class CashComponent implements OnInit {
   initFunction() {
     try {
       this.body.portalHighlight("cash");
-    } catch (e) {}
+    } catch (e) { }
     if (
       this.filterService.checkUploadComplete()
     ) {
@@ -87,7 +87,7 @@ export class CashComponent implements OnInit {
           if (this.filterService.pullAttribute[att]["Label"] == "FA Status") {
             this.FAStatusFilterID = att;
           }
-        } catch (e) {}
+        } catch (e) { }
 
         //init the form for the cash tab
         this.filterService.formCash.addControl(att, new FormControl());
@@ -125,12 +125,12 @@ export class CashComponent implements OnInit {
 
       //get tabs and order them by Order ID, then init first one
       var tabs = this.filterService.getReportHeaders(4);
-      this.cashTabSelected = Object.keys(tabs).sort(function(a, b) {
+      this.cashTabSelected = Object.keys(tabs).sort(function (a, b) {
         return tabs[a]["OrderID"] < tabs[b]["OrderID"]
           ? -1
           : tabs[b]["OrderID"] < tabs[a]["OrderID"]
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       })[0];
 
       //reroute appropriately
@@ -145,7 +145,7 @@ export class CashComponent implements OnInit {
         if (this.router.url.includes("/base-reports")) {
           this.cashTabSelected = this.router.url.split("/base-reports/")[1];
         }
-      } catch (e) {}
+      } catch (e) { }
       this.performHighlightOrSubRoute();
     } else {
       setTimeout(() => {
@@ -181,7 +181,7 @@ export class CashComponent implements OnInit {
     }
   }
 
-  
+
   /**
    * HIGHLIGHT A TAB, USED FOR INIT ON REPORT
    * @param name tab number to highlight 
@@ -200,12 +200,12 @@ export class CashComponent implements OnInit {
   }
 
 
-/**
- * This function will route to reports page or display the report
- * Case on what to do whether it is a list of reports or a report tab
- * 
- * @param name tab number to route to
- */
+  /**
+   * This function will route to reports page or display the report
+   * Case on what to do whether it is a list of reports or a report tab
+   * 
+   * @param name tab number to route to
+   */
   subRoute(name: any) {
     //Get rid of old
     try {
@@ -214,7 +214,7 @@ export class CashComponent implements OnInit {
       );
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
-    } catch (e) {}
+    } catch (e) { }
 
     this.cashTabSelected = name;
     //color new
@@ -223,7 +223,7 @@ export class CashComponent implements OnInit {
         var newTab = document.getElementById(name + "cashBarHighlightid");
         newTab.style.backgroundColor = "#f2f2f2";
         newTab.style.borderBottom = "4px solid lightskyblue";
-      } catch (e) {}
+      } catch (e) { }
     }, 1);
 
     //Route Appropriately
@@ -246,7 +246,7 @@ export class CashComponent implements OnInit {
         document.getElementById("fullScreenButton").className =
           "fullScreenInactive";
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   /**
@@ -270,23 +270,23 @@ export class CashComponent implements OnInit {
         base = "base-reports";
       }
       this.filterService.goToLink(
-        "http://oakcmsreports01.raiders.com:88" +
-          "/" +
-          url[1] +
-          "/" +
-          url[2] +
-          "/" +
-          url[3] +
-          "/" +
-          base +
-          "/" +
-          number
+        this.filterService.onSiteAccessURL +
+        "/" +
+        url[1] +
+        "/" +
+        url[2] +
+        "/" +
+        url[3] +
+        "/" +
+        base +
+        "/" +
+        number
       );
     } else {
       this.subRoute(name);
     }
   }
-  
+
   /**
    * Open/close the year dropdown slect
    */
@@ -376,7 +376,7 @@ export class CashComponent implements OnInit {
       if (!this.filterService.DBFormat[bin]) {
         this.filterService.DBFormat[bin] = {};
       }
-      
+
       var FID = [];
       this.filterService.DBFormat[bin][newFIDNumber] = [pkID, att, FID];
 
@@ -392,7 +392,7 @@ export class CashComponent implements OnInit {
       }
     }
   }
-  
+
   /**
    * Toggle for UI TYPE 5 (Position Select)
    * @param id FIlter Attribute ID

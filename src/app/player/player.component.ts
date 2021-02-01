@@ -104,7 +104,7 @@ export class PlayerComponent implements OnInit {
   initFunction() {
     try {
       this.body.portalHighlight("player");
-    } catch (e) {}
+    } catch (e) { }
 
     if (this.filterService.checkUploadComplete()) {
       //get player name input Attribute ID
@@ -113,15 +113,15 @@ export class PlayerComponent implements OnInit {
           if (this.filterService.pullAttribute[att]["Label"] == "Player Name") {
             this.playerNameInput = att;
           }
-        } catch (e) {}
+        } catch (e) { }
       }
       var tabs = this.filterService.getReportHeaders(3);
-      this.playerTabSelected = Object.keys(tabs).sort(function(a, b) {
+      this.playerTabSelected = Object.keys(tabs).sort(function (a, b) {
         return tabs[a]["OrderID"] < tabs[b]["OrderID"]
           ? -1
           : tabs[b]["OrderID"] < tabs[a]["OrderID"]
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       })[0];
       try {
         if (this.router.url.includes("/report")) {
@@ -136,7 +136,7 @@ export class PlayerComponent implements OnInit {
         if (this.router.url.includes("/base-reports")) {
           this.playerTabSelected = this.router.url.split("/base-reports/")[1];
         }
-      } catch (e) {}
+      } catch (e) { }
       this.performHighlightOrSubRoute();
     } else {
       setTimeout(() => {
@@ -302,7 +302,7 @@ export class PlayerComponent implements OnInit {
       );
       old.style.backgroundColor = "white";
       old.style.borderBottom = "4px solid white";
-    } catch (e) {}
+    } catch (e) { }
 
     this.playerTabSelected = name;
     //color new
@@ -312,7 +312,7 @@ export class PlayerComponent implements OnInit {
         var newTab = document.getElementById(name + "playerBarHighlightid");
         newTab.style.backgroundColor = "#f2f2f2";
         newTab.style.borderBottom = "4px solid lightskyblue";
-      } catch (e) {}
+      } catch (e) { }
     }, 1);
 
     //Route Appropriately
@@ -336,10 +336,10 @@ export class PlayerComponent implements OnInit {
         try {
           document.getElementById("fullScreenButton").className =
             "fullScreenInactive";
-        } catch (e) {}
+        } catch (e) { }
         // this.router.navigate([newRoute + "../base-reports/" + String(name)]);
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   /**
@@ -361,17 +361,17 @@ export class PlayerComponent implements OnInit {
         base = "base-reports";
       }
       this.filterService.goToLink(
-        "http://oakcmsreports01.raiders.com:88" +
-          "/" +
-          url[1] +
-          "/" +
-          url[2] +
-          "/" +
-          url[3] +
-          "/" +
-          base +
-          "/" +
-          number
+        this.filterService.onSiteAccessURL +
+        "/" +
+        url[1] +
+        "/" +
+        url[2] +
+        "/" +
+        url[3] +
+        "/" +
+        base +
+        "/" +
+        number
       );
     } else {
       this.subRoute(name);

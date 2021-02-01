@@ -21,8 +21,8 @@ export class BaseReportsComponent implements OnInit {
     public pullData: PullDataService,
     public route: ActivatedRoute,
     public router: Router,
-    public cdref: ChangeDetectorRef 
-  ) {}
+    public cdref: ChangeDetectorRef
+  ) { }
 
   //number of report list viewing
   reportList = null;
@@ -39,15 +39,15 @@ export class BaseReportsComponent implements OnInit {
     }
   }
 
-/**
- * Change the router outlet internal to this browser instance to view the report clicked on
- * @param num number of report clicked on
- *            
- */
+  /**
+   * Change the router outlet internal to this browser instance to view the report clicked on
+   * @param num number of report clicked on
+   *            
+   */
   changeReportType(num: any) {
     try {
       document.getElementById("fullScreenButton").className = "fullScreen";
-    } catch (e) {}
+    } catch (e) { }
 
     this.body.changeReportType(num);
   }
@@ -64,17 +64,17 @@ export class BaseReportsComponent implements OnInit {
       var number = name;
       var base = "report";
       this.filterService.goToLink(
-        "http://oakcmsreports01.raiders.com:88" +
-          "/" +
-          url[1] +
-          "/" +
-          url[2] +
-          "/" +
-          url[3] +
-          "/" +
-          base +
-          "/" +
-          number
+        this.filterService.onSiteAccessURL +
+        "/" +
+        url[1] +
+        "/" +
+        url[2] +
+        "/" +
+        url[3] +
+        "/" +
+        base +
+        "/" +
+        number
       );
     } else {
       this.changeReportType(name);

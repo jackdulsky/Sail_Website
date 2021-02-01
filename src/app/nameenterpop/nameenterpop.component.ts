@@ -17,13 +17,13 @@ export class NameenterpopComponent implements OnInit {
     public dialogRef: MatDialogRef<NameenterpopComponent>,
 
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) { }
 
   /**
    * Init form parts and import a name if it exists
    */
   ngOnInit() {
-    this.filterService.getBulkImport();
+    // this.filterService.getBulkImport();
 
     this.form = this.fb.group({});
     this.form.addControl("name", new FormControl());

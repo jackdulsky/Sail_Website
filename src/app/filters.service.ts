@@ -116,37 +116,7 @@ export class FiltersService {
   namePresent: boolean = false;
   modified: boolean = false; //boolean for if db format has been modified
 
-  //default player club information
-  //might make sense to move this to a flag in the teams seciton passed down
-  teamPortalActiveClubID;
-  teamPortalSelected;
-  defaultTeamCode = "1012";
-  defaultTeam = {
-    SailTeamID: "1012",
-    GSISClubID: "13",
-    GSISClubKey: "5092",
-    NCAAID: null,
-    Season: "2020",
-    TeamCode: "LV",
-    LeagueType: "NFL",
-    Conference: "AFC",
-    Division: "West",
-    ClubCityName: "Las Vegas",
-    ClubNickName: "Raiders",
-    SchemeOffense: null,
-    SchemeDefense: "43",
-    ClubColor1: "#000000",
-    ClubColor2: "#BCC4CB",
-    ClubColor3: "#a3a3b5",
-    ClubImageURL:
-      "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/Oakland_Raiders.png?",
-    StadiumID: null
-  };
 
-  playerPortalSelected = {
-    Label: "Player Select"
-  };
-  playerPortalActivePlayerID = "";
 
   //negotiationID for Draft tradetool
   draftActiveNegotiation;
@@ -160,35 +130,42 @@ export class FiltersService {
   //different than portal selected even though they are on the same sidebar
   selected: string;
   portalSelected = "";
-
+  vpnAccessProtocol = "https://"
+  onSiteAccessProtocol = "http://"
+  vpnAccessSAILURLDomainBase = "sail.raiders.com";
+  onSiteAccessURLDomainBase = "oakcmsreports01.raiders.com";
+  onSiteAccessPort = "88";
+  onSiteAccessURL = this.onSiteAccessProtocol + this.onSiteAccessURLDomainBase + ":" + this.onSiteAccessPort;
+  vpnAccessURL = this.vpnAccessProtocol + this.vpnAccessSAILURLDomainBase;
+  vpnAccessRockDaisyDomaiBase = "sailreports.raiders.com";
+  vpnAccessRockDaisy = this.vpnAccessProtocol + this.vpnAccessRockDaisyDomaiBase;
   //THIS SECTION IS COMMENTED OUT AND WILL BE THE EVENTUAL CODE IN PRODUCTION
   //AFTER THE NETWORK ISSUE IS RESOLVED
-  // viewingURL = this.sanitizer.bypassSecurityTrustResngourceUrl(
+  // viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
+  //   "https://sailreports.raiders.com/"
+  // );
+  // viewingURLDefault = this.sanitizer.bypassSecurityTrustResourceUrl(
   //   "https://sailreports.raiders.com/"
   // );
   //This below is the Rock Daisy base url
   viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-    "http://oakcmsreports01.raiders.com/"
+    "http://" + this.onSiteAccessURLDomainBase + "/"
+  );
+  viewingURLDefault = this.sanitizer.bypassSecurityTrustResourceUrl(
+    "http://" + this.onSiteAccessURLDomainBase + "/"
   );
 
+
+
+  leagueYear = new Date().getFullYear();
+  leagueYearSet = false;
   //Stores years selected from list of possible years to display
   //portalYearsOnly is the variable that will be added to DBFormat and sent to the DB
   portalYearsSelected: String[] = [];
-  portalYearsList = [
-    "2022",
-    "2021",
-    "2020",
-    "2019",
-    "2018",
-    "2017",
-    "2016",
-    "2015",
-    "2014",
-    "2013",
-    "2012",
-    "2011"
-  ];
-  portalYearsOnly: String[] = ["2019"];
+  portalYearsList = [];
+  portalYearsOnly: String[] = [this.leagueYear.toString()];
+  beginningYear = 2011;
+  yearsIntoFuture = 3;
   portalYearUpdated = false; //check if year updated to save and send
 
   fullScreenMode = false;
@@ -221,6 +198,38 @@ export class FiltersService {
   //YOU CAN SUBSCRIBE TO CHANGES IN THEM FOR TRIGGERING
   //THIS VARIABLE IS FOR TIME THE FILTERS WERE LAST SENT
   timeLastSent = new BehaviorSubject<string>("");
+
+  //default player club information
+  //might make sense to move this to a flag in the teams seciton passed down
+  teamPortalActiveClubID;
+  teamPortalSelected;
+  defaultTeamCode = "1012";
+  defaultTeam = {
+    SailTeamID: "1012",
+    GSISClubID: "13",
+    GSISClubKey: "5092",
+    NCAAID: null,
+    Season: this.leagueYear.toString(),
+    TeamCode: "LV",
+    LeagueType: "NFL",
+    Conference: "AFC",
+    Division: "West",
+    ClubCityName: "Las Vegas",
+    ClubNickName: "Raiders",
+    SchemeOffense: null,
+    SchemeDefense: "43",
+    ClubColor1: "#000000",
+    ClubColor2: "#BCC4CB",
+    ClubColor3: "#a3a3b5",
+    ClubImageURL:
+      "https://sail-bucket.s3-us-west-2.amazonaws.com/NFL_Logos_Transparent/Oakland_Raiders.png?",
+    StadiumID: null
+  };
+
+  playerPortalSelected = {
+    Label: "Player Select"
+  };
+  playerPortalActivePlayerID = "";
 
   constructor(
     //imported packages and components initialized
@@ -445,6 +454,24 @@ export class FiltersService {
   }
 
   /**
+   * GetLeagueYear
+   * Set defaults with league year
+   */
+  getLeagueYear() {
+    this.pullData.pullDefaultLeagueYear().subscribe(data => {
+      this.leagueYear = Number(data[0][""]);
+      this.pullData.setLeagueYear(this.leagueYear);
+      this.leagueYearSet = true;
+      console.log("LEAGUE YEAR SET TO " + this.leagueYear.toString())
+      this.portalYearsOnly = [this.leagueYear.toString()];
+      for (let i = this.yearsIntoFuture; i >= (this.beginningYear - this.leagueYear); i--) {
+        this.portalYearsList.push((this.leagueYear + i).toString());
+      }
+      this.defaultTeam.Season = this.leagueYear.toString();
+      this.getBulkImport();
+    })
+  }
+  /**
    * THIS IS THE FUNCTION CALLED BY THE TOP BAR RENDER TO IMPORT ALL THE DATA ON WEBSITE START UP
    * ONLY CALLED ONCE (when top bar loads)
    */
@@ -454,7 +481,7 @@ export class FiltersService {
       this.teamPortalActiveClubID = this.defaultTeamCode;
       this.pullData.setGUID(); //set guid
       this.pullData.constructAndSendFilters({
-        "-4": { "4": [["2019"], {}, []] }
+        "-4": { "4": [[this.leagueYear.toString()], {}, []] }
       });
 
       //Pull structure (1 is for NFL)
@@ -1781,18 +1808,14 @@ export class FiltersService {
   createRDURL(id: any, count: any = 0) {
     if (this.filterInDB == false) {
       this.pullData
-        .constructAndSendFilters({ "-4": { "4": [["2019"], {}, []] } })
+        .constructAndSendFilters({ "-4": { "4": [[this.leagueYear.toString()], {}, []] } })
         .subscribe(() => {
           this.filterInDB = true;
         });
     }
     //Below is part of network issue
-    this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-      "http://oakcmsreports01.raiders.com/"
-    );
-    // this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-    //   "https://sailreports.raiders.com/"
-    // );
+    this.viewingURL = this.viewingURLDefault
+
     if (Number(id) < 0) {
       return this.viewingURL;
     }
@@ -1806,15 +1829,15 @@ export class FiltersService {
         var baseURL = this.reportURL[id]["ViewURL"];
 
         //Based on how your accessing the website this will edit the url appropriately
-        if (document.location.hostname.includes("sail.raiders.com")) {
+        if (document.location.hostname.includes(this.vpnAccessSAILURLDomainBase)) {
           baseURL = baseURL.replace(
-            "http://oakcmsreports01.raiders.com",
-            "https://sailreports.raiders.com"
+            this.onSiteAccessURL,
+            this.vpnAccessRockDaisy
           );
         } else {
           baseURL = baseURL.replace(
-            "https://sailreports.raiders.com",
-            "http://oakcmsreports01.raiders.com"
+            this.vpnAccessRockDaisy,
+            this.onSiteAccessURL
           );
         }
         this.viewingURL = this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -2655,15 +2678,15 @@ export class FiltersService {
    */
   goToLink(url: string) {
     //catch for network issue and how the application is being accessed
-    if (document.location.hostname.includes("sail.raiders.com")) {
+    if (document.location.hostname.includes(this.vpnAccessSAILURLDomainBase)) {
       url = url.replace(
-        "http://oakcmsreports01.raiders.com:88",
-        "https://sail.raiders.com"
+        "http://" + this.onSiteAccessURLDomainBase + ":" + this.onSiteAccessPort,
+        "https://" + this.vpnAccessSAILURLDomainBase
       );
     } else {
       url = url.replace(
-        "https://sail.raiders.com",
-        "http://oakcmsreports01.raiders.com:88"
+        "https://" + this.vpnAccessSAILURLDomainBase,
+        "http://" + this.onSiteAccessURLDomainBase + ":" + this.onSiteAccessPort
       );
     }
 

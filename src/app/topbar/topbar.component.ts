@@ -20,7 +20,7 @@ export class TopbarComponent implements OnInit {
     public route: ActivatedRoute,
     public router: Router,
     public pullData: PullDataService
-  ) {}
+  ) { }
   /**
    * Init component, call function in filter Service to get all the data from the DB
    */
@@ -55,7 +55,7 @@ export class TopbarComponent implements OnInit {
                 Object.keys(this.filterService.globalSearchResults)[0]
               ];
               this.filterService.goToLink(
-                "http://oakcmsreports01.raiders.com:88" + urlFirst
+                this.filterService.onSiteAccessURL + urlFirst
               );
             }
           });
